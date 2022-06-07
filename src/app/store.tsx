@@ -7,6 +7,10 @@ export const store = configureStore({
     reducer: {
         login: loginReducer,
         [loginApi.reducerPath]: loginApi.reducer,
+        // propinsi: propinsiReducer,
+        // kabupaten: kabupatenReducer,
+        // kecamatan: kecamatanReducer,
+        // desa: desaReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(loginApi.middleware),
