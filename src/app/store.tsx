@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit"
 import propinsiReducer from "../features/propinsi/propinsiSlice"
 // import counterReducer from "../features/counter/counter-slice"
-// import loginReducer from "../features/login/login-slice"
+import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
 
 export const store = configureStore({
@@ -10,7 +10,7 @@ export const store = configureStore({
         // kabupaten: kabupatenReducer,
         // kecamatan: kecamatanReducer,
         // desa: desaReducer
-        // login: loginReducer,
+        login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
     // middleware: (getDefaultMiddleware) =>
