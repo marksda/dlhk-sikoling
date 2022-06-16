@@ -18,16 +18,16 @@ export const propinsiSlice = createSlice({
         setPropinsi: (state, action: PayloadAction<IPropinsi>) => {
             state = action.payload
         },
-        setId: (state, action: PayloadAction<string>) => {
+        setPropinsiId: (state, action: PayloadAction<string>) => {
             state.id = action.payload
         },
-        setNama: (state, action: PayloadAction<string>) => {
+        setPropinsiNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload
         },
     },
 }) 
 
 // redux action creator
-export const { setPropinsi, setId, setNama } = propinsiSlice.actions
+export const { setPropinsi, setPropinsiId: setId, setPropinsiNama: setNama } = propinsiSlice.actions
 
 export default propinsiSlice.reducer

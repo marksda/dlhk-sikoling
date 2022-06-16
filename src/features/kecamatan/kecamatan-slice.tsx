@@ -20,19 +20,19 @@ export const kecamatanSlice = createSlice({
         setKecamatan: (state, action: PayloadAction<IKecamatan>) => {
             state = action.payload
         },
-        setId: (state, action: PayloadAction<string>) => {
+        setKecamatanId: (state, action: PayloadAction<string>) => {
             state.id = action.payload
         },
-        setNama: (state, action: PayloadAction<string>) => {
+        setKecamatanNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload
         },
-        setIdKabupaten: (state, action: PayloadAction<string>) => {
+        setKecamatanIdKabupaten: (state, action: PayloadAction<string>) => {
             state.idKabupaten = action.payload
         },
     },
 }) 
 
 // redux action creator
-export const { setKecamatan, setId, setNama, setIdKabupaten } = kecamatanSlice.actions
+export const { setKecamatan, setKecamatanId: setId, setKecamatanNama: setNama, setKecamatanIdKabupaten: setIdKabupaten } = kecamatanSlice.actions
 
 export default kecamatanSlice.reducer

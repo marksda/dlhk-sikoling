@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit"
 import bentukUsahaReducer from "../features/bentuk-usaha/bentuk-usaha-slice"
 import propinsiReducer from "../features/propinsi/propinsi-slice"
+import kabupatenReducer from "../features/kabupaten/kabupaten-slice"
+import kecamatanReducer from "../features/kecamatan/kecamatan-slice"
+import desaReducer from "../features/desa/desa-slice"
+import alamatReducer from "../features/alamat/alamat-slice"
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
@@ -9,9 +13,10 @@ export const store = configureStore({
     reducer: {
         bentukUsaha: bentukUsahaReducer,
         propinsi: propinsiReducer,
-        // kabupaten: kabupatenReducer,
-        // kecamatan: kecamatanReducer,
-        // desa: desaReducer
+        kabupaten: kabupatenReducer,
+        kecamatan: kecamatanReducer,
+        desa: desaReducer,
+        alamat: alamatReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },

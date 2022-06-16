@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IAlamat } from "../alamat/alamat-slice";
 import { IBentukUsaha } from "../bentuk-usaha/bentuk-usaha-slice";
 
 export interface IPemrakarsa {
@@ -7,5 +8,10 @@ export interface IPemrakarsa {
     nomorIndukBerusaha: string;
     nama: string;
     namaNotaris: string;
+    alamat: IAlamat;
+    telepone: string;
+    fax: string;
+    npwp: string;
+    email: string;
     
 }
