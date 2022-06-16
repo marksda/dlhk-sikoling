@@ -5,6 +5,9 @@ import kabupatenReducer from "../features/kabupaten/kabupaten-slice"
 import kecamatanReducer from "../features/kecamatan/kecamatan-slice"
 import desaReducer from "../features/desa/desa-slice"
 import alamatReducer from "../features/alamat/alamat-slice"
+import jabatanReducer from "../features/jabatan/jabatan-slice"
+import jenisKelaminReducer from "../features/jenis-kelamin/jenis-kelamin-slice"
+import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice"
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
@@ -17,6 +20,8 @@ export const store = configureStore({
         kecamatan: kecamatanReducer,
         desa: desaReducer,
         alamat: alamatReducer,
+        jabatan: jabatanReducer,
+        jenisKelamin: jenisKelaminReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
