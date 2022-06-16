@@ -33,6 +33,6 @@ export const kabupatenSlice = createSlice({
 }) 
 
 // redux action creator
-export const { setKabupaten, setKabupatenId: setId, setKabupatenNama: setNama, setKabupatenIdPropinsi: setIdPropinsi } = kabupatenSlice.actions
+export const { setKabupaten, setKabupatenId, setKabupatenNama, setKabupatenIdPropinsi } = kabupatenSlice.actions
 
 export default kabupatenSlice.reducer

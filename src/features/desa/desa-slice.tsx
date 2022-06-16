@@ -33,6 +33,6 @@ export const desaSlice = createSlice({
 }) 
 
 // redux action creator
-export const { setDesa, setDesaId: setId, setDesaNama: setNama, setDesaIdKecamatan: setIdKecamatan } = desaSlice.actions
+export const { setDesa, setDesaId, setDesaNama, setDesaIdKecamatan } = desaSlice.actions
 
 export default desaSlice.reducer

@@ -24,13 +24,14 @@ export const Login: React.FunctionComponent = () => {
     // const { data, isFetching } = useGetLoginVerificationQuery();
 
     return (        
-        <div style={{ boxShadow: DefaultEffects.elevation8, padding: 16, width: 300, borderTop: '2px solid orange', borderRadius: 3 }}>
-            <Label>Login Pemohon</Label>
+        <div style={{ boxShadow: DefaultEffects.elevation4, padding: 16, width: 300, borderTop: '2px solid orange', borderRadius: 3, margin: 16 }}>
+            <Label>Sign in</Label>
             <Stack {...columnProps}>
-                <TextField placeholder="Nama Pengguna" iconProps={iconProps} />
+                <TextField placeholder="Email" iconProps={iconProps} underlined/>
                 <TextField
                     placeholder="Password"
                     type="password"
+                    underlined
                     canRevealPassword
                     revealPasswordAriaLabel="Show password"
                     />        

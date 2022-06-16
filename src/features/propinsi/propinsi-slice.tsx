@@ -28,6 +28,6 @@ export const propinsiSlice = createSlice({
 }) 
 
 // redux action creator
-export const { setPropinsi, setPropinsiId: setId, setPropinsiNama: setNama } = propinsiSlice.actions
+export const { setPropinsi, setPropinsiId, setPropinsiNama } = propinsiSlice.actions
 
 export default propinsiSlice.reducer
