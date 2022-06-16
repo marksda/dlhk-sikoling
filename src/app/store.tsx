@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
+import bentukUsahaReducer from "../features/bentuk-usaha/bentuk-usaha-slice"
 import propinsiReducer from "../features/propinsi/propinsi-slice"
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -6,6 +7,7 @@ import loginReducer from "../features/login/login-slice"
 
 export const store = configureStore({
     reducer: {
+        bentukUsaha: bentukUsahaReducer,
         propinsi: propinsiReducer,
         // kabupaten: kabupatenReducer,
         // kecamatan: kecamatanReducer,

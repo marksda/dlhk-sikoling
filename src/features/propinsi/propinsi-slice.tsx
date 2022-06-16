@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface IPropinsiState {
+export interface IPropinsi {
     id: string;
     nama: string;
 }
 
-const initialState: IPropinsiState = {
+const initialState: IPropinsi = {
     id: '',
     nama:'',
 }
@@ -15,13 +15,19 @@ export const propinsiSlice = createSlice({
     name: 'propinsi',
     initialState,
     reducers: {
-        setPropinsi: (state, action: PayloadAction<IPropinsiState>) => {
+        setPropinsi: (state, action: PayloadAction<IPropinsi>) => {
             state = action.payload
+        },
+        setId: (state, action: PayloadAction<string>) => {
+            state.id = action.payload
+        },
+        setNama: (state, action: PayloadAction<string>) => {
+            state.nama = action.payload
         },
     },
 }) 
 
 // redux action creator
-export const { setPropinsi } = propinsiSlice.actions
+export const { setPropinsi, setId, setNama } = propinsiSlice.actions
 
 export default propinsiSlice.reducer

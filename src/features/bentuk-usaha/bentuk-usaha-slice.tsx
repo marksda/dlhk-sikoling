@@ -15,7 +15,7 @@ const initialState: IBentukUsaha = {
 }
 
 const bentukUsahaSlice = createSlice({
-    name: "bentukusaha",
+    name: "bentukUsaha",
     initialState,
     reducers: {
         setBentukUsaha: (state, action: PayloadAction<IBentukUsaha>) => {
@@ -32,3 +32,6 @@ const bentukUsahaSlice = createSlice({
         },
     }
 })
+
+export const { setBentukUsaha, setIdBentukUsaha, setNamaBentukUsaha, setIdJenisPelakuUsaha } = bentukUsahaSlice.actions
+export default bentukUsahaSlice.reducer
