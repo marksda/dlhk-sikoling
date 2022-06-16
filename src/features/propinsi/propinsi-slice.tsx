@@ -16,7 +16,8 @@ export const propinsiSlice = createSlice({
     initialState,
     reducers: {
         setPropinsi: (state, action: PayloadAction<IPropinsi>) => {
-            state = action.payload
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
         },
         setPropinsiId: (state, action: PayloadAction<string>) => {
             state.id = action.payload
