@@ -6,3 +6,29 @@ export interface IBentukUsaha {
     singkatan: string;
     idJenisPelakuUsaha: string;
 }
+
+const initialState: IBentukUsaha = {
+    id: '',
+    nama: '',
+    singkatan: '',
+    idJenisPelakuUsaha: ''
+}
+
+const bentukUsahaSlice = createSlice({
+    name: "bentukusaha",
+    initialState,
+    reducers: {
+        setBentukUsaha: (state, action: PayloadAction<IBentukUsaha>) => {
+            state = action.payload;
+        },
+        setIdBentukUsaha: (state, action: PayloadAction<string>) => {
+            state.id = action.payload;
+        },
+        setNamaBentukUsaha: (state, action: PayloadAction<string>) => {
+            state.nama = action.payload;
+        },
+        setIdJenisPelakuUsaha: (state, action: PayloadAction<string>) => {
+            state.idJenisPelakuUsaha = action.payload;
+        },
+    }
+})
