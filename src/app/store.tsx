@@ -22,6 +22,7 @@ export const store = configureStore({
         alamat: alamatReducer,
         jabatan: jabatanReducer,
         jenisKelamin: jenisKelaminReducer,
+        penanggungJawab: penanggungJawabReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
