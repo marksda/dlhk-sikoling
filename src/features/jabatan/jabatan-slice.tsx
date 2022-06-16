@@ -16,18 +16,19 @@ export const jabatanSlice = createSlice({
     initialState,
     reducers: {
         setJabatan: (state, action: PayloadAction<IJabatan>) => {
-            state = action.payload
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
         },
         setJabatanId: (state, action: PayloadAction<string>) => {
-            state.id = action.payload
+            state.id = action.payload;
         },
         setJabatanNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload
+            state.nama = action.payload;
         },
     },
 }) 
 
 // redux action creator
-export const { setJabatan, setJabatanId: setId, setJabatanNama: setNama } = jabatanSlice.actions
+export const { setJabatan, setJabatanId, setJabatanNama } = jabatanSlice.actions
 
 export default jabatanSlice.reducer

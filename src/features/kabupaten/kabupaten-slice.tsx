@@ -18,16 +18,18 @@ export const kabupatenSlice = createSlice({
     initialState,
     reducers: {
         setKabupaten: (state, action: PayloadAction<IKabupaten>) => {
-            state = action.payload
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
+            state.idPropinsi = action.payload.idPropinsi;
         },
         setKabupatenId: (state, action: PayloadAction<string>) => {
-            state.id = action.payload
+            state.id = action.payload;
         },
         setKabupatenNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload
+            state.nama = action.payload;
         },
         setKabupatenIdPropinsi: (state, action: PayloadAction<string>) => {
-            state.idPropinsi = action.payload
+            state.idPropinsi = action.payload;
         },
     },
 }) 

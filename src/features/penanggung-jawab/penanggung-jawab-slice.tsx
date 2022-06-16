@@ -28,32 +28,38 @@ export const PenanggungJawabSlice = createSlice({
     initialState,
     reducers: {
         setPenanggungJawab: (state, action: PayloadAction<IPenanggungJawab>) => {
-            state = action.payload
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
+            state.alamat = action.payload.alamat;
+            state.jabatan = action.payload.jabatan;
+            state.jenisKelamin = action.payload.jenisKelamin;
+            state.noIdentitas = action.payload.noIdentitas;
+            state.noHandphone = action.payload.noHandphone;
         },
         setPenanggungJawabId: (state, action: PayloadAction<string>) => {
-            state.id = action.payload
+            state.id = action.payload;
         },
         setPenanggungJawabNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload
+            state.nama = action.payload;
         },
         setPenanggungJawabAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.alamat = action.payload
+            state.alamat = action.payload;
         },
         setPenanggungJawabJabatan: (state, action: PayloadAction<IJabatan>) => {
-            state.jabatan = action.payload
+            state.jabatan = action.payload;
         },
         setPenanggungJawabJenisKelamin: (state, action: PayloadAction<IJenisKelamin>) => {
-            state.jenisKelamin = action.payload
+            state.jenisKelamin = action.payload;
         },
         setPenanggungJawabNoIdentitas: (state, action: PayloadAction<string>) => {
-            state.noIdentitas = action.payload
+            state.noIdentitas = action.payload;
         },
         setPenanggungJawabNoHandphone: (state, action: PayloadAction<string>) => {
-            state.noHandphone = action.payload
+            state.noHandphone = action.payload;
         },
     },
 }) 
 
-export const { setPenanggungJawab, setPenanggungJawabId: setId, setPenanggungJawabNama: setNama, setPenanggungJawabAlamat, setPenanggungJawabJabatan, setPenanggungJawabJenisKelamin, setPenanggungJawabNoIdentitas, setPenanggungJawabNoHandphone } = PenanggungJawabSlice.actions
+export const { setPenanggungJawab, setPenanggungJawabId, setPenanggungJawabNama, setPenanggungJawabAlamat, setPenanggungJawabJabatan, setPenanggungJawabJenisKelamin, setPenanggungJawabNoIdentitas, setPenanggungJawabNoHandphone } = PenanggungJawabSlice.actions
 
 export default PenanggungJawabSlice.reducer

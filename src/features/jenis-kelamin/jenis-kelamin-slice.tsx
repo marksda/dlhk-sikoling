@@ -16,18 +16,19 @@ export const jenisKelaminSlice = createSlice({
     initialState,
     reducers: {
         setJenisKelamin: (state, action: PayloadAction<IJenisKelamin>) => {
-            state = action.payload
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
         },
         setJenisKelaminId: (state, action: PayloadAction<string>) => {
-            state.id = action.payload
+            state.id = action.payload;
         },
         setJenisKelaminNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload
+            state.nama = action.payload;
         },
     },
 }) 
 
 // redux action creator
-export const { setJenisKelamin, setJenisKelaminId: setId, setJenisKelaminNama: setNama } = jenisKelaminSlice.actions
+export const { setJenisKelamin, setJenisKelaminId, setJenisKelaminNama } = jenisKelaminSlice.actions
 
 export default jenisKelaminSlice.reducer

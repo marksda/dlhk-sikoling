@@ -20,10 +20,10 @@ export const propinsiSlice = createSlice({
             state.nama = action.payload.nama;
         },
         setPropinsiId: (state, action: PayloadAction<string>) => {
-            state.id = action.payload
+            state.id = action.payload;
         },
         setPropinsiNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload
+            state.nama = action.payload;
         },
     },
 }) 
