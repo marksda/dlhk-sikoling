@@ -29,8 +29,7 @@ export const store = configureStore({
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
-    // middleware: (getDefaultMiddleware) =>
-    //     getDefaultMiddleware().concat(loginApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(propinsiApiSlice.middleware),
 })
 
 // Aliasing variable in typescript

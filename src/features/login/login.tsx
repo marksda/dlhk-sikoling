@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { IPropinsi, setPropinsi } from '../propinsi/propinsi-slice'
-// import { useGetUserAutentikasiQuery } from '../../services/sikoling-api'
+import { setPropinsi } from '../propinsi/propinsi-slice'
+import { useGetAllQuery } from "../propinsi/propinsi-api-slice"
 
 import { 
     DefaultEffects, ActionButton, IIconProps, Label, PrimaryButton, TextField, Stack, IStackProps, IStackStyles 
@@ -25,11 +25,11 @@ export const Login: React.FunctionComponent = () => {
 
     const dispatch = useAppDispatch();
 
+    const { data = [], isFetching } = useGetAllQuery();    
+
     function handleClick() {
         dispatch(setPropinsi({id: '02', nama: 'JAWA TENGAH'}));
     }
-
-    // const { data, isFetching } = useGetLoginVerificationQuery();
 
     return (        
         <div style={{ boxShadow: DefaultEffects.elevation4, padding: 16, width: 300, borderTop: '2px solid orange', borderRadius: 3, margin: 16 }}>

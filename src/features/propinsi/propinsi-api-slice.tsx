@@ -29,3 +29,5 @@ export const propinsiApiSlice = createApi({
         }
     }
 })
+
+export const { useGetAllQuery, useGetAllByPageQuery, useGetByNamaQuery, useGetByNamaAndPageQuery } = propinsiApiSlice
