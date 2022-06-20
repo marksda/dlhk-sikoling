@@ -1,4 +1,5 @@
 import React from "react"
+// import { PropinsiDropDown } from "./components/PropinsiDropDown/PropinsiDropDown"
 import { Login } from './features/login/login'
 import { useAppSelector } from './app/hooks'
 
@@ -15,6 +16,9 @@ const RoutePage: React.FunctionComponent = () => {
             <div>sudah login</div>
         )
     }   
+    // return (
+    //     <div style={{margin: 16}}><PropinsiDropDown /></div>    
+    // )
 }
 
 export default RoutePage
