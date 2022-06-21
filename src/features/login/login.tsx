@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setPropinsi } from '../propinsi/propinsi-slice'
-import { useGetAllQuery } from "../propinsi/propinsi-api-slice"
+import { useGetAllPropinsiQuery } from "../propinsi/propinsi-api-slice"
 
 import { 
     DefaultEffects, ActionButton, IIconProps, Label, PrimaryButton, TextField, Stack, IStackProps, IStackStyles 
@@ -25,7 +25,7 @@ export const Login: React.FunctionComponent = () => {
 
     const dispatch = useAppDispatch();
 
-    const { data = [], isFetching } = useGetAllQuery();    
+    const { data = [], isFetching } = useGetAllPropinsiQuery();    
 
     function handleClick() {
         dispatch(setPropinsi({id: '02', nama: 'JAWA TENGAH'}));

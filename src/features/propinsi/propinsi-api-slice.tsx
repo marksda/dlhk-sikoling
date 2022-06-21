@@ -1,12 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IPropinsi } from "./propinsi-slice";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { IPropinsi } from "./propinsi-slice"
+import { baseUrl } from "../../features/config/config"
 
 const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
 export const propinsiApiSlice = createApi({
     reducerPath: 'propinsiApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:8080/Sikoling-web/api',
+        baseUrl: baseUrl,
         // prepareHeaders(headers) {
         //     headers.set('x-api-key', PROPINSI_API_KEY);
         //     return headers;
