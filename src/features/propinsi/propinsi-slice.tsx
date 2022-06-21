@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IPropinsi {
-    key: string;
-    text: string;
+    id: string;
+    nama: string;
 }
 
 const initialState: IPropinsi = {
-    key: '',
-    text:'',
+    id: '',
+    nama:'',
 }
 
 //redux busines logic
@@ -16,14 +16,14 @@ export const propinsiSlice = createSlice({
     initialState,
     reducers: {
         setPropinsi: (state, action: PayloadAction<IPropinsi>) => {
-            state.key = action.payload.key;
-            state.text = action.payload.text;
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
         },
         setPropinsiId: (state, action: PayloadAction<string>) => {
-            state.key = action.payload;
+            state.id = action.payload;
         },
         setPropinsiNama: (state, action: PayloadAction<string>) => {
-            state.text = action.payload;
+            state.nama = action.payload;
         },
     },
 }) 
