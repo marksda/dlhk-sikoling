@@ -28,7 +28,7 @@ export const PropinsiDropDown: React.FunctionComponent = () => {
             selectedKey={selectedItem ? selectedItem.key : undefined}
             onChange={onChange}
             placeholder="Pilih Propinsi"
-            options={dropdownControlledExampleOptions}
+            options={data}
             styles={dropdownStyles}
         />
     )
