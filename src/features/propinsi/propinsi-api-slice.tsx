@@ -15,7 +15,7 @@ export const propinsiApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            getAllPropinsi: builder.query<IPropinsi[], number|void>({
+            getAllPropinsi: builder.query<IPropinsi[], void>({
                 query: () => `/propinsi`,
             }),
             getPropinsiByPage: builder.query<IPropinsi[], number|void>({
