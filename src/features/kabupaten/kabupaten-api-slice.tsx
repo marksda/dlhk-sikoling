@@ -30,6 +30,9 @@ export const KabupatenApiSlice = createApi({
             getKabupatenByPropinsi: builder.query<IKabupaten[], string|void>({
                 query: (idPropinsi = defaultPropinsi.id) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
             }),
+            getKabupatenByPropinsiAndPage: builder.query<IKabupaten[], string|void>({
+                query: (idPropinsi = defaultPropinsi.id) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
+            }),
         }
     }
 })
