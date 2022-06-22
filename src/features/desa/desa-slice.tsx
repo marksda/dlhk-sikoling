@@ -1,16 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { defaultDesa } from "../config/config";
 
 export interface IDesa {
     id: string;
     nama: string;
-    idKecamatan: string;
 }
 
-const initialState: IDesa = {
-    id: '',
-    nama:'',
-    idKecamatan:'',
-}
+const initialState: IDesa = defaultDesa;
 
 //redux busines logic
 export const desaSlice = createSlice({
@@ -26,13 +22,10 @@ export const desaSlice = createSlice({
         setDesaNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
-        setDesaIdKecamatan: (state, action: PayloadAction<string>) => {
-            state.idKecamatan = action.payload;
-        },
     },
 }) 
 
 // redux action creator
-export const { setDesa, setDesaId, setDesaNama, setDesaIdKecamatan } = desaSlice.actions
+export const { setDesa, setDesaId, setDesaNama } = desaSlice.actions
 
 export default desaSlice.reducer

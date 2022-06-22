@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseUrl } from "../config/config";
+import { baseUrl, defaultPropinsi } from "../config/config";
 import { IKabupaten } from "./kabupaten-slice";
 
 const Kabupaten_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
@@ -27,8 +27,12 @@ export const KabupatenApiSlice = createApi({
             getKabupatenByNamaAndPage: builder.query<IKabupaten[], string|void>({
                 query: (nama = 'jawa timur', page=1, pageSize=10) => `kabupaten/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
+            getKabupatenByPropinsi: builder.query<IKabupaten[], string|void>({
+                query: (idPropinsi = defaultPropinsi.id) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
+            }),
         }
     }
 })
 
-export const { useGetAllKabupatenQuery, useGetKabupatenByPageQuery, useGetKabupatenByNamaQuery, useGetKabupatenByNamaAndPageQuery } = KabupatenApiSlice
+export const { useGetAllKabupatenQuery, useGetKabupatenByPageQuery, useGetKabupatenByNamaQuery, 
+    useGetKabupatenByNamaAndPageQuery, useGetKabupatenByPropinsiQuery } = KabupatenApiSlice
