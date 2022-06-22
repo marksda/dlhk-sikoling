@@ -14,7 +14,8 @@ export const desaSlice = createSlice({
     initialState,
     reducers: {
         setDesa: (state, action: PayloadAction<IDesa>) => {
-            state = action.payload;
+            state.id = action.payload.id;
+            state.nama = action.payload.nama;
         },
         setDesaId: (state, action: PayloadAction<string>) => {
             state.id = action.payload;

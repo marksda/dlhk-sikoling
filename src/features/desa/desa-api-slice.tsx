@@ -1,15 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { baseUrl, defaultKecamatan } from "../config/config";
+import { IDesa } from "./desa-slice";
 
 
 export const DesaApiSlice = createApi({
     reducerPath: 'desaApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseUrl,
-        // prepareHeaders(headers) {
-        //     headers.set('x-api-key', Desa_API_KEY);
-        //     return headers;
-        // },
     }),
     endpoints(builder) {
         return {

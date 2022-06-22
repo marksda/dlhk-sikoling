@@ -7,6 +7,7 @@ import { KabupatenApiSlice } from "../features/kabupaten/kabupaten-api-slice"
 import kecamatanReducer from "../features/kecamatan/kecamatan-slice"
 import { KecamatanApiSlice } from "../features/kecamatan/kecamatan-api-slice"
 import desaReducer from "../features/desa/desa-slice"
+import { DesaApiSlice } from "../features/desa/desa-api-slice"
 import alamatReducer from "../features/alamat/alamat-slice"
 import jabatanReducer from "../features/jabatan/jabatan-slice"
 import jenisKelaminReducer from "../features/jenis-kelamin/jenis-kelamin-slice"
@@ -26,6 +27,7 @@ export const store = configureStore({
         kecamatan: kecamatanReducer,
         [KecamatanApiSlice.reducerPath]: KecamatanApiSlice.reducer,
         desa: desaReducer,
+        [DesaApiSlice.reducerPath]: DesaApiSlice.reducer,
         alamat: alamatReducer,
         jabatan: jabatanReducer,
         jenisKelamin: jenisKelaminReducer,
@@ -36,7 +38,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
                                             .concat(propinsiApiSlice.middleware)
                                             .concat(KabupatenApiSlice.middleware)
-                                            .concat(KecamatanApiSlice.middleware),
+                                            .concat(KecamatanApiSlice.middleware)
+                                            .concat(DesaApiSlice.middleware),
 })
 
 // Aliasing variable in typescript

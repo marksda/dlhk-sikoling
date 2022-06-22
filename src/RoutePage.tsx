@@ -17,7 +17,7 @@ const RoutePage: React.FunctionComponent = () => {
     //     )
     // }   
     return (
-        <div style={{margin: 16}}><FormulirPerson /></div>    
+        <FormulirPerson />    
     )
 }
 

@@ -6,30 +6,24 @@ import { setDesa } from "../../features/desa/desa-slice"
 
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
-const desaOptions = [
-    { key: '3515110', text: 'SIDOARJO' },
-    { key: '3515120', text: 'BUDURAN' },
-    { key: '3515130', text: 'SEDATI' },
-  ];
-
-export const KabupatenDropDown: React.FunctionComponent = () => {
+export const DesaDropDown: React.FunctionComponent = () => {
     const kecamatan = useAppSelector(state => state.kecamatan);
-    const [selectedItem, setSelectedItem] = React.useState<IDropdownOption>();
-    const { data = [], isFetching } = useGetDesaByKecamatanQuery(kecamatan.id);
+    const desa = useAppSelector(state => state.desa);
     const dispatch = useAppDispatch();
-
+    const { data = [], isFetching } = useGetDesaByKecamatanQuery(kecamatan.id);    
+    const dataDesaOptions = data.map((t) => { return {key: t.id, text: t.nama}; });
+    
     const onChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
-        setSelectedItem(item);
         dispatch(setDesa({id: item.key as string, nama: item.text}));
     };
 
     return (
         <Dropdown 
             label="Desa"
-            selectedKey={selectedItem ? selectedItem.key : undefined}
+            selectedKey={!isFetching ? desa.id : undefined}
             onChange={onChange}
             placeholder="Pilih Desa"
-            options={desaOptions}
+            options={dataDesaOptions}
             styles={dropdownStyles}
         />
     )
