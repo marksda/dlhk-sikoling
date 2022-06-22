@@ -1,6 +1,6 @@
 import React from "react"
 import { Dropdown, IDropdownOption, IDropdownStyles } from "@fluentui/react"
-import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice" 
+import { useGetKecamatanByKecamatanQuery } from "../../features/kecamatan/kecamatan-api-slice" 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setKecamatan } from "../../features/kecamatan/kecamatan-slice"
 
@@ -12,10 +12,10 @@ const kecamatanOptions = [
     { key: '3515130', text: 'SEDATI' },
   ];
 
-export const KabupatenDropDown: React.FunctionComponent = () => {
-    const kabupaten = useAppSelector(state => state.kabupaten);
+export const KecamatanDropDown: React.FunctionComponent = () => {
+    const kecamatan = useAppSelector(state => state.kecamatan);
     const [selectedItem, setSelectedItem] = React.useState<IDropdownOption>();
-    const { data = [], isFetching } = useGetKecamatanByKabupatenQuery(kabupaten.id);
+    const { data = [], isFetching } = useGetKecamatanByKecamatanQuery(kecamatan.id);
     const dispatch = useAppDispatch();
 
     const onChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {

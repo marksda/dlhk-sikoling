@@ -1,5 +1,5 @@
 import React from "react"
-import { PropinsiDropDown } from "./components/PropinsiDropDown/PropinsiDropDown"
+import { FormulirPerson } from "./components/FormulirPerson/FormulirPerson"
 // import { Login } from './features/login/login'
 // import { useAppSelector } from './app/hooks'
 
@@ -17,7 +17,7 @@ const RoutePage: React.FunctionComponent = () => {
     //     )
     // }   
     return (
-        <div style={{margin: 16}}><PropinsiDropDown /></div>    
+        <div style={{margin: 16}}><FormulirPerson /></div>    
     )
 }
 

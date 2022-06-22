@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit"
 import bentukUsahaReducer from "../features/bentuk-usaha/bentuk-usaha-slice"
 import propinsiReducer from "../features/propinsi/propinsi-slice"
 import { propinsiApiSlice } from "../features/propinsi/propinsi-api-slice"
+import { kabupatenSlice } from "../features/kabupaten/kabupaten-slice"
 import kabupatenReducer from "../features/kabupaten/kabupaten-slice"
 import kecamatanReducer from "../features/kecamatan/kecamatan-slice"
 import desaReducer from "../features/desa/desa-slice"
@@ -12,6 +13,7 @@ import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawa
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
+import { KabupatenApiSlice } from "../features/kabupaten/kabupaten-api-slice"
 // import { loginApi } from "../services/sikoling-api"
 
 export const store = configureStore({
@@ -20,6 +22,7 @@ export const store = configureStore({
         propinsi: propinsiReducer,
         [propinsiApiSlice.reducerPath]: propinsiApiSlice.reducer,
         kabupaten: kabupatenReducer,
+        [KabupatenApiSlice.reducerPath]: KabupatenApiSlice.reducer,
         kecamatan: kecamatanReducer,
         desa: desaReducer,
         alamat: alamatReducer,
@@ -29,7 +32,9 @@ export const store = configureStore({
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(propinsiApiSlice.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+                                            .concat(propinsiApiSlice.middleware)
+                                            .concat(KabupatenApiSlice.middleware),
 })
 
 // Aliasing variable in typescript
