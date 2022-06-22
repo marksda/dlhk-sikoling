@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { defaultKabupaten } from "../config/config";
 
 export interface IKabupaten {
     id: string;
     nama: string;
 }
 
-const initialState: IKabupaten = {
-    id: '',
-    nama:'',
-}
+const initialState: IKabupaten = defaultKabupaten;
 
 //redux busines logic
 export const kabupatenSlice = createSlice({
