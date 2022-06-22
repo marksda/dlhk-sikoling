@@ -1,8 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseUrl, defaultPropinsi } from "../config/config";
+import { baseUrl, defaultKabupaten } from "../config/config";
 import { IKecamatan } from "./kecamatan-slice";
 
-const Kecamatan_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
 export const KecamatanApiSlice = createApi({
     reducerPath: 'kecamatanApi',
@@ -28,7 +27,7 @@ export const KecamatanApiSlice = createApi({
                 query: (nama = 'jawa timur', page=1, pageSize=10) => `kecamatan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
             getKecamatanByKabupaten: builder.query<IKecamatan[], string|void>({
-                query: (idKabupaten = defaultPropinsi.id) => `kecamatan/kabupaten?idKabupaten=${idKabupaten}`,
+                query: (idKabupaten = defaultKabupaten.id) => `kecamatan/kabupaten?idKabupaten=${idKabupaten}`,
             }),
         }
     }
