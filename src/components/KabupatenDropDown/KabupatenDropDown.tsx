@@ -3,6 +3,8 @@ import { Dropdown, IDropdownOption, IDropdownStyles } from "@fluentui/react"
 import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice" 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setKabupaten } from "../../features/kabupaten/kabupaten-slice"
+import { resetDesa } from "../../features/desa/desa-slice"
+import { resetKecamatan } from "../../features/kecamatan/kecamatan-slice"
 
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
@@ -15,12 +17,14 @@ export const KabupatenDropDown: React.FunctionComponent = () => {
     const dataKabupatenOptions = data.map((t) => { return {key: t.id, text: t.nama}; });
 
     const onChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+        dispatch(resetDesa());
+        dispatch(resetKecamatan());
         dispatch(setKabupaten({id: item.key as string, nama: item.text}));
     };
 
     return (
         <Dropdown 
-            label="Kabupaten"
+            label="Kabupaten / Kota"
             selectedKey={!isFetching ? kabupaten.id : undefined}
             onChange={onChange}
             placeholder="Pilih Kabupaten"

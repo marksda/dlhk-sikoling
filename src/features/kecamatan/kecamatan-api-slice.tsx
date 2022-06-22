@@ -7,15 +7,11 @@ export const KecamatanApiSlice = createApi({
     reducerPath: 'kecamatanApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseUrl,
-        // prepareHeaders(headers) {
-        //     headers.set('x-api-key', Kecamatan_API_KEY);
-        //     return headers;
-        // },
     }),
     endpoints(builder) {
         return {
             getAllKecamatan: builder.query<IKecamatan[], number|void>({
-                query: () => `/Kecamatan`,
+                query: () => `/kecamatan`,
             }),
             getKecamatanByPage: builder.query<IKecamatan[], number|void>({
                 query: (page = 1, pageSize = 10) => `kecamatan/page?page=${page}&pageSize=${pageSize}`,

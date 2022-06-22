@@ -22,10 +22,14 @@ export const desaSlice = createSlice({
         setDesaNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
+        resetDesa: (state) => {
+            state.id = "";
+            state.nama = "";
+        }
     },
 }) 
 
 // redux action creator
-export const { setDesa, setDesaId, setDesaNama } = desaSlice.actions
+export const { setDesa, setDesaId, setDesaNama, resetDesa } = desaSlice.actions
 
 export default desaSlice.reducer

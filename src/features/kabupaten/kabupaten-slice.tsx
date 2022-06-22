@@ -23,10 +23,14 @@ export const kabupatenSlice = createSlice({
         setKabupatenNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
+        resetKabupaten: (state) => {
+            state.id = "";
+            state.nama = "";
+        },
     },
 }) 
 
 // redux action creator
-export const { setKabupaten, setKabupatenId, setKabupatenNama } = kabupatenSlice.actions
+export const { setKabupaten, setKabupatenId, setKabupatenNama, resetKabupaten } = kabupatenSlice.actions
 
 export default kabupatenSlice.reducer
