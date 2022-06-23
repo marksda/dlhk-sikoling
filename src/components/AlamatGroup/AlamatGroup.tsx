@@ -33,8 +33,8 @@ export const AlamatGroup: React.FunctionComponent<IPropsAlamat> = ({title}) => {
     
     return (      
         <>
-            <Label style={{borderBottom: '2px solid red', marginBottom: 16}}>
-                Alamat {title}
+            <Label style={{borderBottom: '2px solid red', marginBottom: 8}}>
+                {title}
             </Label>  
             <Stack tokens={stackTokens}>            
                 <PropinsiDropDown />
