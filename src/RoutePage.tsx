@@ -1,5 +1,5 @@
 import React from "react"
-import { FormulirPerson } from "./components/FormulirPerson/FormulirPerson"
+import { PersonFormulir } from "./components/PersonFormulir/PersonFormulir"
 // import { Login } from './features/login/login'
 // import { useAppSelector } from './app/hooks'
 
@@ -17,7 +17,7 @@ const RoutePage: React.FunctionComponent = () => {
     //     )
     // }   
     return (
-        <FormulirPerson />    
+        <PersonFormulir />    
     )
 }
 

@@ -36,12 +36,14 @@ export const AlamatGroup: React.FunctionComponent<IPropsAlamat> = ({title}) => {
             <Label style={{borderBottom: '2px solid red', marginBottom: 8}}>
                 {title}
             </Label>  
-            <Stack tokens={stackTokens}>            
-                <PropinsiDropDown />
-                <KabupatenDropDown />
-                <KecamatanDropDown />
-                <DesaDropDown /> 
-            </Stack>
+            <div style={{marginLeft: 8}}>
+                <Stack tokens={stackTokens}>            
+                    <PropinsiDropDown />
+                    <KabupatenDropDown />
+                    <KecamatanDropDown />
+                    <DesaDropDown /> 
+                </Stack>
+            </div>
         </>
     );
 }
