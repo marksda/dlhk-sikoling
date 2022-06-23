@@ -12,7 +12,7 @@ import alamatReducer from "../features/alamat/alamat-slice"
 import jabatanReducer from "../features/jabatan/jabatan-slice"
 import jenisKelaminReducer from "../features/jenis-kelamin/jenis-kelamin-slice"
 import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice"
-
+import personReducer from "../features/person/person-slice"
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
@@ -32,6 +32,7 @@ export const store = configureStore({
         jabatan: jabatanReducer,
         jenisKelamin: jenisKelaminReducer,
         penanggungJawab: penanggungJawabReducer,
+        person: personReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },

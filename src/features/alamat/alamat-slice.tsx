@@ -9,7 +9,7 @@ export interface IAlamat {
     kabupaten: IKabupaten;
     kecamatan: IKecamatan;
     desa: IDesa;
-    keterangan: string
+    keterangan?: string
 }
 
 const initialState: IAlamat = {
@@ -17,7 +17,7 @@ const initialState: IAlamat = {
     kabupaten: {} as IKabupaten,
     kecamatan: {} as IKecamatan,
     desa: {} as IDesa,
-    keterangan: ''
+    keterangan: undefined
 }
 
 //redux busines logic
@@ -26,10 +26,13 @@ export const alamatSlice = createSlice({
     initialState,
     reducers: {
         setAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state = action.payload;
+            state.desa = {id: action.payload.desa.id, nama: action.payload.desa.nama};
+            state.kecamatan = {id: action.payload.kecamatan.id, nama: action.payload.kecamatan.nama};
+            state.kabupaten = {id: action.payload.kabupaten.id, nama: action.payload.kabupaten.nama};
+            state.propinsi = {id: action.payload.propinsi.id, nama: action.payload.propinsi.nama};
         },
         setAlamatPropinsi: (state, action: PayloadAction<IPropinsi>) => {
-            state.propinsi = action.payload;
+            state.propinsi = {id: action.payload.id, nama: action.payload.nama};
         },
         setAlamatKabupaten: (state, action: PayloadAction<IKabupaten>) => {
             state.propinsi = action.payload;

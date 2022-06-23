@@ -2,7 +2,7 @@ import React from "react"
 import { Dropdown, IDropdownOption, IDropdownStyles } from "@fluentui/react"
 import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice" 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { setKabupaten } from "../../features/kabupaten/kabupaten-slice"
+import { IKabupaten, setKabupaten } from "../../features/kabupaten/kabupaten-slice"
 import { resetDesa } from "../../features/desa/desa-slice"
 import { resetKecamatan } from "../../features/kecamatan/kecamatan-slice"
 
@@ -14,12 +14,12 @@ export const KabupatenDropDown: React.FunctionComponent = () => {
     const dispatch = useAppDispatch();
 
     const { data = [], isFetching } = useGetKabupatenByPropinsiQuery(propinsi.id);
-    const dataKabupatenOptions = data.map((t) => { return {key: t.id, text: t.nama}; });
+    const dataKabupatenOptions = data.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
-    const onChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    const onChange = (event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption<IKabupaten>, index?: number): void => {
         dispatch(resetDesa());
         dispatch(resetKecamatan());
-        dispatch(setKabupaten({id: item.key as string, nama: item.text}));
+        dispatch(setKabupaten({id: item?.key as string, nama: item?.text}));
     };
 
     return (

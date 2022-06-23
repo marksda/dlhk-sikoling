@@ -2,13 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultKecamatan } from "../config/config";
 
 export interface IKecamatan {
-    id: string;
-    nama: string;
+    id?: string;
+    nama?: string;
 }
 
 const initialState: IKecamatan = defaultKecamatan;
 
-//redux busines logic
 export const kecamatanSlice = createSlice({
     name: 'kecamatan',
     initialState,
@@ -24,13 +23,12 @@ export const kecamatanSlice = createSlice({
             state.nama = action.payload;
         },
         resetKecamatan: (state) => {
-            state.id = "";
-            state.nama = "";
+            state.id = undefined;
+            state.nama = undefined;
         }
     },
 }) 
 
-// redux action creator
 export const { setKecamatan, setKecamatanId, setKecamatanNama, resetKecamatan } = kecamatanSlice.actions
 
 export default kecamatanSlice.reducer

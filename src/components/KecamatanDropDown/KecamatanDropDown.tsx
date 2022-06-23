@@ -2,7 +2,7 @@ import React from "react"
 import { Dropdown, IDropdownOption, IDropdownStyles } from "@fluentui/react"
 import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice"
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { setKecamatan } from "../../features/kecamatan/kecamatan-slice"
+import { IKecamatan, setKecamatan } from "../../features/kecamatan/kecamatan-slice"
 import { resetDesa } from "../../features/desa/desa-slice"
 
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
@@ -12,11 +12,11 @@ export const KecamatanDropDown: React.FunctionComponent = () => {
     const kecamatan = useAppSelector(state => state.kecamatan);
     const dispatch = useAppDispatch();
     const { data = [], isFetching } = useGetKecamatanByKabupatenQuery(kabupaten.id);    
-    const dataKecamatanOptions = data.map((t) => { return {key: t.id, text: t.nama}; });    
+    const dataKecamatanOptions = data.map((t) => { return {key: t.id as string, text: t.nama as string}; });    
 
-    const onChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    const onChange = (event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption<IKecamatan>, index?: number): void => {
         dispatch(resetDesa());
-        dispatch(setKecamatan({id: item.key as string, nama: item.text}));
+        dispatch(setKecamatan({id: item?.key as string, nama: item?.text}));
     };
 
     return (

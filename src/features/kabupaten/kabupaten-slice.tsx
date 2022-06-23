@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultKabupaten } from "../config/config";
 
 export interface IKabupaten {
-    id: string;
-    nama: string;
+    id?: string;
+    nama?: string;
 }
 
 const initialState: IKabupaten = defaultKabupaten;
@@ -24,8 +24,8 @@ export const kabupatenSlice = createSlice({
             state.nama = action.payload;
         },
         resetKabupaten: (state) => {
-            state.id = "";
-            state.nama = "";
+            state.id = undefined;
+            state.nama = undefined;
         },
     },
 }) 
