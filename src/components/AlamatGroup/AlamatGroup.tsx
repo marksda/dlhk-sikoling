@@ -33,7 +33,9 @@ export const AlamatGroup: React.FunctionComponent<ITitleAlamat> = ({title}) => {
     
     return (      
         <>
-            <Label style={{borderBottom: '2px solid red', marginBottom: 16}}>Alamat {title}</Label>  
+            <Label style={{borderBottom: '2px solid red', marginBottom: 16}}>
+                Alamat {title}
+            </Label>  
             <Stack tokens={stackTokens}>            
                 <PropinsiDropDown />
                 <KabupatenDropDown />
