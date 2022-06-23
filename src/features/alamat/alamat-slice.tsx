@@ -9,7 +9,7 @@ export interface IAlamat {
     kabupaten: IKabupaten;
     kecamatan: IKecamatan;
     desa: IDesa;
-    keterangan?: string
+    keterangan: string
 }
 
 const initialState: IAlamat = {
@@ -17,7 +17,7 @@ const initialState: IAlamat = {
     kabupaten: {} as IKabupaten,
     kecamatan: {} as IKecamatan,
     desa: {} as IDesa,
-    keterangan: undefined
+    keterangan: ''
 }
 
 //redux busines logic
