@@ -28,8 +28,7 @@ export const AlamatGroup: React.FunctionComponent = () => {
     dispatch(setAlamat(alamat));
     
     return (        
-        <Stack tokens={stackTokens}>
-            
+        <Stack tokens={stackTokens}>            
             <PropinsiDropDown />
             <KabupatenDropDown />
             <KecamatanDropDown />

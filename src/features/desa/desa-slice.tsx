@@ -23,8 +23,8 @@ export const desaSlice = createSlice({
             state.nama = action.payload;
         },
         resetDesa: (state) => {
-            state.id = undefined;
-            state.nama = undefined;
+            state.id = '';
+            state.nama = '';
         }
     },
 }) 

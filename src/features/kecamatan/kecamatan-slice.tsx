@@ -23,8 +23,8 @@ export const kecamatanSlice = createSlice({
             state.nama = action.payload;
         },
         resetKecamatan: (state) => {
-            state.id = undefined;
-            state.nama = undefined;
+            state.id = '';
+            state.nama = '';
         }
     },
 }) 

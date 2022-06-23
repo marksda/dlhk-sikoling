@@ -24,8 +24,8 @@ export const kabupatenSlice = createSlice({
             state.nama = action.payload;
         },
         resetKabupaten: (state) => {
-            state.id = undefined;
-            state.nama = undefined;
+            state.id = '';
+            state.nama = '';
         },
     },
 }) 
