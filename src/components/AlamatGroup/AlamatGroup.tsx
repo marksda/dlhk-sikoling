@@ -9,13 +9,13 @@ import { PropinsiDropDown } from "../PropinsiDropDown/PropinsiDropDown";
 import { setAlamat } from "../../features/alamat/alamat-slice";
 
 
-export interface ITitleAlamat {
+interface IPropsAlamat {
     title: string;
 }
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 
-export const AlamatGroup: React.FunctionComponent<ITitleAlamat> = ({title}) => {    
+export const AlamatGroup: React.FunctionComponent<IPropsAlamat> = ({title}) => {    
     const dispatch = useAppDispatch();
     const desa = useAppSelector(state => state.desa);
     const kecamatan = useAppSelector(state => state.kecamatan);
