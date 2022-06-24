@@ -24,6 +24,12 @@ export const personSlice = createSlice({
     name: 'person',
     initialState,
     reducers: {
+        setPerson: (state, action: PayloadAction<IPerson>) => {
+            state.nik = action.payload.nik;
+            state.nama = action.payload.nama;
+            state.jenisKelamin = { id: action.payload.jenisKelamin?.id, nama: action.payload.jenisKelamin?.nama};
+            // state.alamat = {}
+        },
         setNik: (state, action: PayloadAction<string>) => {
             state.nik = action.payload;
         },
@@ -34,7 +40,7 @@ export const personSlice = createSlice({
             state.jenisKelamin = action.payload;
         },
         setAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.alamat = action.payload;
+            state.alamat = {...action.payload};
         },
         setTelepone: (state, action: PayloadAction<string>) => {
             state.telepone = action.payload;
@@ -45,5 +51,5 @@ export const personSlice = createSlice({
     },
 })
 
-export const {setNik, setNama, setAlamat, setJenisKelamin, setTelepone, setScanKtp} = personSlice.actions
+export const {setPerson, setNik, setNama, setAlamat, setJenisKelamin, setTelepone, setScanKtp} = personSlice.actions
 export default personSlice.reducer

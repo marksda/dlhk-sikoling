@@ -22,7 +22,7 @@ export const DesaDropDown: React.FunctionComponent = () => {
             label="Desa"
             selectedKey={!isFetching ? desa.id : undefined}
             onChange={onChange}
-            placeholder="Pilih Desa"
+            placeholder="Pilih Desa sesuai dengan ktp"
             options={dataDesaOptions}
             styles={dropdownStyles}
         />

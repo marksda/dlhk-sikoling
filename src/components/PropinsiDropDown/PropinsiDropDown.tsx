@@ -30,7 +30,7 @@ export const PropinsiDropDown: React.FunctionComponent = () => {
             label="Propinsi"
             selectedKey={!isFetching ? propinsi.id : undefined}
             onChange={onChange}
-            placeholder="Pilih Propinsi"
+            placeholder="Pilih Propinsi sesuai dengan ktp"
             options={dataPropinsiOptions}
             styles={dropdownStyles}
         />

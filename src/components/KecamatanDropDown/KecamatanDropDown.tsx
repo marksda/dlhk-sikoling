@@ -24,7 +24,7 @@ export const KecamatanDropDown: React.FunctionComponent = () => {
             label="Kecamatan"
             selectedKey={!isFetching ? kecamatan.id : undefined}
             onChange={onChange}
-            placeholder="Pilih Kecamatan"
+            placeholder="Pilih Kecamatan sesuai dengan ktp"
             options={dataKecamatanOptions}
             styles={dropdownStyles}
         />

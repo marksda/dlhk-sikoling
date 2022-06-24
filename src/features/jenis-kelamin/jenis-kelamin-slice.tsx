@@ -1,16 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { defaultJenisKelamin } from "../config/config";
 
 export interface IJenisKelamin {
-    id: string;
-    nama: string;
+    id?: string;
+    nama?: string;
 }
 
-const initialState: IJenisKelamin = {
-    id: '',
-    nama:'',
-}
+const initialState: IJenisKelamin = defaultJenisKelamin;
 
-//redux busines logic
 export const jenisKelaminSlice = createSlice({
     name: 'jenisKelamin',
     initialState,
@@ -28,7 +25,6 @@ export const jenisKelaminSlice = createSlice({
     },
 }) 
 
-// redux action creator
 export const { setJenisKelamin, setJenisKelaminId, setJenisKelaminNama } = jenisKelaminSlice.actions
 
 export default jenisKelaminSlice.reducer

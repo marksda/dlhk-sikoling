@@ -1,21 +1,16 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl, defaultPropinsi } from "../config/config";
 import { IKabupaten } from "./kabupaten-slice";
 
-const Kabupaten_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
 export const KabupatenApiSlice = createApi({
     reducerPath: 'kabupatenApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseUrl,
-        // prepareHeaders(headers) {
-        //     headers.set('x-api-key', Kabupaten_API_KEY);
-        //     return headers;
-        // },
     }),
     endpoints(builder) {
         return {
-            getAllKabupaten: builder.query<IKabupaten[], number|void>({
+            getAllKabupaten: builder.query<IKabupaten[], void>({
                 query: () => `/kabupaten`,
             }),
             getKabupatenByPage: builder.query<IKabupaten[], number|void>({
