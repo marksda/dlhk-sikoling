@@ -1,7 +1,8 @@
 import { FC } from "react"
-import { ITextFieldProps, TextField } from "@fluentui/react"
+import { ITextFieldProps, ITextFieldStyles, TextField } from "@fluentui/react"
 import { Controller } from "react-hook-form"
 import { HookFormProps } from "../../app/HookFormProps"
+
 
 export const ControlledTextField: FC<HookFormProps & ITextFieldProps> = (props) => {
     return (
@@ -22,6 +23,7 @@ export const ControlledTextField: FC<HookFormProps & ITextFieldProps> = (props) 
                     name={fieldName}
                     errorMessage={error && error.message}
                     defaultValue={undefined}
+                    required={props.required}                
                 />
             )}  
         />
