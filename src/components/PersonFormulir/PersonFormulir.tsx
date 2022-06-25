@@ -7,6 +7,7 @@ import { IPerson } from "../../features/person/person-slice"
 import { ControlledTextField } from "../ControlledTextField/ControlledTextField"
 import { ControlledDropDown } from "../ControlledDropDown/ControlledDropDown"
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
+import { defaultJenisKelamin } from "../../features/config/config"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
@@ -61,6 +62,7 @@ export const PersonFormulir: React.FunctionComponent = () => {
                     name={"jenisKelamin"}
                     rules={{ required: "harus diisi sesuai dengan ktp" }} 
                     styles={dropdownStyles}
+                    defaultValue={defaultJenisKelamin}
                 /> 
                 <ControlledTextField
                     required={true}
