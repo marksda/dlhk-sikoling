@@ -2,7 +2,6 @@ import { Dropdown, IDropdownProps } from "@fluentui/react";
 import { FC } from "react";
 import { Controller } from "react-hook-form";
 import { HookFormProps } from "../../app/HookFormProps";
-import { IJenisKelamin } from "../../features/jenis-kelamin/jenis-kelamin-slice";
 
 
 export const ControlledDropDown: FC<HookFormProps & IDropdownProps> = (props) => {
