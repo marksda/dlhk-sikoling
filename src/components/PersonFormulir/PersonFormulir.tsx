@@ -1,17 +1,24 @@
-import { DefaultEffects, IStackTokens, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react"
+import { DefaultEffects, IDropdownStyles, IStackTokens, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react"
 import React, { FormEvent, useCallback, useState } from "react"
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup"
 import { JenisKelaminDropDown } from "../JenisKelaminDropDown/JenisKelaminDropDown"
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { IPerson } from "../../features/person/person-slice"
 import { ControlledTextField } from "../ControlledTextField/ControlledTextField"
+import { ControlledDropDown } from "../ControlledDropDown/ControlledDropDown"
+import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
+const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 export const PersonFormulir: React.FunctionComponent = () => {
     const { control, handleSubmit } = useForm<IPerson>();
+    const { data = [], isFetching } = useGetAllJenisKelaminQuery();
+    const dataJenisKelaminOptions = data.map((t) => {
+            return {key: t.id as string, text: t.nama as string}; 
+        });
 
     const onButtonSimpanClick = () => { 
         handleSubmit(
@@ -45,7 +52,16 @@ export const PersonFormulir: React.FunctionComponent = () => {
                     rules={{ required: "harus diisi sesuai dengan ktp" }}                    
                     styles={textFieldStyles}    
                 /> 
-                <JenisKelaminDropDown />   
+                <ControlledDropDown
+                    label="Jenis Kelamin"
+                    placeholder="Pilih Jenis Kelamin"
+                    options={dataJenisKelaminOptions}
+                    control={control}
+                    required={true}
+                    name={"jenisKelamin"}
+                    rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                    styles={dropdownStyles}
+                /> 
                 <ControlledTextField
                     required={true}
                     label="Telepone"
