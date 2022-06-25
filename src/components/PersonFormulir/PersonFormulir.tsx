@@ -1,13 +1,21 @@
-import { BaseButton, Button, DefaultEffects, IStackTokens, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react"
-import React, { FormEvent, MouseEventHandler, useCallback, useState } from "react"
+import { DefaultEffects, IStackTokens, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react"
+import React, { FormEvent, useCallback, useState } from "react"
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup"
 import { JenisKelaminDropDown } from "../JenisKelaminDropDown/JenisKelaminDropDown"
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import { IPerson } from "../../features/person/person-slice"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 
 export const PersonFormulir: React.FunctionComponent = () => {
+    const { control, handleSubmit } = useForm<IPerson>();
+
+    const onSubmit: SubmitHandler<IPerson> = data => {
+        console.log(data);
+    };
+
     const [nikValue, setNikValue] = useState('');
     const [namaValue, setNamaValue] = useState('');
     const [tlpValue, setTlpValue] = useState('');
@@ -39,7 +47,7 @@ export const PersonFormulir: React.FunctionComponent = () => {
         <div style={{
             display: "inline-block", boxShadow: DefaultEffects.elevation8, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
-            <Stack tokens={stackTokens}>
+            <Stack tokens={stackTokens}>                
                 <TextField 
                     label="NIK"
                     placeholder="Isi sesuai dengan ktp"
