@@ -3,22 +3,15 @@ import { IAlamat } from "../alamat/alamat-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
 
 export interface IPerson {
-    nik?: string;
-    nama?: string;
-    jenisKelamin?: IJenisKelamin;
-    alamat?: IAlamat;
-    telepone?: string;
-    scanKtp?: string;
+    nik: string;
+    nama: string;
+    jenisKelamin: IJenisKelamin;
+    alamat: IAlamat;
+    telepone: string;
+    scanKtp: string;
 }
 
-const initialState: IPerson = {
-    nik: undefined,
-    nama: undefined,
-    jenisKelamin: undefined,
-    alamat: undefined,
-    telepone: undefined,
-    scanKtp: undefined,
-}
+const initialState: IPerson = {} as IPerson
 
 export const personSlice = createSlice({
     name: 'person',
@@ -27,7 +20,7 @@ export const personSlice = createSlice({
         setPerson: (state, action: PayloadAction<IPerson>) => {
             state.nik = action.payload.nik;
             state.nama = action.payload.nama;
-            state.jenisKelamin = { id: action.payload.jenisKelamin?.id, nama: action.payload.jenisKelamin?.nama};
+            state.jenisKelamin = { id: action.payload.jenisKelamin.id, nama: action.payload.jenisKelamin.nama};
             // state.alamat = {}
         },
         setNik: (state, action: PayloadAction<string>) => {

@@ -6,9 +6,9 @@ import { IPropinsi } from "../propinsi/propinsi-slice";
 
 export interface IAlamat {
     propinsi: IPropinsi;
-    kabupaten: IKabupaten|undefined;
-    kecamatan: IKecamatan|undefined;
-    desa: IDesa|undefined;
+    kabupaten: IKabupaten;
+    kecamatan: IKecamatan;
+    desa: IDesa;
     keterangan: string
 }
 

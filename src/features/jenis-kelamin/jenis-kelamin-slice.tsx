@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultJenisKelamin } from "../config/config";
 
 export interface IJenisKelamin {
-    id?: string;
-    nama?: string;
+    id: string|null;
+    nama: string|null;
 }
 
 const initialState: IJenisKelamin = defaultJenisKelamin;

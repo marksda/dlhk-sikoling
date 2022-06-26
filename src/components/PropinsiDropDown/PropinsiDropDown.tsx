@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Dropdown, IDropdownProps } from "@fluentui/react"
 import { IPropinsi } from "../../features/propinsi/propinsi-slice"
-import { HookFormProps } from "../../app/HookFormProps"
+import { HookFluentUiDropDownProps, HookFormProps } from "../../app/HookFormProps"
 import { Controller } from "react-hook-form"
 
 
@@ -11,7 +11,7 @@ interface IPropinsiPropsComponent {
     isFetching: boolean;
 }
 
-export const PropinsiDropDown: FC<HookFormProps & IPropinsiPropsComponent & IDropdownProps> = (props) => {
+export const PropinsiDropDown: FC<HookFluentUiDropDownProps & IPropinsiPropsComponent & IDropdownProps> = (props) => {
     return (
         <Controller 
             name={props.name}

@@ -6,13 +6,12 @@ import { IKabupaten } from "../../features/kabupaten/kabupaten-slice"
 
 
 interface IKabupatenPropsComponent {
-    kabupaten?: IKabupaten|null;
+    kabupaten: IKabupaten;
     setKabupaten: any;
     isFetching: boolean;
 }
 
 export const KabupatenDropDown: FC<HookFormProps & IKabupatenPropsComponent & IDropdownProps> = (props) => {
-    console.log(props.nilaiDefault);
     return (
         <Controller 
             name={props.name}
@@ -25,7 +24,7 @@ export const KabupatenDropDown: FC<HookFormProps & IKabupatenPropsComponent & ID
             }) => (
                 <Dropdown
                     {...props}
-                    selectedKey={props.kabupaten !== null ? props.kabupaten?.id : undefined}
+                    selectedKey={props.kabupaten.id}
                     onChange={(_e, itemSelected) => {
                         let item = {id: itemSelected?.key as string, nama: itemSelected?.text};
                         props.setKabupaten(item);
