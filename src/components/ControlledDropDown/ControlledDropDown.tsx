@@ -10,7 +10,7 @@ export const ControlledDropDown: FC<HookFormProps & IDropdownProps> = (props) =>
             name={props.name}
             control={props.control}
             rules={props.rules}
-            defaultValue={props.defaultValue}
+            defaultValue={props.nilaiDefault}
             render={({
                 field: { onChange, onBlur, name: fieldName, value },
                 fieldState: { error }
@@ -18,12 +18,11 @@ export const ControlledDropDown: FC<HookFormProps & IDropdownProps> = (props) =>
                 <Dropdown
                     {...props}
                     selectedKey={value.id}
-                    onChange={(_e, option) => {
-                        onChange({id: option?.key as string, nama: option?.text});
+                    onChange={(_e, itemSelected) => {
+                        onChange({id: itemSelected?.key as string, nama: itemSelected?.text});
                     }}
                     onBlur={onBlur}
                     errorMessage={error && error?.message}
-                    defaultValue={undefined}
                 />
             )}
         />

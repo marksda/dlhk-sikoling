@@ -6,20 +6,20 @@ import { IPerson } from "../../features/person/person-slice"
 import { ControlledTextField } from "../ControlledTextField/ControlledTextField"
 import { ControlledDropDown } from "../ControlledDropDown/ControlledDropDown"
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
+import { defaultJenisKelamin } from "../../features/config/config"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
-export const PersonFormulir: React.FunctionComponent = () => {
+export const PersonFormulir: React.FunctionComponent = () => {   
     const { control, handleSubmit } = useForm<IPerson>();
-    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();
-    
+    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();    
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => {
             return {key: t.id as string, text: t.nama as string}; 
         });
-
+    
     const onButtonSimpanClick = () => { 
         handleSubmit(
             (data) => {
@@ -61,6 +61,7 @@ export const PersonFormulir: React.FunctionComponent = () => {
                     name={"jenisKelamin"}
                     rules={{ required: "harus diisi sesuai dengan ktp" }} 
                     styles={dropdownStyles}
+                    nilaiDefault={defaultJenisKelamin}
                 /> 
                 <ControlledTextField
                     required={true}
@@ -70,7 +71,11 @@ export const PersonFormulir: React.FunctionComponent = () => {
                     rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}                    
                     styles={textFieldStyles}    
                 />     
-                <AlamatGroup title="Alamat"/>
+                <AlamatGroup 
+                    title="Alamat"
+                    control={control}
+                    dropdownStyles={dropdownStyles}
+                />
                 <PrimaryButton text="Simpan" onClick={onButtonSimpanClick} style={{marginTop: 16, width: 100}}/>
             </Stack>            
         </div>

@@ -1,38 +1,44 @@
-import React from "react"
-import { Dropdown, IDropdownOption, IDropdownStyles } from "@fluentui/react"
-import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice"
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { IPropinsi, setPropinsi } from "../../features/propinsi/propinsi-slice"
-import { resetKabupaten } from "../../features/kabupaten/kabupaten-slice"
-import { resetKecamatan } from "../../features/kecamatan/kecamatan-slice"
-import { resetDesa } from "../../features/desa/desa-slice"
+import { FC } from "react"
+import { Dropdown, IDropdownProps } from "@fluentui/react"
+import { IPropinsi } from "../../features/propinsi/propinsi-slice"
+import { HookFormProps } from "../../app/HookFormProps"
+import { Controller } from "react-hook-form"
 
 
-const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
+interface IPropinsiPropsComponent {
+    propinsi: IPropinsi;
+    setPropinsi: any;
+    isFetching: boolean;
+}
 
-export const PropinsiDropDown: React.FunctionComponent = () => {
-    const propinsi = useAppSelector(state => state.propinsi);
-    const dispatch = useAppDispatch();
-    const { data = [], isFetching } = useGetAllPropinsiQuery();
-    const dataPropinsiOptions = data.map((t) => {
-            return {key: t.id as string, text: t.nama as string}; 
-        });
-
-    const onChange = (event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption<IPropinsi>, index?: number): void => {
-        dispatch(resetDesa());
-        dispatch(resetKecamatan());
-        dispatch(resetKabupaten());
-        dispatch(setPropinsi({id: item?.key as string, nama: item?.text}));
-    };
-
+export const PropinsiDropDown: FC<HookFormProps & IPropinsiPropsComponent & IDropdownProps> = (props) => {
     return (
-        <Dropdown 
-            label="Propinsi"
-            selectedKey={!isFetching ? propinsi.id : undefined}
-            onChange={onChange}
-            placeholder="Pilih Propinsi sesuai dengan ktp"
-            options={dataPropinsiOptions}
-            styles={dropdownStyles}
+        <Controller 
+            name={props.name}
+            control={props.control}
+            rules={props.rules}
+            defaultValue={props.nilaiDefault}
+            render={({
+                field: { onChange, onBlur, name: fieldName, value },
+                fieldState: { error }
+            }) => (
+                <Dropdown
+                    {...props}
+                    selectedKey={!props.isFetching ? props.propinsi.id : undefined}
+                    onChange={(_e, itemSelected) => {
+                        let item = {id: itemSelected?.key as string, nama: itemSelected?.text};
+                        props.setPropinsi(item);
+                        value.propinsi = item;
+                        value.kabupaten = null;
+                        value.kecamatan = null;
+                        value.desa = null;
+                        onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    errorMessage={error && error?.message}
+                    disabled={props.isFetching}
+                />
+            )}
         />
-    )
+    );
 }
