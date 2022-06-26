@@ -23,7 +23,7 @@ export const ControlledDropDown: FC<HookFormProps & IDropdownProps> = (props) =>
                     }}
                     onBlur={onBlur}
                     errorMessage={error && error?.message}
-                    defaultValue={props.defaultValue}
+                    defaultValue={undefined}
                 />
             )}
         />
