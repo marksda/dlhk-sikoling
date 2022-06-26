@@ -5,13 +5,14 @@ import { HookFluentUiDropDownProps } from "../../app/HookFormProps";
 
 
 export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdownProps> = (props) => {
-    const [item, setItem] = useState<any>(props.defaultItemSelected);
+    const [item, setItem] = useState(props.defaultItemSelected);
 
     return (
         <Controller 
             name={props.name}
             control={props.control}
             rules={props.rules}
+            defaultValue={props.defaultItemSelected}
             render={({
                 field: { onChange, onBlur, name: fieldName, value },
                 fieldState: { error }
@@ -21,10 +22,12 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                     selectedKey={!props.isFetching ? item.id : undefined}
                     onChange={
                         (_e, item) => {
+                            console.log(fieldName);
+                            console.log(value);
                             let itemSelected = {id: item?.key as string, nama: item?.text};
                             setItem(itemSelected);
                             onChange(itemSelected);
-                            props.onChangeItem != undefined ? props.onChangeItem(itemSelected) : null;  
+                            props.onChangeItem != undefined ? props.onChangeItem(itemSelected) : null;                              
                         }
                     }
                     onBlur={onBlur}
