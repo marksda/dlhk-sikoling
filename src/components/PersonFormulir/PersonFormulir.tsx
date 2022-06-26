@@ -14,8 +14,8 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } 
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 export const PersonFormulir: React.FunctionComponent = () => {   
-    const { control, handleSubmit } = useForm<IPerson>({
-        mode: 'onBlur',
+    const { control, handleSubmit, setValue  } = useForm<IPerson>({
+        mode: 'onSubmit',
         defaultValues: {
             nik: '',
             nama: '',
@@ -77,7 +77,8 @@ export const PersonFormulir: React.FunctionComponent = () => {
                     required
                     name="jenisKelamin"
                     rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                    styles={dropdownStyles}                    
+                    styles={dropdownStyles}   
+                    defaultItemSelected={defaultJenisKelamin}                 
                 /> 
                 <ControlledFluentUiTextField
                     required
@@ -90,6 +91,7 @@ export const PersonFormulir: React.FunctionComponent = () => {
                 <AlamatGroup 
                     title="Alamat"
                     control={control}
+                    setValue={setValue}
                     dropdownStyles={dropdownStyles}
                 />
                 <PrimaryButton text="Simpan" onClick={onButtonSimpanClick} style={{marginTop: 16, width: 100}}/>

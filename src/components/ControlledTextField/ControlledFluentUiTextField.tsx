@@ -17,7 +17,6 @@ export const ControlledFluentUiTextField: FC<HookFormProps & ITextFieldProps> = 
                 <TextField 
                     {...props}
                     onChange={onChange}
-                    value={value}
                     onBlur={onBlur}
                     name={fieldName}
                     errorMessage={error && error.message}             

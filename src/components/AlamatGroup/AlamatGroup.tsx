@@ -13,12 +13,14 @@ import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
 import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
 import { IDesa, resetDesa } from "../../features/desa/desa-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUITextField";
+import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 
 
 interface IAlamatPropsComponent {
     title: string;
     control: Control<any>;
     dropdownStyles: Partial<IDropdownStyles>;
+    setValue: any;
 }
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
@@ -44,7 +46,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
     });
 
     const [desa, setDesa] = useState<IDesa>(defaultDesa);
-    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetKecamatanByKabupatenQuery(kecamatan.id);
+    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id);
     const dataDesaOptions = dataDesa.map((t) => {
         return {key: t.id as string, text: t.nama as string}; 
     });
@@ -54,30 +56,23 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
         setKecamatan({id: '', nama: ''});
         setKabupaten({id: '', nama: ''});
         setPropinsi(item);
+        props.setValue("alamat.kabupaten", null);
+        props.setValue("alamat.kecamatan", null);
+        props.setValue("alamat.desa", null);
     }
 
     const resetKabupaten = (item: IKabupaten) => {               
         setKabupaten(item); 
         setKecamatan({id: '', nama: ''});
+        props.setValue("alamat.kecamatan", null);
+        props.setValue("alamat.desa", null)
     }
 
     const resetKecamatan = (item: IKabupaten) => {               
         setKecamatan(item); 
         setDesa({id: '', nama: ''});
+        props.setValue("alamat.desa", null);
     }
-
-
-
-    const dispatch = useAppDispatch();
-    const [detailValue, setDetailValue] = useState('');   
-
-    const onChangeDetailValue = useCallback(
-        (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newDetailValue?: string) => {
-            setDetailValue(newDetailValue||'');     
-            dispatch(setKeterangan(newDetailValue||''));
-        },
-        []
-    );
     
     return (      
         <>
@@ -94,9 +89,10 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetPropinsi}
                         required={true}
-                        name={"propensi"}
+                        name={"alamat.propinsi"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={props.dropdownStyles}                    
+                        styles={props.dropdownStyles}       
+                        defaultItemSelected={defaultPropinsi}             
                     />       
                     <ControlledFluentUiDropDown
                         label="Kabupaten"
@@ -106,9 +102,10 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetKabupaten}
                         required={true}
-                        name={"kabupaten"}
+                        name={"alamat.kabupaten"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={props.dropdownStyles}                    
+                        styles={props.dropdownStyles}  
+                        defaultItemSelected={defaultKabupaten}                  
                     />
                     <ControlledFluentUiDropDown
                         label="Kecamatan"
@@ -118,9 +115,10 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetKecamatan}
                         required={true}
-                        name={"kecamatan"}
+                        name={"alamat.kecamatan"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={props.dropdownStyles}                    
+                        styles={props.dropdownStyles}    
+                        defaultItemSelected={defaultKecamatan}                
                     />  
                     <ControlledFluentUiDropDown
                         label="Desa"
@@ -130,27 +128,20 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetDesa}
                         required={true}
-                        name={"desa"}
+                        name={"alamat.desa"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={props.dropdownStyles}                    
+                        styles={props.dropdownStyles}  
+                        defaultItemSelected={defaultDesa}                  
                     />
                     <ControlledFluentUiTextField
                         label="NIK"
                         placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
                         control={props.control}
-                        name="keterangan"
+                        name="alamat.keterangan"
                         rules={{ required: "harus diisi sesuai dengan ktp" }}                    
                         styles={textFieldStyles}    
                         required multiline autoAdjustHeight
-                    />  
-                    <TextField 
-                        label="Detail"
-                        placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
-                        value={detailValue}
-                        onChange={onChangeDetailValue}
-                        styles={textFieldStyles}
-                        required multiline autoAdjustHeight
-                    />  
+                    /> 
                 </Stack>
             </div>
         </>
