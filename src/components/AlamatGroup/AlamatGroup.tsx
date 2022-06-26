@@ -1,19 +1,17 @@
-import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack, TextField } from "@fluentui/react";
-import { FC, FormEvent, useCallback, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setKeterangan } from "../../features/alamat/alamat-slice";
-import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
-import { Control } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
-import { IPropinsi } from "../../features/propinsi/propinsi-slice";
-import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
-import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
-import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
-import { IDesa, resetDesa } from "../../features/desa/desa-slice";
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUITextField";
-import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
+import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
+import { FC, useState } from "react"
+import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice"
+import { Control } from "react-hook-form"
+import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config"
+import { IPropinsi } from "../../features/propinsi/propinsi-slice"
+import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice"
+import { IKabupaten } from "../../features/kabupaten/kabupaten-slice"
+import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown"
+import { IKecamatan } from "../../features/kecamatan/kecamatan-slice"
+import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice"
+import { IDesa, resetDesa } from "../../features/desa/desa-slice"
+import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice"
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField"
 
 
 interface IAlamatPropsComponent {
@@ -134,7 +132,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         defaultItemSelected={defaultDesa}                  
                     />
                     <ControlledFluentUiTextField
-                        label="NIK"
+                        label="Detail Alamat"
                         placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
                         control={props.control}
                         name="alamat.keterangan"
