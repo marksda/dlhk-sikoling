@@ -1,5 +1,5 @@
+import { FC } from "react"
 import { DefaultEffects, IDropdownStyles, IStackTokens, ITextFieldStyles, PrimaryButton, Stack } from "@fluentui/react"
-import React from "react"
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup"
 import { useForm } from "react-hook-form"
 import { IPerson } from "../../features/person/person-slice"
@@ -13,7 +13,7 @@ const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
-export const PersonFormulir: React.FunctionComponent = () => {   
+export const PersonFormulir: FC = () => {   
     const { control, handleSubmit, setValue  } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -31,12 +31,8 @@ export const PersonFormulir: React.FunctionComponent = () => {
             scanKtp: '',
         }
     });
-
     const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();    
-    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => {
-            return {key: t.id as string, text: t.nama as string}; 
-        });
-    
+    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
     const onButtonSimpanClick = () => { 
         handleSubmit(
             (data) => {
