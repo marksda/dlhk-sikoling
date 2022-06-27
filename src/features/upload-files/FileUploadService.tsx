@@ -1,4 +1,4 @@
-import http from "./http-common";
+import http from "./http-common"
 
 const upload = (file: any, onUploadProgress: any) => {
     let formData = new FormData();
@@ -12,7 +12,7 @@ const upload = (file: any, onUploadProgress: any) => {
 };
 
 const getFiles= () => {
-    return http.get("/files");
+    return http.get("/files")
 };
 
-export default { upload, getFiles };
+export default { upload, getFiles }
