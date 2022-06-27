@@ -7,6 +7,7 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown"
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
 import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config"
+import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
@@ -49,6 +50,7 @@ export const PersonFormulir: FC = () => {
             display: "inline-block", boxShadow: DefaultEffects.elevation8, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
             <Stack tokens={stackTokens}>  
+                <UploadFilesFluentUi />
                 <ControlledFluentUiTextField
                     required
                     label="NIK"
