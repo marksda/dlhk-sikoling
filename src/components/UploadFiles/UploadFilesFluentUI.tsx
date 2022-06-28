@@ -20,7 +20,7 @@ export const UploadFilesFluentUi: FC = () => {
         uploadService.upload(currentFile, (event: ProgressEvent) => {
             setProgress(Math.round(100 * event.loaded)/event.total)
         })
-        .then((response) =>{
+        .then((response) => {
             setMessage(response.data.namaFile)
             return uploadService.getFiles(response.data.namaFile)
         })
