@@ -22,8 +22,6 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                     selectedKey={!props.isFetching ? item.id : undefined}
                     onChange={
                         (_e, item) => {
-                            console.log(fieldName);
-                            console.log(value);
                             let itemSelected = {id: item?.key as string, nama: item?.text};
                             setItem(itemSelected);
                             onChange(itemSelected);
