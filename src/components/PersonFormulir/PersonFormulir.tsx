@@ -7,12 +7,17 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown"
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
 import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config"
-import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI"
+import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
+const containerStyle: IContainerUploadStyle = {
+    width: 300, 
+    height: 100, 
+    backgroundColor: '#ECECEC',
+};
 
 export const PersonFormulir: FC = () => {   
     const { control, handleSubmit, setValue  } = useForm<IPerson>({
@@ -46,11 +51,14 @@ export const PersonFormulir: FC = () => {
     };
 
     return (
-        <div style={{
-            display: "inline-block", boxShadow: DefaultEffects.elevation8, 
+        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation8, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
             <Stack tokens={stackTokens}>  
-                <UploadFilesFluentUi />
+                <UploadFilesFluentUi 
+                    label='masukkan gambar ktp'
+                    showPreview={true}
+                    containerStyle={containerStyle}
+                />
                 <ControlledFluentUiTextField
                     required
                     label="NIK"

@@ -11,7 +11,7 @@ const upload = (file: any, onUploadProgress: any) => {
     });
 };
 
-const getFiles= (namaFile: string) => {
+const getFiles = (namaFile: string) => {
     return http.get(`/files/${namaFile}`)
 };
 

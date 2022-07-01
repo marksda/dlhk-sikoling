@@ -1,28 +1,67 @@
-import { FC, FormEvent, useEffect, useState } from "react"
+import { FontIcon, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
+import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
 
+export interface IContainerUploadStyle {
+    width?: string|number;
+    height?: string|number; 
+    backgroundColor?: string;
+}
 
-export const UploadFilesFluentUi: FC = () => {
+const iconClass = mergeStyles({
+    fontSize: 32,
+    // width: 60,
+    height: 36,
+    color: '#DDDCDC',
+    margin: '0 25px',
+});
+
+const containerClass = mergeStyles({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '1px solid #DDDCDC',
+    "&:hover": {
+        background: "#F4F2F2",
+        cursor: 'pointer',
+        border: '1px solid #D7D7D7'
+    },
+})
+
+interface IUploadFilePropsComponent {
+    label?: string;
+    showPreview?: boolean;    
+    containerStyle?: IContainerUploadStyle;
+}
+export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined)
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined)
     const [progress, setProgress] = useState<number>(0)
     const [message, setMessage] = useState<string>('')
     const [fileInfos, setFileInfos] = useState<any[]>([])
+    const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined)
+    const styleContainer: Record<string, any> = {}
 
-    const selectFile = (event: FormEvent<HTMLInputElement>) => {
-        setSelectedFiles(event.currentTarget.files)
+    if(typeof props.containerStyle === 'undefined') {
+        styleContainer.width = 300
+        styleContainer.height = 100
+        // styleContainer.backgroundColor = '#ECECEC'
+    }
+    else {
+        styleContainer.width = typeof props.containerStyle.width !== 'undefined'?props.containerStyle.width:300
+        styleContainer.height = typeof props.containerStyle.height !== 'undefined'?props.containerStyle.height:100
+        // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
     }
 
     const upload = () => {
-        // let currentFile = selectedFiles[0]
         setProgress(0)
-        // setCurrentFile(currentFile)
         uploadService.upload(currentFile, (event: ProgressEvent) => {
             setProgress(Math.round(100 * event.loaded)/event.total)
         })
         .then((response) => {
             setMessage(response.data.namaFile)
-            return uploadService.getFiles(response.data.namaFile)
+            return 'as test' //uploadService.getFiles(response.data.namaFile)
         })
         .then((files) => {
             console.log(files)
@@ -42,9 +81,11 @@ export const UploadFilesFluentUi: FC = () => {
     //     })
     // }, [])
 
-    const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
-        let inputElmt: HTMLInputElement = event.currentTarget.firstElementChild as HTMLInputElement
-        inputElmt?.click()
+    // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
+    const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
+        event.stopPropagation()
+        if(typeof imageProps == 'undefined')
+            document.getElementById('fileUpload')!.click()
     }
 
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
@@ -52,25 +93,37 @@ export const UploadFilesFluentUi: FC = () => {
         const parentElement: HTMLElement = event.currentTarget.parentElement as HTMLElement
         // @ts-ignore: Object is possibly 'null'.
         const file = event.currentTarget.files[0]
-        
         setCurrentFile(file)
 
-        const img: HTMLImageElement = new Image()
+        if(props.showPreview) {
+            const imageProps: IImageProps = {
+                imageFit: ImageFit.center,
+                width: 300,
+                height: 100,
+                styles: props => ({ root: { border: '1px solid ' + props.theme.palette.neutralSecondary } }),
+            }
 
-        const reader = new FileReader()
-        reader.onload = () => {
-            img.src = reader.result as string
-        }
-        reader.readAsDataURL(file)
-        
-        parentElement.appendChild(img);
+            const reader = new FileReader()
+            reader.onload = () => {
+                imageProps.src = reader.result as string
+                setImageProps(imageProps)
+            }
+            reader.readAsDataURL(file)
+        }        
     }
 
     return(
         <>            
-            <div style={{width: 200, height: 100, border: '1px solid black'}} onClick={bindClickEventInputFile}>
-                <input type="file" style={{display: 'none'}} accept="image/*" onChange={handleFile}/>
+            {
+            props.showPreview && 
+            <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}> 
+                <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/>    
+                {!imageProps &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
+                {!imageProps &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
+                {imageProps && <Image {...imageProps}/>}
+                {imageProps && <FontIcon aria-label="Ktp" iconName="Delete" />}
             </div>
+            }
             {currentFile && (
                 <div className="progress">
                     <div
@@ -85,13 +138,11 @@ export const UploadFilesFluentUi: FC = () => {
                     </div>
                 </div>
             )}
-            <button
-                className="btn btn-success"
+            <PrimaryButton
+                text="Upload"
                 disabled={!selectedFiles}
                 onClick={upload}
-            >
-                Upload
-            </button>
+            />
             <div className="alert alert-light" role="alert">
                 {message}
             </div>
