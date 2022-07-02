@@ -1,6 +1,7 @@
 import { FontIcon, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
 import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
+import { FileViewerFluentUi } from "../FileViewer/FileViewerFluentUi";
 
 export interface IContainerUploadStyle {
     width?: string|number;
@@ -34,14 +35,17 @@ interface IUploadFilePropsComponent {
     showPreview?: boolean;    
     containerStyle?: IContainerUploadStyle;
 }
+
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
-    const [selectedFiles, setSelectedFiles] = useState<any>(undefined)
-    const [currentFile, setCurrentFile] = useState<File|undefined>(undefined)
-    const [progress, setProgress] = useState<number>(0)
-    const [message, setMessage] = useState<string>('')
-    const [fileInfos, setFileInfos] = useState<any[]>([])
-    const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined)
-    const styleContainer: Record<string, any> = {}
+    const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
+    const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
+    const [isImageFile, setIsImageFile] = useState<boolean>(false);
+    const [isPDFFile, setIsPdfFile] = useState<boolean>(false);
+    const [progress, setProgress] = useState<number>(0);
+    const [message, setMessage] = useState<string>('');
+    const [fileInfos, setFileInfos] = useState<any[]>([]);
+    const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
+    const styleContainer: Record<string, any> = {};
 
     if(typeof props.containerStyle === 'undefined') {
         styleContainer.width = 300
@@ -89,26 +93,24 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     }
 
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
-        setSelectedFiles(event.currentTarget.files)
-        const parentElement: HTMLElement = event.currentTarget.parentElement as HTMLElement
+        setSelectedFiles(event.currentTarget.files);
         // @ts-ignore: Object is possibly 'null'.
-        const file = event.currentTarget.files[0]
-        setCurrentFile(file)
-
-        if(props.showPreview) {
-            const imageProps: IImageProps = {
-                imageFit: ImageFit.center,
-                width: 300,
-                height: 100,
-                styles: props => ({ root: { border: '1px solid ' + props.theme.palette.neutralSecondary } }),
-            }
-
-            const reader = new FileReader()
-            reader.onload = () => {
-                imageProps.src = reader.result as string
-                setImageProps(imageProps)
-            }
-            reader.readAsDataURL(file)
+        const file = event.currentTarget.files[0];
+        setCurrentFile(file);
+        switch (file.type.toLowerCase()) {
+            case 'image/bmp':
+            case 'image/svg+xml':
+            case 'image/jpeg':
+            case 'image/tiff':
+            case 'image/gif':
+            case 'image/png':
+                setIsImageFile(true);
+                break;
+            case 'application/pdf':
+                setIsPdfFile(true);
+                break;
+            default:
+                break;
         }        
     }
 
@@ -118,10 +120,10 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             props.showPreview && 
             <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}> 
                 <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/>    
-                {!imageProps &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
-                {!imageProps &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
-                {imageProps && <Image {...imageProps}/>}
-                {imageProps && <FontIcon aria-label="Ktp" iconName="Delete" />}
+                {!isImageFile &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
+                {!isImageFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
+                {isImageFile && <FileViewerFluentUi file={currentFile} area={{panjang: 300, lebar: 100}}/>}
+                {isImageFile && <FontIcon aria-label="Ktp" iconName="Delete" />}
             </div>
             }
             {currentFile && (
