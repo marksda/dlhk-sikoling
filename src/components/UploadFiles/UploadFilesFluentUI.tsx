@@ -1,7 +1,8 @@
-import { FontIcon, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
+import { CompoundButton, FontIcon, IButtonStyles, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
 import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
 import { FileViewerFluentUi } from "../FileViewer/FileViewerFluentUi";
+import  CekTypeFile  from "../../features/file-utils/FileUtils";
 
 export interface IContainerUploadStyle {
     width?: string|number;
@@ -35,7 +36,6 @@ interface IUploadFilePropsComponent {
     showPreview?: boolean;    
     containerStyle?: IContainerUploadStyle;
 }
-
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
@@ -88,7 +88,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
         event.stopPropagation()
-        if(typeof imageProps == 'undefined')
+        if(typeof currentFile == 'undefined')
             document.getElementById('fileUpload')!.click()
     }
 
@@ -97,13 +97,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         // @ts-ignore: Object is possibly 'null'.
         const file = event.currentTarget.files[0];
         setCurrentFile(file);
-        switch (file.type.toLowerCase()) {
-            case 'image/bmp':
-            case 'image/svg+xml':
-            case 'image/jpeg':
-            case 'image/tiff':
-            case 'image/gif':
-            case 'image/png':
+        switch (CekTypeFile(file.type)) {
+            case 'image':
                 setIsImageFile(true);
                 break;
             case 'application/pdf':
@@ -116,17 +111,31 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
 
     return(
         <>            
+            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/> 
             {
             props.showPreview && 
-            <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}> 
-                <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/>    
-                {!isImageFile &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
-                {!isImageFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
-                {isImageFile && <FileViewerFluentUi file={currentFile} area={{panjang: 300, lebar: 100}}/>}
-                {isImageFile && <FontIcon aria-label="Ktp" iconName="Delete" />}
+            <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
+                {!currentFile &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
+                {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
+                {props.showPreview && isImageFile && <FileViewerFluentUi file={currentFile} area={{panjang: 300, lebar: 100}}/>}
+                {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
+                {currentFile && <FontIcon aria-label="Ktp" iconName="Delete" />}
             </div>
             }
-            {currentFile && (
+            {
+            !props.showPreview && !currentFile && 
+            <CompoundButton
+                secondaryText={props.label} 
+                onClick={bindClickEventInputFile}
+            >
+                File
+            </CompoundButton>
+            }
+            {
+            !props.showPreview && currentFile && 
+            <label>{currentFile.name}</label>
+            }
+            {currentFile && 
                 <div className="progress">
                     <div
                         className="progress-bar progress-bar-info progress-bar-striped"
@@ -139,12 +148,14 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                         {progress}%
                     </div>
                 </div>
-            )}
+            }
+            {currentFile &&
             <PrimaryButton
                 text="Upload"
                 disabled={!selectedFiles}
                 onClick={upload}
             />
+            }
             <div className="alert alert-light" role="alert">
                 {message}
             </div>

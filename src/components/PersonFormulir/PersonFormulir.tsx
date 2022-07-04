@@ -55,8 +55,8 @@ export const PersonFormulir: FC = () => {
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
             <Stack tokens={stackTokens}>  
                 <UploadFilesFluentUi 
-                    label='masukkan gambar ktp'
-                    showPreview={true}
+                    label='Upload File Hasil Scan KTP'
+                    showPreview={false}
                     containerStyle={containerStyle}
                 />
                 <ControlledFluentUiTextField
