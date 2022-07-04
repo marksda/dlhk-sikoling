@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl, defaultKabupaten } from "../config/config";
+import { baseUrl } from "../config/config";
 import { IPerson } from "./person-slice";
 
 
