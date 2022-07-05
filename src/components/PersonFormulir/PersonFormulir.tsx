@@ -8,6 +8,7 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice"
 import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI"
+import { useAddPersonMutation } from "../../features/person/person-api-slice"
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
@@ -20,6 +21,8 @@ const containerStyle: IContainerUploadStyle = {
 };
 
 export const PersonFormulir: FC = () => {   
+    const [ addPerson ] = useAddPersonMutation();
+
     const { control, handleSubmit, setValue  } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -37,12 +40,16 @@ export const PersonFormulir: FC = () => {
             scanKtp: '',
         }
     });
-    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();    
+
+    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();  
+
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+
     const onButtonSimpanClick = () => { 
         handleSubmit(
             (data) => {
               console.log(data);
+              addPerson(data);
             },
             (err) => {                
               console.log(err);
