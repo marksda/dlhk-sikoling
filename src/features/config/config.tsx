@@ -6,7 +6,7 @@ import { IHalaman } from "../halaman/halaman"
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice"
 
 
-export const baseUrl:string = 'http://localhost:8080/Sikoling-web/api'
+export const baseUrl:string = 'http://localhost:8080/Sikoling-web/api/'
 export const defaultPropinsi: IPropinsi = {id: '35', nama: 'JAWA TIMUR'}
 export const defaultKabupaten: IKabupaten = {id:'3515', nama: 'SIDOARJO'}
 export const defaultKecamatan: IKecamatan = {id: '3515110', nama: 'SIDOARJO'}

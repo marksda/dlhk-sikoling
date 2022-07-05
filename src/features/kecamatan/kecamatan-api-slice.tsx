@@ -11,7 +11,7 @@ export const KecamatanApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllKecamatan: builder.query<IKecamatan[], number|void>({
-                query: () => `/kecamatan`,
+                query: () => `kecamatan`,
             }),
             getKecamatanByPage: builder.query<IKecamatan[], number|void>({
                 query: (page = 1, pageSize = 10) => `kecamatan/page?page=${page}&pageSize=${pageSize}`,

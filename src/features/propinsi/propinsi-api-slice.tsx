@@ -16,16 +16,16 @@ export const propinsiApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllPropinsi: builder.query<IPropinsi[], void>({
-                query: () => `/propinsi`,
+                query: () => `propinsi`,
             }),
             getPropinsiByPage: builder.query<IPropinsi[], number|void>({
-                query: (page = 1, pageSize = 10) => `/propinsi/page?page=${page}&pageSize=${pageSize}`,
+                query: (page = 1, pageSize = 10) => `propinsi/page?page=${page}&pageSize=${pageSize}`,
             }),
             getPropinsiByNama: builder.query<IPropinsi[], string|void>({
-                query: (nama = 'jawa timur') => `/propinsi/nama?nama=${nama}`,
+                query: (nama = 'jawa timur') => `propinsi/nama?nama=${nama}`,
             }),
             getPropinsiByNamaAndPage: builder.query<IPropinsi[], string|void>({
-                query: (nama = 'jawa timur', page=halaman.page, pageSize=halaman.pageSize) => `/propinsi/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+                query: (nama = 'jawa timur', page=halaman.page, pageSize=halaman.pageSize) => `propinsi/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
         }
     }

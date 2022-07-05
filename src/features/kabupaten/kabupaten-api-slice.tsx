@@ -11,7 +11,7 @@ export const KabupatenApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllKabupaten: builder.query<IKabupaten[], void>({
-                query: () => `/kabupaten`,
+                query: () => `kabupaten`,
             }),
             getKabupatenByPage: builder.query<IKabupaten[], number|void>({
                 query: (page = 1, pageSize = 10) => `kabupaten/page?page=${page}&pageSize=${pageSize}`,

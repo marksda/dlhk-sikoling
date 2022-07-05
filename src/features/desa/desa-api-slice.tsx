@@ -11,7 +11,7 @@ export const DesaApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllDesa: builder.query<IDesa[], number|void>({
-                query: () => `/Desa`,
+                query: () => `desa`,
             }),
             getDesaByPage: builder.query<IDesa[], number|void>({
                 query: (page = 1, pageSize = 10) => `desa/page?page=${page}&pageSize=${pageSize}`,

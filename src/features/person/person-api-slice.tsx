@@ -11,7 +11,7 @@ export const PersonApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllPerson: builder.query<IPerson[], number|void>({
-                query: () => `/person`,
+                query: () => `person`,
             }),
             getPersonByPage: builder.query<IPerson[], number|void>({
                 query: (page = 1, pageSize = 10) => `person/page?page=${page}&pageSize=${pageSize}`,
@@ -25,9 +25,16 @@ export const PersonApiSlice = createApi({
             getPersonByPemrakarsa: builder.query<IPerson[], string|void>({
                 query: (idPemrakarsa) => `person/pemrakarsa?idPemrakarsa=${idPemrakarsa}`,
             }),
+            addPerson: builder.mutation({
+                query: (body) => ({
+                    url: 'person',
+                    method: 'POST',
+                    body,
+                })
+            }),
         }
     }
 })
 
 export const { useGetAllPersonQuery, useGetPersonByPageQuery, useGetPersonByNamaQuery,
-    useGetPersonByNamaAndPageQuery, useGetPersonByPemrakarsaQuery } = PersonApiSlice;
+    useGetPersonByNamaAndPageQuery, useGetPersonByPemrakarsaQuery, useAddPersonMutation } = PersonApiSlice;
