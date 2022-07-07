@@ -97,7 +97,7 @@ export const PersonFormulir: FC = () => {
                     required
                     label="Telepone"
                     control={control}
-                    name="telepone"
+                    name="kontak.telepone"
                     rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}                    
                     styles={textFieldStyles}    
                 />     
@@ -105,7 +105,7 @@ export const PersonFormulir: FC = () => {
                     required
                     label="Email"
                     control={control}
-                    name="email"
+                    name="kontak.email"
                     rules={{ required: "Alamat email harus diisi" }}                    
                     styles={textFieldStyles}    
                 />

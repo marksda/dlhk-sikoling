@@ -46,7 +46,8 @@ export const store = configureStore({
                                             .concat(KabupatenApiSlice.middleware)
                                             .concat(KecamatanApiSlice.middleware)
                                             .concat(DesaApiSlice.middleware)
-                                            .concat(JenisKelaminApiSlice.middleware),
+                                            .concat(JenisKelaminApiSlice.middleware)
+                                            .concat(PersonApiSlice.middleware),
 })
 
 // Aliasing variable in typescript
