@@ -1,26 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IAlamat } from "../alamat/alamat-slice";
 import { IJabatan } from "../jabatan/jabatan-slice";
-import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
+import { IPerson } from "../person/person-slice";
 
 export interface IPenanggungJawab {
-    id: string;
-    nama: string;
-    alamat: IAlamat;
-    jabatan: IJabatan;
-    jenisKelamin: IJenisKelamin;
-    noIdentitas: string;
-    noHandphone: string;
+    id: string|null;
+    person: IPerson|null;
+    jabatan: IJabatan|null;
 }
 
 const initialState: IPenanggungJawab = {
-    id: '',
-    nama:'',
-    alamat: {} as IAlamat,
-    jabatan: {} as IJabatan,
-    jenisKelamin: {} as IJenisKelamin,
-    noIdentitas: '',
-    noHandphone: ''
+    id: null,
+    person: null,
+    jabatan: null,
 }
 
 export const PenanggungJawabSlice = createSlice({
@@ -29,37 +20,89 @@ export const PenanggungJawabSlice = createSlice({
     reducers: {
         setPenanggungJawab: (state, action: PayloadAction<IPenanggungJawab>) => {
             state.id = action.payload.id;
-            state.nama = action.payload.nama;
-            state.alamat = action.payload.alamat;
-            state.jabatan = action.payload.jabatan;
-            state.jenisKelamin = action.payload.jenisKelamin;
-            state.noIdentitas = action.payload.noIdentitas;
-            state.noHandphone = action.payload.noHandphone;
+            state.person = {
+                nik: action.payload.person?.nik as string,
+                nama: action.payload.person?.nama as string,
+                jenisKelamin: { 
+                    id: action.payload.person?.jenisKelamin.id as string, 
+                    nama: action.payload.person?.jenisKelamin.nama as string
+                },
+                alamat: {
+                    propinsi: {
+                        id: action.payload.person?.alamat.propinsi.id,
+                        nama: action.payload.person?.alamat.propinsi.nama
+                    },
+                    kabupaten: {
+                        id: action.payload.person?.alamat.kabupaten.id,
+                        nama: action.payload.person?.alamat.kabupaten.nama
+                    },
+                    kecamatan: {
+                        id: action.payload.person?.alamat.kecamatan.id,
+                        nama: action.payload.person?.alamat.kecamatan.nama
+                    },
+                    desa: {
+                        id: action.payload.person?.alamat.desa.id,
+                        nama: action.payload.person?.alamat.desa.nama
+                    },
+                    keterangan: action.payload.person?.alamat.keterangan as string
+                },
+                kontak: {
+                    telepone: action.payload.person?.kontak.telepone,
+                    email: action.payload.person?.kontak.email
+                },
+                scanKtp: action.payload.person?.scanKtp as string,
+            };
+            state.jabatan = {
+                id: action.payload.jabatan?.id as string,
+                nama: action.payload.jabatan?.nama as string
+            }
         },
         setPenanggungJawabId: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
         },
-        setPenanggungJawabNama: (state, action: PayloadAction<string>) => {
-            state.nama = action.payload;
-        },
-        setPenanggungJawabAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.alamat = action.payload;
+        setPenanggungJawabPerson: (state, action: PayloadAction<IPerson>) => {
+            state.person = {
+                nik: action.payload.nik,
+                nama: action.payload.nama as string,
+                jenisKelamin: { 
+                    id: action.payload.jenisKelamin.id as string, 
+                    nama: action.payload.jenisKelamin.nama as string
+                },
+                alamat: {
+                    propinsi: {
+                        id: action.payload.alamat.propinsi.id,
+                        nama: action.payload.alamat.propinsi.nama
+                    },
+                    kabupaten: {
+                        id: action.payload.alamat.kabupaten.id,
+                        nama: action.payload.alamat.kabupaten.nama
+                    },
+                    kecamatan: {
+                        id: action.payload.alamat.kecamatan.id,
+                        nama: action.payload.alamat.kecamatan.nama
+                    },
+                    desa: {
+                        id: action.payload.alamat.desa.id,
+                        nama: action.payload.alamat.desa.nama
+                    },
+                    keterangan: action.payload.alamat.keterangan as string
+                },
+                kontak: {
+                    telepone: action.payload.kontak.telepone,
+                    email: action.payload.kontak.email
+                },
+                scanKtp: action.payload.scanKtp,
+            };
         },
         setPenanggungJawabJabatan: (state, action: PayloadAction<IJabatan>) => {
-            state.jabatan = action.payload;
-        },
-        setPenanggungJawabJenisKelamin: (state, action: PayloadAction<IJenisKelamin>) => {
-            state.jenisKelamin = action.payload;
-        },
-        setPenanggungJawabNoIdentitas: (state, action: PayloadAction<string>) => {
-            state.noIdentitas = action.payload;
-        },
-        setPenanggungJawabNoHandphone: (state, action: PayloadAction<string>) => {
-            state.noHandphone = action.payload;
+            state.jabatan = {
+                id: action.payload.id,
+                nama: action.payload.nama
+            }
         },
     },
 }) 
 
-export const { setPenanggungJawab, setPenanggungJawabId, setPenanggungJawabNama, setPenanggungJawabAlamat, setPenanggungJawabJabatan, setPenanggungJawabJenisKelamin, setPenanggungJawabNoIdentitas, setPenanggungJawabNoHandphone } = PenanggungJawabSlice.actions
+export const { setPenanggungJawab, setPenanggungJawabId, setPenanggungJawabPerson, setPenanggungJawabJabatan } = PenanggungJawabSlice.actions
 
 export default PenanggungJawabSlice.reducer

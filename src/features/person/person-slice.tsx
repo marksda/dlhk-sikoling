@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { IAlamat } from "../alamat/alamat-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
 
-interface IKontak {
+export interface IKontak {
     telepone?: string;
     fax?: string;
     email?: string;
