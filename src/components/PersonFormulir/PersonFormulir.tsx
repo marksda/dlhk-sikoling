@@ -36,7 +36,7 @@ export const PersonFormulir: FC = () => {
                 desa: defaultDesa,
                 keterangan: '',
             },
-            telepone: '',
+            kontak: {telepone: '', email: ''},
             scanKtp: '',
         }
     });
@@ -48,7 +48,7 @@ export const PersonFormulir: FC = () => {
     const onButtonSimpanClick = () => { 
         handleSubmit(
             (data) => {
-              console.log(data);
+            //   console.log(data);
               addPerson(data);
             },
             (err) => {                
