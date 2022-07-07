@@ -15,6 +15,7 @@ import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-ap
 import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
+import pemrakarsaReducer from "../features/pemrakarsa/pemrakarsa-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -38,6 +39,7 @@ export const store = configureStore({
         penanggungJawab: penanggungJawabReducer,
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
+        pemrakarsa: pemrakarsaReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },

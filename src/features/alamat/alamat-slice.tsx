@@ -30,6 +30,7 @@ export const alamatSlice = createSlice({
             state.kecamatan = {id: action.payload.kecamatan?.id, nama: action.payload.kecamatan?.nama};
             state.kabupaten = {id: action.payload.kabupaten?.id, nama: action.payload.kabupaten?.nama};
             state.propinsi = {id: action.payload.propinsi.id, nama: action.payload.propinsi.nama};
+            state.keterangan = action.payload.keterangan;
         },
         setAlamatPropinsi: (state, action: PayloadAction<IPropinsi>) => {
             state.propinsi = {id: action.payload.id, nama: action.payload.nama};
