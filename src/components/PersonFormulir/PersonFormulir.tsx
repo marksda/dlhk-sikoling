@@ -101,6 +101,14 @@ export const PersonFormulir: FC = () => {
                     rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}                    
                     styles={textFieldStyles}    
                 />     
+                <ControlledFluentUiTextField
+                    required
+                    label="Email"
+                    control={control}
+                    name="email"
+                    rules={{ required: "Alamat email harus diisi" }}                    
+                    styles={textFieldStyles}    
+                />
                 <AlamatGroup 
                     title="Alamat"
                     control={control}
