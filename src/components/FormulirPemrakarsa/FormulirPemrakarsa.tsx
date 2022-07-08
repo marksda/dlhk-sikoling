@@ -1,6 +1,7 @@
 import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { IPemrakarsa } from "../../features/pemrakarsa/pemrakarsa-slice";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
@@ -22,7 +23,10 @@ export const FormulirPemrakarsa: FC = () => {
                 id: '',
                 nama: '',
                 singkatan: '',
-                idJenisPelakuUsaha: ''
+                jenisPelakuUsaha: {
+                    id: null,
+                    nama: null,
+                }
             },
             aktaPemrakarsa: {
                 nomor: null,
@@ -57,7 +61,8 @@ export const FormulirPemrakarsa: FC = () => {
         }
     });
 
-    
+    const { data: dataJenisPelakuUsaha = [], isFetching: isFetchingJenisPelakuUsaha} = useGetAllJenisPelakuUsahaQuery();
+    const dataJenisPelakuUsahaOptions = dataJenisPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
     return(
         <>
@@ -69,13 +74,12 @@ export const FormulirPemrakarsa: FC = () => {
                     <ControlledFluentUiDropDown
                         label="Jenis Pelaku Usaha"
                         placeholder="Pilih Jenis Pelaku Usaha"
-                        options={dataJenisKelaminOptions}
+                        options={dataJenisPelakuUsahaOptions}
                         control={control}
                         required
-                        name="jenisKelamin"
+                        name="bentukUsaha.jenisPelakuUsaha"
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={dropdownStyles}   
-                        defaultItemSelected={defaultJenisKelamin}                 
+                        styles={dropdownStyles}                 
                     /> 
                     <ControlledFluentUiTextField
                         required

@@ -6,7 +6,7 @@ import { HookFluentUiDropDownProps } from "../../app/HookFormProps";
 
 export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdownProps> = (props) => {
     const [item, setItem] = useState(props.defaultItemSelected);
-
+    
     return (        
         <Controller 
             name={props.name}
@@ -19,13 +19,15 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
             }) => (
                 <Dropdown
                     {...props}
-                    selectedKey={!props.isFetching ? item.id : undefined}
+                    selectedKey={typeof item != 'undefined' ? item.id : undefined}
                     onChange={
                         (_e, item) => {
                             let itemSelected = {id: item?.key as string, nama: item?.text};
                             setItem(itemSelected);
                             onChange(itemSelected);
-                            props.onChangeItem != undefined ? props.onChangeItem(itemSelected) : null;                              
+                            if(typeof props.onChangeItem != 'undefined') {
+                                props.onChangeItem(itemSelected);
+                            }                            
                         }
                     }
                     onBlur={onBlur}

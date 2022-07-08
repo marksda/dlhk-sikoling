@@ -32,19 +32,19 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
     });
 
     const [kabupaten, setKabupaten] = useState<IKabupaten>(defaultKabupaten);
-    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(propinsi.id);
+    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(propinsi.id!);
     const dataKabupatenOptions = dataKabupaten.map((t) => {
         return {key: t.id as string, text: t.nama as string}; 
     });
 
     const [kecamatan, setKecamatan] = useState<IKecamatan>(defaultKecamatan);
-    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(kabupaten.id);
+    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(kabupaten.id!);
     const dataKecamatanOptions = dataKecamatan.map((t) => {
         return {key: t.id as string, text: t.nama as string}; 
     });
 
     const [desa, setDesa] = useState<IDesa>(defaultDesa);
-    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id);
+    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id!);
     const dataDesaOptions = dataDesa.map((t) => {
         return {key: t.id as string, text: t.nama as string}; 
     });
