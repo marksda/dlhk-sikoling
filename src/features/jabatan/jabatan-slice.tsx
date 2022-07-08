@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IJabatan {
-    id: string;
-    nama: string;
+    id: string|null;
+    nama: string|null;
 }
 
 const initialState: IJabatan = {
@@ -10,7 +10,6 @@ const initialState: IJabatan = {
     nama:'',
 }
 
-//redux busines logic
 export const jabatanSlice = createSlice({
     name: 'jabatan',
     initialState,
@@ -28,7 +27,6 @@ export const jabatanSlice = createSlice({
     },
 }) 
 
-// redux action creator
 export const { setJabatan, setJabatanId, setJabatanNama } = jabatanSlice.actions
 
 export default jabatanSlice.reducer

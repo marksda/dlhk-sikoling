@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultKecamatan } from "../config/config";
 
 export interface IKecamatan {
-    id?: string;
-    nama?: string;
+    id: string|null;
+    nama: string|null;
 }
 
 const initialState: IKecamatan = defaultKecamatan;

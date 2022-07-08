@@ -6,9 +6,9 @@ import { IKontak } from "../person/person-slice";
 
 
 export interface IAktaPemrakarsa {
-    nomor: string;
-    tanggal: string;
-    namaNotaris: string;
+    nomor: string|null;
+    tanggal: string|null;
+    namaNotaris: string|null;
 };
 
 export interface IKbli {
@@ -17,8 +17,8 @@ export interface IKbli {
 }
 
 export interface IOss {
-    nib: string;
-    tanggal: string;
+    nib: string|null;
+    tanggal: string|null;
     kbli: IKbli[];
 }
 

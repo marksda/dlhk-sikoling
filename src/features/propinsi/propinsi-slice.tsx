@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { defaultPropinsi } from "../config/config";
 
 export interface IPropinsi {
-    id?: string;
-    nama?: string;
+    id: string|null;
+    nama: string|null;
 }
 
 const initialState: IPropinsi = defaultPropinsi;

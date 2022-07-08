@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultKabupaten } from "../config/config";
 
 export interface IKabupaten {
-    id?: string;
-    nama?: string;
+    id: string|null;
+    nama: string|null;
 }
 
 const initialState: IKabupaten = defaultKabupaten;

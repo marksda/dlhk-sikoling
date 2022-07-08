@@ -5,11 +5,11 @@ import { IKecamatan } from "../kecamatan/kecamatan-slice";
 import { IPropinsi } from "../propinsi/propinsi-slice";
 
 export interface IAlamat {
-    propinsi: IPropinsi;
-    kabupaten: IKabupaten;
-    kecamatan: IKecamatan;
-    desa: IDesa;
-    keterangan: string
+    propinsi: IPropinsi|null;
+    kabupaten: IKabupaten|null;
+    kecamatan: IKecamatan|null;
+    desa: IDesa|null;
+    keterangan: string|null;
 }
 
 const initialState: IAlamat = {
@@ -26,10 +26,10 @@ export const alamatSlice = createSlice({
     initialState,
     reducers: {
         setAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.desa = {id: action.payload.desa?.id, nama: action.payload.desa?.nama};
-            state.kecamatan = {id: action.payload.kecamatan?.id, nama: action.payload.kecamatan?.nama};
-            state.kabupaten = {id: action.payload.kabupaten?.id, nama: action.payload.kabupaten?.nama};
-            state.propinsi = {id: action.payload.propinsi.id, nama: action.payload.propinsi.nama};
+            state.desa = {id: action.payload.desa!.id, nama: action.payload.desa!.nama};
+            state.kecamatan = {id: action.payload.kecamatan!.id, nama: action.payload.kecamatan!.nama};
+            state.kabupaten = {id: action.payload.kabupaten!.id, nama: action.payload.kabupaten!.nama};
+            state.propinsi = {id: action.payload.propinsi!.id, nama: action.payload.propinsi!.nama};
             state.keterangan = action.payload.keterangan;
         },
         setAlamatPropinsi: (state, action: PayloadAction<IPropinsi>) => {

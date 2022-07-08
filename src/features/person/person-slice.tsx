@@ -3,18 +3,18 @@ import { IAlamat } from "../alamat/alamat-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
 
 export interface IKontak {
-    telepone?: string;
-    fax?: string;
-    email?: string;
+    telepone: string|null;
+    fax?: string|null;
+    email: string|null;
 }
 
 export interface IPerson {
-    nik: string;
-    nama: string;
-    jenisKelamin: IJenisKelamin;
-    alamat: IAlamat;
-    kontak: IKontak;
-    scanKtp: string;
+    nik: string|null;
+    nama: string|null;
+    jenisKelamin: IJenisKelamin|null;
+    alamat: IAlamat|null;
+    kontak: IKontak|null;
+    scanKtp: string|null;
 }
 
 const initialState: IPerson = {} as IPerson
@@ -27,31 +27,31 @@ export const personSlice = createSlice({
             state.nik = action.payload.nik;
             state.nama = action.payload.nama;
             state.jenisKelamin = { 
-                id: action.payload.jenisKelamin.id, 
-                nama: action.payload.jenisKelamin.nama
+                id: action.payload.jenisKelamin!.id, 
+                nama: action.payload.jenisKelamin!.nama
             };
             state.alamat = {
                 propinsi: {
-                    id: action.payload.alamat.propinsi.id,
-                    nama: action.payload.alamat.propinsi.nama
+                    id: action.payload.alamat!.propinsi!.id,
+                    nama: action.payload.alamat!.propinsi!.nama
                 },
                 kabupaten: {
-                    id: action.payload.alamat.kabupaten.id,
-                    nama: action.payload.alamat.kabupaten.nama
+                    id: action.payload.alamat!.kabupaten!.id,
+                    nama: action.payload.alamat!.kabupaten!.nama
                 },
                 kecamatan: {
-                    id: action.payload.alamat.kecamatan.id,
-                    nama: action.payload.alamat.kecamatan.nama
+                    id: action.payload.alamat!.kecamatan!.id,
+                    nama: action.payload.alamat!.kecamatan!.nama
                 },
                 desa: {
-                    id: action.payload.alamat.desa.id,
-                    nama: action.payload.alamat.desa.nama
+                    id: action.payload.alamat!.desa!.id,
+                    nama: action.payload.alamat!.desa!.nama
                 },
-                keterangan: action.payload.alamat.keterangan
+                keterangan: action.payload.alamat!.keterangan
             };
             state.kontak = {
-                telepone: action.payload.kontak.telepone,
-                email: action.payload.kontak.email
+                telepone: action.payload.kontak!.telepone,
+                email: action.payload.kontak!.email
             };
             state.scanKtp = action.payload.scanKtp;
         },
@@ -70,20 +70,20 @@ export const personSlice = createSlice({
         setAlamat: (state, action: PayloadAction<IAlamat>) => {
             state.alamat = {
                 propinsi: {
-                    id: action.payload.propinsi.id,
-                    nama: action.payload.propinsi.nama
+                    id: action.payload.propinsi!.id,
+                    nama: action.payload.propinsi!.nama
                 },
                 kabupaten: {
-                    id: action.payload.kabupaten.id,
-                    nama: action.payload.kabupaten.nama
+                    id: action.payload.kabupaten!.id,
+                    nama: action.payload.kabupaten!.nama
                 },
                 kecamatan: {
-                    id: action.payload.kecamatan.id,
-                    nama: action.payload.kecamatan.nama
+                    id: action.payload.kecamatan!.id,
+                    nama: action.payload.kecamatan!.nama
                 },
                 desa: {
-                    id: action.payload.desa.id,
-                    nama: action.payload.desa.nama
+                    id: action.payload.desa!.id,
+                    nama: action.payload.desa!.nama
                 },
                 keterangan: action.payload.keterangan
             };

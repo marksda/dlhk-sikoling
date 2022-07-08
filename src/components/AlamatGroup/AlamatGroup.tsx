@@ -16,9 +16,9 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 
 interface IAlamatPropsComponent {
     title: string;
-    control: Control<any>;
+    control?: Control<any>;
     dropdownStyles: Partial<IDropdownStyles>;
-    setValue: any;
+    setValue?: any;
 }
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
@@ -74,7 +74,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
     
     return (      
         <>
-            <Label style={{borderBottom: '2px solid #E81123', marginBottom: 8}}>
+            <Label style={{borderBottom: '2px solid grey', marginBottom: 8}}>
                 {props.title}
             </Label>  
             <div style={{marginLeft: 8}}>
@@ -93,7 +93,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         defaultItemSelected={defaultPropinsi}             
                     />       
                     <ControlledFluentUiDropDown
-                        label="Kabupaten"
+                        label="Kabupaten / Kota"
                         placeholder="Pilih Kabupaten sesuai dengan ktp"
                         isFetching={isFetchingDataKabupaten||isFetchingDataPropinsi}
                         options={dataKabupatenOptions}

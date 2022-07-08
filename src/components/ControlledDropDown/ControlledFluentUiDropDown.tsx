@@ -7,7 +7,7 @@ import { HookFluentUiDropDownProps } from "../../app/HookFormProps";
 export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdownProps> = (props) => {
     const [item, setItem] = useState(props.defaultItemSelected);
 
-    return (
+    return (        
         <Controller 
             name={props.name}
             control={props.control}
