@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { IPropinsi } from "./propinsi-slice"
-import { baseUrl, defaultHalaman as halaman } from "../../features/config/config"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IPropinsi } from "./propinsi-slice";
+import { baseUrl, defaultHalaman as halaman } from "../../features/config/config";
 
 // const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
@@ -31,4 +31,4 @@ export const propinsiApiSlice = createApi({
     }
 })
 
-export const { useGetAllPropinsiQuery, useGetPropinsiByPageQuery, useGetPropinsiByNamaQuery, useGetPropinsiByNamaAndPageQuery } = propinsiApiSlice
+export const { useGetAllPropinsiQuery, useGetPropinsiByPageQuery, useGetPropinsiByNamaQuery, useGetPropinsiByNamaAndPageQuery } = propinsiApiSlice;

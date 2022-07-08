@@ -17,6 +17,7 @@ import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
 import pemrakarsaReducer from "../features/pemrakarsa/pemrakarsa-slice";
 import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
+import { jenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -25,6 +26,7 @@ import loginReducer from "../features/login/login-slice"
 export const store = configureStore({
     reducer: {
         jenisPelakuUsaha: jenisPelakuUsahaReducer,
+        [jenisPelakuUsahaApiSlice.reducerPath]: jenisPelakuUsahaApiSlice.reducer,
         bentukUsaha: bentukUsahaReducer,
         propinsi: propinsiReducer,
         [propinsiApiSlice.reducerPath]: propinsiApiSlice.reducer,
@@ -51,7 +53,8 @@ export const store = configureStore({
                                             .concat(KecamatanApiSlice.middleware)
                                             .concat(DesaApiSlice.middleware)
                                             .concat(JenisKelaminApiSlice.middleware)
-                                            .concat(PersonApiSlice.middleware),
+                                            .concat(PersonApiSlice.middleware)
+                                            .concat(jenisPelakuUsahaApiSlice.middleware),
 })
 
 // Aliasing variable in typescript
