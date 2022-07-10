@@ -61,7 +61,6 @@ export const pemrakarsaSlice = createSlice({
                 id: action.payload.id,
                 nama: action.payload.nama,
                 singkatan: action.payload.singkatan,
-                idJenisPelakuUsaha: action.payload.idJenisPelakuUsaha,
             }
         },
         setAktaPemrakarsa: (state, action: PayloadAction<IAktaPemrakarsa>) => {
@@ -74,19 +73,19 @@ export const pemrakarsaSlice = createSlice({
         setAlamat: (state, action: PayloadAction<IAlamat>) => {
             state.alamat = {
                 desa: {
-                    id: action.payload.desa?.id, nama: action.payload.desa?.nama
+                    id: action.payload.desa!.id, nama: action.payload.desa!.nama
                 },
                 kecamatan: {
-                    id: action.payload.kecamatan?.id, 
-                    nama: action.payload.kecamatan?.nama
+                    id: action.payload.kecamatan!.id, 
+                    nama: action.payload.kecamatan!.nama
                 },
                 kabupaten: {
-                    id: action.payload.kabupaten?.id, 
-                    nama: action.payload.kabupaten?.nama
+                    id: action.payload.kabupaten!.id, 
+                    nama: action.payload.kabupaten!.nama
                 },
                 propinsi: {
-                    id: action.payload.propinsi.id, 
-                    nama: action.payload.propinsi.nama
+                    id: action.payload.propinsi!.id, 
+                    nama: action.payload.propinsi!.nama
                 },
                 keterangan: action.payload.keterangan,
             }

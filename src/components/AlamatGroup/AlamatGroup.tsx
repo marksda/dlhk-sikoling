@@ -19,6 +19,7 @@ interface IAlamatPropsComponent {
     control?: Control<any>;
     dropdownStyles: Partial<IDropdownStyles>;
     setValue?: any;
+    name?: string;
 };
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
@@ -87,7 +88,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetPropinsi}
                         required={true}
-                        name={"alamat.propinsi"}
+                        name={`${props.name}.propinsi`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
                         styles={props.dropdownStyles}       
                         defaultItemSelected={defaultPropinsi}             
@@ -100,7 +101,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetKabupaten}
                         required={true}
-                        name={"alamat.kabupaten"}
+                        name={`${props.name}.kabupaten`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
                         styles={props.dropdownStyles}  
                         defaultItemSelected={defaultKabupaten}                  
@@ -113,7 +114,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetKecamatan}
                         required={true}
-                        name={"alamat.kecamatan"}
+                        name={`${props.name}.kecamatan`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
                         styles={props.dropdownStyles}    
                         defaultItemSelected={defaultKecamatan}                
@@ -126,7 +127,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         control={props.control}
                         onChangeItem={resetDesa}
                         required={true}
-                        name={"alamat.desa"}
+                        name={`${props.name}.desa`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
                         styles={props.dropdownStyles}  
                         defaultItemSelected={defaultDesa}                  
@@ -135,7 +136,7 @@ export const AlamatGroup: FC<IAlamatPropsComponent> = (props) => {
                         label="Detail Alamat"
                         placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
                         control={props.control}
-                        name="alamat.keterangan"
+                        name={`${props.name}.keterangan`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }}                    
                         styles={textFieldStyles}    
                         required multiline autoAdjustHeight

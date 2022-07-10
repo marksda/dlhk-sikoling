@@ -112,6 +112,7 @@ export const FormulirPerson: FC = () => {
             />
             <AlamatGroup 
                 title="Alamat"
+                name="alamat"
                 control={control}
                 setValue={setValue}
                 dropdownStyles={dropdownStyles}
