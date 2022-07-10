@@ -6,6 +6,7 @@ import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jeni
 import { IJenisPelakuUsaha } from "../../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { IPemrakarsa } from "../../features/pemrakarsa/pemrakarsa-slice";
+import { AktaGroup } from "../AktaGroup/AktaGroup";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
@@ -113,6 +114,11 @@ export const FormulirPemrakarsa: FC = () => {
                         control={control}  
                         rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
                         styles={textFieldStyles}    
+                    />
+                    <AktaGroup
+                        title="Akta Pendirian"
+                        name="aktaPemrakarsa"
+                        control={control}
                     />
                     <AlamatGroup 
                         title="Alamat"
