@@ -24,9 +24,9 @@ export const FormulirPemrakarsa: FC = () => {
         defaultValues: {
             id: null,
             bentukUsaha: {
-                id: '',
-                nama: '',
-                singkatan: '',
+                id: null,
+                nama: null,
+                singkatan: null,
             },
             aktaPemrakarsa: {
                 nomor: null,
@@ -73,6 +73,11 @@ export const FormulirPemrakarsa: FC = () => {
 
     const loadBadanUsaha = (item: IJenisPelakuUsaha) => {
         setJenisPelakuUsaha(item);
+        setValue("bentukUsaha", {
+            id: null,
+            nama: null,
+            singkatan: null,
+        })
     };
 
     return(
