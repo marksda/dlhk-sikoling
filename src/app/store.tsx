@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import bentukUsahaReducer from "../features/bentuk-usaha/bentuk-usaha-slice";
+import { bentukUsahaApiSlice } from "../features/bentuk-usaha/bentuk-usaha-api-slice";
 import propinsiReducer from "../features/propinsi/propinsi-slice";
 import { propinsiApiSlice } from "../features/propinsi/propinsi-api-slice";
 import kabupatenReducer from "../features/kabupaten/kabupaten-slice";
@@ -28,6 +29,7 @@ export const store = configureStore({
         jenisPelakuUsaha: jenisPelakuUsahaReducer,
         [jenisPelakuUsahaApiSlice.reducerPath]: jenisPelakuUsahaApiSlice.reducer,
         bentukUsaha: bentukUsahaReducer,
+        [bentukUsahaApiSlice.reducerPath]: bentukUsahaApiSlice.reducer,
         propinsi: propinsiReducer,
         [propinsiApiSlice.reducerPath]: propinsiApiSlice.reducer,
         kabupaten: kabupatenReducer,
@@ -54,7 +56,8 @@ export const store = configureStore({
                                             .concat(DesaApiSlice.middleware)
                                             .concat(JenisKelaminApiSlice.middleware)
                                             .concat(PersonApiSlice.middleware)
-                                            .concat(jenisPelakuUsahaApiSlice.middleware),
+                                            .concat(jenisPelakuUsahaApiSlice.middleware)
+                                            .concat(bentukUsahaApiSlice.middleware),
 })
 
 // Aliasing variable in typescript
