@@ -16,6 +16,19 @@ interface IAktaPropsComponent {
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 
+const onFormatDate = (date?: Date) => {
+    return !date ? '' : addZeroDigitInFront(date.getDate()) + '/' + addZeroDigitInFront(date.getMonth() + 1) + '/' + date.getFullYear();
+};
+
+const addZeroDigitInFront = (bilangan: number) => {
+    if(bilangan < 10) {
+        return `0${bilangan}`;
+    }
+    else {
+        return `${bilangan}`;
+    }
+}
+
 export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
 
     // const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
@@ -42,6 +55,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     placeholder="Pilih tanggal.."
                     ariaLabel="Piih tanggal"
                     strings={DayPickerIndonesiaStrings}
+                    formatDate={onFormatDate}
                 />
                 <ControlledFluentUiTextField
                     required
