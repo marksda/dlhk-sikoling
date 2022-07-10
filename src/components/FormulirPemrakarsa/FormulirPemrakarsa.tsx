@@ -2,6 +2,7 @@ import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
+import { IJenisPelakuUsaha } from "../../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { IPemrakarsa } from "../../features/pemrakarsa/pemrakarsa-slice";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
@@ -23,10 +24,6 @@ export const FormulirPemrakarsa: FC = () => {
                 id: '',
                 nama: '',
                 singkatan: '',
-                jenisPelakuUsaha: {
-                    id: null,
-                    nama: null,
-                }
             },
             aktaPemrakarsa: {
                 nomor: null,
@@ -64,6 +61,10 @@ export const FormulirPemrakarsa: FC = () => {
     const { data: dataJenisPelakuUsaha = [], isFetching: isFetchingJenisPelakuUsaha} = useGetAllJenisPelakuUsahaQuery();
     const dataJenisPelakuUsahaOptions = dataJenisPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
+    const loadBadanUsaha = (item: IJenisPelakuUsaha) => {
+        //load badan usaha
+    };
+
     return(
         <>
             <Label style={{borderBottom: '2px solid grey', marginBottom: 8}}>
@@ -75,11 +76,11 @@ export const FormulirPemrakarsa: FC = () => {
                         label="Jenis Pelaku Usaha"
                         placeholder="Pilih Jenis Pelaku Usaha"
                         options={dataJenisPelakuUsahaOptions}
-                        control={control}
                         required
-                        name="bentukUsaha.jenisPelakuUsaha"
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        styles={dropdownStyles}                 
+                        name="jenisPelakuUsaha"
+                        styles={dropdownStyles}           
+                        isFetching={isFetchingJenisPelakuUsaha}      
+                        onChangeItem={loadBadanUsaha}
                     /> 
                     <ControlledFluentUiTextField
                         required

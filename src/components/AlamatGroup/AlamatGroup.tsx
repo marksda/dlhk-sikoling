@@ -1,17 +1,17 @@
 import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
-import { FC, useState } from "react"
-import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice"
-import { Control } from "react-hook-form"
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config"
-import { IPropinsi } from "../../features/propinsi/propinsi-slice"
-import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice"
-import { IKabupaten } from "../../features/kabupaten/kabupaten-slice"
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown"
-import { IKecamatan } from "../../features/kecamatan/kecamatan-slice"
-import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice"
-import { IDesa, resetDesa } from "../../features/desa/desa-slice"
-import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice"
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField"
+import { FC, useState } from "react";
+import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
+import { Control } from "react-hook-form";
+import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { IPropinsi } from "../../features/propinsi/propinsi-slice";
+import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
+import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
+import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
+import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
+import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
+import { IDesa, resetDesa } from "../../features/desa/desa-slice";
+import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
 interface IAlamatPropsComponent {
@@ -19,7 +19,7 @@ interface IAlamatPropsComponent {
     control?: Control<any>;
     dropdownStyles: Partial<IDropdownStyles>;
     setValue?: any;
-}
+};
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 

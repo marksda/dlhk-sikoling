@@ -8,6 +8,7 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
     const [item, setItem] = useState(props.defaultItemSelected);
     
     return (        
+        typeof props.control != 'undefined' ?
         <Controller 
             name={props.name}
             control={props.control}
@@ -35,6 +36,20 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                     disabled={props.isFetching}
                 />
             )}
+        /> :
+        <Dropdown
+            {...props}
+            selectedKey={typeof item != 'undefined' ? item.id : undefined}
+            onChange={
+                (_e, item) => {
+                    let itemSelected = {id: item?.key as string, nama: item?.text};
+                    setItem(itemSelected);
+                    if(typeof props.onChangeItem != 'undefined') {
+                        props.onChangeItem(itemSelected);
+                    }                            
+                }
+            }
+            disabled={props.isFetching}
         />
     );
 }
