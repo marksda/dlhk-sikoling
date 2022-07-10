@@ -35,7 +35,7 @@ export const Login: React.FunctionComponent = () => {
         <div style={{ boxShadow: DefaultEffects.elevation4, padding: 16, width: 300, borderTop: '2px solid orange', borderRadius: 3, margin: 16 }}>
             <Label>Sign in</Label>
             <Stack {...columnProps}>
-                <TextField placeholder="Email" iconProps={iconProps} underlined defaultValue={propinsi.nama}/>
+                <TextField placeholder="Email" iconProps={iconProps} underlined defaultValue={propinsi.nama!}/>
                 <TextField
                     placeholder="Password"
                     type="password"

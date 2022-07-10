@@ -23,7 +23,7 @@ export const DesaApiSlice = createApi({
                 query: (nama = 'jawa timur', page=1, pageSize=10) => `desa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
             getDesaByKecamatan: builder.query<IDesa[], string|void>({
-                query: (idKecamatan = defaultKecamatan.id) => `desa/kecamatan?idKecamatan=${idKecamatan}`,
+                query: (idKecamatan = defaultKecamatan.id!) => `desa/kecamatan?idKecamatan=${idKecamatan}`,
             }),
         }
     }

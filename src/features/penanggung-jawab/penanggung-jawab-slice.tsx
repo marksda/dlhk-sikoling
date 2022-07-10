@@ -24,31 +24,31 @@ export const PenanggungJawabSlice = createSlice({
                 nik: action.payload.person?.nik as string,
                 nama: action.payload.person?.nama as string,
                 jenisKelamin: { 
-                    id: action.payload.person?.jenisKelamin.id as string, 
-                    nama: action.payload.person?.jenisKelamin.nama as string
+                    id: action.payload.person!.jenisKelamin!.id, 
+                    nama: action.payload.person!.jenisKelamin!.nama,
                 },
                 alamat: {
                     propinsi: {
-                        id: action.payload.person?.alamat.propinsi.id,
-                        nama: action.payload.person?.alamat.propinsi.nama
+                        id: action.payload.person!.alamat!.propinsi!.id,
+                        nama: action.payload.person!.alamat!.propinsi!.nama
                     },
                     kabupaten: {
-                        id: action.payload.person?.alamat.kabupaten.id,
-                        nama: action.payload.person?.alamat.kabupaten.nama
+                        id: action.payload.person!.alamat!.kabupaten!.id,
+                        nama: action.payload.person!.alamat!.kabupaten!.nama
                     },
                     kecamatan: {
-                        id: action.payload.person?.alamat.kecamatan.id,
-                        nama: action.payload.person?.alamat.kecamatan.nama
+                        id: action.payload.person!.alamat!.kecamatan!.id,
+                        nama: action.payload.person!.alamat!.kecamatan!.nama
                     },
                     desa: {
-                        id: action.payload.person?.alamat.desa.id,
-                        nama: action.payload.person?.alamat.desa.nama
+                        id: action.payload.person!.alamat!.desa!.id,
+                        nama: action.payload.person!.alamat!.desa!.nama
                     },
-                    keterangan: action.payload.person?.alamat.keterangan as string
+                    keterangan: action.payload.person!.alamat!.keterangan
                 },
                 kontak: {
-                    telepone: action.payload.person?.kontak.telepone,
-                    email: action.payload.person?.kontak.email
+                    telepone: action.payload.person!.kontak!.telepone,
+                    email: action.payload.person!.kontak!.email
                 },
                 scanKtp: action.payload.person?.scanKtp as string,
             };
@@ -65,31 +65,31 @@ export const PenanggungJawabSlice = createSlice({
                 nik: action.payload.nik,
                 nama: action.payload.nama as string,
                 jenisKelamin: { 
-                    id: action.payload.jenisKelamin.id as string, 
-                    nama: action.payload.jenisKelamin.nama as string
+                    id: action.payload.jenisKelamin!.id as string, 
+                    nama: action.payload.jenisKelamin!.nama as string
                 },
                 alamat: {
                     propinsi: {
-                        id: action.payload.alamat.propinsi.id,
-                        nama: action.payload.alamat.propinsi.nama
+                        id: action.payload.alamat!.propinsi!.id,
+                        nama: action.payload.alamat!.propinsi!.nama
                     },
                     kabupaten: {
-                        id: action.payload.alamat.kabupaten.id,
-                        nama: action.payload.alamat.kabupaten.nama
+                        id: action.payload.alamat!.kabupaten!.id,
+                        nama: action.payload.alamat!.kabupaten!.nama
                     },
                     kecamatan: {
-                        id: action.payload.alamat.kecamatan.id,
-                        nama: action.payload.alamat.kecamatan.nama
+                        id: action.payload.alamat!.kecamatan!.id,
+                        nama: action.payload.alamat!.kecamatan!.nama
                     },
                     desa: {
-                        id: action.payload.alamat.desa.id,
-                        nama: action.payload.alamat.desa.nama
+                        id: action.payload.alamat!.desa!.id,
+                        nama: action.payload.alamat!.desa!.nama
                     },
-                    keterangan: action.payload.alamat.keterangan as string
+                    keterangan: action.payload.alamat!.keterangan as string
                 },
                 kontak: {
-                    telepone: action.payload.kontak.telepone,
-                    email: action.payload.kontak.email
+                    telepone: action.payload.kontak!.telepone,
+                    email: action.payload.kontak!.email
                 },
                 scanKtp: action.payload.scanKtp,
             };
