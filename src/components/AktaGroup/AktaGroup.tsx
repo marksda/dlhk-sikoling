@@ -1,7 +1,7 @@
 import { DatePicker, DayOfWeek, defaultDatePickerStrings, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
 import { Control } from "react-hook-form";
-import { DayPickerIndonesiaStrings } from "../../features/config/config";
+import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
@@ -16,18 +16,6 @@ interface IAktaPropsComponent {
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 
-const onFormatDate = (date?: Date) => {
-    return !date ? '' : addZeroDigitInFront(date.getDate()) + '/' + addZeroDigitInFront(date.getMonth() + 1) + '/' + date.getFullYear();
-};
-
-const addZeroDigitInFront = (bilangan: number) => {
-    if(bilangan < 10) {
-        return `0${bilangan}`;
-    }
-    else {
-        return `${bilangan}`;
-    }
-}
 
 export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
 
