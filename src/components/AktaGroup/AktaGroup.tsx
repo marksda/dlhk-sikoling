@@ -1,6 +1,7 @@
 import { DatePicker, DayOfWeek, defaultDatePickerStrings, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
 import { Control } from "react-hook-form";
+import { DayPickerIndonesiaStrings } from "../../features/config/config";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
@@ -35,11 +36,12 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     styles={textFieldStyles}    
                 />
                 <DatePicker
+                    isRequired
                     label="Tanggal Akta"
                     firstDayOfWeek={DayOfWeek.Sunday}
                     placeholder="Pilih tanggal.."
                     ariaLabel="Piih tanggal"
-                    strings={defaultDatePickerStrings}
+                    strings={DayPickerIndonesiaStrings}
                 />
                 <ControlledFluentUiTextField
                     required
