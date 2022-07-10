@@ -1,6 +1,7 @@
 import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useGetBentukUsahaByPelakuUsahaQuery } from "../../features/bentuk-usaha/bentuk-usaha-api-slice";
 import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import { IJenisPelakuUsaha } from "../../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
@@ -15,6 +16,8 @@ const textFieldStyles: Partial<ITextFieldStyles> = {fieldGroup: {width: 300}};
 const dropdownStyles: Partial<IDropdownStyles> = {dropdown: {width: 300}};
 
 export const FormulirPemrakarsa: FC = () => {
+
+    const [jenisPelakuUsaha, setJenisPelakuUsaha] = useState<IJenisPelakuUsaha|undefined>(undefined);
 
     const { control, handleSubmit, setValue } = useForm<IPemrakarsa>({
         mode: 'onSubmit',
@@ -61,8 +64,15 @@ export const FormulirPemrakarsa: FC = () => {
     const { data: dataJenisPelakuUsaha = [], isFetching: isFetchingJenisPelakuUsaha} = useGetAllJenisPelakuUsahaQuery();
     const dataJenisPelakuUsahaOptions = dataJenisPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
+    const { data: dataBentukUsaha = [], isFetching: isFetchingBentukUsaha} = useGetBentukUsahaByPelakuUsahaQuery(
+        jenisPelakuUsaha?.id as string
+        );
+    const dataBentukUsahaOptions = dataBentukUsaha.map((t) => { 
+        return {key: t.id as string, text: `${t.nama} (${t.singkatan})`}; 
+    });
+
     const loadBadanUsaha = (item: IJenisPelakuUsaha) => {
-        //load badan usaha
+        setJenisPelakuUsaha(item);
     };
 
     return(
@@ -81,6 +91,15 @@ export const FormulirPemrakarsa: FC = () => {
                         styles={dropdownStyles}           
                         isFetching={isFetchingJenisPelakuUsaha}      
                         onChangeItem={loadBadanUsaha}
+                    /> 
+                    <ControlledFluentUiDropDown
+                        label="Bentuk Usaha"
+                        placeholder="Pilih Bentuk Usaha"
+                        options={dataBentukUsahaOptions}
+                        required
+                        name="bentukUsaha"
+                        styles={dropdownStyles}           
+                        isFetching={isFetchingBentukUsaha}   
                     /> 
                     <ControlledFluentUiTextField
                         required

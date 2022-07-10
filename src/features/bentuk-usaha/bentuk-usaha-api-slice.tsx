@@ -22,9 +22,12 @@ export const bentukUsahaApiSlice = createApi({
             getBentukUsahaByNamaAndPage: builder.query<IBentukUsaha[], string|void>({
                 query: (nama, page=halaman.page, pageSize=halaman.pageSize) => `bentuk_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
+            getBentukUsahaByPelakuUsaha: builder.query<IBentukUsaha[], string|void>({
+                query: (idKelompok) => `bentuk_usaha/kelompok?idKelompok=${idKelompok}`,
+            }),
         };
     },
 });
 
-export const { useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, useGetBentukUsahaByNamaQuery, useLazyGetBentukUsahaByNamaAndPageQuery} = bentukUsahaApiSlice;
+export const { useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, useGetBentukUsahaByNamaQuery, useLazyGetBentukUsahaByNamaAndPageQuery, useGetBentukUsahaByPelakuUsahaQuery} = bentukUsahaApiSlice;
 
