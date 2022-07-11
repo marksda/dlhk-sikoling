@@ -113,12 +113,44 @@ export const FormulirPemrakarsa: FC = () => {
                         rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
                     /> 
                     <ControlledFluentUiTextField
-                        required
                         label="Nama"
                         name="nama"         
                         control={control}  
                         rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
+                        required
                         styles={textFieldStyles}    
+                    />
+                    <ControlledFluentUiTextField
+                        label="NPWP"
+                        name="npwp"         
+                        control={control}  
+                        rules={{ required: "harus diisi sesuai dengan npwp perusahaan" }}  
+                        required
+                        styles={textFieldStyles}    
+                    />
+                    <ControlledFluentUiTextField
+                        label="Telepon"
+                        name="kontakPemrakarsa.telepone"         
+                        control={control}  
+                        rules={{ required: "harus diisi sesuai dengan telepon perusahaan" }}  
+                        required
+                        styles={textFieldStyles}
+                    />
+                    <ControlledFluentUiTextField
+                        label="Fax"
+                        name="kontakPemrakarsa.fax"         
+                        control={control}  
+                        rules={{ required: "harus diisi sesuai dengan fax perusahaan" }}  
+                        required
+                        styles={textFieldStyles}
+                    />
+                    <ControlledFluentUiTextField
+                        label="Email"
+                        name="kontakPemrakarsa.email"         
+                        control={control}  
+                        rules={{ required: "harus diisi sesuai dengan email perusahaan" }}  
+                        required
+                        styles={textFieldStyles}
                     />
                     <AktaGroup
                         title="Akta Pendirian"
