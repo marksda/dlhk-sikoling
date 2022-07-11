@@ -1,4 +1,4 @@
-import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
+import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useGetBentukUsahaByPelakuUsahaQuery } from "../../features/bentuk-usaha/bentuk-usaha-api-slice";
@@ -81,6 +81,17 @@ export const FormulirPemrakarsa: FC = () => {
         })
     };
 
+    const onButtonSimpanClick = () => { 
+        handleSubmit(
+            (data) => {
+              console.log(data);
+            },
+            (err) => {                
+              console.log(err);
+            }
+          )();
+    };
+
     return(
         <>
             <Label style={{borderBottom: '2px solid grey', marginBottom: 8}}>
@@ -127,6 +138,7 @@ export const FormulirPemrakarsa: FC = () => {
                         setValue={setValue}
                         dropdownStyles={dropdownStyles}
                     />
+                    <PrimaryButton text="Simpan" onClick={onButtonSimpanClick} style={{marginTop: 16, width: 100}}/>
                 </Stack>
             </div>
         </>
