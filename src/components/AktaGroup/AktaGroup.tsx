@@ -2,6 +2,7 @@ import { DatePicker, DayOfWeek, defaultDatePickerStrings, IStackTokens, ITextFie
 import { FC, useState } from "react";
 import { Control } from "react-hook-form";
 import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
+import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
@@ -36,7 +37,8 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     rules={{ required: "harus diisi sesuai dengan akta" }}                    
                     styles={textFieldStyles}    
                 />
-                <DatePicker
+                <ControlledFluentUiDatePicker
+                    name={`${props.name}.tanggal`}
                     isRequired
                     label="Tanggal Akta"
                     firstDayOfWeek={DayOfWeek.Sunday}
@@ -44,6 +46,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     ariaLabel="Piih tanggal"
                     strings={DayPickerIndonesiaStrings}
                     formatDate={onFormatDate}
+                    control={props.control}
                 />
                 <ControlledFluentUiTextField
                     required

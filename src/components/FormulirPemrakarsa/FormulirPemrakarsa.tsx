@@ -24,16 +24,8 @@ export const FormulirPemrakarsa: FC = () => {
         mode: 'onSubmit',
         defaultValues: {
             id: null,
-            bentukUsaha: {
-                id: null,
-                nama: null,
-                singkatan: null,
-            },
-            aktaPemrakarsa: {
-                nomor: null,
-                tanggal: null,
-                namaNotaris: null,
-            },
+            bentukUsaha: null,
+            aktaPemrakarsa: null,
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -116,7 +108,9 @@ export const FormulirPemrakarsa: FC = () => {
                         required
                         name="bentukUsaha"
                         styles={dropdownStyles}           
-                        isFetching={isFetchingBentukUsaha}   
+                        isFetching={isFetchingBentukUsaha}      
+                        control={control}                     
+                        rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
                     /> 
                     <ControlledFluentUiTextField
                         required
