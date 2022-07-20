@@ -65,6 +65,7 @@ export const FormulirPerson: FC = () => {
             <UploadFilesFluentUi 
                 label='Upload File Hasil Scan KTP'
                 showPreview={false}
+                showListFile={false}
                 containerStyle={containerStyle}
             />
             <ControlledFluentUiTextField

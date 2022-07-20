@@ -32,7 +32,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
         <Label style={{borderBottom: '2px solid grey', marginBottom: 8}}>
             {props.title}
         </Label> 
-        <div style={{marginLeft: 8}}>
+        <div style={{marginLeft: 0}}>
             <Stack tokens={stackTokens}>
                 <UploadFilesFluentUi 
                     label={`Upload File ${props.title}`}
