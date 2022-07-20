@@ -36,7 +36,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
             <Stack tokens={stackTokens}>
                 <UploadFilesFluentUi 
                     label={`Upload File ${props.title}`}
-                    showPreview={false}
+                    showPreview={true}
                     showListFile={false}
                     containerStyle={containerStyle}
                 />

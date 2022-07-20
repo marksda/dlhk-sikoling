@@ -91,15 +91,14 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
 
     // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
-        event.stopPropagation()
+        // event.stopPropagation();
         if(typeof currentFile == 'undefined')
             document.getElementById('fileUpload')!.click()
     }
 
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
-        // @ts-ignore: Object is possibly 'null'.
-        const file = event.currentTarget.files[0];
+        const file = event.currentTarget.files![0];
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':
@@ -119,7 +118,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             {
             props.showPreview && 
             <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
-                {!currentFile &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
+                {!currentFile &&<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>}
                 {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
                 {
                 props.showPreview && isImageFile && 
