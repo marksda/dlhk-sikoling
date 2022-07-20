@@ -1,4 +1,4 @@
-import { CompoundButton, FontIcon, IButtonStyles, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
+import { CompoundButton, FontIcon, IButtonStyles, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
 import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
