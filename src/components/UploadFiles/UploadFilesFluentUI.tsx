@@ -37,6 +37,9 @@ interface IUploadFilePropsComponent {
     showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
 }
+
+const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
+
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
@@ -118,7 +121,15 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
                 {!currentFile &&<FontIcon aria-label="Ktp" iconName="CircleAddition" className={iconClass} onClick={bindClickEventInputFile}/>}
                 {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
-                {props.showPreview && isImageFile && <FileViewerFluentUi file={currentFile} area={{panjang: 300, lebar: 100}}/>}
+                {
+                props.showPreview && isImageFile && 
+                <FileViewerFluentUi 
+                    file={currentFile} 
+                    area={
+                        {panjang: props.containerStyle!.width as number, lebar: 100}
+                    }
+                    />
+                }
                 {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
                 {currentFile && <FontIcon aria-label="Ktp" iconName="Delete" />}
             </div>
@@ -128,6 +139,11 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             <CompoundButton
                 secondaryText={props.label} 
                 onClick={bindClickEventInputFile}
+                styles={{
+                    root: {
+                        maxWidth: props.containerStyle!.width
+                    }
+                }}
             >
                 File
             </CompoundButton>

@@ -9,9 +9,8 @@ interface IFileViewerPropsComponent {
 
 }
 export const FileViewerFluentUi: FC<IFileViewerPropsComponent> = (props) => {
+
     const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
-    
-        
 
     switch (props.file?.type.toLowerCase()) {
         case 'image/bmp':
