@@ -37,6 +37,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                 <UploadFilesFluentUi 
                     label={`Upload File ${props.title}`}
                     showPreview={false}
+                    showListFile={false}
                     containerStyle={containerStyle}
                 />
                 <ControlledFluentUiTextField

@@ -33,7 +33,8 @@ const containerClass = mergeStyles({
 
 interface IUploadFilePropsComponent {
     label?: string;
-    showPreview?: boolean;    
+    showPreview?: boolean;
+    showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
 }
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
@@ -44,7 +45,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [progress, setProgress] = useState<number>(0);
     const [message, setMessage] = useState<string>('');
     const [fileInfos, setFileInfos] = useState<any[]>([]);
-    const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
+    // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const styleContainer: Record<string, any> = {};
 
     if(typeof props.containerStyle === 'undefined') {
@@ -159,6 +160,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             <div className="alert alert-light" role="alert">
                 {message}
             </div>
+            {props.showListFile &&
             <div className="card">
                 <div className="card-header">List of Files</div>
                 <ul className="list-group list-group-flush">
@@ -170,6 +172,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     ))}
                 </ul>
             </div>
+            }
         </>
     )
 }
