@@ -1,11 +1,10 @@
-import { DatePicker, DayOfWeek, defaultDatePickerStrings, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
-import { FC, useState } from "react";
+import { DayOfWeek, IStackTokens, ITextFieldStyles, Label, Stack } from "@fluentui/react";
+import { FC } from "react";
 import { Control } from "react-hook-form";
 import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
-
 
 
 interface IAktaPropsComponent {
@@ -14,7 +13,6 @@ interface IAktaPropsComponent {
     setValue?: any;
     name?: string;
 };
-
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const containerStyle: IContainerUploadStyle = {

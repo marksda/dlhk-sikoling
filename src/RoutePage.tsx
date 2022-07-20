@@ -39,9 +39,8 @@ const RoutePage: React.FunctionComponent = () => {
                 onClick={onButtonSimpanClick} 
                 style={{marginTop: 24, width: 100}}
                 />
-        </div>
-         
-    )
+        </div>         
+    );
 }
 
 export default RoutePage
