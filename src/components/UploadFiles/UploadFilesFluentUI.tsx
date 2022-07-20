@@ -1,7 +1,7 @@
 import { CompoundButton, FontIcon, IButtonStyles, IImageProps, Image, ImageFit, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
 import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
-import { FileViewerFluentUi } from "../FileViewer/FileViewerFluentUi";
+import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
 
 export interface IContainerUploadStyle {
@@ -105,7 +105,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             case 'image':
                 setIsImageFile(true);
                 break;
-            case 'application/pdf':
+            case 'pdf':
                 setIsPdfFile(true);
                 break;
             default:
@@ -123,10 +123,10 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
                 {
                 props.showPreview && isImageFile && 
-                <FileViewerFluentUi 
+                <FileImageViewerFluentUi 
                     file={currentFile} 
                     area={
-                        {panjang: props.containerStyle!.width as number, lebar: 100}
+                        {width: props.containerStyle!.width as number, height: 100}
                     }
                     />
                 }
