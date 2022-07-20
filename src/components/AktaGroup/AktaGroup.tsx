@@ -4,6 +4,7 @@ import { Control } from "react-hook-form";
 import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 
 
 
@@ -16,7 +17,11 @@ interface IAktaPropsComponent {
 
 const stackTokens: IStackTokens = { childrenGap: 8 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
-
+const containerStyle: IContainerUploadStyle = {
+    width: 300, 
+    height: 100, 
+    backgroundColor: '#ECECEC',
+};
 
 export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
 
@@ -29,9 +34,14 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
         </Label> 
         <div style={{marginLeft: 8}}>
             <Stack tokens={stackTokens}>
+                <UploadFilesFluentUi 
+                    label={`Upload File ${props.title}`}
+                    showPreview={false}
+                    containerStyle={containerStyle}
+                />
                 <ControlledFluentUiTextField
                     required
-                    label="Nomor Akta"
+                    label="Nomor"
                     control={props.control}
                     name={`${props.name}.nomor`}
                     rules={{ required: "harus diisi sesuai dengan akta" }}                    
@@ -40,7 +50,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                 <ControlledFluentUiDatePicker
                     name={`${props.name}.tanggal`}
                     isRequired
-                    label="Tanggal Akta"
+                    label="Tanggal"
                     firstDayOfWeek={DayOfWeek.Sunday}
                     placeholder="Pilih tanggal.."
                     ariaLabel="Piih tanggal"

@@ -1,7 +1,8 @@
 import { DefaultEffects } from "@fluentui/react";
 import React from "react";
+import { AktaGroup } from "./components/AktaGroup/AktaGroup";
 // import { FormulirPerson } from "./components/FormulirPerson/FormulirPerson";
-import { FormulirPemrakarsa } from "./components/FormulirPemrakarsa/FormulirPemrakarsa";
+// import { FormulirPemrakarsa } from "./components/FormulirPemrakarsa/FormulirPemrakarsa";
 // import { Login } from './features/login/login'
 // import { useAppSelector } from './app/hooks'
 
@@ -21,7 +22,10 @@ const RoutePage: React.FunctionComponent = () => {
     return (
         <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation8, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
-            <FormulirPemrakarsa />   
+            <AktaGroup
+                title="Akta Pendirian"
+                name="aktaPemrakarsa"
+                />
         </div>
          
     )
