@@ -37,6 +37,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     showPreview={false}
                     showListFile={false}
                     containerStyle={containerStyle}   
+                    teachingBubbleVisible={true}
                     teachingBubbleText={`Tekan tombol disamping untuk upload file ${props.title}, file harus berjenis pdf dan hanya berisi ${props.title} saja, alias tidak boleh dicampur dengan dokumen lain dalam satu file pdf`}            
                 />
                 <ControlledFluentUiTextField
@@ -45,14 +46,15 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     control={props.control}
                     name={`${props.name}.nomor`}
                     rules={{ required: "harus diisi sesuai dengan akta" }}                    
-                    styles={textFieldStyles}    
+                    styles={textFieldStyles}     
+                    placeholder={`isikan sesuai dalam ${props.title}`}                   
                 />
                 <ControlledFluentUiDatePicker
                     name={`${props.name}.tanggal`}
                     isRequired
                     label="Tanggal"
                     firstDayOfWeek={DayOfWeek.Sunday}
-                    placeholder="Pilih tanggal.."
+                    placeholder={`Pilih tanggal sesuai dalam ${props.title}`}
                     ariaLabel="Piih tanggal"
                     strings={DayPickerIndonesiaStrings}
                     formatDate={onFormatDate}
@@ -65,6 +67,7 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
                     name={`${props.name}.namaNotaris`}
                     rules={{ required: "harus diisi sesuai akta" }}                    
                     styles={textFieldStyles}    
+                    placeholder={`isikan sesuai dalam ${props.title}`}
                 />
             </Stack>
         </div>

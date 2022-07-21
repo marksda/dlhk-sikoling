@@ -37,6 +37,7 @@ interface IUploadFilePropsComponent {
     showPreview?: boolean;
     showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
+    teachingBubbleVisible?: boolean;
     teachingBubbleText?: string;
 }
 
@@ -52,7 +53,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [fileInfos, setFileInfos] = useState<any[]>([]);
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const styleContainer: Record<string, any> = {};
-    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(true);
+    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);
 
     if(typeof props.containerStyle === 'undefined') {
         styleContainer.width = 300
