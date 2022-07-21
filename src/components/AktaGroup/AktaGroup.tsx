@@ -34,9 +34,10 @@ export const AktaGroup: FC<IAktaPropsComponent> = (props) => {
             <Stack tokens={stackTokens}>
                 <UploadFilesFluentUi 
                     label={`Upload File ${props.title}`}
-                    showPreview={true}
+                    showPreview={false}
                     showListFile={false}
-                    containerStyle={containerStyle}
+                    containerStyle={containerStyle}   
+                    teachingBubbleText={`Tekan tombol disamping untuk upload file ${props.title}, file harus berjenis pdf dan hanya berisi ${props.title} saja, alias tidak boleh dicampur dengan dokumen lain dalam satu file pdf`}            
                 />
                 <ControlledFluentUiTextField
                     required

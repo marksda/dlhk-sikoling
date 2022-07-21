@@ -1,8 +1,9 @@
-import { CompoundButton, FontIcon, IButtonStyles, Label, mergeStyles, PrimaryButton } from "@fluentui/react"
+import { CompoundButton, DirectionalHint, FontIcon, IButtonStyles, Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react"
 import { FC, FormEvent, MouseEventHandler, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
+import {useBoolean, useId} from "@fluentui/react-hooks";
 
 export interface IContainerUploadStyle {
     width?: string|number;
@@ -36,6 +37,7 @@ interface IUploadFilePropsComponent {
     showPreview?: boolean;
     showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
+    teachingBubbleText?: string;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -50,6 +52,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [fileInfos, setFileInfos] = useState<any[]>([]);
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const styleContainer: Record<string, any> = {};
+    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(true);
 
     if(typeof props.containerStyle === 'undefined') {
         styleContainer.width = 300
@@ -112,6 +115,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         }        
     }
 
+    const compoundButtonId = useId('targetCompoundButton');
+
     return(
         <>            
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/> 
@@ -136,6 +141,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             {
             !props.showPreview && !currentFile && 
             <CompoundButton
+                id={compoundButtonId}
                 secondaryText={props.label} 
                 onClick={bindClickEventInputFile}
                 styles={{
@@ -145,7 +151,22 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 }}
             >
                 File
-            </CompoundButton>
+            </CompoundButton>    
+            }
+            {
+            !props.showPreview && teachingBubbleVisible && (
+            <TeachingBubble
+                calloutProps={{ directionalHint: DirectionalHint.rightCenter }}
+                target={`#${compoundButtonId}`}
+                isWide={true}
+                hasCloseButton={true}
+                closeButtonAriaLabel="Close"
+                onDismiss={toggleTeachingBubbleVisible}
+                headline={props.label}
+            >
+                {props.teachingBubbleText} 
+            </TeachingBubble>
+            )
             }
             {
             !props.showPreview && currentFile && 
