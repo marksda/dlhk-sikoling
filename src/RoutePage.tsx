@@ -1,6 +1,7 @@
 import { DefaultEffects, IIconProps, PrimaryButton } from "@fluentui/react";
 import React from "react";
-import { AktaGroup } from "./components/AktaGroup/AktaGroup";
+// import { AktaGroup } from "./components/AktaGroup/AktaGroup";
+import { FormulirLogin } from "./components/FormulirLogin/FormulirLogin";
 // import { FormulirPerson } from "./components/FormulirPerson/FormulirPerson";
 // import { FormulirPemrakarsa } from "./components/FormulirPemrakarsa/FormulirPemrakarsa";
 // import { Login } from './features/login/login'
@@ -29,10 +30,7 @@ const RoutePage: React.FunctionComponent = () => {
     return (
         <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation8, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
-            <AktaGroup
-                title="Akta Pendirian"
-                name="aktaPemrakarsa"
-                />
+            <FormulirLogin />
             <PrimaryButton 
                 text="Simpan" 
                 iconProps={addIcon}
