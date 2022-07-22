@@ -1,6 +1,6 @@
 import { IIconProps, ILabelStyles, IStackProps, Label, Stack, TextField } from "@fluentui/react";
 import { FC } from "react";
-import logo from '../../login_headera.png';
+import logo from '../../logo.svg';
 
 
 const columnProps: Partial<IStackProps> = {
