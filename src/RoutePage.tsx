@@ -1,4 +1,4 @@
-import { DefaultEffects, IIconProps, PrimaryButton } from "@fluentui/react";
+import { DefaultEffects, PrimaryButton } from "@fluentui/react";
 import React from "react";
 // import { AktaGroup } from "./components/AktaGroup/AktaGroup";
 import { FormulirLogin } from "./components/FormulirLogin/FormulirLogin";
@@ -7,7 +7,7 @@ import { FormulirLogin } from "./components/FormulirLogin/FormulirLogin";
 // import { Login } from './features/login/login'
 // import { useAppSelector } from './app/hooks'
 
-const addIcon: IIconProps = { iconName: 'Save' };
+// const addIcon: IIconProps = { iconName: 'Save' };
 
 const RoutePage: React.FunctionComponent = () => {
     // const userProfile = useAppSelector(state => state.login.user_profile)
@@ -28,14 +28,13 @@ const RoutePage: React.FunctionComponent = () => {
     };
     
     return (
-        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation8, 
-            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 16, margin: 16}}>
+        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
+            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
             <FormulirLogin />
             <PrimaryButton 
-                text="Simpan" 
-                iconProps={addIcon}
+                text="Berikutnya" 
                 onClick={onButtonSimpanClick} 
-                style={{marginTop: 24, width: 100}}
+                style={{marginTop: 24, width: 100, float: 'right'}}
                 />
         </div>         
     );
