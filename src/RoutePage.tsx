@@ -37,12 +37,7 @@ const RoutePage: React.FunctionComponent = () => {
     return (
         <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
-            <UploadFilesFluentUi 
-                label='Upload File Hasil Scan KTP'
-                showPreview={false}
-                showListFile={false}
-                containerStyle={containerStyle}
-            />
+            <FormulirLogin />
             <PrimaryButton 
                 text="Berikutnya" 
                 onClick={onButtonSimpanClick} 
