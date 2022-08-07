@@ -11,8 +11,11 @@ export const tokenApiSlice = createApi({
     endpoints(builder) {
         return {
             getToken: builder.query<IToken, void>({
-                query: () => `propinsi`,
+                // grant_type, code, redirect_uri
+                query: () => `openidconnect/token`,
             }),
         }
     }
-})
+});
+
+export const { useGetTokenQuery } = tokenApiSlice;
