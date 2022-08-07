@@ -7,7 +7,8 @@ import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice"
 import { IDatePickerStrings } from "@fluentui/react"
 
 
-export const baseUrl:string = 'http://localhost:8080/Sikoling-web/api/';
+export const baseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
+export const baseIdentityProviderUrl = 'http://localhost:8082/';
 export const defaultPropinsi: IPropinsi = {id: '35', nama: 'JAWA TIMUR'};
 export const defaultKabupaten: IKabupaten = {id:'3515', nama: 'SIDOARJO'};
 export const defaultKecamatan: IKecamatan = {id: '3515110', nama: 'SIDOARJO'};

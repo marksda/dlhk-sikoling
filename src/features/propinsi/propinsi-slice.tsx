@@ -24,9 +24,9 @@ export const propinsiSlice = createSlice({
             state.nama = action.payload;
         },
     },
-}) 
+}); 
 
 // redux action creator
-export const { setPropinsi, setPropinsiId, setPropinsiNama } = propinsiSlice.actions
+export const { setPropinsi, setPropinsiId, setPropinsiNama } = propinsiSlice.actions;
 
-export default propinsiSlice.reducer
+export default propinsiSlice.reducer;

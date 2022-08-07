@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseUrl, defaultKabupaten } from "../config/config";
+import { baseRestAPIUrl, defaultKabupaten } from "../config/config";
 import { IKecamatan } from "./kecamatan-slice";
 
 
 export const KecamatanApiSlice = createApi({
     reducerPath: 'kecamatanApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseUrl,
+        baseUrl: baseRestAPIUrl,
     }),
     endpoints(builder) {
         return {

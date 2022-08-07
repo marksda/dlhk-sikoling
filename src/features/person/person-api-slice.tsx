@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl } from "../config/config";
+import { baseRestAPIUrl } from "../config/config";
 import { IPerson } from "./person-slice";
 
 
 export const PersonApiSlice = createApi({
     reducerPath: 'personApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseUrl,
+        baseUrl: baseRestAPIUrl,
     }),
     endpoints(builder) {
         return {

@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-import { baseUrl } from "../config/config";
+import { baseRestAPIUrl } from "../config/config";
 import { IJenisKelamin } from "./jenis-kelamin-slice";
 
 export const JenisKelaminApiSlice = createApi({
     reducerPath: 'jenisKelaminApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseUrl,
+        baseUrl: baseRestAPIUrl,
     }),
     endpoints(builder) {
         return {

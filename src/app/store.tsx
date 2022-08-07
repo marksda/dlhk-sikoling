@@ -19,6 +19,7 @@ import { PersonApiSlice } from "../features/person/person-api-slice";
 import pemrakarsaReducer from "../features/pemrakarsa/pemrakarsa-slice";
 import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { jenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
+import tokenReducer from "../features/security/token-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -45,6 +46,7 @@ export const store = configureStore({
         penanggungJawab: penanggungJawabReducer,
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
+        token: tokenReducer,
         pemrakarsa: pemrakarsaReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
