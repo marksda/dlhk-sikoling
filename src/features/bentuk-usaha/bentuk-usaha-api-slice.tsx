@@ -3,7 +3,7 @@ import { baseRestAPIUrl, defaultHalaman as halaman } from "../config/config";
 import { IBentukUsaha } from "./bentuk-usaha-slice";
 
 
-export const bentukUsahaApiSlice = createApi({
+export const BentukUsahaApiSlice = createApi({
     reducerPath: 'bentukUsahaApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
@@ -29,5 +29,5 @@ export const bentukUsahaApiSlice = createApi({
     },
 });
 
-export const { useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, useGetBentukUsahaByNamaQuery, useLazyGetBentukUsahaByNamaAndPageQuery, useGetBentukUsahaByPelakuUsahaQuery} = bentukUsahaApiSlice;
+export const { useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, useGetBentukUsahaByNamaQuery, useLazyGetBentukUsahaByNamaAndPageQuery, useGetBentukUsahaByPelakuUsahaQuery} = BentukUsahaApiSlice;
 

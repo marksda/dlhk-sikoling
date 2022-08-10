@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl, defaultHalaman as halaman } from "../config/config";
 import { IJenisPelakuUsaha } from "./jenis-pelaku-usaha-slice";
 
-export const jenisPelakuUsahaApiSlice = createApi({
+export const JenisPelakuUsahaApiSlice = createApi({
     reducerPath: 'jenisPelakuUsahaApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
@@ -25,4 +25,4 @@ export const jenisPelakuUsahaApiSlice = createApi({
     }
 });
 
-export const { useGetAllJenisPelakuUsahaQuery, useGetJenisPelakuUsahaByPageQuery, useGetJenisPelakuUsahaByNamaQuery, useGetJenisPelakuUsahaByNamaAndPageQuery } = jenisPelakuUsahaApiSlice
+export const { useGetAllJenisPelakuUsahaQuery, useGetJenisPelakuUsahaByPageQuery, useGetJenisPelakuUsahaByNamaQuery, useGetJenisPelakuUsahaByNamaAndPageQuery } = JenisPelakuUsahaApiSlice;

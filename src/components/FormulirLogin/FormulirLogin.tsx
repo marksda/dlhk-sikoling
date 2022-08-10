@@ -38,7 +38,7 @@ export const FormulirLogin: FC = () => {
                 src={logo}
             />
             <Label styles={labelStyle}>Sign in</Label>
-            <TextField placeholder="User atau email" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>   
+            <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>   
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                 <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Tidak memiliki akun?</Label> 
                 <ActionButton iconProps={addFriendIcon}>

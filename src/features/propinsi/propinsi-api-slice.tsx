@@ -4,7 +4,7 @@ import { baseRestAPIUrl, defaultHalaman as halaman } from "../../features/config
 
 // const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
-export const propinsiApiSlice = createApi({
+export const PropinsiApiSlice = createApi({
     reducerPath: 'propinsiApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
@@ -31,4 +31,4 @@ export const propinsiApiSlice = createApi({
     }
 });
 
-export const { useGetAllPropinsiQuery, useGetPropinsiByPageQuery, useGetPropinsiByNamaQuery, useGetPropinsiByNamaAndPageQuery } = propinsiApiSlice;
+export const { useGetAllPropinsiQuery, useGetPropinsiByPageQuery, useGetPropinsiByNamaQuery, useGetPropinsiByNamaAndPageQuery } = PropinsiApiSlice;
