@@ -3,10 +3,6 @@ import { FC } from "react";
 import logo from '../../sidoarjo.svg';
 
 
-// const columnProps: Partial<IStackProps> = {
-//     tokens: { childrenGap: 16 },
-//     styles: { root: { width: 300} },
-// };
 const stackTokens = { childrenGap: 2 }
 
 const labelStyle: ILabelStyles  = {
@@ -21,11 +17,6 @@ const labelStyle: ILabelStyles  = {
 const contactIcon: IIconProps = { iconName: 'Contact' }
 const addFriendIcon: IIconProps = { iconName: 'AddFriend' }
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' }
-
-// const imageProps: IImageProps = {
-//     imageFit: ImageFit.contain,
-//     styles: props => ({ root: { border: '1px solid ' + props.theme.palette.neutralSecondary } }),
-//   };
 
 export const FormulirLogin: FC = () => {
     // const [ addPerson ] = useAddPersonMutation();
@@ -43,12 +34,13 @@ export const FormulirLogin: FC = () => {
                 height={42}
                 src={logo}
             />
+            <div>
             <Label styles={labelStyle}>Sign in</Label>
-            <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>   
+            <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Tidak memiliki akun?</Label> 
+                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
                 <ActionButton iconProps={addFriendIcon}>
-                Buat Akun Baru
+                    daftar sekarang!
                 </ActionButton>
             </Stack>                 
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
@@ -62,6 +54,7 @@ export const FormulirLogin: FC = () => {
                 onClick={onButtonSimpanClick} 
                 style={{marginTop: 24, width: 100, float: 'right'}}
                 />
+            </div>
         </div>
     );
 };
