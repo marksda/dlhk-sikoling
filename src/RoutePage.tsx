@@ -29,21 +29,9 @@ const RoutePage: React.FunctionComponent = () => {
     //         <div>sudah login</div>
     //     )
     // }   
-
-    const onButtonSimpanClick = () => { 
-        //aksi
-    };
     
     return (
-        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
-            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
-            <FormulirLogin />
-            <PrimaryButton 
-                text="Berikutnya" 
-                onClick={onButtonSimpanClick} 
-                style={{marginTop: 24, width: 100, float: 'right'}}
-                />
-        </div>         
+        <FormulirLogin />
     );
 }
 

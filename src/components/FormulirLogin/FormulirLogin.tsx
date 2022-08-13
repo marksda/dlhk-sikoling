@@ -1,4 +1,4 @@
-import { ActionButton, IIconProps, ILabelStyles, Image, IStackProps, Label, Stack, TextField } from "@fluentui/react";
+import { ActionButton, DefaultEffects, IIconProps, ILabelStyles, Image, IStackProps, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { FC } from "react";
 import logo from '../../sidoarjo.svg';
 
@@ -28,9 +28,15 @@ const settingIcon: IIconProps = { iconName: 'PlayerSettings' }
 //   };
 
 export const FormulirLogin: FC = () => {
+    // const [ addPerson ] = useAddPersonMutation();
+
+    const onButtonSimpanClick = () => { 
+        //aksi
+    };
 
     return(
-        <>
+        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
+            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
             <Image
                 alt='logo'
                 width={42}
@@ -51,6 +57,11 @@ export const FormulirLogin: FC = () => {
                 Reset Akun
                 </ActionButton>
             </Stack>
-        </>
+            <PrimaryButton 
+                text="Berikutnya" 
+                onClick={onButtonSimpanClick} 
+                style={{marginTop: 24, width: 100, float: 'right'}}
+                />
+        </div>
     );
 };

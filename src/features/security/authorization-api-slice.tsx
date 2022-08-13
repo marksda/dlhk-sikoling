@@ -12,6 +12,7 @@ export const AuthorizationApiSlice = createApi({
             cekUserName: builder.query<string, void>({
                 query: (nama) => `user/cek_user_name?userName=${nama}`,
             }),
+            
         }
     }
 });

@@ -60,6 +60,7 @@ export const FormulirPemrakarsa: FC = () => {
     const { data: dataBentukUsaha = [], isFetching: isFetchingBentukUsaha} = useGetBentukUsahaByPelakuUsahaQuery(
         jenisPelakuUsaha?.id as string
         );
+        
     const dataBentukUsahaOptions = dataBentukUsaha.map((t) => { 
         return {key: t.id as string, text: `${t.nama} (${t.singkatan})`}; 
     });
