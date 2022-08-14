@@ -35,25 +35,27 @@ export const FormulirLogin: FC = () => {
                 src={logo}
             />
             <div className="userlogin">
-            <Label styles={labelStyle}>Sign in</Label>
-            <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
-                <ActionButton iconProps={addFriendIcon}>
-                    daftar sekarang!
-                </ActionButton>
-            </Stack>                 
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa akun?</Label> 
-                <ActionButton iconProps={settingIcon}>
-                Reset Akun
-                </ActionButton>
-            </Stack>
-            <PrimaryButton 
-                text="Berikutnya" 
-                onClick={onButtonSimpanClick} 
-                style={{marginTop: 24, width: 100, float: 'right'}}
-                />
+                <Label styles={labelStyle}>Sign in</Label>
+                <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
+                    <ActionButton iconProps={addFriendIcon} styles={{root: {color: '#0067b8'}}}>
+                        daftar sekarang!
+                    </ActionButton>
+                </Stack>                 
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa akun?</Label> 
+                    <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
+                        Reset Akun
+                    </ActionButton>
+                </Stack>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Berikutnya" 
+                        onClick={onButtonSimpanClick} 
+                        style={{marginTop: 24, width: 100}}
+                        />
+                </Stack>
             </div>
         </div>
     );

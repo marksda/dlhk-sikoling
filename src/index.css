@@ -13,17 +13,13 @@ code {
 }
 
 div.userlogin {
-  animation-name: userslidein;
-  animation-duration: 3;
-  animation-delay: 4s;
+  margin-left: 0%;
+  animation-name: sileout;
+  animation-duration: 3s;
 }
 
-@keyframes slidein {
-  from {
-    margin-left: 0%;    width: 300%;
-  }
-
-  to {
-    margin-left: -100%;    width: 100%;
+@keyframes sileout {
+  100% {
+    margin-left: -200%;    
   }
 }
