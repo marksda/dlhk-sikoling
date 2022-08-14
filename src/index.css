@@ -16,6 +16,7 @@ div.userlogin {
   margin-left: 0%;
   animation-name: sileout;
   animation-duration: 3s;
+  animation-fill-mode: forwards;
 }
 
 @keyframes sileout {
