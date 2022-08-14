@@ -34,7 +34,7 @@ export const FormulirLogin: FC = () => {
                 height={42}
                 src={logo}
             />
-            <div>
+            <div className="userlogin">
             <Label styles={labelStyle}>Sign in</Label>
             <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8}}}/>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
