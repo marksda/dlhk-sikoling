@@ -27,7 +27,7 @@ export const FormulirLogin: FC = () => {
     console.log(isAda);
 
     const onButtonSimpanClick = () => { 
-        setUserName('marksda');
+        // setUserName('marksda');        
     };
 
     return(
@@ -39,7 +39,7 @@ export const FormulirLogin: FC = () => {
                 height={42}
                 src={logo}
             />
-            <div className="userloginx">
+            <div>
                 <Label styles={labelStyle}>Sign in</Label>
                 <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
