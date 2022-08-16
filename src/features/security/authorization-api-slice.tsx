@@ -9,7 +9,7 @@ export const AuthorizationApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            cekUserName: builder.query<string, void>({
+            cekUserName: builder.query<string, void|string>({
                 query: (nama) => `user/cek_user_name?userName=${nama}`,
             }),
             

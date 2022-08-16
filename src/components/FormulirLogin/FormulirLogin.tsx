@@ -1,5 +1,6 @@
 import { ActionButton, DefaultEffects, IIconProps, ILabelStyles, Image, IStackProps, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
 
 
@@ -19,10 +20,14 @@ const addFriendIcon: IIconProps = { iconName: 'AddFriend' }
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' }
 
 export const FormulirLogin: FC = () => {
+    const [authenticationState, setAuthenticationState] = useState<string>('userName');
+    const [userName, setUserName] = useState<string>('');
+    const { data: isAda = [], isFetching: isFetchingDataPropinsi } = useCekUserNameQuery(userName);
     // const [ addPerson ] = useAddPersonMutation();
+    console.log(isAda);
 
     const onButtonSimpanClick = () => { 
-        //aksi
+        setUserName('marksda');
     };
 
     return(
@@ -34,7 +39,7 @@ export const FormulirLogin: FC = () => {
                 height={42}
                 src={logo}
             />
-            <div className="userlogin">
+            <div className="userloginx">
                 <Label styles={labelStyle}>Sign in</Label>
                 <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
