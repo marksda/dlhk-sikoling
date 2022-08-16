@@ -5,8 +5,7 @@ import { useCekUserNameQuery } from "../../features/security/authorization-api-s
 import logo from '../../sidoarjo.svg';
 
 
-const stackTokens = { childrenGap: 2 }
-
+const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
     root: {
        fontWeight: 600,
@@ -14,21 +13,29 @@ const labelStyle: ILabelStyles  = {
        fontSize: '1.5rem', 
        marginTop: 16
     }
-}
-
-const contactIcon: IIconProps = { iconName: 'Contact' }
-const addFriendIcon: IIconProps = { iconName: 'AddFriend' }
-const settingIcon: IIconProps = { iconName: 'PlayerSettings' }
+};
+const contactIcon: IIconProps = { iconName: 'Contact' };
+const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
+const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
+const variantsUserName = {
+    open: { opacity: 1, x: 0 },
+    closed: { opacity: 0, x: "-10%", display: 'none' },
+};
+const variantsPassword = {
+    open: { opacity: 1, x: 0, display: 'block' },
+    closed: { opacity: 0, x: "10%" },
+};
 
 export const FormulirLogin: FC = () => {
-    const [authenticationState, setAuthenticationState] = useState<string>('userName');
+    const [authenticationUserNamaeState, setAuthenticationUserNameState] = useState<boolean>(true);
     const [userName, setUserName] = useState<string>('');
     const { data: isAda = [], isFetching: isFetchingDataPropinsi } = useCekUserNameQuery(userName);
     // const [ addPerson ] = useAddPersonMutation();
-    console.log(isAda);
+    // console.log(isAda);
+    
 
     const onButtonSimpanClick = () => { 
-        // setUserName('marksda');        
+        setAuthenticationUserNameState(!authenticationUserNamaeState);     
     };
 
     return(
@@ -41,9 +48,9 @@ export const FormulirLogin: FC = () => {
                 src={logo}
             />
             <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.5 }}
+                 animate={authenticationUserNamaeState ? "open" : "closed"}
+                 variants={variantsUserName}
+                 transition={{ duration: 0.5 }}
             >
                 <Label styles={labelStyle}>Sign in</Label>
                 <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
@@ -52,16 +59,32 @@ export const FormulirLogin: FC = () => {
                     <ActionButton iconProps={addFriendIcon} styles={{root: {color: '#0067b8'}}}>
                         daftar sekarang!
                     </ActionButton>
-                </Stack>                 
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa akun?</Label> 
-                    <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
-                        Reset Akun
-                    </ActionButton>
                 </Stack>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Berikutnya" 
+                        onClick={onButtonSimpanClick} 
+                        style={{marginTop: 24, width: 100}}
+                        />
+                </Stack>
+            </motion.div>
+            <motion.div
+                initial={{display: 'none'}}
+                 animate={ !authenticationUserNamaeState ? "open" : "closed" }
+                 variants={variantsPassword}
+                 transition={{ duration: 0.5 }}
+            >
+                <Label styles={labelStyle}>Sign in</Label>
+                <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
+                    <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
+                        Reset password
+                    </ActionButton>
+                </Stack>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Masuk" 
                         onClick={onButtonSimpanClick} 
                         style={{marginTop: 24, width: 100}}
                         />
