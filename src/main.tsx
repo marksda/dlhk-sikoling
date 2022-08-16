@@ -1,15 +1,19 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { initializeIcons } from '@fluentui/font-icons-mdl2'
-import { Provider } from 'react-redux'
-import { store } from './app/store'
-import './index.css'
-import RoutePage from './RoutePage'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import './index.css';
+import RoutePage from './RoutePage';
 
 initializeIcons()
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+
+
+root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
@@ -18,6 +22,5 @@ ReactDOM.render(
         </Routes>
       </BrowserRouter>
     </Provider>    
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 )
