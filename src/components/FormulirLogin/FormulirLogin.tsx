@@ -1,5 +1,6 @@
 import { ActionButton, DefaultEffects, IIconProps, ILabelStyles, Image, IStackProps, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { FC, useState } from "react";
+import { motion } from "framer-motion";
 import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
 
@@ -39,7 +40,11 @@ export const FormulirLogin: FC = () => {
                 height={42}
                 src={logo}
             />
-            <div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5 }}
+            >
                 <Label styles={labelStyle}>Sign in</Label>
                 <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
@@ -61,7 +66,7 @@ export const FormulirLogin: FC = () => {
                         style={{marginTop: 24, width: 100}}
                         />
                 </Stack>
-            </div>
+            </motion.div>
         </div>
     );
 };
