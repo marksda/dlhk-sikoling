@@ -1,6 +1,6 @@
 import { ActionButton, DefaultEffects, IIconProps, ILabelStyles, Image, IStackProps, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { FC, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
 
@@ -15,27 +15,71 @@ const labelStyle: ILabelStyles  = {
     }
 };
 const contactIcon: IIconProps = { iconName: 'Contact' };
+const lockIcon: IIconProps = { iconName: 'Lock' };
 const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
+const duration: number = 1;
 const variantsUserName = {
-    open: { opacity: 1, x: 0 },
-    closed: { opacity: 0, x: "-10%", display: 'none' },
+    open: { 
+        opacity: 1, 
+        x: 0,      
+        transition: {
+            duration
+        },   
+    },
+    closed: { 
+        opacity: 0, 
+        x: '-15%', 
+        transition: {
+            duration
+        },
+    },
 };
 const variantsPassword = {
-    open: { opacity: 1, x: 0, display: 'block' },
-    closed: { opacity: 0, x: "10%" },
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "15%", 
+        transition: {
+            duration
+        },
+    },
 };
 
 export const FormulirLogin: FC = () => {
-    const [authenticationUserNamaeState, setAuthenticationUserNameState] = useState<boolean>(true);
-    const [userName, setUserName] = useState<string>('');
-    const { data: isAda = [], isFetching: isFetchingDataPropinsi } = useCekUserNameQuery(userName);
+    const [animUserName, setAnimUserName] = useState<string>('open');
+    const [animPassword, setAnimPassword] = useState<string>('closed');
+    const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
+    // const [userName, setUserName] = useState<string>('');
+    // const { data: isAda = [], isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
     // const [ addPerson ] = useAddPersonMutation();
-    // console.log(isAda);
-    
 
-    const onButtonSimpanClick = () => { 
-        setAuthenticationUserNameState(!authenticationUserNamaeState);     
+    const onButtonLanjutClick = () => {         
+        setAnimUserName(animUserName=='open'?'closed':'open'); 
+        setTimeout(
+            () => {
+                setFlipDisplay(!flipDisplay); 
+                setAnimPassword(animPassword=='open'?'closed':'open');
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonMasukClick = () => {         
+        setAnimPassword(animPassword=='open'?'closed':'open');
+        setTimeout(
+            () => {
+                setFlipDisplay(!flipDisplay);
+                setAnimUserName(animUserName=='open'?'closed':'open'); 
+            },
+            duration*1000
+        );
     };
 
     return(
@@ -48,9 +92,9 @@ export const FormulirLogin: FC = () => {
                 src={logo}
             />
             <motion.div
-                 animate={authenticationUserNamaeState ? "open" : "closed"}
-                 variants={variantsUserName}
-                 transition={{ duration: 0.5 }}
+                animate={animUserName}
+                variants={variantsUserName}
+                style={flipDisplay?{display:'block'}:{display:'none'}}
             >
                 <Label styles={labelStyle}>Sign in</Label>
                 <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
@@ -63,19 +107,18 @@ export const FormulirLogin: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Berikutnya" 
-                        onClick={onButtonSimpanClick} 
+                        onClick={onButtonLanjutClick} 
                         style={{marginTop: 24, width: 100}}
                         />
                 </Stack>
             </motion.div>
             <motion.div
-                initial={{display: 'none'}}
-                 animate={ !authenticationUserNamaeState ? "open" : "closed" }
-                 variants={variantsPassword}
-                 transition={{ duration: 0.5 }}
+                animate={animPassword}
+                variants={variantsPassword}
+                style={!flipDisplay?{display:'block'}:{display:'none'}}
             >
-                <Label styles={labelStyle}>Sign in</Label>
-                <TextField placeholder="user name" iconProps={contactIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
+                <Label styles={labelStyle}>nama</Label>
+                <TextField placeholder="user name" iconProps={lockIcon} underlined styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
                     <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
@@ -85,7 +128,7 @@ export const FormulirLogin: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Masuk" 
-                        onClick={onButtonSimpanClick} 
+                        onClick={onButtonMasukClick} 
                         style={{marginTop: 24, width: 100}}
                         />
                 </Stack>
