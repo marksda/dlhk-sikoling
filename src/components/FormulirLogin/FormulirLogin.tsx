@@ -26,9 +26,10 @@ const backIcon: IIconProps = {
         color: 'grey',
         fontSize: '0.8rem',
     }
- };
+};
 const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
+
 const duration: number = 0.5;
 const variantsUserName = {
     open: { 
@@ -69,11 +70,14 @@ export const FormulirLogin: FC = () => {
     const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
     const [userName, setUserName] = useState<string>('');
     const [userPassword, setUserPassword] = useState<string>('');
-    // const { data: dataCekUserName = [], isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    const { data: dataCekUserName = [], isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    // console.log(dataCekUserName);
+    // var nama: string = '';
 
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             setUserName(newValue || '');
+            // nama = newValue || '';
         },
         [],
     );
@@ -94,6 +98,7 @@ export const FormulirLogin: FC = () => {
             },
             duration*1000
         );
+        // setUserName(nama);
     };
 
     const onButtonMasukClick = () => {         
@@ -127,7 +132,7 @@ export const FormulirLogin: FC = () => {
                 width={42}
                 height={42}
                 src={logo}
-            />
+                />
             <div style={{height: 8}}></div>
             <motion.div
                 animate={animUserName}
