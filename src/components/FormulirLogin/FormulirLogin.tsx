@@ -101,6 +101,7 @@ export const FormulirLogin: FC = () => {
         },
         [],
     );
+    
     const onButtonMasukClick = () => {         
         // setAnimPassword(animPassword=='open'?'closed':'open');
         // setTimeout(
