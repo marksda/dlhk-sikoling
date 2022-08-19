@@ -72,9 +72,7 @@ export const FormulirLogin: FC = () => {
     const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
     const [userName, setUserName] = useState<string>('');
     const [userPassword, setUserPassword] = useState<string>('');    
-    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
-    console.log(dataCekUserName);
-    
+    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);    
 
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
