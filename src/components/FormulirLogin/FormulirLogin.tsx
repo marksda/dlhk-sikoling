@@ -211,4 +211,5 @@ export const FormulirLogin: FC = () => {
             </motion.div>
         </div>
     );
+    
 };
