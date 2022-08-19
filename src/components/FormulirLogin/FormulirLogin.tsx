@@ -64,20 +64,22 @@ const variantsPassword = {
     },
 };
 
+let nama: string = '';
+
 export const FormulirLogin: FC = () => {
     const [animUserName, setAnimUserName] = useState<string>('open');
     const [animPassword, setAnimPassword] = useState<string>('closed');
     const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
     const [userName, setUserName] = useState<string>('');
-    const [userPassword, setUserPassword] = useState<string>('');
-    const { data: dataCekUserName = [], isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
-    // console.log(dataCekUserName);
-    // var nama: string = '';
+    const [userPassword, setUserPassword] = useState<string>('');    
+    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    console.log(dataCekUserName);
+    
 
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            setUserName(newValue || '');
-            // nama = newValue || '';
+            // setUserName(newValue || '');
+            nama = newValue!;
         },
         [],
     );
@@ -89,16 +91,16 @@ export const FormulirLogin: FC = () => {
         [],
     );
 
-    const onButtonLanjutClick = () => {         
-        setAnimUserName(animUserName=='open'?'closed':'open'); 
-        setTimeout(
-            () => {
-                setFlipDisplay(!flipDisplay); 
-                setAnimPassword(animPassword=='open'?'closed':'open');
-            },
-            duration*1000
-        );
-        // setUserName(nama);
+    const onButtonLanjutClick = () => {      
+        setUserName(nama); 
+        // setAnimUserName(animUserName=='open'?'closed':'open'); 
+        // setTimeout(
+        //     () => {
+        //         setFlipDisplay(!flipDisplay); 
+        //         setAnimPassword(animPassword=='open'?'closed':'open');
+        //     },
+        //     duration*1000
+        // );        
     };
 
     const onButtonMasukClick = () => {         
@@ -144,7 +146,6 @@ export const FormulirLogin: FC = () => {
                 </Stack>
                 <TextField 
                     placeholder="Email, telepon, atau nik" 
-                    value={userName}
                     onChange={onChangeUserNameValue}
                     iconProps={contactIcon} 
                     underlined 
