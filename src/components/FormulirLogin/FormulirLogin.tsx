@@ -67,24 +67,18 @@ const variantsPassword = {
 let nama: string = '';
 
 export const FormulirLogin: FC = () => {
+
     const [animUserName, setAnimUserName] = useState<string>('open');
     const [animPassword, setAnimPassword] = useState<string>('closed');
     const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
     const [userName, setUserName] = useState<string>('');
     const [userPassword, setUserPassword] = useState<string>('');    
-    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);    
-
+    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             // setUserName(newValue || '');
             nama = newValue!;
-        },
-        [],
-    );
-
-    const onChangeUserPasswordValue = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            setUserPassword(newValue || '');
         },
         [],
     );
@@ -101,6 +95,12 @@ export const FormulirLogin: FC = () => {
         // );        
     };
 
+    const onChangeUserPasswordValue = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            setUserPassword(newValue || '');
+        },
+        [],
+    );
     const onButtonMasukClick = () => {         
         // setAnimPassword(animPassword=='open'?'closed':'open');
         // setTimeout(
@@ -211,5 +211,5 @@ export const FormulirLogin: FC = () => {
             </motion.div>
         </div>
     );
-    
+
 };
