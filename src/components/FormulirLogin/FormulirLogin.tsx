@@ -121,7 +121,7 @@ export const FormulirLogin: FC = () => {
             },
             duration*1000
         );  
-    }, [variant]);
+    }, []);
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
