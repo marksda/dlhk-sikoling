@@ -83,32 +83,37 @@ const variantsPassword = {
     },
 };
 
+const loginAuthentication: IAuthentication = {
+    userName: '',
+    password: '',
+};
 
 export const FormulirLogin: FC = () => {
-
-    const loginAuthentication: IAuthentication = {
-        userName: '',
-        password: '',
-    };
+   
     const [variant, setVariant] = useState<IStateAnimationFramer>({
         animUserName: 'open',
         animPassword: 'closed',
         flipDisplay: true,
     });
-    const [userName, setUserName] = useState<string>('');
-    const [userPassword, setUserPassword] = useState<string>('');    
+    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
+        userName: '',
+        password: '',
+    });
     // const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            // setUserName(newValue || '');
-            loginAuthentication.userName = newValue!;
+            // loginAuthentication.userName = newValue!;
+            setLoginAuthentication(
+                (prev) => (
+                    {...prev, userName: newValue!}
+                )
+            );
         },
-        [userName],
+        [],
     );
 
-    const onButtonLanjutClick = () => {      
-        // setUserName(nama); 
+    const onButtonLanjutClick = useCallback(() => {   
         // setAnimUserName(animUserName=='open'?'closed':'open'); 
         // setTimeout(
         //     () => {
@@ -116,8 +121,15 @@ export const FormulirLogin: FC = () => {
         //         setAnimPassword(animPassword=='open'?'closed':'open');
         //     },
         //     duration*1000
-        // );        
-    };
+        // ); 
+        setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+        setTimeout(
+            () => {
+                setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+            },
+            duration*1000
+        );  
+    }, [variant]);
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
