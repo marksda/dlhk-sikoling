@@ -1,7 +1,9 @@
-import { ActionButton, DefaultEffects, IconButton, IIconProps, ILabelStyles, Image, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import { 
+    ActionButton, DefaultEffects, IconButton, IIconProps, 
+    ILabelStyles, Image, Label, PrimaryButton, Stack, TextField 
+} from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-// import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
 
 
@@ -82,11 +84,6 @@ const variantsPassword = {
         },
     },
 };
-
-// const loginAuthentication: IAuthentication = {
-//     userName: '',
-//     password: '',
-// };
 
 export const FormulirLogin: FC = () => {
    
