@@ -125,10 +125,13 @@ export const FormulirLogin: FC = () => {
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            // setUserPassword(newValue || '');
-            loginAuthentication.password = newValue!;
+            setLoginAuthentication(
+                (prev) => (
+                    {...prev, password: newValue!}
+                )
+            );
         },
-        [userPassword],
+        [],
     );
     
     const onButtonMasukClick = () => {         
