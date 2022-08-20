@@ -1,11 +1,23 @@
 import { ActionButton, DefaultEffects, IconButton, IIconProps, ILabelStyles, Image, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
+// import { useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
 
 
+interface IAuthentication {
+    userName: string;
+    password: string;
+};
+
+interface IStateAnimationFramer {
+    animUserName: string;
+    animPassword: String;
+    flipDisplay: boolean;
+}
+
 const stackTokens = { childrenGap: 2 };
+
 const labelStyle: ILabelStyles  = {
     root: {
        fontWeight: 600,
@@ -13,13 +25,16 @@ const labelStyle: ILabelStyles  = {
        fontSize: '1.5rem', 
     }
 };
+
 const labelUserNameStyle: ILabelStyles  = {
     root: {
        fontWeight: 400,
        fontSize: '1rem', 
     }
 };
+
 const contactIcon: IIconProps = { iconName: 'Contact' };
+
 const backIcon: IIconProps = { 
     iconName: 'Back',
     style: {
@@ -27,10 +42,13 @@ const backIcon: IIconProps = {
         fontSize: '0.8rem',
     }
 };
+
 const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
+
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
 
 const duration: number = 0.5;
+
 const variantsUserName = {
     open: { 
         opacity: 1, 
@@ -47,6 +65,7 @@ const variantsUserName = {
         },
     },
 };
+
 const variantsPassword = {
     open: {       
         opacity: 1, 
@@ -64,27 +83,32 @@ const variantsPassword = {
     },
 };
 
-let nama: string = '';
 
 export const FormulirLogin: FC = () => {
 
-    const [animUserName, setAnimUserName] = useState<string>('open');
-    const [animPassword, setAnimPassword] = useState<string>('closed');
-    const [flipDisplay, setFlipDisplay] = useState<boolean>(true);
+    const loginAuthentication: IAuthentication = {
+        userName: '',
+        password: '',
+    };
+    const [variant, setVariant] = useState<IStateAnimationFramer>({
+        animUserName: 'open',
+        animPassword: 'closed',
+        flipDisplay: true,
+    });
     const [userName, setUserName] = useState<string>('');
     const [userPassword, setUserPassword] = useState<string>('');    
-    const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    // const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             // setUserName(newValue || '');
-            nama = newValue!;
+            loginAuthentication.userName = newValue!;
         },
-        [],
+        [userName],
     );
 
     const onButtonLanjutClick = () => {      
-        setUserName(nama); 
+        // setUserName(nama); 
         // setAnimUserName(animUserName=='open'?'closed':'open'); 
         // setTimeout(
         //     () => {
@@ -97,9 +121,10 @@ export const FormulirLogin: FC = () => {
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            setUserPassword(newValue || '');
+            // setUserPassword(newValue || '');
+            loginAuthentication.password = newValue!;
         },
-        [],
+        [userPassword],
     );
     
     const onButtonMasukClick = () => {         
@@ -114,12 +139,11 @@ export const FormulirLogin: FC = () => {
     };
 
     const onButtonUserNameBackClick = () => {         
-        setAnimPassword(animPassword=='open'?'closed':'open');
+        setVariant((prev) =>({...prev, animPassword: 'closed'}));
         setTimeout(
             () => {
                 setUserPassword('');
-                setFlipDisplay(!flipDisplay);
-                setAnimUserName(animUserName=='open'?'closed':'open'); 
+                setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animUserName: 'open'}));
             },
             duration*1000
         );
@@ -136,9 +160,9 @@ export const FormulirLogin: FC = () => {
                 />
             <div style={{height: 8}}></div>
             <motion.div
-                animate={animUserName}
+                animate={variant.animUserName}
                 variants={variantsUserName}
-                style={flipDisplay?{display:'block'}:{display:'none'}}
+                style={variant.flipDisplay?{display:'block'}:{display:'none'}}
             >
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={labelStyle}>Masuk</Label>
@@ -164,7 +188,7 @@ export const FormulirLogin: FC = () => {
                 </Stack>
             </motion.div>
             <motion.div
-                animate={animPassword}
+                animate={variant.animPassword}
                 variants={variantsPassword}
                 style={!flipDisplay?{display:'block'}:{display:'none'}}
             >

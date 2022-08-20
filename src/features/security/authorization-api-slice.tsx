@@ -9,7 +9,7 @@ export const AuthorizationApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            cekUserName: builder.query<string, void|string>({
+            cekUserName: builder.mutation<string, void|string>({
                 query: (nama) => `user/cek_user_name?userName=${nama}`,
             }),
             
@@ -17,4 +17,4 @@ export const AuthorizationApiSlice = createApi({
     }
 });
 
-export const { useCekUserNameQuery } = AuthorizationApiSlice;
+export const { useCekUserNameMutation } = AuthorizationApiSlice;
