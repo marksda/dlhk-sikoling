@@ -103,7 +103,6 @@ export const FormulirLogin: FC = () => {
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            // loginAuthentication.userName = newValue!;
             setLoginAuthentication(
                 (prev) => (
                     {...prev, userName: newValue!}
@@ -180,6 +179,7 @@ export const FormulirLogin: FC = () => {
                 </Stack>
                 <TextField 
                     placeholder="Email, telepon, atau nik" 
+                    value={loginAuthentication.userName}
                     onChange={onChangeUserNameValue}
                     iconProps={contactIcon} 
                     underlined 
@@ -224,6 +224,7 @@ export const FormulirLogin: FC = () => {
                 </Stack>                
                 <TextField 
                     placeholder="Sandi" 
+                    value={loginAuthentication.password}
                     onChange={onChangeUserPasswordValue}
                     underlined 
                     type="password"
