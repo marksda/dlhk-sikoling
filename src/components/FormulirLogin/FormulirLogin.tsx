@@ -12,7 +12,7 @@ interface IAuthentication {
 
 interface IStateAnimationFramer {
     animUserName: string;
-    animPassword: String;
+    animPassword: string;
     flipDisplay: boolean;
 }
 
@@ -190,7 +190,7 @@ export const FormulirLogin: FC = () => {
             <motion.div
                 animate={variant.animPassword}
                 variants={variantsPassword}
-                style={!flipDisplay?{display:'block'}:{display:'none'}}
+                style={!variant.flipDisplay?{display:'block'}:{display:'none'}}
             >
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>                    
                     <IconButton 
