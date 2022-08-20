@@ -83,10 +83,10 @@ const variantsPassword = {
     },
 };
 
-const loginAuthentication: IAuthentication = {
-    userName: '',
-    password: '',
-};
+// const loginAuthentication: IAuthentication = {
+//     userName: '',
+//     password: '',
+// };
 
 export const FormulirLogin: FC = () => {
    
@@ -114,14 +114,6 @@ export const FormulirLogin: FC = () => {
     );
 
     const onButtonLanjutClick = useCallback(() => {   
-        // setAnimUserName(animUserName=='open'?'closed':'open'); 
-        // setTimeout(
-        //     () => {
-        //         setFlipDisplay(!flipDisplay); 
-        //         setAnimPassword(animPassword=='open'?'closed':'open');
-        //     },
-        //     duration*1000
-        // ); 
         setVariant((prev) =>({...prev, animUserName: 'closed'}));     
         setTimeout(
             () => {
@@ -154,7 +146,11 @@ export const FormulirLogin: FC = () => {
         setVariant((prev) =>({...prev, animPassword: 'closed'}));
         setTimeout(
             () => {
-                setUserPassword('');
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
                 setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animUserName: 'open'}));
             },
             duration*1000
@@ -218,14 +214,13 @@ export const FormulirLogin: FC = () => {
                                 marginTop: 2,
                             }
                         }}/>
-                    <Label styles={labelUserNameStyle}>{userName}</Label>
+                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
                 </Stack>                
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={labelStyle}>Masukkan sandi</Label>
                 </Stack>                
                 <TextField 
                     placeholder="Sandi" 
-                    value={userPassword}
                     onChange={onChangeUserPasswordValue}
                     underlined 
                     type="password"
