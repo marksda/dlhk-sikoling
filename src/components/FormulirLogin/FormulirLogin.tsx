@@ -5,6 +5,7 @@ import {
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
+import { useCekUserNameMutation } from "../../features/security/authorization-api-slice";
 
 
 interface IAuthentication {
@@ -96,28 +97,45 @@ export const FormulirLogin: FC = () => {
         userName: '',
         password: '',
     });
-    // const { data: dataCekUserName = false, isFetching: isFetchingDataCekuserName } = useCekUserNameQuery(userName);
+    const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             setLoginAuthentication(
                 (prev) => (
-                    {...prev, userName: newValue!}
+                    {...prev, userName: newValue||''}
                 )
             );
         },
         [],
     );
 
-    const onButtonLanjutClick = useCallback(() => {   
-        setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-        setTimeout(
-            () => {
-                setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-            },
-            duration*1000
-        );  
-    }, []);
+    const onButtonLanjutClick = async () => {   
+        // setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+        // setTimeout(
+        //     () => {
+        //         setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+        //     },
+        //     duration*1000
+        // );     
+        try {
+            const hasil = await cekUserName(loginAuthentication.userName).unwrap();
+            console.log(hasil);
+            if(hasil == true) {
+                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                setTimeout(
+                    () => {
+                        setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+                    },
+                    duration*1000
+                ); 
+            }
+        }   
+        catch (err) {
+            console.log(err);
+        }  
+        
+    };
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -179,6 +197,7 @@ export const FormulirLogin: FC = () => {
                     value={loginAuthentication.userName}
                     onChange={onChangeUserNameValue}
                     iconProps={contactIcon} 
+                    disabled={isLoadingCekUserName}
                     underlined 
                     styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
@@ -192,6 +211,7 @@ export const FormulirLogin: FC = () => {
                         text="Berikutnya" 
                         onClick={onButtonLanjutClick} 
                         style={{marginTop: 24, width: 100}}
+                        disabled={isLoadingCekUserName}
                         />
                 </Stack>
             </motion.div>
