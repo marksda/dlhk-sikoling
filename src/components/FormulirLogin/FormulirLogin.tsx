@@ -97,31 +97,29 @@ export const FormulirLogin: FC = () => {
         userName: '',
         password: '',
     });
+    const [errorUserName, setErrorUserName] = useState<string>('');
     const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorUserName.length != 0) {                
+                setErrorUserName('');
+            }
+
             setLoginAuthentication(
                 (prev) => (
                     {...prev, userName: newValue||''}
                 )
             );
         },
-        [],
+        [errorUserName, setLoginAuthentication],
     );
 
-    const onButtonLanjutClick = async () => {   
-        // setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-        // setTimeout(
-        //     () => {
-        //         setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-        //     },
-        //     duration*1000
-        // );     
+    const onButtonLanjutClick = async () => { 
         try {
             const hasil = await cekUserName(loginAuthentication.userName).unwrap();
-            console.log(hasil);
             if(hasil == true) {
+                setErrorUserName('');
                 setVariant((prev) =>({...prev, animUserName: 'closed'}));     
                 setTimeout(
                     () => {
@@ -129,6 +127,9 @@ export const FormulirLogin: FC = () => {
                     },
                     duration*1000
                 ); 
+            }
+            else {
+                setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
             }
         }   
         catch (err) {
@@ -196,9 +197,17 @@ export const FormulirLogin: FC = () => {
                     placeholder="Email, telepon, atau nik" 
                     value={loginAuthentication.userName}
                     onChange={onChangeUserNameValue}
+                    onKeyUp={
+                        (event) => {
+                            if(event.key == 'Enter') {
+                                onButtonLanjutClick();
+                            }
+                        }
+                    }
                     iconProps={contactIcon} 
                     disabled={isLoadingCekUserName}
                     underlined 
+                    errorMessage={errorUserName}
                     styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
