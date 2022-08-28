@@ -22,6 +22,9 @@ export const AuthorizationApiSlice = createApi({
                 query: (authenticationData) => ({
                     url: `user/get_token`,
                     method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                    },
                     body: authenticationData,
                 }),
             }),            
