@@ -10,6 +10,11 @@ export interface IToken {
     expireOn: string;
 }
 
+export interface IResponseStatusToken {
+    status: string;
+    token: IToken;
+}
+
 const initialState: IToken = {
     userId: '',
     userName: '',

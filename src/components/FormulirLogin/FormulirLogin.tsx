@@ -5,13 +5,11 @@ import {
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
-import { useCekUserNameMutation } from "../../features/security/authorization-api-slice";
+import { useCekUserNameMutation, useGetTokenMutation } from "../../features/security/authorization-api-slice";
+import { IAuthentication } from "../../features/security/authorization-slice";
+import { IResponseStatusToken } from "../../features/security/token-slice";
 
 
-interface IAuthentication {
-    userName: string;
-    password: string;
-};
 
 interface IStateAnimationFramer {
     animUserName: string;
@@ -98,7 +96,9 @@ export const FormulirLogin: FC = () => {
         password: '',
     });
     const [errorUserName, setErrorUserName] = useState<string>('');
+    const [errorPassword, setErrorPassword] = useState<string>('');
     const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
+    const [getToken, { isLoading: isLoadingGetToken}] = useGetTokenMutation();
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -139,6 +139,10 @@ export const FormulirLogin: FC = () => {
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorUserName.length != 0) {                
+                setErrorPassword('');
+            }
+
             setLoginAuthentication(
                 (prev) => (
                     {...prev, password: newValue!}
@@ -148,15 +152,30 @@ export const FormulirLogin: FC = () => {
         [],
     );
     
-    const onButtonMasukClick = () => {         
-        // setAnimPassword(animPassword=='open'?'closed':'open');
-        // setTimeout(
-        //     () => {
-        //         setFlipDisplay(!flipDisplay);
-        //         setAnimUserName(animUserName=='open'?'closed':'open'); 
-        //     },
-        //     duration*1000
-        // );
+    const onButtonMasukClick = async () => {         
+        try {
+            const hasil: IResponseStatusToken = await getToken(loginAuthentication).unwrap();
+            console.log(hasil);
+            if(hasil.status == 'oke') {
+                setErrorPassword('');
+                // setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                // setTimeout(
+                //     () => {
+                //         setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+                //     },
+                //     duration*1000
+                // ); 
+            }
+            else if(hasil.status == 'need pid') {
+                setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
+            }
+            else {
+                setErrorPassword(`Sandi tidak sesuai dengan akun ${loginAuthentication.userName}, coba gunakan sandi lain.`)
+            }
+        }   
+        catch (err) {
+            console.log(err);
+        }  
     };
 
     const onButtonUserNameBackClick = () => {         
@@ -251,10 +270,19 @@ export const FormulirLogin: FC = () => {
                     placeholder="Sandi" 
                     value={loginAuthentication.password}
                     onChange={onChangeUserPasswordValue}
+                    onKeyUp={
+                        (event) => {
+                            if(event.key == 'Enter') {
+                                onButtonMasukClick();
+                            }
+                        }
+                    }
                     underlined 
                     type="password"
                     canRevealPassword
                     revealPasswordAriaLabel="Tunjukkan sandi"
+                    disabled={isLoadingGetToken}
+                    errorMessage={errorPassword}
                     styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
@@ -267,6 +295,7 @@ export const FormulirLogin: FC = () => {
                         text="Masuk" 
                         onClick={onButtonMasukClick} 
                         style={{marginTop: 24, width: 100}}
+                        disabled={isLoadingGetToken}
                         />
                 </Stack>
             </motion.div>
