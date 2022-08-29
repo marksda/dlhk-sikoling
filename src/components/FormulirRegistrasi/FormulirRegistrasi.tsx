@@ -1,18 +1,19 @@
 import { DefaultEffects, DefaultPalette, Image, IStackItemStyles, IStackTokens, Stack } from "@fluentui/react";
-import { FC } from "react";
+import { motion } from "framer-motion";
+import { FC, useState } from "react";
 import logo from '../../sidoarjo.svg';
 
 const containerStyles: React.CSSProperties = {
     boxShadow: DefaultEffects.elevation4,
     borderTop: '2px solid #0078D7', 
     borderRadius: 3, 
-    padding: 48,
-    width:300,
-    height: 300,
+    padding: 32,
+    width:500,
+    minHeight: 500,
     marginLeft: 'auto',
     marginRight: 'auto',
     background: 'white',
-  };
+};
 const containerStackTokens: IStackTokens = { childrenGap: 5};
 const labelSikolingStyles: IStackItemStyles = {
     root: {
@@ -22,7 +23,37 @@ const labelSikolingStyles: IStackItemStyles = {
     },
 };
 
+interface IStateRegistrasiAnimationFramer {
+    animUserName: string;
+    animPassword: string;
+    flipDisplay: boolean;
+}
+
+const duration: number = 0.5;
+const variantsUserName = {
+    open: { 
+        opacity: 1, 
+        x: 0,      
+        transition: {
+            duration
+        },   
+    },
+    closed: { 
+        opacity: 0, 
+        x: '-15%', 
+        transition: {
+            duration
+        },
+    },
+};
+
 export const FormulirRegistrasi: FC = () => {
+    const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
+        animUserName: 'open',
+        animPassword: 'closed',
+        flipDisplay: true,
+    });
+    
     return(
         <div style={containerStyles}>
             <Stack horizontal tokens={containerStackTokens}>
@@ -33,6 +64,14 @@ export const FormulirRegistrasi: FC = () => {
                     SIKOLING   
                 </Stack.Item>  
             </Stack>
+            <div style={{height: 8}}></div>
+            <motion.div
+                animate={variant.animUserName}
+                variants={variantsUserName}
+                style={variant.flipDisplay?{display:'block'}:{display:'none'}}
+            >
+                
+            </motion.div>
         </div>
     )
 }

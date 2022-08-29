@@ -11,7 +11,8 @@ const containerStyle: React.CSSProperties = {
     verticalAlign: 'middle',
     width: '100vw',
     height: '100vh',
-    // background: 'radial-gradient(circle, rgba(131,58,180,1) 0%, rgba(29,253,194,0.6755077030812324) 48%, rgba(252,176,69,1) 100%)'
+    background: 'RGB(204, 203, 202)'
+    // backgroundImage: 'linear-gradient(to right, #ffecd2 0%, #fcb69f 100%)'
 }
 
 export const UserRegistrasi: FC = () => {

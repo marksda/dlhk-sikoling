@@ -16,7 +16,7 @@ interface IStateAnimationFramer {
     animUserName: string;
     animPassword: string;
     flipDisplay: boolean;
-}
+};
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
