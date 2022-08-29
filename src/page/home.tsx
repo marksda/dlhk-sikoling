@@ -19,16 +19,16 @@ const labelStyles: IStackItemStyles = {
       fontWeight: 500
     },
 };
-
 const dateStyles: IStackItemStyles = {
     root: {
       color: DefaultPalette.white,
-      fontSize: '1em',
-      fontWeight: 350
+      fontSize: '1.0em',
+      fontWeight: 350,
     },
 };
 
 export const Home: FC = () => {
+    const today = new Date().toLocaleDateString();
     return (
         <Stack tokens={containerStackTokens} >
             <Stack horizontal styles={stackStyles} tokens={headerStackTokens}>
@@ -39,7 +39,7 @@ export const Home: FC = () => {
                     DLHK Sidoarjo    
                 </Stack.Item>   
                 <Stack.Item align="center" styles={dateStyles}>
-                    Tanggal
+                    {`${today}`}
                 </Stack.Item>             
             </Stack>                
         </Stack>
