@@ -5,7 +5,8 @@ import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
 import './index.css';
-import RoutePage from './RoutePage';
+// import RoutePage from './RoutePage';
+import { Home } from './page/home';
 
 initializeIcons()
 
@@ -18,7 +19,7 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<RoutePage/>}/>
+          <Route path="/" element={<Home/>}/>
         </Routes>
       </BrowserRouter>
     </Provider>    
