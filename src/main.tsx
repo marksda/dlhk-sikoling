@@ -7,6 +7,7 @@ import { store } from './app/store';
 import './index.css';
 // import RoutePage from './RoutePage';
 import { Home } from './page/home';
+import { UserRegistrasi } from './page/user-registrasi';
 
 initializeIcons()
 
@@ -19,7 +20,8 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/" element={<Home/>}/>         
+          <Route path="registrasi" element={<UserRegistrasi/>}/> 
         </Routes>
       </BrowserRouter>
     </Provider>    

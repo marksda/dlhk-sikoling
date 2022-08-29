@@ -8,6 +8,7 @@ import logo from '../../sidoarjo.svg';
 import { useCekUserNameMutation, useGetTokenMutation } from "../../features/security/authorization-api-slice";
 import { IAuthentication } from "../../features/security/authorization-slice";
 import { IResponseStatusToken } from "../../features/security/token-slice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -28,8 +29,8 @@ const labelStyle: ILabelStyles  = {
 const labelSikolingStyles: IStackItemStyles = {
     root: {
       color: DefaultPalette.blackTranslucent40,
-      fontSize: '1.4em',
-      fontWeight: 500
+      fontSize: '1.2em',
+      fontWeight: 600
     },
 };
 const labelUserNameStyle: ILabelStyles  = {
@@ -97,6 +98,7 @@ export const FormulirLogin: FC = () => {
     const [errorPassword, setErrorPassword] = useState<string>('');
     const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     const [getToken, { isLoading: isLoadingGetToken}] = useGetTokenMutation();
+    const navigate = useNavigate();
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -193,7 +195,7 @@ export const FormulirLogin: FC = () => {
 
     return(
         <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
-            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
+            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48}}>
             <Stack horizontal tokens={containerLoginStackTokens}>
                 <Stack.Item>
                     <Image alt='logo' width={42} height={42} src={logo} />
@@ -229,7 +231,15 @@ export const FormulirLogin: FC = () => {
                     styles={{root: {marginBottom: 8, width: 300}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                     <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
-                    <ActionButton iconProps={addFriendIcon} styles={{root: {color: '#0067b8'}}}>
+                    <ActionButton 
+                        iconProps={addFriendIcon} 
+                        onClick={
+                            () => {
+                                navigate("/registrasi");
+                            }
+                        }
+                        styles={{root: {color: '#0067b8'}}}
+                    >
                         daftar sekarang!
                     </ActionButton>
                 </Stack>

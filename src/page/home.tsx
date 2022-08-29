@@ -6,6 +6,7 @@ import logo from '../sidoarjo.svg';
 
 const containerStackTokens: IStackTokens = { childrenGap: 5};
 const headerStackTokens: IStackTokens = { childrenGap: 16};
+const containerBodyStackTokens: IStackTokens = { childrenGap: 5};
 const stackStyles: IStackStyles = {
     root: {
       background: '#3c8dbc',
@@ -26,6 +27,12 @@ const dateStyles: IStackItemStyles = {
       fontSize: '1.0em',
     },
 };
+const stackBodyStyles: IStackStyles = {
+    root: {
+      paddingLeft: 16,
+      paddingRight: 16,
+    },
+};
 
 export const Home: FC = () => {
     const today = new Date().toLocaleDateString();
@@ -42,7 +49,7 @@ export const Home: FC = () => {
                     {`${today}`}
                 </Stack.Item>             
             </Stack>   
-            <Stack horizontal>
+            <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
                 <FormulirLogin />
             </Stack>             
         </Stack>
