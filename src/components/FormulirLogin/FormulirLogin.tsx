@@ -1,6 +1,6 @@
 import { 
-    ActionButton, DefaultEffects, IconButton, IIconProps, 
-    ILabelStyles, Image, Label, PrimaryButton, Stack, TextField 
+    ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, 
+    ILabelStyles, Image, IStackItemStyles, IStackTokens, Label, PrimaryButton, Stack, TextField 
 } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
@@ -16,9 +16,8 @@ interface IStateAnimationFramer {
     animPassword: string;
     flipDisplay: boolean;
 }
-
+const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 const stackTokens = { childrenGap: 2 };
-
 const labelStyle: ILabelStyles  = {
     root: {
        fontWeight: 600,
@@ -26,16 +25,20 @@ const labelStyle: ILabelStyles  = {
        fontSize: '1.5rem', 
     }
 };
-
+const labelSikolingStyles: IStackItemStyles = {
+    root: {
+      color: DefaultPalette.blackTranslucent40,
+      fontSize: '1.4em',
+      fontWeight: 500
+    },
+};
 const labelUserNameStyle: ILabelStyles  = {
     root: {
        fontWeight: 400,
        fontSize: '1rem', 
     }
 };
-
 const contactIcon: IIconProps = { iconName: 'Contact' };
-
 const backIcon: IIconProps = { 
     iconName: 'Back',
     style: {
@@ -43,13 +46,9 @@ const backIcon: IIconProps = {
         fontSize: '0.8rem',
     }
 };
-
 const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
-
 const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
-
 const duration: number = 0.5;
-
 const variantsUserName = {
     open: { 
         opacity: 1, 
@@ -66,7 +65,6 @@ const variantsUserName = {
         },
     },
 };
-
 const variantsPassword = {
     open: {       
         opacity: 1, 
@@ -196,12 +194,14 @@ export const FormulirLogin: FC = () => {
     return(
         <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
             borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48, margin: 16}}>
-            <Image
-                alt='logo'
-                width={42}
-                height={42}
-                src={logo}
-                />
+            <Stack horizontal tokens={containerLoginStackTokens}>
+                <Stack.Item>
+                    <Image alt='logo' width={42} height={42} src={logo} />
+                </Stack.Item>
+                <Stack.Item align="center" styles={labelSikolingStyles}>
+                    SIKOLING   
+                </Stack.Item>  
+            </Stack>            
             <div style={{height: 8}}></div>
             <motion.div
                 animate={variant.animUserName}

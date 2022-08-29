@@ -1,5 +1,6 @@
 import { DefaultPalette, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
+import { FormulirLogin } from "../components/FormulirLogin/FormulirLogin";
 import logo from '../sidoarjo.svg';
 
 
@@ -23,7 +24,6 @@ const dateStyles: IStackItemStyles = {
     root: {
       color: DefaultPalette.white,
       fontSize: '1.0em',
-      fontWeight: 350,
     },
 };
 
@@ -41,7 +41,10 @@ export const Home: FC = () => {
                 <Stack.Item align="center" styles={dateStyles}>
                     {`${today}`}
                 </Stack.Item>             
-            </Stack>                
+            </Stack>   
+            <Stack horizontal>
+                <FormulirLogin />
+            </Stack>             
         </Stack>
     );
 }
