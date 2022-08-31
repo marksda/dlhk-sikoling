@@ -224,7 +224,7 @@ export const FormulirRegistrasi: FC = () => {
                 telepone: '', 
                 email: loginAuthentication.userName,
             },
-            scanKtp: '',
+            scanKTP: '',
         }
     });
     const [heighArea, setHeightArea] = useState<number>(300);

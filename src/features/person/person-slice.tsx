@@ -15,7 +15,7 @@ export interface IPerson {
     jenisKelamin: IJenisKelamin|null;
     alamat: IAlamat|null;
     kontak: IKontak|null;
-    scanKtp: string|null;
+    scanKTP: string|null;
 }
 
 const initialState: IPerson = {} as IPerson
@@ -54,7 +54,7 @@ export const personSlice = createSlice({
                 telepone: action.payload.kontak!.telepone,
                 email: action.payload.kontak!.email
             };
-            state.scanKtp = action.payload.scanKtp;
+            state.scanKTP = action.payload.scanKTP;
         },
         setNik: (state, action: PayloadAction<string>) => {
             state.nik = action.payload;
@@ -96,7 +96,7 @@ export const personSlice = createSlice({
             };
         },
         setScanKtp: (state, action: PayloadAction<string>) => {
-            state.scanKtp = action.payload;
+            state.scanKTP = action.payload;
         },
     },
 })
