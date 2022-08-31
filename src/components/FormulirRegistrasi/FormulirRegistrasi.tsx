@@ -789,12 +789,14 @@ export const FormulirRegistrasi: FC = () => {
                     <Label styles={labelSandiStyle}>Silahkan upload KTP anda.</Label>
                 </Stack>
                 <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
-                    <Stack.Item>
+                    <Stack.Item align="center">
                         <UploadFilesFluentUi 
                             label='Upload File Hasil Scan KTP'
+                            maxSize={350}
+                            jenisFile='image'
                             showPreview={true}
                             showListFile={false}
-                            containerStyle={containerStyle}
+                            luasArea={{panjang: 310, lebar: 193}}
                         />
                     </Stack.Item>
                 </Stack>

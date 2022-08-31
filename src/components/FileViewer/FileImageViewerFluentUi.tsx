@@ -17,10 +17,9 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
 
     const [imageProps, setImageProps] = useState<IImageProps|undefined>(
         {
-            imageFit: ImageFit.center,
+            imageFit: ImageFit.cover,
             width: props.area!.width,
             height: props.area!.height,
-            styles: props => ({ root: { border: '1px solid ' + props.theme.palette.neutralSecondary } }),
         }
     ); 
 
@@ -41,7 +40,7 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
 
     return(
         <>
-            { imageProps && <Image {...imageProps}/> }
+            { imageProps && <Image {...imageProps} /> }
         </>
     )
 }

@@ -39,6 +39,9 @@ interface IUploadFilePropsComponent {
     containerStyle?: IContainerUploadStyle;
     teachingBubbleVisible?: boolean;
     teachingBubbleText?: string;
+    jenisFile?: string;
+    maxSize?: number;
+    luasArea?: {panjang: number; lebar: number;}
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -55,14 +58,15 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const styleContainer: Record<string, any> = {};
     const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);
 
-    if(typeof props.containerStyle === 'undefined') {
+    if(typeof props.luasArea === 'undefined') {
         styleContainer.width = 300
         styleContainer.height = 100
         // styleContainer.backgroundColor = '#ECECEC'
     }
     else {
-        styleContainer.width = typeof props.containerStyle.width !== 'undefined'?props.containerStyle.width:300
-        styleContainer.height = typeof props.containerStyle.height !== 'undefined'?props.containerStyle.height:100
+        styleContainer.width = props.luasArea?.panjang;
+        styleContainer.height = props.luasArea?.lebar;
+        styleContainer.padding = 2;
         // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
     }
 
@@ -125,14 +129,14 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             props.showPreview && 
             <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
                 {!currentFile &&<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>}
-                {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{props.label}</Label>}
+                {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{`${props.label} (maksimal ${props.maxSize} KB)`}</Label>}
                 {
                 props.showPreview && isImageFile && 
                 <FileImageViewerFluentUi 
                     file={currentFile} 
                     area={
-                        {width: props.containerStyle!.width as number, height: 100}
-                    }
+                        {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
+                    }                    
                     />
                 }
                 {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}

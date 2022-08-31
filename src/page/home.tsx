@@ -1,4 +1,4 @@
-import { DefaultPalette, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
+import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import { FormulirLogin } from "../components/FormulirLogin/FormulirLogin";
 import { Header } from "./header";
