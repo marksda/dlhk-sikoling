@@ -18,16 +18,19 @@ import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
+import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 
 interface IStateRegistrasiAnimationFramer {
     animUserName: string;
     animPassword: string;
     animPID: string;
     animPID2: string;
+    animUploadKTP: string;
     flipDisplayUser: boolean;
     flipDisplayPassword: boolean;
     flipDisplayPID: boolean;
     flipDisplayPID2: boolean;
+    flipDisplayUploadKTP: boolean;
 }
 
 const containerStyles: React.CSSProperties = {
@@ -155,6 +158,22 @@ const variantsPID2 = {
         },
     },
 };
+const variantsUploadKTP = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "-10%", 
+        transition: {
+            duration
+        },
+    },
+};
 const contactIcon: IIconProps = { iconName: 'Contact' };
 const backIcon: IIconProps = { 
     iconName: 'Back',
@@ -176,9 +195,18 @@ const progressStyle: IProgressIndicatorStyles ={
     progressBar:null,
     progressTrack: null
 };
+const containerStyle: IContainerUploadStyle = {
+    width: 400, 
+    height: 100, 
+    backgroundColor: '#ECECEC',
+};
 
 
-export const FormulirRegistrasi: FC = () => {
+export const FormulirRegistrasi: FC = () => {    
+    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
+        userName: '',
+        password: '',
+    });
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -194,7 +222,7 @@ export const FormulirRegistrasi: FC = () => {
             },
             kontak: {
                 telepone: '', 
-                email: ''
+                email: loginAuthentication.userName,
             },
             scanKtp: '',
         }
@@ -205,14 +233,12 @@ export const FormulirRegistrasi: FC = () => {
         animPassword: 'closed',
         animPID: 'closed',
         animPID2: 'closed',
+        animUploadKTP: 'closed',
         flipDisplayUser: true,
         flipDisplayPassword: false,
         flipDisplayPID: false,
         flipDisplayPID2: false,
-    });
-    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
-        userName: '',
-        password: '',
+        flipDisplayUploadKTP: false,
     });
     const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
@@ -405,6 +431,38 @@ export const FormulirRegistrasi: FC = () => {
             duration*1000
         );
     }
+
+    const onButtonUserNameBackToPID2Click = () => {
+        setVariant((prev) =>({...prev, animUploadKTP: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}));
+            },
+            duration*1000
+        );
+    }
+
+    const onButtonLanjutPID2Click = () => {
+        setVariant((prev) =>({...prev, animPID2: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(500);
+                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'}));
+            },
+            duration*1000
+        );
+    }
     
     return(
         <>
@@ -539,6 +597,7 @@ export const FormulirRegistrasi: FC = () => {
                             label="NIK"
                             name="nik"
                             rules={{ required: "harus diisi sesuai dengan ktp" }}     
+                            control={control}
                         />
                     </Stack.Item>
                     <Stack.Item>
@@ -547,6 +606,7 @@ export const FormulirRegistrasi: FC = () => {
                             label="Nama"
                             name="nama"
                             rules={{ required: "harus diisi sesuai dengan ktp" }}   
+                            control={control}
                         />
                     </Stack.Item>
                     <Stack.Item>
@@ -567,6 +627,7 @@ export const FormulirRegistrasi: FC = () => {
                             label="Telepone"
                             name="kontak.telepone"
                             rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
+                            control={control}
                         /> 
                     </Stack.Item>
                     <Stack.Item>
@@ -574,7 +635,8 @@ export const FormulirRegistrasi: FC = () => {
                             required
                             label="Email"
                             name="kontak.email"
-                            rules={{ required: "Alamat email harus diisi" }}   
+                            rules={{ required: "Alamat email harus diisi" }}  
+                            control={control} 
                         />
                     </Stack.Item>
                 </Stack>
@@ -635,9 +697,10 @@ export const FormulirRegistrasi: FC = () => {
                             options={dataKabupatenOptions}
                             onChangeItem={resetKabupaten}
                             required={true}
-                            name={`kabupaten`}
+                            name={`alamat.kabupaten`}
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                            defaultItemSelected={defaultKabupaten}                  
+                            defaultItemSelected={defaultKabupaten}   
+                            control={control}               
                         />
                     </Stack.Item>
                     <Stack.Item>
@@ -648,9 +711,10 @@ export const FormulirRegistrasi: FC = () => {
                             options={dataKecamatanOptions}
                             onChangeItem={resetKecamatan}
                             required={true}
-                            name={`kecamatan`}
+                            name={`alamat.kecamatan`}
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                            defaultItemSelected={defaultKecamatan}                
+                            defaultItemSelected={defaultKecamatan}     
+                            control={control}           
                         />  
                     </Stack.Item>
                     <Stack.Item>
@@ -661,17 +725,19 @@ export const FormulirRegistrasi: FC = () => {
                             options={dataDesaOptions}
                             onChangeItem={resetDesa}
                             required={true}
-                            name={`.desa`}
+                            name={`alamat.desa`}
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                            defaultItemSelected={defaultDesa}                  
+                            defaultItemSelected={defaultDesa}  
+                            control={control}                
                         />
                     </Stack.Item>
                     <Stack.Item>
                         <ControlledFluentUiTextField
                             label="Detail Alamat"
                             placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
-                            name={`keterangan`}
+                            name={`alamat.keterangan`}
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            control={control}
                             required multiline autoAdjustHeight
                         /> 
                     </Stack.Item>
@@ -679,7 +745,51 @@ export const FormulirRegistrasi: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Lanjut" 
-                        onClick={onButtonLanjutPIDClick} 
+                        onClick={onButtonLanjutPID2Click} 
+                        style={{marginTop: 24, width: 100}}
+                        disabled={false}
+                        />
+                </Stack>
+            </motion.div>
+            <motion.div
+                animate={variant.animUploadKTP}
+                variants={variantsUploadKTP}
+                style={variant.flipDisplayUploadKTP?{display:'block'}:{display:'none'}}
+            >
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                    <IconButton 
+                        iconProps={backIcon} 
+                        title="Back" 
+                        ariaLabel="Back"
+                        onClick={onButtonUserNameBackToPID2Click} 
+                        styles={{
+                            root: {
+                                borderStyle: 'none',
+                                borderRadius: '50%',
+                                padding: 0,
+                                marginTop: 2,
+                            }
+                        }}/>
+                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
+                </Stack>
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                    <Label styles={labelStyle}>Upload KTP</Label>
+                    <Label styles={labelSandiStyle}>Silahkan upload KTP anda.</Label>
+                </Stack>
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                    <Stack.Item>
+                        <UploadFilesFluentUi 
+                            label='Upload File Hasil Scan KTP'
+                            showPreview={true}
+                            showListFile={false}
+                            containerStyle={containerStyle}
+                        />
+                    </Stack.Item>
+                </Stack>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Lanjut" 
+                        onClick={onButtonLanjutPID2Click} 
                         style={{marginTop: 24, width: 100}}
                         disabled={false}
                         />

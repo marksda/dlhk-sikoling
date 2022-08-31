@@ -147,7 +147,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 onClick={bindClickEventInputFile}
                 styles={{
                     root: {
-                        maxWidth: props.containerStyle!.width
+                        maxWidth: props.containerStyle!.width,
+                        width: props.containerStyle!.width
                     }
                 }}
             >

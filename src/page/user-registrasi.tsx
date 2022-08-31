@@ -1,8 +1,6 @@
 import { DefaultEffects, Stack } from "@fluentui/react";
 import { FC } from "react";
-import { FormulirPerson } from "../components/FormulirPerson/FormulirPerson";
 import { FormulirRegistrasi } from "../components/FormulirRegistrasi/FormulirRegistrasi";
-import { UploadFilesFluentUi } from "../components/UploadFiles/UploadFilesFluentUI";
 
 
 
@@ -18,7 +16,7 @@ const containerStyle: React.CSSProperties = {
 export const UserRegistrasi: FC = () => {
     return (
         <div style={containerStyle}>
-            <FormulirPerson />
+            <FormulirRegistrasi />
         </div>
     );
 }
