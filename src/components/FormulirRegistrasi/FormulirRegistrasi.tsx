@@ -353,6 +353,18 @@ export const FormulirRegistrasi: FC = () => {
         }        
     };
 
+    const onButtonSimpanClick = () => {
+        handleSubmit(
+            (data) => {
+              console.log(data);
+            //   addPerson(data);
+            },
+            (err) => {                
+              console.log(err);
+            }
+          )();
+    };
+
     const onButtonUserNameBackClick = () => {         
         setVariant((prev) =>({...prev, animPassword: 'closed'}));
         setTimeout(
@@ -789,7 +801,7 @@ export const FormulirRegistrasi: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Lanjut" 
-                        onClick={onButtonLanjutPID2Click} 
+                        onClick={onButtonSimpanClick} 
                         style={{marginTop: 24, width: 100}}
                         disabled={false}
                         />

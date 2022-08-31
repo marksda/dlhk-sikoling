@@ -40,7 +40,7 @@ export const FormulirPerson: FC = () => {
                 telepone: '', 
                 email: ''
             },
-            scanKtp: '',
+            scanKTP: '',
         }
     });
 
