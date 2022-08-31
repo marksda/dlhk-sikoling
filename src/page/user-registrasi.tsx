@@ -1,7 +1,6 @@
-import { DefaultEffects, Stack } from "@fluentui/react";
+import { DefaultEffects, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import { FormulirRegistrasi } from "../components/FormulirRegistrasi/FormulirRegistrasi";
-
 
 
 const containerStyle: React.CSSProperties = {
@@ -14,7 +13,8 @@ const containerStyle: React.CSSProperties = {
 }
 
 export const UserRegistrasi: FC = () => {
-    return (
+
+    return (        
         <div style={containerStyle}>
             <FormulirRegistrasi />
         </div>
