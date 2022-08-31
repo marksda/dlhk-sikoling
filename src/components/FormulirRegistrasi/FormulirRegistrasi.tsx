@@ -1,18 +1,58 @@
-import { DefaultEffects, DefaultPalette, Image, IStackItemStyles, IStackTokens, Stack } from "@fluentui/react";
+import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
+import { IDesa, resetDesa } from "../../features/desa/desa-slice";
+import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
+import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
+import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
+import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
+import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
+import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
+import { IPropinsi } from "../../features/propinsi/propinsi-slice";
+import { useCekUserNameMutation } from "../../features/security/authorization-api-slice";
+import { IAuthentication } from "../../features/security/authorization-slice";
 import logo from '../../sidoarjo.svg';
+import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+import { IPerson } from "../../features/person/person-slice"
+
+interface IStateRegistrasiAnimationFramer {
+    animUserName: string;
+    animPassword: string;
+    animPID: string;
+    animPID2: string;
+    flipDisplayUser: boolean;
+    flipDisplayPassword: boolean;
+    flipDisplayPID: boolean;
+    flipDisplayPID2: boolean;
+}
 
 const containerStyles: React.CSSProperties = {
     boxShadow: DefaultEffects.elevation4,
-    borderTop: '2px solid #0078D7', 
-    borderRadius: 3, 
+    borderTop: '2px solid orange', 
+    // borderRadius: 3, 
     padding: 32,
-    width:500,
-    minHeight: 500,
+    minWidth:400,
+    maxWidth: 400,
+    minHeight: 300,
     marginLeft: 'auto',
     marginRight: 'auto',
     background: 'white',
+};
+const containerInformationStyles: React.CSSProperties = {
+    boxShadow: DefaultEffects.elevation4,
+    padding: '16px 32px',
+    minWidth:300,
+    maxWidth: 400,
+    minHeight: 45,
+    marginTop: 16,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    background: 'white',
+    marginBottom: 16
 };
 const containerStackTokens: IStackTokens = { childrenGap: 5};
 const labelSikolingStyles: IStackItemStyles = {
@@ -22,13 +62,34 @@ const labelSikolingStyles: IStackItemStyles = {
       fontWeight: 600
     },
 };
-
-interface IStateRegistrasiAnimationFramer {
-    animUserName: string;
-    animPassword: string;
-    flipDisplay: boolean;
-}
-
+const labelStyle: ILabelStyles  = {
+    root: {
+       fontWeight: 600,
+       color: '#1b1b1b',
+       fontSize: '1.5rem', 
+    }
+};
+const labelWarningStyle: ILabelStyles  = {
+    root: {
+    //    fontWeight: 400,
+       color: '#dd4132',
+    //    fontSize: '0.95rem', 
+    }
+};
+const labelUserNameStyle: ILabelStyles  = {
+    root: {
+       fontWeight: 400,
+       fontSize: '1rem', 
+    }
+};
+const labelSandiStyle: ILabelStyles  = {
+    root: {
+       fontWeight: 400,
+       color: '#383838',
+       fontSize: '1rem', 
+    }
+};
+const stackTokens = { childrenGap: 2 };
 const duration: number = 0.5;
 const variantsUserName = {
     open: { 
@@ -40,38 +101,600 @@ const variantsUserName = {
     },
     closed: { 
         opacity: 0, 
-        x: '-15%', 
+        x: '-10%', 
         transition: {
             duration
         },
     },
 };
+const variantsPassword = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "10%", 
+        transition: {
+            duration
+        },
+    },
+};
+const variantsPID = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "-10%", 
+        transition: {
+            duration
+        },
+    },
+};
+const variantsPID2 = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "10%", 
+        transition: {
+            duration
+        },
+    },
+};
+const contactIcon: IIconProps = { iconName: 'Contact' };
+const backIcon: IIconProps = { 
+    iconName: 'Back',
+    style: {
+        color: 'grey',
+        fontSize: '0.8rem',
+    }
+};
+const progressStyle: IProgressIndicatorStyles ={
+    root: {
+        width: 464,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        height: 8,
+    },
+    itemName: null,
+    itemDescription: null,
+    itemProgress: null,
+    progressBar:null,
+    progressTrack: null
+};
+
 
 export const FormulirRegistrasi: FC = () => {
+    const { control, handleSubmit, setValue } = useForm<IPerson>({
+        mode: 'onSubmit',
+        defaultValues: {
+            nik: '',
+            nama: '',
+            jenisKelamin: defaultJenisKelamin,
+            alamat: {
+                propinsi: defaultPropinsi,
+                kabupaten: defaultKabupaten,
+                kecamatan: defaultKecamatan,
+                desa: defaultDesa,
+                keterangan: '',
+            },
+            kontak: {
+                telepone: '', 
+                email: ''
+            },
+            scanKtp: '',
+        }
+    });
+    const [heighArea, setHeightArea] = useState<number>(300);
     const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
         animUserName: 'open',
         animPassword: 'closed',
-        flipDisplay: true,
+        animPID: 'closed',
+        animPID2: 'closed',
+        flipDisplayUser: true,
+        flipDisplayPassword: false,
+        flipDisplayPID: false,
+        flipDisplayPID2: false,
     });
+    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
+        userName: '',
+        password: '',
+    });
+    const [errorEmailName, setErrorEmailName] = useState<string>('');
+    const [errorPassword, setErrorPassword] = useState<string>('');
+    const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
+    const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    
+    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();  
+    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+
+    const [propinsi, setPropinsi] = useState<IPropinsi>(defaultPropinsi); 
+    const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi } = useGetAllPropinsiQuery();
+    const dataPropinsiOptions = dataPropinsi.map((t) => {
+        return {key: t.id as string, text: t.nama as string}; 
+    });
+
+    const [kabupaten, setKabupaten] = useState<IKabupaten>(defaultKabupaten);
+    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(propinsi.id!);
+    const dataKabupatenOptions = dataKabupaten.map((t) => {
+        return {key: t.id as string, text: t.nama as string}; 
+    });
+
+    const [kecamatan, setKecamatan] = useState<IKecamatan>(defaultKecamatan);
+    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(kabupaten.id!);
+    const dataKecamatanOptions = dataKecamatan.map((t) => {
+        return {key: t.id as string, text: t.nama as string}; 
+    });
+
+    const [desa, setDesa] = useState<IDesa>(defaultDesa);
+    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id!);
+    const dataDesaOptions = dataDesa.map((t) => {
+        return {key: t.id as string, text: t.nama as string}; 
+    });
+
+    const resetPropinsi = (item: IPropinsi) => {          
+        setDesa({id: '', nama: ''});
+        setKecamatan({id: '', nama: ''});
+        setKabupaten({id: '', nama: ''});
+        setPropinsi(item);
+        // props.setValue("alamat.kabupaten", null);
+        // props.setValue("alamat.kecamatan", null);
+        // props.setValue("alamat.desa", null);
+    }
+
+    const resetKabupaten = (item: IKabupaten) => {               
+        setKabupaten(item); 
+        setKecamatan({id: '', nama: ''});
+        // props.setValue("alamat.kecamatan", null);
+        // props.setValue("alamat.desa", null)
+    }
+
+    const resetKecamatan = (item: IKabupaten) => {               
+        setKecamatan(item); 
+        setDesa({id: '', nama: ''});
+        // props.setValue("alamat.desa", null);
+    }
+
+    const onChangeEmailNameValue = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorEmailName.length != 0) {                
+                setErrorEmailName('');
+            }
+
+            setLoginAuthentication(
+                (prev) => (
+                    {...prev, userName: newValue||''}
+                )
+            );
+        },
+        [errorEmailName, setLoginAuthentication],
+    );
+
+    const onChangeUserPasswordValue = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorEmailName.length != 0) {                
+                setErrorPassword('');
+            }
+
+            setLoginAuthentication(
+                (prev) => (
+                    {...prev, password: newValue!}
+                )
+            );
+        },
+        [],
+    );
+
+    const onButtonLanjutClick = async () => { 
+        let test = regexp.test(loginAuthentication.userName);
+        if(test == true) {
+            // try {
+            //     const hasil = await cekUserName(loginAuthentication.userName).unwrap();
+            //     if(hasil == true) {
+                    setErrorEmailName('');
+                    setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                    setTimeout(
+                        () => {
+                            setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+                        },
+                        duration*1000
+                    ); 
+            //     }
+            //     else {
+            //         setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
+            //     }
+            // }   
+            // catch (err) {
+            //     console.log(err);
+            // }  
+        }
+        else {
+            setErrorEmailName('Format email tidak sesuai');
+        }        
+    };
+
+    const onButtonUserNameBackClick = () => {         
+        setVariant((prev) =>({...prev, animPassword: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonUserNameBackToPasswordClick = () => {         
+        setVariant((prev) =>({...prev, animPID: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(300);
+                setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonLanjutPasswordClick = () => {
+        setVariant((prev) =>({...prev, animPassword: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}));
+            },
+            duration*1000
+        );
+    }
+
+    const onButtonLanjutPIDClick = () => {
+        setVariant((prev) =>({...prev, animPID: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}));
+            },
+            duration*1000
+        );
+    }
+
+    const onButtonUserNameBackToPIDClick = () => {
+        setVariant((prev) =>({...prev, animPID2: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayPID: true, animPID: 'open'}));
+            },
+            duration*1000
+        );
+    }
     
     return(
-        <div style={containerStyles}>
+        <>
+        {
+            isLoadingCekUserName &&
+            (<Stack>
+                <ProgressIndicator styles={progressStyle}/>
+            </Stack>)
+        }         
+        <div style={{...containerStyles, height: heighArea}}>
             <Stack horizontal tokens={containerStackTokens}>
                 <Stack.Item>
                     <Image alt='logo' width={42} height={42} src={logo} />
                 </Stack.Item>
                 <Stack.Item align="center" styles={labelSikolingStyles}>
                     SIKOLING   
-                </Stack.Item>  
+                </Stack.Item> 
             </Stack>
             <div style={{height: 8}}></div>
             <motion.div
                 animate={variant.animUserName}
                 variants={variantsUserName}
-                style={variant.flipDisplay?{display:'block'}:{display:'none'}}
+                style={variant.flipDisplayUser?{display:'block'}:{display:'none'}}
+            >   
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center', marginBottom: 16}}}>
+                    <Label styles={labelStyle}>Buat akun</Label>                    
+                </Stack>
+                <TextField 
+                    placeholder="Gunakan email yang masih aktif" 
+                    value={loginAuthentication.userName}
+                    onChange={onChangeEmailNameValue}
+                    onKeyUp={
+                        (event) => {
+                            if(event.key == 'Enter') {
+                                onButtonLanjutClick();
+                            }
+                        }
+                    }
+                    iconProps={contactIcon} 
+                    disabled={isLoadingCekUserName}
+                    underlined 
+                    errorMessage={errorEmailName}
+                    styles={{root: {marginBottom: 8}}}/>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Berikutnya" 
+                        onClick={onButtonLanjutClick} 
+                        style={{marginTop: 24, width: 100}}
+                        disabled={isLoadingCekUserName}
+                        />
+                </Stack>
+            </motion.div>
+            <motion.div
+                animate={variant.animPassword}
+                variants={variantsPassword}
+                style={variant.flipDisplayPassword?{display:'block'}:{display:'none'}}
             >
-                
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                    <IconButton 
+                        iconProps={backIcon} 
+                        title="Back" 
+                        ariaLabel="Back"
+                        onClick={onButtonUserNameBackClick} 
+                        styles={{
+                            root: {
+                                borderStyle: 'none',
+                                borderRadius: '50%',
+                                padding: 0,
+                                marginTop: 2,
+                            }
+                        }}/>
+                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
+                </Stack>                
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                    <Label styles={labelStyle}>Buat kata sandi</Label>
+                    <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan dengan akun Anda.</Label>
+                </Stack>                
+                <TextField 
+                    placeholder="kata sandi" 
+                    value={loginAuthentication.password}
+                    onChange={onChangeUserPasswordValue}
+                    onKeyUp={
+                        (event) => {
+                            if(event.key == 'Enter') {
+                                onButtonLanjutClick();
+                            }
+                        }
+                    }
+                    underlined 
+                    type="password"
+                    disabled={false}
+                    errorMessage={errorPassword}
+                    styles={{root: {marginBottom: 8}}}/>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Lanjut" 
+                        onClick={onButtonLanjutPasswordClick} 
+                        style={{marginTop: 24, width: 100}}
+                        disabled={false}
+                        />
+                </Stack>
+            </motion.div>
+            <motion.div
+                animate={variant.animPID}
+                variants={variantsPID}
+                style={variant.flipDisplayPID?{display:'block'}:{display:'none'}}
+            >
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                    <IconButton 
+                        iconProps={backIcon} 
+                        title="Back" 
+                        ariaLabel="Back"
+                        onClick={onButtonUserNameBackToPasswordClick} 
+                        styles={{
+                            root: {
+                                borderStyle: 'none',
+                                borderRadius: '50%',
+                                padding: 0,
+                                marginTop: 2,
+                            }
+                        }}/>
+                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
+                </Stack>                
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                    <Label styles={labelStyle}>Siapa anda?</Label>
+                    <Label styles={labelSandiStyle}>Kami perlu data personal berdasar KTP untuk mengatur akun Anda.</Label>
+                </Stack>
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                    <Stack.Item>
+                        <ControlledFluentUiTextField
+                            required
+                            label="NIK"
+                            name="nik"
+                            rules={{ required: "harus diisi sesuai dengan ktp" }}     
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiTextField
+                            required
+                            label="Nama"
+                            name="nama"
+                            rules={{ required: "harus diisi sesuai dengan ktp" }}   
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Jenis Kelamin"
+                            placeholder="Pilih Jenis Kelamin"
+                            options={dataJenisKelaminOptions}
+                            required
+                            name="jenisKelamin"
+                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            defaultItemSelected={defaultJenisKelamin}    
+                            control={control}             
+                        /> 
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiTextField
+                            required
+                            label="Telepone"
+                            name="kontak.telepone"
+                            rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
+                        /> 
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiTextField
+                            required
+                            label="Email"
+                            name="kontak.email"
+                            rules={{ required: "Alamat email harus diisi" }}   
+                        />
+                    </Stack.Item>
+                </Stack>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Lanjut" 
+                        onClick={onButtonLanjutPIDClick} 
+                        style={{marginTop: 24, width: 100}}
+                        disabled={false}
+                        />
+                </Stack>     
+            </motion.div>
+            <motion.div
+                animate={variant.animPID2}
+                variants={variantsPID2}
+                style={variant.flipDisplayPID2?{display:'block'}:{display:'none'}}
+            >
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                    <IconButton 
+                        iconProps={backIcon} 
+                        title="Back" 
+                        ariaLabel="Back"
+                        onClick={onButtonUserNameBackToPIDClick} 
+                        styles={{
+                            root: {
+                                borderStyle: 'none',
+                                borderRadius: '50%',
+                                padding: 0,
+                                marginTop: 2,
+                            }
+                        }}/>
+                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
+                </Stack>
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                    <Label styles={labelStyle}>Alamat tinggal anda?</Label>
+                    <Label styles={labelSandiStyle}>Kami perlu data alamat tinggal anda berdasar KTP.</Label>
+                </Stack>
+                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Propinsi"
+                            placeholder="Pilih Propinsi sesuai dengan ktp"
+                            name={"alamat.propinsi"}
+                            isFetching={isFetchingDataPropinsi}
+                            options={dataPropinsiOptions}
+                            onChangeItem={resetPropinsi}
+                            required={true}
+                            rules={{ required: "harus diisi sesuai dengan ktp" }}
+                            defaultItemSelected={defaultPropinsi}
+                            control={control}
+                        />   
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Kabupaten / Kota"
+                            placeholder="Pilih Kabupaten sesuai dengan ktp"
+                            isFetching={isFetchingDataKabupaten||isFetchingDataPropinsi}
+                            options={dataKabupatenOptions}
+                            onChangeItem={resetKabupaten}
+                            required={true}
+                            name={`kabupaten`}
+                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            defaultItemSelected={defaultKabupaten}                  
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Kecamatan"
+                            placeholder="Pilih Kecamatan sesuai dengan ktp"
+                            isFetching={isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
+                            options={dataKecamatanOptions}
+                            onChangeItem={resetKecamatan}
+                            required={true}
+                            name={`kecamatan`}
+                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            defaultItemSelected={defaultKecamatan}                
+                        />  
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Desa"
+                            placeholder="Pilih Desa sesuai dengan ktp"
+                            isFetching={isFetchingDataDesa||isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
+                            options={dataDesaOptions}
+                            onChangeItem={resetDesa}
+                            required={true}
+                            name={`.desa`}
+                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            defaultItemSelected={defaultDesa}                  
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiTextField
+                            label="Detail Alamat"
+                            placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
+                            name={`keterangan`}
+                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                            required multiline autoAdjustHeight
+                        /> 
+                    </Stack.Item>
+                </Stack>
+                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                    <PrimaryButton 
+                        text="Lanjut" 
+                        onClick={onButtonLanjutPIDClick} 
+                        style={{marginTop: 24, width: 100}}
+                        disabled={false}
+                        />
+                </Stack>
             </motion.div>
         </div>
+        <div style={containerInformationStyles}>
+            <Stack tokens={containerStackTokens}>
+                <Stack.Item align="start">
+                    <Label  styles={labelWarningStyle}>Perhatiaan!!</Label> 
+                    <Label  styles={labelWarningStyle} style={{color: 'black'}}>
+                        Anda harus meyiapkan file hasil scan/foto KTP berformat jpg, file ini wajib diupload pada tahap berikutnya</Label>
+                </Stack.Item>
+            </Stack>
+        </div>
+        </>
     )
 }
