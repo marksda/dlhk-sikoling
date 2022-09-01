@@ -41,7 +41,9 @@ interface IUploadFilePropsComponent {
     teachingBubbleText?: string;
     jenisFile?: string;
     maxSize?: number;
-    luasArea?: {panjang: number; lebar: number;}
+    luasArea?: {panjang: number; lebar: number;};
+    showButtonUpload?: boolean;
+    showProgressBar?: boolean;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -99,14 +101,15 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
 
     // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
-        // event.stopPropagation();
-        if(typeof currentFile == 'undefined')
-            document.getElementById('fileUpload')!.click()
+        // alert('asu');
+        event.stopPropagation();
+        // if(typeof currentFile == 'undefined')
+        document.getElementById('fileUpload')!.click()
     }
 
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
-        const file = event.currentTarget.files![0];
+        let file = event.currentTarget.files![0];
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':
@@ -136,11 +139,12 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     file={currentFile} 
                     area={
                         {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
-                    }                    
-                    />
+                    }  
+                    onClick={bindClickEventInputFile}                 
+                />
                 }
                 {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
-                {currentFile && <FontIcon aria-label="Ktp" iconName="Delete" />}
+                {currentFile && false && <FontIcon aria-label="Ktp" iconName="Delete" />}
             </div>
             }
             {
@@ -178,7 +182,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             !props.showPreview && currentFile && 
             <label>{currentFile.name}</label>
             }
-            {currentFile && 
+            {currentFile && props.showProgressBar &&
                 <div className="progress">
                     <div
                         className="progress-bar progress-bar-info progress-bar-striped"
@@ -192,7 +196,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     </div>
                 </div>
             }
-            {currentFile &&
+            {currentFile && props.showButtonUpload &&
             <PrimaryButton
                 text="Upload"
                 disabled={!selectedFiles}

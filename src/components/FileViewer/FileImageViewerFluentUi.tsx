@@ -1,5 +1,5 @@
 import { Image, IImageProps, ImageFit } from "@fluentui/react";
-import { FC, useState } from "react";
+import { FC, MouseEventHandler, useState } from "react";
 import CekTypeFile from "../../features/file-utils/FileUtils";
 
 
@@ -10,7 +10,7 @@ interface IFileViewerPropsComponent {
         height: number, 
         width: number
     };
-
+    onClick?:  MouseEventHandler<HTMLElement>;
 }
 
 export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) => {
@@ -40,7 +40,7 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
 
     return(
         <>
-            { imageProps && <Image {...imageProps} /> }
+            { imageProps && <Image {...imageProps} onClick={props.onClick}/> }
         </>
     )
 }

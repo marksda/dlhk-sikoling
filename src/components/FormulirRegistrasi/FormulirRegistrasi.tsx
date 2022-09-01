@@ -469,7 +469,7 @@ export const FormulirRegistrasi: FC = () => {
                         {...prev, password: ''}
                     )
                 );
-                setHeightArea(500);
+                setHeightArea(430);
                 setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'}));
             },
             duration*1000
@@ -797,12 +797,14 @@ export const FormulirRegistrasi: FC = () => {
                             showPreview={true}
                             showListFile={false}
                             luasArea={{panjang: 310, lebar: 193}}
+                            showButtonUpload={false}
+                            showProgressBar={false}
                         />
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
-                        text="Lanjut" 
+                        text="Simpan" 
                         onClick={onButtonSimpanClick} 
                         style={{marginTop: 24, width: 100}}
                         disabled={false}
