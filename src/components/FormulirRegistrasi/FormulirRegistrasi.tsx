@@ -353,6 +353,22 @@ export const FormulirRegistrasi: FC = () => {
         }        
     };
 
+    const onButtonLanjutPIDClick = () => {
+        setVariant((prev) =>({...prev, animPID: 'closed'}));
+        setTimeout(
+            () => {
+                setLoginAuthentication(
+                    (prev) => (
+                        {...prev, password: ''}
+                    )
+                );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
     const onButtonSimpanClick = () => {
         handleSubmit(
             (data) => {
@@ -412,21 +428,7 @@ export const FormulirRegistrasi: FC = () => {
         );
     }
 
-    const onButtonLanjutPIDClick = () => {
-        setVariant((prev) =>({...prev, animPID: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(570);
-                setVariant((prev) =>({...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}));
-            },
-            duration*1000
-        );
-    }
+    
 
     const onButtonUserNameBackToPIDClick = () => {
         setVariant((prev) =>({...prev, animPID2: 'closed'}));
