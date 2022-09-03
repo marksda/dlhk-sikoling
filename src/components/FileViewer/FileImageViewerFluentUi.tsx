@@ -1,6 +1,6 @@
 import { Image, IImageProps, ImageFit } from "@fluentui/react";
 import { FC, MouseEventHandler, useState } from "react";
-import CekTypeFile from "../../features/file-utils/FileUtils";
+// import CekTypeFile from "../../features/file-utils/FileUtils";
 
 
 interface IFileViewerPropsComponent {

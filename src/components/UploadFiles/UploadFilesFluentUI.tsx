@@ -44,6 +44,7 @@ interface IUploadFilePropsComponent {
     luasArea?: {panjang: number; lebar: number;};
     showButtonUpload?: boolean;
     showProgressBar?: boolean;
+    setFileKTP?: (f: File) => void;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -110,6 +111,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
         let file = event.currentTarget.files![0];
+        props.setFileKTP!(file);
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':

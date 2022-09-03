@@ -19,7 +19,8 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
-import Tesseract from "tesseract.js";
+import {createWorker}  from "tesseract.js";
+// import datatrain from "../../ocr.traineddata";
 
 interface IStateRegistrasiAnimationFramer {
     animUserName: string;
@@ -33,6 +34,9 @@ interface IStateRegistrasiAnimationFramer {
     flipDisplayPID2: boolean;
     flipDisplayUploadKTP: boolean;
 }
+
+
+
 
 const containerStyles: React.CSSProperties = {
     boxShadow: DefaultEffects.elevation4,
@@ -207,6 +211,8 @@ export const FormulirRegistrasi: FC = () => {
         userName: '',
         password: '',
     });
+
+    const [fileKTP, setFileKTP] = useState<File|null>(null);
 
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
@@ -486,15 +492,28 @@ export const FormulirRegistrasi: FC = () => {
     };
 
     const onButtonSimpanClick = () => {
-        handleSubmit(
-            (data) => {
-              console.log(data);
-            //   addPerson(data);
-            },
-            (err) => {                
-              console.log(err);
-            }
-          )();
+        // handleSubmit(
+        //     (data) => {
+        //       console.log(data);
+        //     //   addPerson(data);
+        //     },
+        //     (err) => {                
+        //       console.log(err);
+        //     }
+        //   )();
+
+        const worker = createWorker({
+            logger: m => console.log(m)
+        });
+          
+          (async () => {
+            await worker.load();
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
+            const { data: { text } } = await worker.recognize(fileKTP);
+            console.log(text);
+            await worker.terminate();
+          })();
     };    
     
     return(
@@ -825,6 +844,7 @@ export const FormulirRegistrasi: FC = () => {
                             luasArea={{panjang: 310, lebar: 193}}
                             showButtonUpload={false}
                             showProgressBar={false}
+                            setFileKTP={setFileKTP}
                         />
                     </Stack.Item>
                 </Stack>
