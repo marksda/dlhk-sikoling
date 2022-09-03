@@ -50,7 +50,7 @@ export const PenanggungJawabSlice = createSlice({
                     telepone: action.payload.person!.kontak!.telepone,
                     email: action.payload.person!.kontak!.email
                 },
-                scanKtp: action.payload.person?.scanKtp as string,
+                scanKTP: action.payload.person?.scanKTP as string,
             };
             state.jabatan = {
                 id: action.payload.jabatan?.id as string,
@@ -91,7 +91,7 @@ export const PenanggungJawabSlice = createSlice({
                     telepone: action.payload.kontak!.telepone,
                     email: action.payload.kontak!.email
                 },
-                scanKtp: action.payload.scanKtp,
+                scanKTP: action.payload.scanKTP,
             };
         },
         setPenanggungJawabJabatan: (state, action: PayloadAction<IJabatan>) => {

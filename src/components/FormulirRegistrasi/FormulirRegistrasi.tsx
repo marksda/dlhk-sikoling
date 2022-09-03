@@ -506,14 +506,14 @@ export const FormulirRegistrasi: FC = () => {
             logger: m => console.log(m)
         });
           
-          (async () => {
-            await worker.load();
-            await worker.loadLanguage('eng');
-            await worker.initialize('eng');
-            const { data: { text } } = await worker.recognize(fileKTP);
-            console.log(text);
-            await worker.terminate();
-          })();
+        (async () => {
+        await worker.load();
+        await worker.loadLanguage('eng');
+        await worker.initialize('eng');
+        const { data: { text } } = await worker.recognize(fileKTP!);
+        console.log(text);
+        await worker.terminate();
+        })();
     };    
     
     return(
