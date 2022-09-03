@@ -201,7 +201,6 @@ const containerStyle: IContainerUploadStyle = {
     backgroundColor: '#ECECEC',
 };
 
-
 export const FormulirRegistrasi: FC = () => {    
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
@@ -522,6 +521,7 @@ export const FormulirRegistrasi: FC = () => {
                     iconProps={contactIcon} 
                     disabled={isLoadingCekUserName}
                     underlined 
+                    autoFocus
                     errorMessage={errorEmailName}
                     styles={{root: {marginBottom: 8}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
@@ -815,7 +815,7 @@ export const FormulirRegistrasi: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Simpan" 
-                        onClick={onButtonSimpanClick} 
+                        onClick={onButtonSimpanClick}
                         style={{marginTop: 24, width: 100}}
                         disabled={false}
                         />
