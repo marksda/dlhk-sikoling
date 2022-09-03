@@ -20,7 +20,7 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import {createWorker}  from "tesseract.js";
-// import datatrain from "../../ocr.traineddata";
+
 
 interface IStateRegistrasiAnimationFramer {
     animUserName: string;
@@ -34,9 +34,6 @@ interface IStateRegistrasiAnimationFramer {
     flipDisplayPID2: boolean;
     flipDisplayUploadKTP: boolean;
 }
-
-
-
 
 const containerStyles: React.CSSProperties = {
     boxShadow: DefaultEffects.elevation4,
@@ -207,6 +204,8 @@ const containerStyle: IContainerUploadStyle = {
 };
 
 export const FormulirRegistrasi: FC = () => {    
+    // importScript("../../opencv.js");
+
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
         password: '',

@@ -1,4 +1,3 @@
-import { DefaultEffects, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import { FormulirRegistrasi } from "../components/FormulirRegistrasi/FormulirRegistrasi";
 

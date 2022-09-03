@@ -5,6 +5,7 @@ import { IPropinsi } from "../propinsi/propinsi-slice"
 import { IHalaman } from "../halaman/halaman"
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice"
 import { IDatePickerStrings } from "@fluentui/react"
+import { useEffect } from "react"
 
 
 export const baseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
@@ -50,3 +51,14 @@ const addZeroDigitInFront = (bilangan: number) => {
         return `${bilangan}`;
     }
 }
+// export const importScript = (resourceUrl: string) => {
+//     useEffect(() => {
+//         const script = document.createElement('script');
+//         script.src = resourceUrl;
+//         script.async = true;
+//         document.body.appendChild(script);
+//         return () => {
+//             document.body.removeChild(script);
+//         }
+//     }, [resourceUrl]);
+// };
