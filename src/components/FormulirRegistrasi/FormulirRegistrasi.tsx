@@ -573,6 +573,7 @@ export const FormulirRegistrasi: FC = () => {
                     type="password"
                     disabled={false}
                     errorMessage={errorPassword}
+                    
                     styles={{root: {marginBottom: 8}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
