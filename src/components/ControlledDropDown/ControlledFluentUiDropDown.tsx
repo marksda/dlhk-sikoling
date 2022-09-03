@@ -33,7 +33,6 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                     }
                     onBlur={onBlur}
                     errorMessage={error && error?.message}
-                    disabled={props.isFetching}
                 />
             )}
         /> :

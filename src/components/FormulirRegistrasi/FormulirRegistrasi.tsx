@@ -1,7 +1,7 @@
 import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FC, useCallback, useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 import { IDesa, resetDesa } from "../../features/desa/desa-slice";
@@ -212,7 +212,7 @@ export const FormulirRegistrasi: FC = () => {
         defaultValues: {
             nik: '',
             nama: '',
-            jenisKelamin: defaultJenisKelamin,
+            jenisKelamin: null,
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -227,6 +227,12 @@ export const FormulirRegistrasi: FC = () => {
             scanKTP: '',
         }
     });
+
+    const [nik, nama, jenisKelamin, kontak] = useWatch({
+        control, 
+        name: ['nik', 'nama', 'jenisKelamin', 'kontak']
+    });
+
     const [heighArea, setHeightArea] = useState<number>(300);
     const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
         animUserName: 'open',
@@ -426,9 +432,7 @@ export const FormulirRegistrasi: FC = () => {
             },
             duration*1000
         );
-    }
-
-    
+    }    
 
     const onButtonUserNameBackToPIDClick = () => {
         setVariant((prev) =>({...prev, animPID2: 'closed'}));
@@ -621,6 +625,7 @@ export const FormulirRegistrasi: FC = () => {
                             name="nama"
                             rules={{ required: "harus diisi sesuai dengan ktp" }}   
                             control={control}
+                            disabled={nik!.length>0?false:true}
                         />
                     </Stack.Item>
                     <Stack.Item>
@@ -631,8 +636,8 @@ export const FormulirRegistrasi: FC = () => {
                             required
                             name="jenisKelamin"
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                            defaultItemSelected={defaultJenisKelamin}    
-                            control={control}             
+                            control={control}         
+                            disabled={nama!.length>0?false:true}    
                         /> 
                     </Stack.Item>
                     <Stack.Item>
@@ -642,6 +647,7 @@ export const FormulirRegistrasi: FC = () => {
                             name="kontak.telepone"
                             rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
                             control={control}
+                            disabled={jenisKelamin == null?true:false}
                         /> 
                     </Stack.Item>
                     <Stack.Item>
@@ -651,6 +657,8 @@ export const FormulirRegistrasi: FC = () => {
                             name="kontak.email"
                             rules={{ required: "Alamat email harus diisi" }}  
                             control={control} 
+                            value={loginAuthentication.userName}
+                            disabled={true}
                         />
                     </Stack.Item>
                 </Stack>
@@ -659,7 +667,7 @@ export const FormulirRegistrasi: FC = () => {
                         text="Lanjut" 
                         onClick={onButtonLanjutPIDClick} 
                         style={{marginTop: 24, width: 100}}
-                        disabled={false}
+                        disabled={kontak?.telepone?.length == 0 ? true:false}
                         />
                 </Stack>     
             </motion.div>
