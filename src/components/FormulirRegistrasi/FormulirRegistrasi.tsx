@@ -19,6 +19,7 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import Tesseract from "tesseract.js";
 
 interface IStateRegistrasiAnimationFramer {
     animUserName: string;
@@ -206,6 +207,7 @@ export const FormulirRegistrasi: FC = () => {
         userName: '',
         password: '',
     });
+
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -227,9 +229,9 @@ export const FormulirRegistrasi: FC = () => {
         }
     });
 
-    const [nik, nama, jenisKelamin, kontak] = useWatch({
+    const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
         control, 
-        name: ['nik', 'nama', 'jenisKelamin', 'kontak']
+        name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
     });
 
     const [heighArea, setHeightArea] = useState<number>(300);
@@ -248,8 +250,9 @@ export const FormulirRegistrasi: FC = () => {
     const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
     const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
-    const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    
+    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+
     const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
@@ -282,22 +285,22 @@ export const FormulirRegistrasi: FC = () => {
         setKecamatan({id: '', nama: ''});
         setKabupaten({id: '', nama: ''});
         setPropinsi(item);
-        // props.setValue("alamat.kabupaten", null);
-        // props.setValue("alamat.kecamatan", null);
-        // props.setValue("alamat.desa", null);
+        setValue("alamat.kabupaten", null);
+        setValue("alamat.kecamatan", null);
+        setValue("alamat.desa", null);
     }
 
     const resetKabupaten = (item: IKabupaten) => {               
         setKabupaten(item); 
         setKecamatan({id: '', nama: ''});
-        // props.setValue("alamat.kecamatan", null);
-        // props.setValue("alamat.desa", null)
+        setValue("alamat.kecamatan", null);
+        setValue("alamat.desa", null)
     }
 
     const resetKecamatan = (item: IKabupaten) => {               
         setKecamatan(item); 
         setDesa({id: '', nama: ''});
-        // props.setValue("alamat.desa", null);
+        setValue("alamat.desa", null);
     }
 
     const onChangeEmailNameValue = useCallback(
@@ -311,6 +314,7 @@ export const FormulirRegistrasi: FC = () => {
                     {...prev, userName: newValue||''}
                 )
             );
+            setValue("kontak.email", newValue||'');
         },
         [errorEmailName, setLoginAuthentication],
     );
@@ -331,12 +335,14 @@ export const FormulirRegistrasi: FC = () => {
     );
 
     const onButtonLanjutClick = async () => { 
-        let test = regexp.test(loginAuthentication.userName);
+        let test = regexpEmail.test(loginAuthentication.userName);
         if(test == true) {
-            // try {
-            //     const hasil = await cekUserName(loginAuthentication.userName).unwrap();
-            //     if(hasil == true) {
+            try {
+                const hasil = await cekUserName(loginAuthentication.userName).unwrap();
+                if(hasil == false) {
+                    setHeightArea(350);
                     setErrorEmailName('');
+                    setErrorPassword('');
                     setVariant((prev) =>({...prev, animUserName: 'closed'}));     
                     setTimeout(
                         () => {
@@ -344,18 +350,75 @@ export const FormulirRegistrasi: FC = () => {
                         },
                         duration*1000
                     );
-            //     }
-            //     else {
-            //         setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
-            //     }
-            // }   
-            // catch (err) {
-            //     console.log(err);
-            // }  
+                }
+                else {
+                    setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
+                }
+            }   
+            catch (err) {
+                console.log(err);
+            }  
         }
         else {
             setErrorEmailName('Format email tidak sesuai');
         }        
+    };
+
+    const onButtonUserNameBackClick = () => {         
+        setVariant((prev) =>({...prev, animPassword: 'closed'}));
+        setTimeout(
+            () => {
+                // setLoginAuthentication(
+                //     (prev) => (
+                //         {...prev, password: ''}
+                //     )
+                // );
+                setHeightArea(300);
+                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonLanjutPasswordClick = () => {
+        // let test = regexpPassword.test(loginAuthentication.password);
+        let test = loginAuthentication.password.length > 7 ? true:false;
+        if(test == true) {
+            setErrorPassword('');
+            setVariant((prev) =>({...prev, animPassword: 'closed'}));
+            setTimeout(
+                () => {
+                    // setLoginAuthentication(
+                    //     (prev) => (
+                    //         {...prev, password: ''}
+                    //     )
+                    // );
+                    setHeightArea(570);
+                    setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}));
+                },
+                duration*1000
+            );
+        }
+        else {
+            setErrorPassword("panjang sandi minimal 8 karakter");
+            // setErrorPassword("Sandi harus mengandung huruf besar, kecil, numerik, spesial karakter seperti ~!@#$%^&* dan panjang minimal 8 karakter");
+        }        
+    };
+
+    const onButtonUserNameBackToPasswordClick = () => {         
+        setVariant((prev) =>({...prev, animPID: 'closed'}));
+        setTimeout(
+            () => {
+                // setLoginAuthentication(
+                //     (prev) => (
+                //         {...prev, password: ''}
+                //     )
+                // );
+                setHeightArea(350);
+                setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+            },
+            duration*1000
+        );
     };
 
     const onButtonLanjutPIDClick = () => {
@@ -374,6 +437,54 @@ export const FormulirRegistrasi: FC = () => {
         );
     };
 
+    const onButtonUserNameBackToPIDClick = () => {
+        setVariant((prev) =>({...prev, animPID2: 'closed'}));
+        setTimeout(
+            () => {
+                // setLoginAuthentication(
+                //     (prev) => (
+                //         {...prev, password: ''}
+                //     )
+                // );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayPID: true, animPID: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonLanjutPID2Click = () => {
+        setVariant((prev) =>({...prev, animPID2: 'closed'}));
+        setTimeout(
+            () => {
+                // setLoginAuthentication(
+                //     (prev) => (
+                //         {...prev, password: ''}
+                //     )
+                // );
+                setHeightArea(430);
+                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    const onButtonUserNameBackToPID2Click = () => {
+        setVariant((prev) =>({...prev, animUploadKTP: 'closed'}));
+        setTimeout(
+            () => {
+                // setLoginAuthentication(
+                //     (prev) => (
+                //         {...prev, password: ''}
+                //     )
+                // );
+                setHeightArea(570);
+                setVariant((prev) =>({...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
     const onButtonSimpanClick = () => {
         handleSubmit(
             (data) => {
@@ -384,102 +495,7 @@ export const FormulirRegistrasi: FC = () => {
               console.log(err);
             }
           )();
-    };
-
-    const onButtonUserNameBackClick = () => {         
-        setVariant((prev) =>({...prev, animPassword: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
-            },
-            duration*1000
-        );
-    };
-
-    const onButtonUserNameBackToPasswordClick = () => {         
-        setVariant((prev) =>({...prev, animPID: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(300);
-                setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
-            },
-            duration*1000
-        );
-    };
-
-    const onButtonLanjutPasswordClick = () => {
-        setVariant((prev) =>({...prev, animPassword: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(570);
-                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}));
-            },
-            duration*1000
-        );
-    }    
-
-    const onButtonUserNameBackToPIDClick = () => {
-        setVariant((prev) =>({...prev, animPID2: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(570);
-                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayPID: true, animPID: 'open'}));
-            },
-            duration*1000
-        );
-    }
-
-    const onButtonUserNameBackToPID2Click = () => {
-        setVariant((prev) =>({...prev, animUploadKTP: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(570);
-                setVariant((prev) =>({...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}));
-            },
-            duration*1000
-        );
-    }
-
-    const onButtonLanjutPID2Click = () => {
-        setVariant((prev) =>({...prev, animPID2: 'closed'}));
-        setTimeout(
-            () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
-                setHeightArea(430);
-                setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'}));
-            },
-            duration*1000
-        );
-    }
+    };    
     
     return(
         <>
@@ -572,8 +588,7 @@ export const FormulirRegistrasi: FC = () => {
                     underlined 
                     type="password"
                     disabled={false}
-                    errorMessage={errorPassword}
-                    
+                    errorMessage={errorPassword}                    
                     styles={{root: {marginBottom: 8}}}/>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
@@ -770,7 +785,7 @@ export const FormulirRegistrasi: FC = () => {
                         text="Lanjut" 
                         onClick={onButtonLanjutPID2Click} 
                         style={{marginTop: 24, width: 100}}
-                        disabled={false}
+                        disabled={alamat!.keterangan!.length > 0 ? false:true}
                         />
                 </Stack>
             </motion.div>
