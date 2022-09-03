@@ -559,7 +559,7 @@ export const FormulirRegistrasi: FC = () => {
                     <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan dengan akun Anda.</Label>
                 </Stack>                
                 <TextField 
-                    placeholder="kata sandi" 
+                    placeholder="kata sandi"
                     value={loginAuthentication.password}
                     onChange={onChangeUserPasswordValue}
                     onKeyUp={
