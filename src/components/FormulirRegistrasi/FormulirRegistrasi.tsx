@@ -343,7 +343,7 @@ export const FormulirRegistrasi: FC = () => {
                             setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
                         },
                         duration*1000
-                    ); 
+                    );
             //     }
             //     else {
             //         setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
