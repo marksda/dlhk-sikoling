@@ -20,6 +20,7 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import {createWorker}  from "tesseract.js";
+import cv from "@techstark/opencv-js";
 
 
 interface IStateRegistrasiAnimationFramer {
@@ -501,18 +502,27 @@ export const FormulirRegistrasi: FC = () => {
         //     }
         //   )();
 
-        const worker = createWorker({
-            logger: m => console.log(m)
-        });
+        let imgElement: HTMLImageElement = document.createElement("img");
+        imgElement.src = URL.createObjectURL(fileKTP!);
+        let mat = cv.imread(imgElement);
+        // cv.imshow('canvasOutput', mat);
+        // mat.delete();
+
+
+        
+
+        // const worker = createWorker({
+        //     logger: m => console.log(m)
+        // });
           
-        (async () => {
-        await worker.load();
-        await worker.loadLanguage('eng');
-        await worker.initialize('eng');
-        const { data: { text } } = await worker.recognize(fileKTP!);
-        console.log(text);
-        await worker.terminate();
-        })();
+        // (async () => {
+        // await worker.load();
+        // await worker.loadLanguage('eng');
+        // await worker.initialize('eng');
+        // const { data: { text } } = await worker.recognize(fileKTP!);
+        // console.log(text);
+        // await worker.terminate();
+        // })();
     };    
     
     return(
