@@ -503,10 +503,16 @@ export const FormulirRegistrasi: FC = () => {
         //   )();
 
         let imgElement: HTMLImageElement = document.createElement("img");
-        imgElement.src = URL.createObjectURL(fileKTP!);
-        let mat = cv.imread(imgElement);
+        imgElement.src = URL.createObjectURL(fileKTP!);        
         // cv.imshow('canvasOutput', mat);
         // mat.delete();
+        let src = cv.imread(imgElement);
+        let dst = new cv.Mat();
+        cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
+        cv.imshow('canvasOutput', dst);
+        src.delete();
+        dst.delete();
+
         
 
         // const worker = createWorker({
@@ -853,6 +859,9 @@ export const FormulirRegistrasi: FC = () => {
                             showProgressBar={false}
                             setFileKTP={setFileKTP}
                         />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <canvas id="canvasOutput"></canvas>
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
