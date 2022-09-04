@@ -111,6 +111,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
         let file = event.currentTarget.files![0];
+        
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':

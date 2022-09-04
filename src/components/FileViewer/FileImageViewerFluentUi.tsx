@@ -15,7 +15,7 @@ interface IFileViewerPropsComponent {
 }
 
 export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) => {
-
+    
     const [imageProps, setImageProps] = useState<IImageProps|undefined>(
         {
             imageFit: ImageFit.cover,
@@ -26,10 +26,23 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
     ); 
 
     if(typeof props.file !== 'undefined') {                      
-        let reader = new FileReader();                    
+        let reader = new FileReader();        
+        // reader.onload = function() { // file is loaded
+        //     var img: HTMLImageElement = document.createElement("img");    
+        //     img.onload = function() {
+        //         console.log(img.width); // image is loaded; sizes are available
+        //     };
+        
+        //     img.src = reader.result as string; // is the data URL because called with readAsDataURL
+        // };
+                    
         reader.readAsDataURL(props.file);
+
         let imgProperti = {...imageProps};
         reader.onload = () => {
+            var img: HTMLImageElement = document.createElement("img");
+            console.log(img);
+
             imgProperti.src = reader.result as string;
             setImageProps(imgProperti);
         };

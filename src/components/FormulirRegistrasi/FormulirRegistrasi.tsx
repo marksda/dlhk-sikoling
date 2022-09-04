@@ -205,15 +205,10 @@ const containerStyle: IContainerUploadStyle = {
 };
 
 export const FormulirRegistrasi: FC = () => {    
-    // importScript("../../opencv.js");
-
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
         password: '',
     });
-
-    // const [fileKTP, setFileKTP] = useState<File|null>(null);
-
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -234,12 +229,10 @@ export const FormulirRegistrasi: FC = () => {
             scanKTP: '',
         }
     });
-
     const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
         control, 
         name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
     });
-
     const [heighArea, setHeightArea] = useState<number>(300);
     const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
         animUserName: 'open',
@@ -257,7 +250,7 @@ export const FormulirRegistrasi: FC = () => {
     const [errorPassword, setErrorPassword] = useState<string>('');
     const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 
     const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
@@ -286,28 +279,37 @@ export const FormulirRegistrasi: FC = () => {
         return {key: t.id as string, text: t.nama as string}; 
     });
 
-    const resetPropinsi = (item: IPropinsi) => {          
-        setDesa({id: '', nama: ''});
-        setKecamatan({id: '', nama: ''});
-        setKabupaten({id: '', nama: ''});
-        setPropinsi(item);
-        setValue("alamat.kabupaten", null);
-        setValue("alamat.kecamatan", null);
-        setValue("alamat.desa", null);
-    }
+    const resetPropinsi = useCallback(
+        (item: IPropinsi) => {          
+            setDesa({id: '', nama: ''});
+            setKecamatan({id: '', nama: ''});
+            setKabupaten({id: '', nama: ''});
+            setPropinsi(item);
+            setValue("alamat.kabupaten", null);
+            setValue("alamat.kecamatan", null);
+            setValue("alamat.desa", null);
+        },
+        [propinsi]
+    );
 
-    const resetKabupaten = (item: IKabupaten) => {               
-        setKabupaten(item); 
-        setKecamatan({id: '', nama: ''});
-        setValue("alamat.kecamatan", null);
-        setValue("alamat.desa", null)
-    }
+    const resetKabupaten = useCallback(
+         (item: IKabupaten) => {               
+            setKabupaten(item); 
+            setKecamatan({id: '', nama: ''});
+            setValue("alamat.kecamatan", null);
+            setValue("alamat.desa", null)
+        },
+        [kabupaten]
+    );
 
-    const resetKecamatan = (item: IKabupaten) => {               
-        setKecamatan(item); 
-        setDesa({id: '', nama: ''});
-        setValue("alamat.desa", null);
-    }
+    const resetKecamatan = useCallback(
+        (item: IKabupaten) => {               
+            setKecamatan(item); 
+            setDesa({id: '', nama: ''});
+            setValue("alamat.desa", null);
+        },
+        [kecamatan]
+    );
 
     const onChangeEmailNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -502,19 +504,66 @@ export const FormulirRegistrasi: FC = () => {
         //     }
         //   )();
 
-        // let imgElement: HTMLImageElement = document.createElement("img");
-        // imgElement.src = URL.createObjectURL(fileKTP!);    
-        // imgElement.id = "tesgbr";
-        // console.log(imgElement);  
-        // cv.imshow('canvasOutput', mat);
-        // mat.delete();
-        let src = cv.imread("tesgbr");
+        let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
+        // let context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
+        let src = cv.imread('tesgbr');
         let dst = new cv.Mat();
-        cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
-        cv.imshow('canvasOutput', dst);
-        src.delete();
-        dst.delete();
+        let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
+        let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
+        // You can try more different parameters
+        cv.inRange(src, low, high, dst);
+        cv.imshow(canvas, dst);
+        src.delete(); dst.delete(); low.delete(); high.delete();
 
+
+        // let dst = new cv.Mat();
+        // let src = cv.imread("tesgbr");        
+        // cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
+        // cv.threshold(src, src, 0, 255, cv.THRESH_OTSU);
+        // cv.threshold(src, dst, 0, 255, cv.THRESH_BINARY_INV);
+
+        
+        
+        // let M = new cv.Mat();
+        // let ksize = new cv.Size(18, 18);
+        // M = cv.getStructuringElement(cv.MORPH_CROSS, ksize);
+        // cv.morphologyEx(src, dst, cv.MORPH_GRADIENT, M);
+
+        // M = cv.Mat.ones(5, 5, cv.CV_8U);
+        // let anchor = new cv.Point(-1, -1);
+        // cv.dilate(src, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+
+        // let dst = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
+        // let contours = new cv.MatVector();
+        // let hierarchy = new cv.Mat();
+        // // You can try more different parameters
+        // cv.findContours(src, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE);
+        // // draw contours with random Scalar
+        // let jml = contours.size().height * contours.size().width;
+        // for (let i = 0; i < jml ; ++i) {
+        //     let color = new cv.Scalar(Math.round(Math.random() * 255), Math.round(Math.random() * 255),
+        //                             Math.round(Math.random() * 255));
+        //     cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);
+        // }
+        
+        
+        // cv.cvtColor(src, src, cv.COLOR_RGBA2RGB);        
+        // let dst = new cv.Mat();
+        // let M = new cv.Mat();
+        // let ksize = new cv.Size(18, 18);
+        // M = cv.getStructuringElement(cv.MORPH_CROSS, ksize);
+        // cv.morphologyEx(src, dst, cv.MORPH_GRADIENT, M);
+
+        // cv.threshold(src, dst, 177, 200, cv.THRESH_BINARY);
+        // cv.threshold(dst, dst, 177, 100, cv.THRESH_OTSU);
+        // cv.threshold(dst, dst, 0, 255, cv.THRESH_OTSU);
+        // cv.threshold(dst, dst, 125, 255, cv.THRESH_BINARY);
+        // cv.imshow(canvas, dst);
+        // src.delete();
+        // dst.delete();
+        // M.delete();
+        // contours.delete();
+        // hierarchy.delete();
         
 
         // const worker = createWorker({
@@ -525,7 +574,7 @@ export const FormulirRegistrasi: FC = () => {
         // await worker.load();
         // await worker.loadLanguage('eng');
         // await worker.initialize('eng');
-        // const { data: { text } } = await worker.recognize(fileKTP!);
+        // const { data: { text } } = await worker.recognize(canvas);
         // console.log(text);
         // await worker.terminate();
         // })();
@@ -863,7 +912,7 @@ export const FormulirRegistrasi: FC = () => {
                         />
                     </Stack.Item>
                     <Stack.Item>
-                        <canvas id="canvasOutput"></canvas>
+                        <canvas id="canvasOutput" style={{width: 310, height: 193}}></canvas>
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
