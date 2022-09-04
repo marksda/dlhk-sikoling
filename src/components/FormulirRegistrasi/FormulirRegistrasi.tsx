@@ -507,8 +507,6 @@ export const FormulirRegistrasi: FC = () => {
         let mat = cv.imread(imgElement);
         // cv.imshow('canvasOutput', mat);
         // mat.delete();
-
-
         
 
         // const worker = createWorker({
