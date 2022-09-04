@@ -1,8 +1,8 @@
 import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 import { IDesa, resetDesa } from "../../features/desa/desa-slice";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
@@ -19,8 +19,8 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
-import {createWorker}  from "tesseract.js";
-import cv from "@techstark/opencv-js";
+// import {createWorker}  from "tesseract.js";
+// import cv from "@techstark/opencv-js";
 
 
 interface IStateRegistrasiAnimationFramer {
