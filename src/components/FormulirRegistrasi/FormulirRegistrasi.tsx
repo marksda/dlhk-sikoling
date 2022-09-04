@@ -492,13 +492,13 @@ export const FormulirRegistrasi: FC = () => {
     const onButtonSimpanClick = () => {
         handleSubmit(
             (data) => {
-              console.log(data);
-            //   addPerson(data);
+                console.log(data);
+                //addPerson(data);
             },
             (err) => {                
               console.log(err);
             }
-          )();
+        )();
 
         // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
         // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
