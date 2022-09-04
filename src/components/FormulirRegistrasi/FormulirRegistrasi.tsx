@@ -205,6 +205,7 @@ const containerStyle: IContainerUploadStyle = {
 };
 
 export const FormulirRegistrasi: FC = () => {    
+    const [file, setFile] = useState<File|null>(null);
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
         password: '',
@@ -489,77 +490,38 @@ export const FormulirRegistrasi: FC = () => {
     };
 
     const onButtonSimpanClick = () => {
-        // handleSubmit(
-        //     (data) => {
-        //       console.log(data);
-        //     //   addPerson(data);
-        //     },
-        //     (err) => {                
-        //       console.log(err);
-        //     }
-        //   )();
+        handleSubmit(
+            (data) => {
+              console.log(data);
+            //   addPerson(data);
+            },
+            (err) => {                
+              console.log(err);
+            }
+          )();
 
-        let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
+        // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
+        // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
+        // var reader = new FileReader();             
+        // reader.onload = () => {             
+        //     img.src = reader.result as string;
+        //     // canvas.height = img.naturalHeight;
+        //     // canvas.width = img.naturalWidth;
+        // };        
+        // reader.readAsDataURL(file!);
+
+        
+
+        // let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
         // let context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
-        let src = cv.imread('tesgbr');
-        let dst = new cv.Mat();
-        let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
-        let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
+        // let src = cv.imread("tesgbr");
+        // let dst = new cv.Mat();
+        // let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
+        // let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
         // You can try more different parameters
-        cv.inRange(src, low, high, dst);
-        cv.imshow(canvas, dst);
-        src.delete(); dst.delete(); low.delete(); high.delete();
-
-
-        // let dst = new cv.Mat();
-        // let src = cv.imread("tesgbr");        
-        // cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-        // cv.threshold(src, src, 0, 255, cv.THRESH_OTSU);
-        // cv.threshold(src, dst, 0, 255, cv.THRESH_BINARY_INV);
-
-        
-        
-        // let M = new cv.Mat();
-        // let ksize = new cv.Size(18, 18);
-        // M = cv.getStructuringElement(cv.MORPH_CROSS, ksize);
-        // cv.morphologyEx(src, dst, cv.MORPH_GRADIENT, M);
-
-        // M = cv.Mat.ones(5, 5, cv.CV_8U);
-        // let anchor = new cv.Point(-1, -1);
-        // cv.dilate(src, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
-
-        // let dst = cv.Mat.zeros(src.cols, src.rows, cv.CV_8UC3);
-        // let contours = new cv.MatVector();
-        // let hierarchy = new cv.Mat();
-        // // You can try more different parameters
-        // cv.findContours(src, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE);
-        // // draw contours with random Scalar
-        // let jml = contours.size().height * contours.size().width;
-        // for (let i = 0; i < jml ; ++i) {
-        //     let color = new cv.Scalar(Math.round(Math.random() * 255), Math.round(Math.random() * 255),
-        //                             Math.round(Math.random() * 255));
-        //     cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);
-        // }
-        
-        
-        // cv.cvtColor(src, src, cv.COLOR_RGBA2RGB);        
-        // let dst = new cv.Mat();
-        // let M = new cv.Mat();
-        // let ksize = new cv.Size(18, 18);
-        // M = cv.getStructuringElement(cv.MORPH_CROSS, ksize);
-        // cv.morphologyEx(src, dst, cv.MORPH_GRADIENT, M);
-
-        // cv.threshold(src, dst, 177, 200, cv.THRESH_BINARY);
-        // cv.threshold(dst, dst, 177, 100, cv.THRESH_OTSU);
-        // cv.threshold(dst, dst, 0, 255, cv.THRESH_OTSU);
-        // cv.threshold(dst, dst, 125, 255, cv.THRESH_BINARY);
-        // cv.imshow(canvas, dst);
-        // src.delete();
-        // dst.delete();
-        // M.delete();
-        // contours.delete();
-        // hierarchy.delete();
-        
+        // cv.inRange(src, low, high, dst);
+        // cv.imshow(canvas, dst);        
+        // src.delete(); dst.delete(); low.delete(); high.delete();        
 
         // const worker = createWorker({
         //     logger: m => console.log(m)
@@ -904,10 +866,8 @@ export const FormulirRegistrasi: FC = () => {
                             showButtonUpload={false}
                             showProgressBar={false}
                             id="tesgbr"
+                            setFile={setFile}
                         />
-                    </Stack.Item>
-                    <Stack.Item>
-                        <canvas id="canvasOutput" style={{width: 310, height: 193}}></canvas>
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>

@@ -1,12 +1,12 @@
 import { Image, IImageProps, ImageFit } from "@fluentui/react";
-import { FC, MouseEventHandler, useState } from "react";
+import { FC, MouseEventHandler, useEffect, useState } from "react";
 // import CekTypeFile from "../../features/file-utils/FileUtils";
 
 
 interface IFileViewerPropsComponent {
     src?: string;
     id?: string;
-    file?: File;
+    file: File;
     area?: {
         height: number, 
         width: number
@@ -25,8 +25,26 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
         }
     ); 
 
-    if(typeof props.file !== 'undefined') {                      
-        let reader = new FileReader();        
+    useEffect(
+        () => {
+            var reader = new FileReader(); 
+            var imgProperti = {...imageProps};
+            reader.onload = () => {
+                // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;                
+                // img.src = reader.result as string;
+                // setImageProps(imgProperti);
+                // console.log(` height: ${img.naturalHeight}, width: ${img.naturalWidth}`);
+                imgProperti.src = reader.result as string;
+                setImageProps(imgProperti);
+            };
+            
+            reader.readAsDataURL(props.file);
+        },
+        [props.file]
+    );
+
+    // if(typeof props.file !== 'undefined') {                      
+    //     let reader = new FileReader();        
         // reader.onload = function() { // file is loaded
         //     var img: HTMLImageElement = document.createElement("img");    
         //     img.onload = function() {
@@ -36,22 +54,22 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
         //     img.src = reader.result as string; // is the data URL because called with readAsDataURL
         // };
                     
-        reader.readAsDataURL(props.file);
+        // reader.readAsDataURL(props.file);
 
-        let imgProperti = {...imageProps};
-        reader.onload = () => {
-            var img: HTMLImageElement = document.createElement("img");
-            console.log(img);
+        // let imgProperti = {...imageProps};
+        // reader.onload = () => {
+        //     var img: HTMLImageElement = document.createElement("img");
+        //     console.log(img);
 
-            imgProperti.src = reader.result as string;
-            setImageProps(imgProperti);
-        };
-    }
-    else {
-        let imgProperti = {...imageProps};
-        imgProperti.src = props.src;
-        setImageProps(imgProperti);
-    }
+        //     imgProperti.src = reader.result as string;
+        //     setImageProps(imgProperti);
+        // };
+    // }
+    // else {
+    //     let imgProperti = {...imageProps};
+    //     imgProperti.src = props.src;
+    //     setImageProps(imgProperti);
+    // }
 
     return(
         <>

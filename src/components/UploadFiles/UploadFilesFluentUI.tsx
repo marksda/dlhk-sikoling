@@ -45,6 +45,7 @@ interface IUploadFilePropsComponent {
     luasArea?: {panjang: number; lebar: number;};
     showButtonUpload?: boolean;
     showProgressBar?: boolean;
+    setFile?: (File: File) => void;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -111,7 +112,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
         let file = event.currentTarget.files![0];
-        
+        // props.setFile(file);
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':
@@ -131,24 +132,26 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         <>            
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/> 
             {
-            props.showPreview && 
-            <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
-                {!currentFile &&<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>}
-                {!currentFile &&<Label disabled style={{cursor: 'pointer'}}>{`${props.label} (maksimal ${props.maxSize} KB)`}</Label>}
-                {
-                props.showPreview && isImageFile && 
-                <FileImageViewerFluentUi 
-                    file={currentFile} 
-                    area={
-                        {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
-                    }  
-                    onClick={bindClickEventInputFile}        
-                    id={props.id}         
-                />
-                }
-                {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
-                {currentFile && false && <FontIcon aria-label="Ktp" iconName="Delete" />}
-            </div>
+                props.showPreview && 
+                (
+                    <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
+                        {!currentFile && (<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>)}
+                        {!currentFile && (<Label disabled style={{cursor: 'pointer'}}>{`${props.label} (maksimal ${props.maxSize} KB)`}</Label>)}
+                        {
+                        props.showPreview && isImageFile && 
+                        <FileImageViewerFluentUi 
+                            file={currentFile!} 
+                            area={
+                                {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
+                            }  
+                            onClick={bindClickEventInputFile}        
+                            id={props.id}         
+                        />
+                        }
+                        {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
+                        {currentFile && false && <FontIcon aria-label="Ktp" iconName="Delete" />}
+                    </div>
+                )
             }
             {
             !props.showPreview && !currentFile && 
