@@ -252,7 +252,7 @@ export const FormulirRegistrasi: FC = () => {
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 
-    const { data: dataJenisKelamin = [], isFetching } = useGetAllJenisKelaminQuery();  
+    const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
     const [propinsi, setPropinsi] = useState<IPropinsi>(defaultPropinsi); 
@@ -376,11 +376,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animPassword: 'closed'}));
         setTimeout(
             () => {
-                // setLoginAuthentication(
-                //     (prev) => (
-                //         {...prev, password: ''}
-                //     )
-                // );
                 setHeightArea(300);
                 setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
             },
@@ -736,7 +731,7 @@ export const FormulirRegistrasi: FC = () => {
                             name="jenisKelamin"
                             rules={{ required: "harus diisi sesuai dengan ktp" }} 
                             control={control}         
-                            disabled={nama!.length>0?false:true}    
+                            disabled={(nama!.length>0?false:true)||isFetchingJenisKelamin}    
                         /> 
                     </Stack.Item>
                     <Stack.Item>
