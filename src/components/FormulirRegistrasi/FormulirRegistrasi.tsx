@@ -212,7 +212,7 @@ export const FormulirRegistrasi: FC = () => {
         password: '',
     });
 
-    const [fileKTP, setFileKTP] = useState<File|null>(null);
+    // const [fileKTP, setFileKTP] = useState<File|null>(null);
 
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
@@ -502,11 +502,13 @@ export const FormulirRegistrasi: FC = () => {
         //     }
         //   )();
 
-        let imgElement: HTMLImageElement = document.createElement("img");
-        imgElement.src = URL.createObjectURL(fileKTP!);        
+        // let imgElement: HTMLImageElement = document.createElement("img");
+        // imgElement.src = URL.createObjectURL(fileKTP!);    
+        // imgElement.id = "tesgbr";
+        // console.log(imgElement);  
         // cv.imshow('canvasOutput', mat);
         // mat.delete();
-        let src = cv.imread(imgElement);
+        let src = cv.imread("tesgbr");
         let dst = new cv.Mat();
         cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
         cv.imshow('canvasOutput', dst);
@@ -857,7 +859,7 @@ export const FormulirRegistrasi: FC = () => {
                             luasArea={{panjang: 310, lebar: 193}}
                             showButtonUpload={false}
                             showProgressBar={false}
-                            setFileKTP={setFileKTP}
+                            id="tesgbr"
                         />
                     </Stack.Item>
                     <Stack.Item>

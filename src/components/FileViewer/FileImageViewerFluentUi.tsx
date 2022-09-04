@@ -5,6 +5,7 @@ import { FC, MouseEventHandler, useState } from "react";
 
 interface IFileViewerPropsComponent {
     src?: string;
+    id?: string;
     file?: File;
     area?: {
         height: number, 
@@ -20,6 +21,7 @@ export const FileImageViewerFluentUi: FC<IFileViewerPropsComponent> = (props) =>
             imageFit: ImageFit.cover,
             width: props.area!.width,
             height: props.area!.height,
+            id: props.id,
         }
     ); 
 

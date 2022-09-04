@@ -34,6 +34,7 @@ const containerClass = mergeStyles({
 
 interface IUploadFilePropsComponent {
     label?: string;
+    id?: string;
     showPreview?: boolean;
     showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
@@ -44,7 +45,6 @@ interface IUploadFilePropsComponent {
     luasArea?: {panjang: number; lebar: number;};
     showButtonUpload?: boolean;
     showProgressBar?: boolean;
-    setFileKTP?: (f: File) => void;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -111,7 +111,6 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
         setSelectedFiles(event.currentTarget.files);
         let file = event.currentTarget.files![0];
-        props.setFileKTP!(file);
         setCurrentFile(file);
         switch (CekTypeFile(file.type)) {
             case 'image':
@@ -142,7 +141,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     area={
                         {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
                     }  
-                    onClick={bindClickEventInputFile}                 
+                    onClick={bindClickEventInputFile}        
+                    id={props.id}         
                 />
                 }
                 {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
