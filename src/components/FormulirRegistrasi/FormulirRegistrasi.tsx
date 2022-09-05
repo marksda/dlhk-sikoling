@@ -198,14 +198,14 @@ const progressStyle: IProgressIndicatorStyles ={
     progressBar:null,
     progressTrack: null
 };
-const containerStyle: IContainerUploadStyle = {
-    width: 400, 
-    height: 100, 
-    backgroundColor: '#ECECEC',
-};
+// const containerStyle: IContainerUploadStyle = {
+//     width: 400, 
+//     height: 100, 
+//     backgroundColor: '#ECECEC',
+// };
 
 export const FormulirRegistrasi: FC = () => {    
-    const [file, setFile] = useState<File|null>(null);
+    // const [file, setFile] = useState<File|null>(null);
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
         password: '',
@@ -392,11 +392,6 @@ export const FormulirRegistrasi: FC = () => {
             setVariant((prev) =>({...prev, animPassword: 'closed'}));
             setTimeout(
                 () => {
-                    // setLoginAuthentication(
-                    //     (prev) => (
-                    //         {...prev, password: ''}
-                    //     )
-                    // );
                     setHeightArea(570);
                     setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}));
                 },
@@ -413,11 +408,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animPID: 'closed'}));
         setTimeout(
             () => {
-                // setLoginAuthentication(
-                //     (prev) => (
-                //         {...prev, password: ''}
-                //     )
-                // );
                 setHeightArea(350);
                 setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
             },
@@ -429,11 +419,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animPID: 'closed'}));
         setTimeout(
             () => {
-                setLoginAuthentication(
-                    (prev) => (
-                        {...prev, password: ''}
-                    )
-                );
                 setHeightArea(570);
                 setVariant((prev) =>({...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}));
             },
@@ -445,11 +430,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animPID2: 'closed'}));
         setTimeout(
             () => {
-                // setLoginAuthentication(
-                //     (prev) => (
-                //         {...prev, password: ''}
-                //     )
-                // );
                 setHeightArea(570);
                 setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayPID: true, animPID: 'open'}));
             },
@@ -461,11 +441,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animPID2: 'closed'}));
         setTimeout(
             () => {
-                // setLoginAuthentication(
-                //     (prev) => (
-                //         {...prev, password: ''}
-                //     )
-                // );
                 setHeightArea(430);
                 setVariant((prev) =>({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'}));
             },
@@ -477,11 +452,6 @@ export const FormulirRegistrasi: FC = () => {
         setVariant((prev) =>({...prev, animUploadKTP: 'closed'}));
         setTimeout(
             () => {
-                // setLoginAuthentication(
-                //     (prev) => (
-                //         {...prev, password: ''}
-                //     )
-                // );
                 setHeightArea(570);
                 setVariant((prev) =>({...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}));
             },
@@ -493,6 +463,7 @@ export const FormulirRegistrasi: FC = () => {
         handleSubmit(
             (data) => {
                 console.log(data);
+                console.log(loginAuthentication);
                 //addPerson(data);
             },
             (err) => {                
@@ -866,7 +837,6 @@ export const FormulirRegistrasi: FC = () => {
                             showButtonUpload={false}
                             showProgressBar={false}
                             id="tesgbr"
-                            setFile={setFile}
                         />
                     </Stack.Item>
                 </Stack>
