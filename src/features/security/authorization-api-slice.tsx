@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../../features/config/config";
+import { IPerson } from "../person/person-slice";
 import { IAuthentication } from "./authorization-slice";
 import { IResponseStatusToken } from "./token-slice";
 
@@ -18,6 +19,16 @@ export const AuthorizationApiSlice = createApi({
                     method: 'GET',
                 }),
             }),
+            addRegistrasi: builder.mutation<boolean, {auth: IAuthentication, person: IPerson}>({
+                query: (data) => ({
+                    url: `user/registrasi`,
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                    },
+                    body: data,
+                }),
+            }),   
             getToken: builder.mutation<IResponseStatusToken, IAuthentication>({
                 query: (authenticationData) => ({
                     url: `user/get_token`,
@@ -32,4 +43,4 @@ export const AuthorizationApiSlice = createApi({
     }
 });
 
-export const { useCekUserNameMutation, useGetTokenMutation } = AuthorizationApiSlice;
+export const { useCekUserNameMutation, useAddRegistrasiMutation, useGetTokenMutation } = AuthorizationApiSlice;

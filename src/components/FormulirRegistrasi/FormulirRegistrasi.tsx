@@ -12,7 +12,7 @@ import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecama
 import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
 import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
 import { IPropinsi } from "../../features/propinsi/propinsi-slice";
-import { useCekUserNameMutation } from "../../features/security/authorization-api-slice";
+import { useAddRegistrasiMutation, useCekUserNameMutation } from "../../features/security/authorization-api-slice";
 import { IAuthentication } from "../../features/security/authorization-slice";
 import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
@@ -280,6 +280,8 @@ export const FormulirRegistrasi: FC = () => {
         return {key: t.id as string, text: t.nama as string}; 
     });
 
+    const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation();
+
     const resetPropinsi = useCallback(
         (item: IPropinsi) => {          
             setDesa({id: '', nama: ''});
@@ -461,10 +463,14 @@ export const FormulirRegistrasi: FC = () => {
 
     const onButtonSimpanClick = () => {
         handleSubmit(
-            (data) => {
-                console.log(data);
+            (d) => {
+                console.log(d);
                 console.log(loginAuthentication);
                 //addPerson(data);
+                let hasil = addRegistrasi({
+                    auth: loginAuthentication,
+                    person: d
+                });
             },
             (err) => {                
               console.log(err);
