@@ -4,6 +4,10 @@ import { IPerson } from "../person/person-slice";
 import { IAuthentication } from "./authorization-slice";
 import { IResponseStatusToken } from "./token-slice";
 
+export interface PostRegistrasi {
+    auth: IAuthentication;
+    person: IPerson;
+};
 
 export const AuthorizationApiSlice = createApi({
     reducerPath: 'authorizationApi',
@@ -19,14 +23,14 @@ export const AuthorizationApiSlice = createApi({
                     method: 'GET',
                 }),
             }),
-            addRegistrasi: builder.mutation<boolean, {auth: IAuthentication, person: IPerson}>({
-                query: (data) => ({
+            addRegistrasi: builder.mutation<boolean, Partial<PostRegistrasi>>({
+                query: (body) => ({
                     url: `user/registrasi`,
                     method: 'POST',
                     header: {
                         'Content-Type': 'application/json;charset=UTF-8',
                     },
-                    body: data,
+                    body
                 }),
             }),   
             getToken: builder.mutation<IResponseStatusToken, IAuthentication>({

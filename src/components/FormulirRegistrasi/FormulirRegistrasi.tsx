@@ -1,7 +1,7 @@
 import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 import { IDesa, resetDesa } from "../../features/desa/desa-slice";
@@ -461,21 +461,23 @@ export const FormulirRegistrasi: FC = () => {
         );
     };
 
-    const onButtonSimpanClick = () => {
-        handleSubmit(
-            (d) => {
-                console.log(d);
-                console.log(loginAuthentication);
-                //addPerson(data);
-                let hasil = addRegistrasi({
-                    auth: loginAuthentication,
-                    person: d
-                });
-            },
-            (err) => {                
-              console.log(err);
-            }
-        )();
+    const onButtonSimpanClick: SubmitHandler<IPerson> = async (data) => {
+        await addRegistrasi({
+            auth: loginAuthentication,
+            person: data
+        });
+        
+        // handleSubmit(
+        //     async (d) => {
+        //         await addRegistrasi({
+        //             auth: loginAuthentication,
+        //             person: d
+        //         });
+        //     },            
+        //     (err) => {                
+        //       console.log(err);
+        //     }
+        // )();
 
         // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
         // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
@@ -517,7 +519,7 @@ export const FormulirRegistrasi: FC = () => {
     return(
         <>
         {
-            isLoadingCekUserName &&
+            (isLoadingCekUserName || isLoadingAddRegistrasi) &&
             (<Stack>
                 <ProgressIndicator styles={progressStyle}/>
             </Stack>)
@@ -849,7 +851,7 @@ export const FormulirRegistrasi: FC = () => {
                 <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                     <PrimaryButton 
                         text="Simpan" 
-                        onClick={onButtonSimpanClick}
+                        onClick={handleSubmit(onButtonSimpanClick)}
                         style={{marginTop: 24, width: 100}}
                         disabled={false}
                         />
