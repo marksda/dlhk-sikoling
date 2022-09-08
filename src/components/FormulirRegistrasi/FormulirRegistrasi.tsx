@@ -1,4 +1,4 @@
-import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
+import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar, MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
@@ -203,6 +203,20 @@ const progressStyle: IProgressIndicatorStyles ={
 //     height: 100, 
 //     backgroundColor: '#ECECEC',
 // };
+const SuccessExample = () => (
+    <MessageBar
+      actions={
+        <div>
+          <MessageBarButton>Ya</MessageBarButton>
+          <MessageBarButton>Tidak</MessageBarButton>
+        </div>
+      }
+      messageBarType={MessageBarType.success}
+      isMultiline={false}
+    >
+      Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
+    </MessageBar>
+);
 
 export const FormulirRegistrasi: FC = () => {    
     // const [file, setFile] = useState<File|null>(null);
@@ -462,10 +476,17 @@ export const FormulirRegistrasi: FC = () => {
     };
 
     const onButtonSimpanClick: SubmitHandler<IPerson> = async (data) => {
-        await addRegistrasi({
+        let hasil = await addRegistrasi({
             auth: loginAuthentication,
             person: data
-        });
+        }).unwrap();
+
+        if(hasil == true) {
+            alert("registrasi berhasil");
+        }
+        else {
+            alert('Registrasi gagal');
+        }
         
         // handleSubmit(
         //     async (d) => {
