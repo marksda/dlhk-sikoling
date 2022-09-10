@@ -476,15 +476,13 @@ export const FormulirRegistrasi: FC = () => {
     };
 
     const onButtonSimpanClick: SubmitHandler<IPerson> = async (data) => {
-        let hasil = await addRegistrasi({
-            auth: loginAuthentication,
-            person: data
-        }).unwrap();
-
-        if(hasil == true) {
+        try {
+            await addRegistrasi({
+                auth: loginAuthentication,
+                person: data
+            }).unwrap();
             alert("registrasi berhasil");
-        }
-        else {
+        } catch (error) {
             alert('Registrasi gagal');
         }
         
