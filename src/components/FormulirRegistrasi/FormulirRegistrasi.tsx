@@ -203,7 +203,7 @@ const progressStyle: IProgressIndicatorStyles ={
 //     height: 100, 
 //     backgroundColor: '#ECECEC',
 // };
-const SuccessExample = () => (
+const SuccessMessage = () => (
     <MessageBar
       actions={
         <div>
@@ -478,7 +478,8 @@ export const FormulirRegistrasi: FC = () => {
     const onButtonSimpanClick: SubmitHandler<IPerson> = async (data) => {
         try {
             await addRegistrasi({auth: loginAuthentication, person: data}).unwrap();
-            alert("registrasi berhasil");
+            // alert("registrasi berhasil");
+            <SuccessMessage />
         } catch (error) {
             alert('Registrasi gagal');
         }
