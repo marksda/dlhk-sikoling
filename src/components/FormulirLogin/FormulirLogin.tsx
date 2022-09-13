@@ -17,6 +17,33 @@ interface IStateAnimationFramer {
     animPassword: string;
     flipDisplay: boolean;
 };
+const rootContainerStyle: React.CSSProperties = {
+    display: 'table-cell',
+    verticalAlign: 'middle',
+};
+const progressStyle: IProgressIndicatorStyles ={
+    root: {
+        width: 396,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        height: 8,
+    },
+    itemName: null,
+    itemDescription: null,
+    itemProgress: null,
+    progressBar:null,
+    progressTrack: null
+};
+const containerStyles: React.CSSProperties = {    
+    display: "inline-block", 
+    boxShadow: DefaultEffects.elevation4, 
+    // borderTop: '2px solid orange', 
+    borderTop: '2px solid #0078D7', 
+    borderRadius: 3, 
+    padding: 48,
+    width:300,
+    background: 'white',
+};
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
@@ -38,28 +65,6 @@ const labelUserNameStyle: ILabelStyles  = {
        fontWeight: 400,
        fontSize: '1rem', 
     }
-};
-const containerStyles: React.CSSProperties = {    
-    display: "inline-block", 
-    boxShadow: DefaultEffects.elevation4, 
-    borderTop: '2px solid #0078D7', 
-    borderRadius: 3, 
-    padding: 48,
-    width:300,
-    background: 'white',
-};
-const progressStyle: IProgressIndicatorStyles ={
-    root: {
-        width: 464,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        height: 8,
-    },
-    itemName: null,
-    itemDescription: null,
-    itemProgress: null,
-    progressBar:null,
-    progressTrack: null
 };
 const contactIcon: IIconProps = { iconName: 'Contact' };
 const backIcon: IIconProps = { 
@@ -119,6 +124,7 @@ export const FormulirLogin: FC = () => {
     const [errorUserName, setErrorUserName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
     const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
+    
     const [getToken, { isLoading: isLoadingGetToken}] = useGetTokenMutation();
     const navigate = useNavigate();
 
@@ -246,13 +252,15 @@ export const FormulirLogin: FC = () => {
     };
 
     return(
-        <>
+        <div style={rootContainerStyle}>
             {
-                (isLoadingCekUserName) &&
-                (<Stack>
+                (isLoadingCekUserName && userName.length > 0) &&
+                (
+                <Stack>
                     <ProgressIndicator styles={progressStyle}/>
-                </Stack>)
-            }   
+                </Stack>
+                )
+            }
             <div style={containerStyles}>            
                 <Stack horizontal tokens={containerLoginStackTokens}>
                     <Stack.Item>
@@ -283,7 +291,7 @@ export const FormulirLogin: FC = () => {
                             }
                         }
                         iconProps={contactIcon} 
-                        disabled={isLoadingCekUserName}
+                        disabled={isLoadingCekUserName && userName.length > 0}
                         underlined 
                         errorMessage={errorUserName}
                         styles={{root: {marginBottom: 8, width: 300}}}/>
@@ -306,7 +314,7 @@ export const FormulirLogin: FC = () => {
                             text="Berikutnya" 
                             onClick={onButtonLanjutClick} 
                             style={{marginTop: 24, width: 100}}
-                            disabled={isLoadingCekUserName}
+                            disabled={isLoadingCekUserName && userName.length > 0}
                             />
                     </Stack>
                 </motion.div>
@@ -368,7 +376,7 @@ export const FormulirLogin: FC = () => {
                     </Stack>
                 </motion.div>
             </div>
-        </>        
+        </div>        
     );
 
 };
