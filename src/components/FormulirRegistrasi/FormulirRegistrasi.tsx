@@ -359,7 +359,15 @@ export const FormulirRegistrasi: FC = () => {
             );
             setValue("kontak.email", newValue||'');
         },
-        [errorEmailName, setLoginAuthentication],
+        // [errorEmailName, setLoginAuthentication],
+        [],
+    );
+
+    const onButtonLanjutClick = useCallback(
+        () => {
+            setUserName(loginAuthentication.userName);
+        },
+        [userName]
     );
 
     const onChangeUserPasswordValue = useCallback(
@@ -375,13 +383,6 @@ export const FormulirRegistrasi: FC = () => {
             );
         },
         [],
-    );
-
-    const onButtonLanjutClick = useCallback(
-        () => {
-            setUserName(loginAuthentication.userName);
-        },
-        [userName]
     );
     // async () => { 
         // let test = regexpEmail.test(loginAuthentication.userName);
@@ -560,10 +561,12 @@ export const FormulirRegistrasi: FC = () => {
     return(
         <>
         {
-            (isLoadingCekUserName || isLoadingAddRegistrasi) &&
-            (<Stack>
+            ((isLoadingCekUserName && userName.length > 0) || isLoadingAddRegistrasi) &&
+            (
+            <Stack>
                 <ProgressIndicator styles={progressStyle}/>
-            </Stack>)
+            </Stack>
+            )
         }         
         <div style={{...containerStyles, height: heighArea}}>
             <Stack horizontal tokens={containerStackTokens}>
