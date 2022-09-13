@@ -198,11 +198,6 @@ const progressStyle: IProgressIndicatorStyles ={
     progressBar:null,
     progressTrack: null
 };
-// const containerStyle: IContainerUploadStyle = {
-//     width: 400, 
-//     height: 100, 
-//     backgroundColor: '#ECECEC',
-// };
 const SuccessMessage = () => (
     <MessageBar
       actions={
@@ -263,11 +258,10 @@ export const FormulirRegistrasi: FC = () => {
     });
     const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
-    // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-
     const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 

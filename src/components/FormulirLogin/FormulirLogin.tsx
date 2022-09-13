@@ -145,7 +145,7 @@ export const FormulirLogin: FC = () => {
                 } 
             }
         }, 
-        [userName]
+        [statusUserName]
     );
     
     const onChangeUserNameValue = useCallback(
