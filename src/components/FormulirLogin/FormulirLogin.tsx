@@ -39,7 +39,7 @@ const containerStyles: React.CSSProperties = {
     boxShadow: DefaultEffects.elevation4, 
     // borderTop: '2px solid orange', 
     borderTop: '2px solid #0078D7', 
-    borderRadius: 3, 
+    // borderRadius: 3, 
     padding: 48,
     width:300,
     background: 'white',
@@ -111,20 +111,19 @@ const variantsPassword = {
 };
 
 export const FormulirLogin: FC = () => {
-    const [userName, setUserName] = useState<string>('');
+    const [userName, setUserName] = useState<string>('');    
+    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
+        userName: '',
+        password: '',
+    });
     const [variant, setVariant] = useState<IStateAnimationFramer>({
         animUserName: 'open',
         animPassword: 'closed',
         flipDisplay: true,
     });
-    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
-        userName: '',
-        password: '',
-    });
     const [errorUserName, setErrorUserName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
-    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
-    
+    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);    
     const [getToken, { isLoading: isLoadingGetToken}] = useGetTokenMutation();
     const navigate = useNavigate();
 
@@ -142,11 +141,11 @@ export const FormulirLogin: FC = () => {
             }
             else {
                 if(userName.length > 0) {
-                    setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`);
+                    setErrorUserName(`Akun ${loginAuthentication.userName} tidak dikenali, silahkan gunakan akun lain`);
                 } 
             }
         }, 
-        [statusUserName]
+        [userName]
     );
     
     const onChangeUserNameValue = useCallback(
@@ -161,39 +160,15 @@ export const FormulirLogin: FC = () => {
                 )
             );
         },
-        [errorUserName, setLoginAuthentication],
+        [],
     );
 
-    const onButtonLanjutClick =  useCallback(
+    const onButtonLanjutClick = useCallback(
         () => {
             setUserName(loginAuthentication.userName);
         },
-        [userName]
+        [loginAuthentication]
     );
-    // async () => { 
-        // try {
-        //     const hasil = await cekUserName(loginAuthentication.userName).unwrap();
-            
-            // if(hasil == true) {
-            //     console.log(hasil);
-            //     setErrorUserName('');
-            //     setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-            //     setTimeout(
-            //         () => {
-            //             setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-            //         },
-            //         duration*1000
-            //     ); 
-            // }
-            // else {
-            //     console.log(hasil);
-            //     setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
-            // }
-        // }   
-        // catch (err) {
-        //     console.log(err);
-        // }          
-    // };
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
