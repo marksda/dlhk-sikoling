@@ -1,11 +1,11 @@
 import { 
     ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, 
-    ILabelStyles, Image, IStackItemStyles, IStackTokens, Label, PrimaryButton, Stack, TextField 
+    ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField 
 } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
-import { useCekUserNameMutation, useGetTokenMutation } from "../../features/security/authorization-api-slice";
+import { useCekUserNameQuery, useGetTokenMutation } from "../../features/security/authorization-api-slice";
 import { IAuthentication } from "../../features/security/authorization-slice";
 import { IResponseStatusToken } from "../../features/security/token-slice";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,28 @@ const labelUserNameStyle: ILabelStyles  = {
        fontWeight: 400,
        fontSize: '1rem', 
     }
+};
+const containerStyles: React.CSSProperties = {    
+    display: "inline-block", 
+    boxShadow: DefaultEffects.elevation4, 
+    borderTop: '2px solid #0078D7', 
+    borderRadius: 3, 
+    padding: 48,
+    width:300,
+    background: 'white',
+};
+const progressStyle: IProgressIndicatorStyles ={
+    root: {
+        width: 464,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        height: 8,
+    },
+    itemName: null,
+    itemDescription: null,
+    itemProgress: null,
+    progressBar:null,
+    progressTrack: null
 };
 const contactIcon: IIconProps = { iconName: 'Contact' };
 const backIcon: IIconProps = { 
@@ -84,7 +106,7 @@ const variantsPassword = {
 };
 
 export const FormulirLogin: FC = () => {
-   
+    const [userName, setUserName] = useState<string>('');
     const [variant, setVariant] = useState<IStateAnimationFramer>({
         animUserName: 'open',
         animPassword: 'closed',
@@ -96,9 +118,30 @@ export const FormulirLogin: FC = () => {
     });
     const [errorUserName, setErrorUserName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
-    const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
+    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
     const [getToken, { isLoading: isLoadingGetToken}] = useGetTokenMutation();
     const navigate = useNavigate();
+
+    useEffect(
+        () => {
+            if(statusUserName == true) {
+                setErrorUserName('');
+                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                setTimeout(
+                    () => {
+                        setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+                    },
+                    duration*1000
+                ); 
+            }
+            else {
+                if(userName.length > 0) {
+                    setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`);
+                } 
+            }
+        }, 
+        [statusUserName]
+    );
     
     const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -115,27 +158,36 @@ export const FormulirLogin: FC = () => {
         [errorUserName, setLoginAuthentication],
     );
 
-    const onButtonLanjutClick = async () => { 
-        try {
-            const hasil = await cekUserName(loginAuthentication.userName).unwrap();
-            if(hasil == true) {
-                setErrorUserName('');
-                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-                setTimeout(
-                    () => {
-                        setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-                    },
-                    duration*1000
-                ); 
-            }
-            else {
-                setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
-            }
-        }   
-        catch (err) {
-            console.log(err);
-        }          
-    };
+    const onButtonLanjutClick =  useCallback(
+        () => {
+            setUserName(loginAuthentication.userName);
+        },
+        [userName]
+    );
+    // async () => { 
+        // try {
+        //     const hasil = await cekUserName(loginAuthentication.userName).unwrap();
+            
+            // if(hasil == true) {
+            //     console.log(hasil);
+            //     setErrorUserName('');
+            //     setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+            //     setTimeout(
+            //         () => {
+            //             setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+            //         },
+            //         duration*1000
+            //     ); 
+            // }
+            // else {
+            //     console.log(hasil);
+            //     setErrorUserName(`Akun ${loginAuthentication.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
+            // }
+        // }   
+        // catch (err) {
+        //     console.log(err);
+        // }          
+    // };
 
     const onChangeUserPasswordValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -194,122 +246,129 @@ export const FormulirLogin: FC = () => {
     };
 
     return(
-        <div style={{display: "inline-block", boxShadow: DefaultEffects.elevation4, 
-            borderTop: '2px solid #0078D7', borderRadius: 3, padding: 48}}>
-            <Stack horizontal tokens={containerLoginStackTokens}>
-                <Stack.Item>
-                    <Image alt='logo' width={42} height={42} src={logo} />
-                </Stack.Item>
-                <Stack.Item align="center" styles={labelSikolingStyles}>
-                    SIKOLING   
-                </Stack.Item>  
-            </Stack>            
-            <div style={{height: 8}}></div>
-            <motion.div
-                animate={variant.animUserName}
-                variants={variantsUserName}
-                style={variant.flipDisplay?{display:'block'}:{display:'none'}}
-            >
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                    <Label styles={labelStyle}>Masuk</Label>
-                </Stack>
-                <TextField 
-                    placeholder="Email, telepon, atau nik" 
-                    value={loginAuthentication.userName}
-                    onChange={onChangeUserNameValue}
-                    onKeyUp={
-                        (event) => {
-                            if(event.key == 'Enter') {
-                                onButtonLanjutClick();
+        <>
+            {
+                (isLoadingCekUserName) &&
+                (<Stack>
+                    <ProgressIndicator styles={progressStyle}/>
+                </Stack>)
+            }   
+            <div style={containerStyles}>            
+                <Stack horizontal tokens={containerLoginStackTokens}>
+                    <Stack.Item>
+                        <Image alt='logo' width={42} height={42} src={logo} />
+                    </Stack.Item>
+                    <Stack.Item align="center" styles={labelSikolingStyles}>
+                        SIKOLING   
+                    </Stack.Item>  
+                </Stack>            
+                <div style={{height: 8}}></div>
+                <motion.div
+                    animate={variant.animUserName}
+                    variants={variantsUserName}
+                    style={variant.flipDisplay?{display:'block'}:{display:'none'}}
+                >
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                        <Label styles={labelStyle}>Masuk</Label>
+                    </Stack>
+                    <TextField 
+                        placeholder="Email, telepon, atau nik" 
+                        value={loginAuthentication.userName}
+                        onChange={onChangeUserNameValue}
+                        onKeyUp={
+                            (event) => {
+                                if(event.key == 'Enter') {
+                                    onButtonLanjutClick();
+                                }
                             }
                         }
-                    }
-                    iconProps={contactIcon} 
-                    disabled={isLoadingCekUserName}
-                    underlined 
-                    errorMessage={errorUserName}
-                    styles={{root: {marginBottom: 8, width: 300}}}/>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
-                    <ActionButton 
-                        iconProps={addFriendIcon} 
-                        onClick={
-                            () => {
-                                navigate("/registrasi");
-                            }
-                        }
-                        styles={{root: {color: '#0067b8'}}}
-                    >
-                        daftar sekarang!
-                    </ActionButton>
-                </Stack>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
-                    <PrimaryButton 
-                        text="Berikutnya" 
-                        onClick={onButtonLanjutClick} 
-                        style={{marginTop: 24, width: 100}}
+                        iconProps={contactIcon} 
                         disabled={isLoadingCekUserName}
-                        />
-                </Stack>
-            </motion.div>
-            <motion.div
-                animate={variant.animPassword}
-                variants={variantsPassword}
-                style={!variant.flipDisplay?{display:'block'}:{display:'none'}}
-            >
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>                    
-                    <IconButton 
-                        iconProps={backIcon} 
-                        title="Back" 
-                        ariaLabel="Back"
-                        onClick={onButtonUserNameBackClick} 
-                        styles={{
-                            root: {
-                                borderStyle: 'none',
-                                borderRadius: '50%',
-                                padding: 0,
-                                marginTop: 2,
+                        underlined 
+                        errorMessage={errorUserName}
+                        styles={{root: {marginBottom: 8, width: 300}}}/>
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                        <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
+                        <ActionButton 
+                            iconProps={addFriendIcon} 
+                            onClick={
+                                () => {
+                                    navigate("/registrasi");
+                                }
                             }
-                        }}/>
-                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
-                </Stack>                
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                    <Label styles={labelStyle}>Masukkan sandi</Label>
-                </Stack>                
-                <TextField 
-                    placeholder="Sandi" 
-                    value={loginAuthentication.password}
-                    onChange={onChangeUserPasswordValue}
-                    onKeyUp={
-                        (event) => {
-                            if(event.key == 'Enter') {
-                                onButtonMasukClick();
+                            styles={{root: {color: '#0067b8'}}}
+                        >
+                            daftar sekarang!
+                        </ActionButton>
+                    </Stack>
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
+                        <PrimaryButton 
+                            text="Berikutnya" 
+                            onClick={onButtonLanjutClick} 
+                            style={{marginTop: 24, width: 100}}
+                            disabled={isLoadingCekUserName}
+                            />
+                    </Stack>
+                </motion.div>
+                <motion.div
+                    animate={variant.animPassword}
+                    variants={variantsPassword}
+                    style={!variant.flipDisplay?{display:'block'}:{display:'none'}}
+                >
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>                    
+                        <IconButton 
+                            iconProps={backIcon} 
+                            title="Back" 
+                            ariaLabel="Back"
+                            onClick={onButtonUserNameBackClick} 
+                            styles={{
+                                root: {
+                                    borderStyle: 'none',
+                                    borderRadius: '50%',
+                                    padding: 0,
+                                    marginTop: 2,
+                                }
+                            }}/>
+                        <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
+                    </Stack>                
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                        <Label styles={labelStyle}>Masukkan sandi</Label>
+                    </Stack>                
+                    <TextField 
+                        placeholder="Sandi" 
+                        value={loginAuthentication.password}
+                        onChange={onChangeUserPasswordValue}
+                        onKeyUp={
+                            (event) => {
+                                if(event.key == 'Enter') {
+                                    onButtonMasukClick();
+                                }
                             }
                         }
-                    }
-                    underlined 
-                    type="password"
-                    canRevealPassword
-                    revealPasswordAriaLabel="Tunjukkan sandi"
-                    disabled={isLoadingGetToken}
-                    errorMessage={errorPassword}
-                    styles={{root: {marginBottom: 8, width: 300}}}/>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                    <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
-                    <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
-                        Reset password
-                    </ActionButton>
-                </Stack>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
-                    <PrimaryButton 
-                        text="Masuk" 
-                        onClick={onButtonMasukClick} 
-                        style={{marginTop: 24, width: 100}}
+                        underlined 
+                        type="password"
+                        canRevealPassword
+                        revealPasswordAriaLabel="Tunjukkan sandi"
                         disabled={isLoadingGetToken}
-                        />
-                </Stack>
-            </motion.div>
-        </div>
+                        errorMessage={errorPassword}
+                        styles={{root: {marginBottom: 8, width: 300}}}/>
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                        <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
+                        <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
+                            Reset password
+                        </ActionButton>
+                    </Stack>
+                    <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
+                        <PrimaryButton 
+                            text="Masuk" 
+                            onClick={onButtonMasukClick} 
+                            style={{marginTop: 24, width: 100}}
+                            disabled={isLoadingGetToken}
+                            />
+                    </Stack>
+                </motion.div>
+            </div>
+        </>        
     );
 
 };

@@ -1,6 +1,6 @@
 import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar, MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
@@ -12,7 +12,7 @@ import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecama
 import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
 import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
 import { IPropinsi } from "../../features/propinsi/propinsi-slice";
-import { useAddRegistrasiMutation, useCekUserNameMutation } from "../../features/security/authorization-api-slice";
+import { useAddRegistrasiMutation, useCekUserNameQuery } from "../../features/security/authorization-api-slice";
 import { IAuthentication } from "../../features/security/authorization-slice";
 import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
@@ -219,7 +219,7 @@ const SuccessMessage = () => (
 );
 
 export const FormulirRegistrasi: FC = () => {    
-    // const [file, setFile] = useState<File|null>(null);
+    const [userName, setUserName] = useState<string>('');
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
         userName: '',
         password: '',
@@ -263,7 +263,8 @@ export const FormulirRegistrasi: FC = () => {
     });
     const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
-    const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
+    // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
+    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 
@@ -295,6 +296,29 @@ export const FormulirRegistrasi: FC = () => {
     });
 
     const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation();
+
+    useEffect(
+        () => {
+            if(statusUserName == true) {
+                setHeightArea(350);
+                setErrorEmailName('');
+                setErrorPassword('');
+                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                setTimeout(
+                    () => {
+                        setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+                    },
+                    duration*1000
+                );
+            }
+            else {
+                if(userName.length > 0) {
+                    setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                } 
+            }
+        }, 
+        [statusUserName]
+    );
 
     const resetPropinsi = useCallback(
         (item: IPropinsi) => {          
@@ -359,35 +383,41 @@ export const FormulirRegistrasi: FC = () => {
         [],
     );
 
-    const onButtonLanjutClick = async () => { 
-        let test = regexpEmail.test(loginAuthentication.userName);
-        if(test == true) {
-            try {
-                const hasil = await cekUserName(loginAuthentication.userName).unwrap();
-                if(hasil == false) {
-                    setHeightArea(350);
-                    setErrorEmailName('');
-                    setErrorPassword('');
-                    setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-                    setTimeout(
-                        () => {
-                            setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
-                        },
-                        duration*1000
-                    );
-                }
-                else {
-                    setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
-                }
-            }   
-            catch (err) {
-                console.log(err);
-            }  
-        }
-        else {
-            setErrorEmailName('Format email tidak sesuai');
-        }        
-    };
+    const onButtonLanjutClick = useCallback(
+        () => {
+            setUserName(loginAuthentication.userName);
+        },
+        [userName]
+    );
+    // async () => { 
+        // let test = regexpEmail.test(loginAuthentication.userName);
+        // if(test == true) {
+        //     try {
+        //         const hasil = await cekUserName(loginAuthentication.userName).unwrap();
+        //         if(hasil == false) {
+                    // setHeightArea(350);
+                    // setErrorEmailName('');
+                    // setErrorPassword('');
+                    // setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                    // setTimeout(
+                    //     () => {
+                    //         setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+                    //     },
+                    //     duration*1000
+                    // );
+        //         }
+        //         else {
+        //             setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`)
+        //         }
+        //     }   
+        //     catch (err) {
+        //         console.log(err);
+        //     }  
+        // }
+        // else {
+        //     setErrorEmailName('Format email tidak sesuai');
+        // }        
+    // };
 
     const onButtonUserNameBackClick = () => {         
         setVariant((prev) =>({...prev, animPassword: 'closed'}));
