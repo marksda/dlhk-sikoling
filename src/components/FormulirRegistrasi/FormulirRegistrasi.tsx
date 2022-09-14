@@ -253,8 +253,8 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         }, 
         [props.userName]
     );
-
-    const onChangeEmailNameValue = useCallback(
+    //this function is used to track userName changes
+    const onChangeUserNameValue = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             if(newValue!.length === 0 && errorUserName.length != 0) {                
                 setErrorUserName('');
@@ -264,7 +264,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         },
         [],
     );
-
+    //this function is used to process next step with dependen on userName changes only
     const onButtonLanjutClick = useCallback(
         () => {            
             props.setValue("kontak.email", userName);
@@ -272,7 +272,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         },
         [userName]
     );
-
+    //rendered function
     return(
         <motion.div
             animate={props.variant.animUserName}
@@ -285,7 +285,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
             <TextField 
                 placeholder="Gunakan email yang masih aktif" 
                 value={userName}
-                onChange={onChangeEmailNameValue}
+                onChange={onChangeUserNameValue}
                 onKeyUp={
                     (event) => {
                         if(event.key == 'Enter') {
@@ -312,6 +312,9 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
 };
 
 const FormPassword: FC<HookFormPasswordProps> = (props) => {
+    //local state
+    const [password, setPassword] = useState<string>('');
+    const [errorPassword, setErrorPassword] = useState<string>('');
 
     const onButtonUserNameBackClick = () => {         
         setVariant((prev) =>({...prev, animPassword: 'closed'}));
@@ -352,7 +355,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             </Stack>                
             <TextField 
                 placeholder="kata sandi"
-                value={loginAuthentication.password}
+                value={password}
                 onChange={onChangeUserPasswordValue}
                 onKeyUp={
                     (event) => {
@@ -394,35 +397,9 @@ export const FormulirRegistrasi: FC = () => {
         flipDisplayUploadKTP: false,
     });
     //- digunakan untuk merubah tinggi container setiap terjadi pergantian Form -
-    const [heighArea, setHeightArea] = useState<number>(300);
-    
+    const [heighArea, setHeightArea] = useState<number>(300);    
     //redux global state
-    const authentication = useAppSelector(state => state.authentication);
-    //rtk query
-    // const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(authentication.userName);
-    //animasi transisi FormEmail to next step
-    useEffect(
-        () => {
-            if(statusUserName == false && authentication.userName.length > 0) {
-                setHeightArea(350);
-                // setErrorEmailName('');
-                // setErrorPassword('');
-                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-                setTimeout(
-                    () => {
-                        setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
-                    },
-                    duration*1000
-                );
-            }
-            else {
-                if(authentication.userName.length > 0) {
-                    // setErrorEmailName(`Email ${authentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-                } 
-            }
-        }, 
-        [authentication]
-    );
+    const authentication = useAppSelector(state => state.authentication);    
     //react-hook-form
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
@@ -451,7 +428,7 @@ export const FormulirRegistrasi: FC = () => {
 
         
     // const [errorEmailName, setErrorEmailName] = useState<string>('');
-    const [errorPassword, setErrorPassword] = useState<string>('');
+    
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");

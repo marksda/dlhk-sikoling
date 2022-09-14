@@ -23,7 +23,8 @@ export interface HookFormEmailProps {
 
 export interface HookFormPasswordProps {
     variant?: any;
+    setVariant?: any;
     setValue?: any;
-    isLoadingCekUserName?: boolean;
+    changeHightContainer?: any;
     userName?: string;  
 }
