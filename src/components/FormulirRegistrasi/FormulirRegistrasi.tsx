@@ -17,8 +17,11 @@ import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
-import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
-import { IAuthentication } from "../../features/security/authentication-slice";
+import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+// import { IAuthentication } from "../../features/security/authentication-slice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setUserName as setUsernameAuthentication} from "../../features/security/authentication-slice";
+import { HookFormEmailProps, HookFormPasswordProps } from "../../app/HookFormProps";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -213,14 +216,214 @@ const SuccessMessage = () => (
     </MessageBar>
 );
 
+const FormEmail: FC<HookFormEmailProps> = (props) => {    
+    //local state
+    const [userName, setUserName] = useState<string>('');    
+    const [errorUserName, setErrorUserName] = useState<string>('');
+    //rtk query
+    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
+    //redux action creator
+    const dispatch = useAppDispatch();
+    //animasi transisi FormEmail to next step
+    useEffect(
+        () => {
+            if(statusUserName == false && userName.length > 0) {
+                props.changeHightContainer(350);
 
+                if(errorUserName.length > 0) {
+                    setErrorUserName('');
+                }
 
-export const FormulirRegistrasi: FC = () => {    
-    const [userName, setUserName] = useState<string>('');
-    const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
-        userName: '',
-        password: '',
+                props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+
+                setTimeout(
+                    () => {
+                        props.setVariant(
+                            (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                        );
+                    },
+                    duration*1000
+                );
+            }
+            else {
+                if(userName.length > 0) {
+                    setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                } 
+            }
+        }, 
+        [props.userName]
+    );
+
+    const onChangeEmailNameValue = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorUserName.length != 0) {                
+                setErrorUserName('');
+            }
+
+            setUserName(newValue||'');
+        },
+        [],
+    );
+
+    const onButtonLanjutClick = useCallback(
+        () => {            
+            props.setValue("kontak.email", userName);
+            dispatch(setUsernameAuthentication(userName));
+        },
+        [userName]
+    );
+
+    return(
+        <motion.div
+            animate={props.variant.animUserName}
+            variants={variantsUserName}
+            style={props.variant.flipDisplayUser?{display:'block'}:{display:'none'}}
+        >   
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Buat akun</Label>                    
+            </Stack>
+            <TextField 
+                placeholder="Gunakan email yang masih aktif" 
+                value={userName}
+                onChange={onChangeEmailNameValue}
+                onKeyUp={
+                    (event) => {
+                        if(event.key == 'Enter') {
+                            onButtonLanjutClick();
+                        }
+                    }
+                }
+                iconProps={contactIcon} 
+                disabled={props.isLoadingCekUserName}
+                underlined 
+                autoFocus
+                errorMessage={errorUserName}
+                styles={{root: {marginBottom: 8}}}/>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Berikutnya" 
+                    onClick={onButtonLanjutClick} 
+                    style={{marginTop: 24, width: 100}}
+                    disabled={props.isLoadingCekUserName}
+                    />
+            </Stack>
+        </motion.div>
+    );
+};
+
+const FormPassword: FC<HookFormPasswordProps> = (props) => {
+
+    const onButtonUserNameBackClick = () => {         
+        setVariant((prev) =>({...prev, animPassword: 'closed'}));
+        setTimeout(
+            () => {
+                setHeightArea(300);
+                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
+            },
+            duration*1000
+        );
+    };
+
+    return(
+        <motion.div
+            animate={props.variant.animPassword}
+            variants={variantsPassword}
+            style={props.variant.flipDisplayPassword?{display:'block'}:{display:'none'}}
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={onButtonUserNameBackClick} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelUserNameStyle}>{props.userName}</Label>
+            </Stack>                
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Buat kata sandi</Label>
+                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan dengan akun Anda.</Label>
+            </Stack>                
+            <TextField 
+                placeholder="kata sandi"
+                value={loginAuthentication.password}
+                onChange={onChangeUserPasswordValue}
+                onKeyUp={
+                    (event) => {
+                        if(event.key == 'Enter') {
+                            onButtonLanjutClick();
+                        }
+                    }
+                }
+                underlined 
+                type="password"
+                disabled={false}
+                errorMessage={errorPassword}                    
+                styles={{root: {marginBottom: 8}}}/>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    onClick={onButtonLanjutPasswordClick} 
+                    style={{marginTop: 24, width: 100}}
+                    disabled={false}
+                    />
+            </Stack>
+        </motion.div>
+    );
+};
+
+export const FormulirRegistrasi: FC = () => {  
+    //* local state *   
+    //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
+    const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
+        animUserName: 'open',
+        animPassword: 'closed',
+        animPID: 'closed',
+        animPID2: 'closed',
+        animUploadKTP: 'closed',
+        flipDisplayUser: true,
+        flipDisplayPassword: false,
+        flipDisplayPID: false,
+        flipDisplayPID2: false,
+        flipDisplayUploadKTP: false,
     });
+    //- digunakan untuk merubah tinggi container setiap terjadi pergantian Form -
+    const [heighArea, setHeightArea] = useState<number>(300);
+    
+    //redux global state
+    const authentication = useAppSelector(state => state.authentication);
+    //rtk query
+    // const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(authentication.userName);
+    //animasi transisi FormEmail to next step
+    useEffect(
+        () => {
+            if(statusUserName == false && authentication.userName.length > 0) {
+                setHeightArea(350);
+                // setErrorEmailName('');
+                // setErrorPassword('');
+                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
+                setTimeout(
+                    () => {
+                        setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
+                    },
+                    duration*1000
+                );
+            }
+            else {
+                if(authentication.userName.length > 0) {
+                    // setErrorEmailName(`Email ${authentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                } 
+            }
+        }, 
+        [authentication]
+    );
+    //react-hook-form
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
         defaultValues: {
@@ -236,36 +439,25 @@ export const FormulirRegistrasi: FC = () => {
             },
             kontak: {
                 telepone: '', 
-                email: loginAuthentication.userName,
+                email: '',
             },
             scanKTP: '',
         }
-    });
+    });    
     const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
         control, 
         name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
     });
-    const [heighArea, setHeightArea] = useState<number>(300);
-    const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
-        animUserName: 'open',
-        animPassword: 'closed',
-        animPID: 'closed',
-        animPID2: 'closed',
-        animUploadKTP: 'closed',
-        flipDisplayUser: true,
-        flipDisplayPassword: false,
-        flipDisplayPID: false,
-        flipDisplayPID2: false,
-        flipDisplayUploadKTP: false,
-    });
-    const [errorEmailName, setErrorEmailName] = useState<string>('');
+
+        
+    // const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 
     
-    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
+    
 
     const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
@@ -296,29 +488,7 @@ export const FormulirRegistrasi: FC = () => {
 
     const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation();
 
-    useEffect(
-        () => {
-            console.log('aku dipanggil');
-            if(statusUserName == false && userName.length > 0) {
-                setHeightArea(350);
-                setErrorEmailName('');
-                setErrorPassword('');
-                setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-                setTimeout(
-                    () => {
-                        setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
-                    },
-                    duration*1000
-                );
-            }
-            else {
-                if(userName.length > 0) {
-                    setErrorEmailName(`Email ${loginAuthentication.userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-                } 
-            }
-        }, 
-        [userName]
-    );
+    
 
     const resetPropinsi = useCallback(
         (item: IPropinsi) => {          
@@ -350,31 +520,6 @@ export const FormulirRegistrasi: FC = () => {
             setValue("alamat.desa", null);
         },
         [kecamatan]
-    );
-
-    const onChangeEmailNameValue = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            if(newValue!.length === 0 && errorEmailName.length != 0) {                
-                setErrorEmailName('');
-            }
-
-            setLoginAuthentication(
-                (prev) => (
-                    {...prev, userName: newValue||''}
-                )
-            );
-            // setValue("kontak.email", newValue||'');
-        },
-        // [errorEmailName, setLoginAuthentication],
-        [],
-    );
-
-    const onButtonLanjutClick = useCallback(
-        () => {
-            setUserName(loginAuthentication.userName);
-            setValue("kontak.email", loginAuthentication.userName);
-        },
-        [loginAuthentication]
     );
 
     const onChangeUserPasswordValue = useCallback(
@@ -509,7 +654,7 @@ export const FormulirRegistrasi: FC = () => {
 
     const onButtonSimpanClick: SubmitHandler<IPerson> = async (data) => {
         try {
-            await addRegistrasi({auth: loginAuthentication, person: data}).unwrap();
+            await addRegistrasi({auth: authentication, person: data}).unwrap();
             // alert("registrasi berhasil");
             <SuccessMessage />
         } catch (error) {
@@ -568,7 +713,7 @@ export const FormulirRegistrasi: FC = () => {
     return(
         <>
         {
-            ((isLoadingCekUserName && userName.length > 0) || isLoadingAddRegistrasi) &&
+            ((isLoadingCekUserName && authentication.userName.length > 0) || isLoadingAddRegistrasi) &&
             (
             <Stack>
                 <ProgressIndicator styles={progressStyle}/>
@@ -585,90 +730,12 @@ export const FormulirRegistrasi: FC = () => {
                 </Stack.Item> 
             </Stack>
             <div style={{height: 8}}></div>
-            <motion.div
-                animate={variant.animUserName}
-                variants={variantsUserName}
-                style={variant.flipDisplayUser?{display:'block'}:{display:'none'}}
-            >   
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center', marginBottom: 16}}}>
-                    <Label styles={labelStyle}>Buat akun</Label>                    
-                </Stack>
-                <TextField 
-                    placeholder="Gunakan email yang masih aktif" 
-                    value={loginAuthentication.userName}
-                    onChange={onChangeEmailNameValue}
-                    onKeyUp={
-                        (event) => {
-                            if(event.key == 'Enter') {
-                                onButtonLanjutClick();
-                            }
-                        }
-                    }
-                    iconProps={contactIcon} 
-                    disabled={isLoadingCekUserName}
-                    underlined 
-                    autoFocus
-                    errorMessage={errorEmailName}
-                    styles={{root: {marginBottom: 8}}}/>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                    <PrimaryButton 
-                        text="Berikutnya" 
-                        onClick={onButtonLanjutClick} 
-                        style={{marginTop: 24, width: 100}}
-                        disabled={isLoadingCekUserName}
-                        />
-                </Stack>
-            </motion.div>
-            <motion.div
-                animate={variant.animPassword}
-                variants={variantsPassword}
-                style={variant.flipDisplayPassword?{display:'block'}:{display:'none'}}
-            >
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                    <IconButton 
-                        iconProps={backIcon} 
-                        title="Back" 
-                        ariaLabel="Back"
-                        onClick={onButtonUserNameBackClick} 
-                        styles={{
-                            root: {
-                                borderStyle: 'none',
-                                borderRadius: '50%',
-                                padding: 0,
-                                marginTop: 2,
-                            }
-                        }}/>
-                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
-                </Stack>                
-                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                    <Label styles={labelStyle}>Buat kata sandi</Label>
-                    <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan dengan akun Anda.</Label>
-                </Stack>                
-                <TextField 
-                    placeholder="kata sandi"
-                    value={loginAuthentication.password}
-                    onChange={onChangeUserPasswordValue}
-                    onKeyUp={
-                        (event) => {
-                            if(event.key == 'Enter') {
-                                onButtonLanjutClick();
-                            }
-                        }
-                    }
-                    underlined 
-                    type="password"
-                    disabled={false}
-                    errorMessage={errorPassword}                    
-                    styles={{root: {marginBottom: 8}}}/>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                    <PrimaryButton 
-                        text="Lanjut" 
-                        onClick={onButtonLanjutPasswordClick} 
-                        style={{marginTop: 24, width: 100}}
-                        disabled={false}
-                        />
-                </Stack>
-            </motion.div>
+            <FormEmail 
+                userName={authentication.userName}
+                variant={variant} 
+                setValue={setValue} 
+                changeHightContainer={setHeightArea}
+            />             
             <motion.div
                 animate={variant.animPID}
                 variants={variantsPID}

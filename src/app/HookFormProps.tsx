@@ -12,3 +12,18 @@ export interface HookFluentUiDropDownProps extends HookFormProps {
     onChangeItem?: any;
     isFetching?: boolean;
 }
+
+export interface HookFormEmailProps {
+    variant?: any;
+    setVariant?: any;
+    setValue?: any;
+    changeHightContainer?: any;
+    userName?: string;
+}
+
+export interface HookFormPasswordProps {
+    variant?: any;
+    setValue?: any;
+    isLoadingCekUserName?: boolean;
+    userName?: string;  
+}
