@@ -13,12 +13,12 @@ import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
 import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
 import { IPropinsi } from "../../features/propinsi/propinsi-slice";
 import { useAddRegistrasiMutation, useCekUserNameQuery } from "../../features/security/authorization-api-slice";
-import { IAuthentication } from "../../features/security/authorization-slice";
 import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import { IAuthentication } from "../../features/security/authentication-slice";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -213,6 +213,8 @@ const SuccessMessage = () => (
     </MessageBar>
 );
 
+
+
 export const FormulirRegistrasi: FC = () => {    
     const [userName, setUserName] = useState<string>('');
     const [loginAuthentication, setLoginAuthentication] = useState<IAuthentication>({
@@ -258,10 +260,13 @@ export const FormulirRegistrasi: FC = () => {
     });
     const [errorEmailName, setErrorEmailName] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
-    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+
+    
+    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(userName);
+
     const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
     const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
@@ -293,7 +298,8 @@ export const FormulirRegistrasi: FC = () => {
 
     useEffect(
         () => {
-            if(statusUserName == true) {
+            console.log('aku dipanggil');
+            if(statusUserName == false && userName.length > 0) {
                 setHeightArea(350);
                 setErrorEmailName('');
                 setErrorPassword('');
@@ -311,7 +317,7 @@ export const FormulirRegistrasi: FC = () => {
                 } 
             }
         }, 
-        [statusUserName]
+        [userName]
     );
 
     const resetPropinsi = useCallback(
@@ -357,7 +363,7 @@ export const FormulirRegistrasi: FC = () => {
                     {...prev, userName: newValue||''}
                 )
             );
-            setValue("kontak.email", newValue||'');
+            // setValue("kontak.email", newValue||'');
         },
         // [errorEmailName, setLoginAuthentication],
         [],
@@ -366,8 +372,9 @@ export const FormulirRegistrasi: FC = () => {
     const onButtonLanjutClick = useCallback(
         () => {
             setUserName(loginAuthentication.userName);
+            setValue("kontak.email", loginAuthentication.userName);
         },
-        [userName]
+        [loginAuthentication]
     );
 
     const onChangeUserPasswordValue = useCallback(
