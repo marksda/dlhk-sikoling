@@ -224,7 +224,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
-            if(statusUserName == false && userName.length > 0) {
+            if(statusUserName == false && props.userName!.length > 0) {
                 if(errorUserName.length > 0) {
                     setErrorUserName('');
                 }
@@ -956,6 +956,7 @@ export const FormulirRegistrasi: FC = () => {
     });
     //- digunakan untuk merubah tinggi container setiap terjadi pergantian Form -
     const [heighArea, setHeightArea] = useState<number>(300);   
+    //- digunakan untuk tracking status koneksi pemrosesan di back end
     const [isLoading, setIsLoading] = useState<boolean>(false); 
     //redux global state
     const authentication = useAppSelector(state => state.authentication);        
