@@ -25,9 +25,16 @@ export interface HookFormEmailProps {
 export interface HookFormPasswordProps {
     variant?: any;
     setVariant?: any;
-    setValue?: any;
     changeHightContainer?: any;
     userName?: string;
     password?: string;  
     dispatch?: any;
+}
+
+export interface HookFormPersonIdentityStepOneProps {
+    variant?: any;
+    setVariant?: any;
+    changeHightContainer?: any;
+    userName?: string;
+    control?: Control<any>;
 }

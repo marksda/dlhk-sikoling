@@ -21,7 +21,7 @@ import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 // import { IAuthentication } from "../../features/security/authentication-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
-import { HookFormEmailProps, HookFormPasswordProps } from "../../app/HookFormProps";
+import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps } from "../../app/HookFormProps";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -344,7 +344,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     const processBackToPreviousStep = useCallback(
         () => {
             props.setVariant(
-                (prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'})
+                (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPassword: 'closed'})
             );
 
             setTimeout(
@@ -448,6 +448,152 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     );
 };
 
+const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props) => {
+    //react-hook-form variable hook
+    const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
+        control: props.control, 
+        name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
+    });
+    //rtk query variable hook
+    const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
+    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+    //this function is used to go back to FormPassword
+    const processBackToPreviousStep = useCallback(
+        () => {
+            props.setVariant(
+                (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPID: 'closed'})
+            );
+
+            setTimeout(
+                () => {
+                    props.changeHightContainer(350);
+                    props.setVariant(
+                        (prev: IStateRegistrasiAnimationFramer) => (
+                            {
+                                ...prev, 
+                                flipDisplayUser: false, 
+                                flipDisplayPassword: true, 
+                                animPassword: 'open'
+                            }
+                        )
+                    );
+                },
+                duration*1000
+            );
+        },
+        []
+    );
+    //this function is used to process next step with dependen on userName changes only
+    const processNextStep = useCallback(
+        () => {
+            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID: 'closed'}));
+            setTimeout(
+                () => {
+                    props.changeHightContainer(570);
+                    props.setVariant(
+                        (prev: IStateRegistrasiAnimationFramer) => (
+                            {...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}
+                        )
+                    );
+                },
+                duration*1000
+            );
+        },
+        []
+    );
+
+    return(
+        <motion.div
+            animate={props.variant.animPID}
+            variants={variantsPID}
+            style={props.variant.flipDisplayPID?{display:'block'}:{display:'none'}}
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelUserNameStyle}>{props.userName}</Label>
+            </Stack>                
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Siapa anda?</Label>
+                <Label styles={labelSandiStyle}>Kami perlu data personal berdasar KTP untuk mengatur akun Anda.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiTextField
+                        required
+                        label="NIK"
+                        name="nik"
+                        rules={{ required: "harus diisi sesuai dengan ktp" }}     
+                        control={props.control}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiTextField
+                        required
+                        label="Nama"
+                        name="nama"
+                        rules={{ required: "harus diisi sesuai dengan ktp" }}   
+                        control={props.control}
+                        disabled={nik!.length>0?false:true}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Jenis Kelamin"
+                        placeholder="Pilih Jenis Kelamin"
+                        options={dataJenisKelaminOptions}
+                        required
+                        name="jenisKelamin"
+                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
+                        control={props.control}         
+                        disabled={(nama!.length>0?false:true)||isFetchingJenisKelamin}    
+                    /> 
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiTextField
+                        required
+                        label="Telepone"
+                        name="kontak.telepone"
+                        rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
+                        control={props.control}
+                        disabled={jenisKelamin == null?true:false}
+                    /> 
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiTextField
+                        required
+                        label="Email"
+                        name="kontak.email"
+                        rules={{ required: "Alamat email harus diisi" }}  
+                        control={props.control} 
+                        value={props.userName}
+                        disabled={true}
+                    />
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    onClick={processNextStep} 
+                    style={{marginTop: 24, width: 100}}
+                    disabled={kontak?.telepone?.length == 0 ? true:false}
+                    />
+            </Stack>     
+        </motion.div>
+    );
+};
+
 export const FormulirRegistrasi: FC = () => {  
     //* local state *   
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
@@ -496,8 +642,7 @@ export const FormulirRegistrasi: FC = () => {
     });
         
     // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
-    const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
-    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+    
 
     const [propinsi, setPropinsi] = useState<IPropinsi>(defaultPropinsi); 
     const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi } = useGetAllPropinsiQuery();
@@ -559,27 +704,9 @@ export const FormulirRegistrasi: FC = () => {
         [kecamatan]
     );
 
-    const onButtonUserNameBackToPasswordClick = () => {         
-        setVariant((prev) =>({...prev, animPID: 'closed'}));
-        setTimeout(
-            () => {
-                setHeightArea(350);
-                setVariant((prev) =>({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'}));
-            },
-            duration*1000
-        );
-    };
+    
 
-    const onButtonLanjutPIDClick = () => {
-        setVariant((prev) =>({...prev, animPID: 'closed'}));
-        setTimeout(
-            () => {
-                setHeightArea(570);
-                setVariant((prev) =>({...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}));
-            },
-            duration*1000
-        );
-    };
+    
 
     const onButtonUserNameBackToPIDClick = () => {
         setVariant((prev) =>({...prev, animPID2: 'closed'}));
@@ -705,7 +832,13 @@ export const FormulirRegistrasi: FC = () => {
                 variant={variant} 
                 changeHightContainer={setHeightArea}
                 dispatch={dispatch}
-            />           
+            />   
+            <FormPersonIdentityStepOne
+                userName={authentication.userName}
+                variant={variant} 
+                changeHightContainer={setHeightArea}
+                control={control}
+            />
             <motion.div
                 animate={variant.animPID}
                 variants={variantsPID}
