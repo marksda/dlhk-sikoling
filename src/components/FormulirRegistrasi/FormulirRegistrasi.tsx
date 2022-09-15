@@ -20,7 +20,7 @@ import { IPerson } from "../../features/person/person-slice"
 import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 // import { IAuthentication } from "../../features/security/authentication-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setUserName as setUsernameAuthentication} from "../../features/security/authentication-slice";
+import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
 import { HookFormEmailProps, HookFormPasswordProps } from "../../app/HookFormProps";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
@@ -217,19 +217,17 @@ const SuccessMessage = () => (
 );
 
 const FormEmail: FC<HookFormEmailProps> = (props) => {    
+    //local variable for email validation
+    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     //local state
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
     //rtk query
     const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
-    //redux action creator
-    const dispatch = useAppDispatch();
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
             if(statusUserName == false && userName.length > 0) {
-                props.changeHightContainer(350);
-
                 if(errorUserName.length > 0) {
                     setErrorUserName('');
                 }
@@ -238,6 +236,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
 
                 setTimeout(
                     () => {
+                        props.changeHightContainer(350);                
                         props.setVariant(
                             (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
                         );
@@ -254,7 +253,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         [props.userName]
     );
     //this function is used to track userName changes
-    const onChangeUserNameValue = useCallback(
+    const processUserNameChange = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
             if(newValue!.length === 0 && errorUserName.length != 0) {                
                 setErrorUserName('');
@@ -265,10 +264,15 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         [],
     );
     //this function is used to process next step with dependen on userName changes only
-    const onButtonLanjutClick = useCallback(
-        () => {            
-            props.setValue("kontak.email", userName);
-            dispatch(setUsernameAuthentication(userName));
+    const processNextStep = useCallback(
+        () => {   
+            if(regexpEmail.test(userName) == true){
+                props.setValue("kontak.email", userName);
+                props.dispatch(setUserNameAuthentication(userName));
+            }         
+            else {
+                setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
+            }
         },
         [userName]
     );
@@ -285,11 +289,11 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
             <TextField 
                 placeholder="Gunakan email yang masih aktif" 
                 value={userName}
-                onChange={onChangeUserNameValue}
+                onChange={processUserNameChange}
                 onKeyUp={
                     (event) => {
                         if(event.key == 'Enter') {
-                            onButtonLanjutClick();
+                            processNextStep();
                         }
                     }
                 }
@@ -302,7 +306,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
                     text="Berikutnya" 
-                    onClick={onButtonLanjutClick} 
+                    onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
                     disabled={isLoadingCekUserName}
                     />
@@ -315,17 +319,74 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     //local state
     const [password, setPassword] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
+    //animasi transisi FormPassword to next step
+    useEffect(
+        () => {
+            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
 
-    const onButtonUserNameBackClick = () => {         
-        setVariant((prev) =>({...prev, animPassword: 'closed'}));
+            setTimeout(
+                () => {
+                    props.changeHightContainer(570);
+                    props.setVariant(
+                        (prev: IStateRegistrasiAnimationFramer) => (
+                            {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
+                        )
+                    );
+                },
+                duration*1000
+            );
+        }, 
+        [props.password]
+    );
+    //this function is used to go back to FormEmail
+    const processBackToPreviousStep = () => {         
+        props.setVariant(
+            (prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'})
+        );
         setTimeout(
             () => {
-                setHeightArea(300);
-                setVariant((prev) =>({...prev, flipDisplayPassword: false, flipDisplayUser: true, animUserName: 'open'}));
+                props.changeHightContainer(300);
+                props.setVariant(
+                    (prev: IStateRegistrasiAnimationFramer) => ({
+                        ...prev, 
+                        flipDisplayPassword: false, 
+                        flipDisplayUser: true, 
+                        animUserName: 'open'
+                    })
+                );
             },
             duration*1000
         );
     };
+    //this function is used to track userName changes
+    const processPasswordChange = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorPassword.length != 0) {                
+                setErrorPassword('');
+            }
+
+            setPassword(newValue||'');
+        },
+        [],
+    );
+    //this function is used to process next step with dependen on userName changes only
+    const processNextStep = useCallback(
+        () => {
+            // let test = regexpPassword.test(loginAuthentication.password);
+            let test = password.length > 7 ? true:false;
+            if(test == true) {
+                if(errorPassword.length > 0) {
+                    setErrorPassword('');
+                }
+
+                props.dispatch(setPasswordAUthentication(password));                
+            }
+            else {
+                setErrorPassword("panjang sandi minimal 8 karakter");
+            }
+        },
+        [password]
+    );
 
     return(
         <motion.div
@@ -338,7 +399,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                     iconProps={backIcon} 
                     title="Back" 
                     ariaLabel="Back"
-                    onClick={onButtonUserNameBackClick} 
+                    onClick={processBackToPreviousStep} 
                     styles={{
                         root: {
                             borderStyle: 'none',
@@ -356,7 +417,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             <TextField 
                 placeholder="kata sandi"
                 value={password}
-                onChange={onChangeUserPasswordValue}
+                onChange={processPasswordChange}
                 onKeyUp={
                     (event) => {
                         if(event.key == 'Enter') {
@@ -372,7 +433,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
                     text="Lanjut" 
-                    onClick={onButtonLanjutPasswordClick} 
+                    onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
                     disabled={false}
                     />
@@ -399,7 +460,9 @@ export const FormulirRegistrasi: FC = () => {
     //- digunakan untuk merubah tinggi container setiap terjadi pergantian Form -
     const [heighArea, setHeightArea] = useState<number>(300);    
     //redux global state
-    const authentication = useAppSelector(state => state.authentication);    
+    const authentication = useAppSelector(state => state.authentication);        
+    //redux action creator
+    const dispatch = useAppDispatch();
     //react-hook-form
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
@@ -499,20 +562,7 @@ export const FormulirRegistrasi: FC = () => {
         [kecamatan]
     );
 
-    const onChangeUserPasswordValue = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            if(newValue!.length === 0 && errorEmailName.length != 0) {                
-                setErrorPassword('');
-            }
-
-            setLoginAuthentication(
-                (prev) => (
-                    {...prev, password: newValue!}
-                )
-            );
-        },
-        [],
-    );
+    
     // async () => { 
         // let test = regexpEmail.test(loginAuthentication.userName);
         // if(test == true) {
@@ -712,7 +762,15 @@ export const FormulirRegistrasi: FC = () => {
                 variant={variant} 
                 setValue={setValue} 
                 changeHightContainer={setHeightArea}
-            />             
+                dispatch={dispatch}
+            />  
+            <FormPassword   
+                userName={authentication.userName}
+                password={authentication.password}              
+                variant={variant} 
+                changeHightContainer={setHeightArea}
+                dispatch={dispatch}
+            />           
             <motion.div
                 animate={variant.animPID}
                 variants={variantsPID}

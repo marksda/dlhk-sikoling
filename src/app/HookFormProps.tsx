@@ -19,6 +19,7 @@ export interface HookFormEmailProps {
     setValue?: any;
     changeHightContainer?: any;
     userName?: string;
+    dispatch?: any;
 }
 
 export interface HookFormPasswordProps {
@@ -26,5 +27,7 @@ export interface HookFormPasswordProps {
     setVariant?: any;
     setValue?: any;
     changeHightContainer?: any;
-    userName?: string;  
+    userName?: string;
+    password?: string;  
+    dispatch?: any;
 }
