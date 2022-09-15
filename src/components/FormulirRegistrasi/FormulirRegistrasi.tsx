@@ -439,7 +439,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                 onKeyUp={
                     (event) => {
                         if(event.key == 'Enter') {
-                            onButtonLanjutClick();
+                            processNextStep();
                         }
                     }
                 }
