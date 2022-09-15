@@ -322,24 +322,24 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     const [password, setPassword] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
     //animasi transisi FormPassword to next step
-    useEffect(
-        () => {
-            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
+    // useEffect(
+    //     () => {
+    //         props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
 
-            setTimeout(
-                () => {
-                    props.changeHightContainer(570);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => (
-                            {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
-                        )
-                    );
-                },
-                duration*1000
-            );
-        }, 
-        [props.password]
-    );
+    //         setTimeout(
+    //             () => {
+    //                 props.changeHightContainer(570);
+    //                 props.setVariant(
+    //                     (prev: IStateRegistrasiAnimationFramer) => (
+    //                         {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
+    //                     )
+    //                 );
+    //             },
+    //             duration*1000
+    //         );
+    //     }, 
+    //     [props.password]
+    // );
     //this function is used to go back to FormEmail
     const processBackToPreviousStep = useCallback(
         () => {
@@ -385,13 +385,27 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                     setErrorPassword('');
                 }
 
-                props.dispatch(setPasswordAUthentication(password));                
+                props.dispatch(setPasswordAUthentication(password));       
+                props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
+
+                setTimeout(
+                    () => {
+                        props.changeHightContainer(570);
+                        props.setVariant(
+                            (prev: IStateRegistrasiAnimationFramer) => (
+                                {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
+                            )
+                        );
+                    },
+                    duration*1000
+                );
+                
             }
             else {
                 setErrorPassword("panjang sandi minimal 8 karakter");
             }
         },
-        [password]
+        []
     );
 
     return(
@@ -636,10 +650,10 @@ export const FormulirRegistrasi: FC = () => {
             scanKTP: '',
         }
     });    
-    const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
-        control, 
-        name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
-    });
+    // const [nik, nama, jenisKelamin, kontak, alamat] = useWatch({
+    //     control, 
+    //     name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
+    // });
         
     // const [cekUserName, { isLoading: isLoadingCekUserName }] = useCekUserNameMutation();
     
@@ -822,6 +836,7 @@ export const FormulirRegistrasi: FC = () => {
             <FormEmail 
                 userName={authentication.userName}
                 variant={variant} 
+                setVariant={setVariant}
                 setValue={setValue} 
                 changeHightContainer={setHeightArea}
                 dispatch={dispatch}
@@ -830,103 +845,17 @@ export const FormulirRegistrasi: FC = () => {
                 userName={authentication.userName}
                 password={authentication.password}              
                 variant={variant} 
+                setVariant={setVariant}
                 changeHightContainer={setHeightArea}
                 dispatch={dispatch}
             />   
             <FormPersonIdentityStepOne
                 userName={authentication.userName}
                 variant={variant} 
+                setVariant={setVariant}
                 changeHightContainer={setHeightArea}
                 control={control}
             />
-            <motion.div
-                animate={variant.animPID}
-                variants={variantsPID}
-                style={variant.flipDisplayPID?{display:'block'}:{display:'none'}}
-            >
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                    <IconButton 
-                        iconProps={backIcon} 
-                        title="Back" 
-                        ariaLabel="Back"
-                        onClick={onButtonUserNameBackToPasswordClick} 
-                        styles={{
-                            root: {
-                                borderStyle: 'none',
-                                borderRadius: '50%',
-                                padding: 0,
-                                marginTop: 2,
-                            }
-                        }}/>
-                    <Label styles={labelUserNameStyle}>{loginAuthentication.userName}</Label>
-                </Stack>                
-                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                    <Label styles={labelStyle}>Siapa anda?</Label>
-                    <Label styles={labelSandiStyle}>Kami perlu data personal berdasar KTP untuk mengatur akun Anda.</Label>
-                </Stack>
-                <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
-                    <Stack.Item>
-                        <ControlledFluentUiTextField
-                            required
-                            label="NIK"
-                            name="nik"
-                            rules={{ required: "harus diisi sesuai dengan ktp" }}     
-                            control={control}
-                        />
-                    </Stack.Item>
-                    <Stack.Item>
-                        <ControlledFluentUiTextField
-                            required
-                            label="Nama"
-                            name="nama"
-                            rules={{ required: "harus diisi sesuai dengan ktp" }}   
-                            control={control}
-                            disabled={nik!.length>0?false:true}
-                        />
-                    </Stack.Item>
-                    <Stack.Item>
-                        <ControlledFluentUiDropDown
-                            label="Jenis Kelamin"
-                            placeholder="Pilih Jenis Kelamin"
-                            options={dataJenisKelaminOptions}
-                            required
-                            name="jenisKelamin"
-                            rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                            control={control}         
-                            disabled={(nama!.length>0?false:true)||isFetchingJenisKelamin}    
-                        /> 
-                    </Stack.Item>
-                    <Stack.Item>
-                        <ControlledFluentUiTextField
-                            required
-                            label="Telepone"
-                            name="kontak.telepone"
-                            rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
-                            control={control}
-                            disabled={jenisKelamin == null?true:false}
-                        /> 
-                    </Stack.Item>
-                    <Stack.Item>
-                        <ControlledFluentUiTextField
-                            required
-                            label="Email"
-                            name="kontak.email"
-                            rules={{ required: "Alamat email harus diisi" }}  
-                            control={control} 
-                            value={loginAuthentication.userName}
-                            disabled={true}
-                        />
-                    </Stack.Item>
-                </Stack>
-                <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                    <PrimaryButton 
-                        text="Lanjut" 
-                        onClick={onButtonLanjutPIDClick} 
-                        style={{marginTop: 24, width: 100}}
-                        disabled={kontak?.telepone?.length == 0 ? true:false}
-                        />
-                </Stack>     
-            </motion.div>
             <motion.div
                 animate={variant.animPID2}
                 variants={variantsPID2}
