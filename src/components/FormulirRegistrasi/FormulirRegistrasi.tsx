@@ -213,42 +213,70 @@ const SuccessMessage = () => (
       Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
     </MessageBar>
 );
+const ErrorConnectionMessage = () => (
+    <MessageBar
+      actions={
+        <div>
+          <MessageBarButton>Ya</MessageBarButton>
+          <MessageBarButton>Tidak</MessageBarButton>
+        </div>
+      }
+      messageBarType={MessageBarType.error}
+      isMultiline={false}
+    >
+      Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
+    </MessageBar>
+);
 const FormEmail: FC<HookFormEmailProps> = (props) => {    
     //local variable for email validation
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     //local state
+    const [skipCekUserName, setSkipCekUserName] = useState(true);
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
     //rtk query
-    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
+    const { 
+        data: statusUserName, 
+        isLoading: isLoadingCekUserName, 
+        isUninitialized: isUninitializedStatusUserName,
+        isError: isErrorConnectionCekUserName,
+    } = useCekUserNameQuery(props.userName!, {skip: skipCekUserName});
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
-            if(statusUserName == false && props.userName!.length > 0) {
-                if(errorUserName.length > 0) {
-                    setErrorUserName('');
+            if(isLoadingCekUserName == false) {  
+                if(isErrorConnectionCekUserName) {
+                    props.setIsErrorConnection(isErrorConnectionCekUserName);
+                    props.setIsLoading(false);
                 }
+                else {                    
+                    if(statusUserName == false && props.userName!.length > 0) {
+                        if(errorUserName.length > 0) {
+                            setErrorUserName('');
+                        }
 
-                props.setIsLoading(false);
-                props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+                        props.setIsLoading(false);
+                        props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
 
-                setTimeout(
-                    () => {
-                        props.changeHightContainer(350);                
-                        props.setVariant(
-                            (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                        setTimeout(
+                            () => {
+                                props.changeHightContainer(350);                
+                                props.setVariant(
+                                    (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                                );
+                            },
+                            duration*1000
                         );
-                    },
-                    duration*1000
-                );
-            }
-            else {
-                if(userName.length > 0) {
-                    setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-                } 
+                    }
+                    else {
+                        if(userName.length > 0) {
+                            setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                        } 
+                    }
+                }
             }
         }, 
-        [props.userName]
+        [isLoadingCekUserName]
     );
     //this function is used to track userName changes
     const processUserNameChange = useCallback(
@@ -263,8 +291,9 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     );
     //this function is used to process next step (FormPassword) with dependen on userName changes only
     const processNextStep = useCallback(
-        () => {   
-            if(regexpEmail.test(userName) == true){
+        () => {               
+            if(regexpEmail.test(userName) == true){                
+                setSkipCekUserName(false);
                 props.setValue("kontak.email", userName);
                 props.setIsLoading(true);
                 props.dispatch(setUserNameAuthentication(userName));
@@ -956,8 +985,10 @@ export const FormulirRegistrasi: FC = () => {
     });
     //- digunakan untuk merubah tinggi container setiap terjadi pergantian Form -
     const [heighArea, setHeightArea] = useState<number>(300);   
-    //- digunakan untuk tracking status koneksi pemrosesan di back end
+    //- digunakan untuk tracking status loading koneksi pemrosesan di back end
     const [isLoading, setIsLoading] = useState<boolean>(false); 
+    //-digunakan untuk tracking status error koneksi ke back end
+    const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     //redux global state
     const authentication = useAppSelector(state => state.authentication);        
     //redux action creator
@@ -987,6 +1018,9 @@ export const FormulirRegistrasi: FC = () => {
     return(
         <>
         {
+            isErrorConnection && <ErrorConnectionMessage />
+        }
+        {
             isLoading && (
             <Stack>
                 <ProgressIndicator styles={progressStyle}/>
@@ -1010,6 +1044,7 @@ export const FormulirRegistrasi: FC = () => {
                 changeHightContainer={setHeightArea}
                 dispatch={dispatch}
                 setIsLoading={setIsLoading}
+                setIsErrorConnection={setIsErrorConnection}
             />  
             <FormPassword   
                 userName={authentication.userName}

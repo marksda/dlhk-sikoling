@@ -21,6 +21,7 @@ export interface HookFormEmailProps {
     userName?: string;
     dispatch?: any;
     setIsLoading?: any;
+    setIsErrorConnection?: any;
 }
 
 export interface HookFormPasswordProps {
