@@ -20,6 +20,7 @@ export interface HookFormEmailProps {
     changeHightContainer?: any;
     userName?: string;
     dispatch?: any;
+    setIsLoading?: any;
 }
 
 export interface HookFormPasswordProps {
@@ -37,4 +38,23 @@ export interface HookFormPersonIdentityStepOneProps {
     changeHightContainer?: any;
     userName?: string;
     control?: Control<any>;
+}
+
+export interface HookFormPersonIdentityStepTwoProps {
+    variant?: any;
+    setVariant?: any;
+    setValue?: any;
+    changeHightContainer?: any;
+    userName?: string;
+    control?: Control<any>;
+}
+
+export interface HookFormUploadKTP {
+    variant?: any;
+    setVariant?: any;
+    changeHightContainer?: any;
+    userName?: string;
+    handleSubmit?: any;
+    authentication?: any;
+    setIsLoading?: any;
 }
