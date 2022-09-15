@@ -118,6 +118,8 @@ const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
     const [errorUserName, setErrorUserName] = useState<string>('');
     //rtk query
     const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
+    //react router
+    const navigate = useNavigate();
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
@@ -354,7 +356,7 @@ export const FormulirLogin: FC = () => {
     const dispatch = useAppDispatch();
     
     
-    const navigate = useNavigate();    
+        
 
     return(
         <div style={rootContainerStyle}>
