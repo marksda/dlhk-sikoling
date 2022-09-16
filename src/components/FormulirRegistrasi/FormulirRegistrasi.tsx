@@ -2,7 +2,7 @@ import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, I
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi, regexpEmail } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 import { IDesa, resetDesa } from "../../features/desa/desa-slice";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
@@ -229,8 +229,8 @@ const ErrorConnectionMessage = () => (
 );
 const FormEmail: FC<HookFormEmailProps> = (props) => {    
     //local variable for email validation
-    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    //local state
+    
+     //local state
     const [skipCekUserName, setSkipCekUserName] = useState(true);
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
@@ -291,7 +291,8 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     );
     //this function is used to process next step (FormPassword) with dependen on userName changes only
     const processNextStep = useCallback(
-        () => {               
+        () => {         
+            //cek validasi format penulisan email      
             if(regexpEmail.test(userName) == true){                
                 setSkipCekUserName(false);
                 props.setValue("kontak.email", userName);
@@ -343,8 +344,6 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     );
 };
 const FormPassword: FC<HookFormPasswordProps> = (props) => {
-    //local variable
-    // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
     //local state
     const [password, setPassword] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');

@@ -16,6 +16,8 @@ export const defaultKecamatan: IKecamatan = {id: '3515110', nama: 'SIDOARJO'};
 export const defaultDesa: IDesa ={id: '3515110020', nama: 'CEMENG KALANG'};
 export const defaultHalaman: IHalaman = {page: 1, pageSize: 10};
 export const defaultJenisKelamin: IJenisKelamin = {id: 'L', nama: 'Laki-Laki'};
+export const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+export const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 export const DayPickerIndonesiaStrings: IDatePickerStrings = {
     months: [
         'Januari',
