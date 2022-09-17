@@ -21,7 +21,7 @@ import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
 import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, HookFormPersonIdentityStepTwoProps, HookFormUploadKTP } from "../../app/HookFormProps";
-import { useLazyCekUserNameQuery } from "../../features/security/authentication-api-slice";
+import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -228,61 +228,62 @@ const ErrorConnectionMessage = () => (
       Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
     </MessageBar>
 );
-// type RtkQueryEmail = {
-//     userName: string;
-//     skip: boolean
-// };
+type RtkQueryEmail = {
+    userName: string;
+    skip: boolean
+};
 
 const FormEmail: FC<HookFormEmailProps> = (props) => {  
     //local state
-    // const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
+    const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
     //rtk query
-    // const { 
-    //     data: statusUserName, 
-    //     isLoading: isLoadingCekUserName, 
-    //     isError: isErrorConnectionCekUserName,
-    // } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
-    const [cekUsername, resultCekUserName] = useLazyCekUserNameQuery();
-    
+    const { 
+        data: statusUserName, 
+        isLoading: isLoadingCekUserName, 
+        isError: isErrorConnectionCekUserName,
+    } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
+    // console.log(statusUserName);
     //animasi transisi FormEmail to next step
-    // useEffect(
-    //     () => {
-    //         if(isLoadingCekUserName == false) {  
-    //             if(isErrorConnectionCekUserName) {
-    //                 props.setIsErrorConnection(isErrorConnectionCekUserName);
-    //                 props.setIsLoading(false);
-    //             }
-    //             else {                    
-    //                 if(statusUserName == false && props.userName!.length > 0) {
-    //                     if(errorUserName.length > 0) {
-    //                         setErrorUserName('');
-    //                     }
+    useEffect(
+        () => {
+            console.log('effect dipanggil');
+            if(isLoadingCekUserName == false) {  
+                if(isErrorConnectionCekUserName) {
+                    props.setIsErrorConnection(isErrorConnectionCekUserName);
+                    props.setIsLoading(false);
+                }
+                else {                    
+                    if(statusUserName == false && props.userName!.length > 0) {
+                        if(errorUserName.length > 0) {
+                            setErrorUserName('');
+                        }
 
-    //                     props.setIsLoading(false);
-    //                     props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+                        props.setIsLoading(false);
+                        props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
 
-    //                     setTimeout(
-    //                         () => {
-    //                             props.changeHightContainer(350);                
-    //                             props.setVariant(
-    //                                 (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
-    //                             );
-    //                         },
-    //                         duration*1000
-    //                     );
-    //                 }
-    //                 else {
-    //                     if(userName.length > 0) {
-    //                         setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-    //                     } 
-    //                 }
-    //             }
-    //         }
-    //     }, 
-    //     [statusUserName]
-    // );
+                        let timer = setTimeout(
+                            () => {
+                                props.changeHightContainer(350);                
+                                props.setVariant(
+                                    (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                                );
+                            },
+                            duration*1000
+                        );
+                        return () => clearTimeout(timer);
+                    }
+                    else {
+                        if(userName.length > 0) {
+                            setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                        } 
+                    }
+                }
+            }
+        }, 
+        []
+    );
     //this function is used to track userName changes
     const processUserNameChange = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -296,43 +297,43 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     );
     //this function is used to process next step (FormPassword) with dependen on userName changes only
     const processNextStep = useCallback(
-        () => {
-            cekUsername(userName);
-            console.log(resultCekUserName);
+        () => {  
+            if(userName.length > 0) {
+                if(userName === rtkQueryEmailState.userName) {
+                    props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+                    setTimeout(
+                        () => {
+                            props.changeHightContainer(350);                
+                            props.setVariant(
+                                (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                            );
+                        },
+                        duration*1000
+                    );
+                }
+                else {
+                    //cek validasi format penulisan email      
+                    if(regexpEmail.test(userName) == true){      
+                        if(rtkQueryEmailState.skip === true) {
+                            setRtkQueryEmailState({userName: userName, skip: false });
+                        }          
+                        else {
+                            setRtkQueryEmailState((prev) => ({...prev, userName: userName}));
+                        }
+                        // props.setValue("kontak.email", userName);
+                        // props.setIsLoading(true);
+                        // props.dispatch(setUserNameAuthentication(userName));
+                    }         
+                    else {
+                        setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
+                    }
+                }    
+            }
+            else {
+                setErrorUserName(`Email tidak boleh dikosongi`);
+            }        
         },
-        [userName]
-        // () => {  
-        //     if(userName === rtkQueryEmailState.userName) {
-        //         props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
-        //         setTimeout(
-        //             () => {
-        //                 props.changeHightContainer(350);                
-        //                 props.setVariant(
-        //                     (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
-        //                 );
-        //             },
-        //             duration*1000
-        //         );
-        //     }
-        //     else {
-        //         //cek validasi format penulisan email      
-        //         if(regexpEmail.test(userName) == true){      
-        //             if(rtkQueryEmailState.skip === true) {
-        //                 setRtkQueryEmailState({userName: userName, skip: false });
-        //             }          
-        //             else {
-        //                 setRtkQueryEmailState((prev) => ({...prev, userName: userName}));
-        //             }
-        //             // props.setValue("kontak.email", userName);
-        //             // props.setIsLoading(true);
-        //             // props.dispatch(setUserNameAuthentication(userName));
-        //         }         
-        //         else {
-        //             setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
-        //         }
-        //     }            
-        // },
-        // [userName, rtkQueryEmailState]
+        [userName, rtkQueryEmailState]
     );
     //rendered function
     return(
@@ -356,7 +357,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                     }
                 }
                 iconProps={contactIcon} 
-                disabled={false}
+                disabled={isLoadingCekUserName}
                 underlined 
                 autoFocus
                 errorMessage={errorUserName}
@@ -366,7 +367,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                     text="Berikutnya" 
                     onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
-                    disabled={false}
+                    disabled={isLoadingCekUserName}
                     />
             </Stack>
         </motion.div>
@@ -1018,7 +1019,7 @@ export const FormulirRegistrasi: FC = () => {
     //-digunakan untuk tracking status error koneksi ke back end
     const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     //-digunakan untuk mendeteksi state condition FormEmail apa kondisi awal atau balik
-    const [stateConditionFormEmail, setStateConditionFormEmail] = useState<string>('awal');
+    // const [stateConditionFormEmail, setStateConditionFormEmail] = useState<string>('awal');
     //redux global state
     const authentication = useAppSelector(state => state.authentication);        
     //redux action creator

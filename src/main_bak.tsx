@@ -16,6 +16,7 @@ const root = createRoot(container!); // createRoot(container!) if you use TypeSc
 
 
 root.render(
+  <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
@@ -24,4 +25,5 @@ root.render(
         </Routes>
       </BrowserRouter>
     </Provider>    
+  </React.StrictMode>
 )

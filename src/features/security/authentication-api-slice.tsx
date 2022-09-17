@@ -18,4 +18,4 @@ export const AuthenticationApiSlice = createApi({
     },
 });
 
-export const { useLazyCekUserNameQuery } = AuthenticationApiSlice;
+export const { useCekUserNameQuery } = AuthenticationApiSlice;
