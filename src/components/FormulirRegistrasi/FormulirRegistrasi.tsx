@@ -20,7 +20,7 @@ import { IPerson } from "../../features/person/person-slice"
 import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
-import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, HookFormPersonIdentityStepTwoProps, HookFormUploadKTP } from "../../app/HookFormProps";
+import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
@@ -61,6 +61,14 @@ const containerInformationStyles: React.CSSProperties = {
     marginRight: 'auto',
     background: 'white',
     marginBottom: 16
+};
+const containerMessageStyles: React.CSSProperties = {
+    minWidth:364,
+    maxWidth: 464,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    background: 'inherit',
+    marginBottom: 4
 };
 const containerStackTokens: IStackTokens = { childrenGap: 5};
 const labelSikolingStyles: IStackItemStyles = {
@@ -214,18 +222,14 @@ const SuccessMessage = () => (
       Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
     </MessageBar>
 );
-const ErrorConnectionMessage = () => (
+const ErrorMessage: FC<HookMessageBarProps> = (props) => (
     <MessageBar
-      actions={
-        <div>
-          <MessageBarButton>Ya</MessageBarButton>
-          <MessageBarButton>Tidak</MessageBarButton>
-        </div>
-      }
       messageBarType={MessageBarType.error}
       isMultiline={false}
+      onDismiss={props.resetChoice}
+      dismissButtonAriaLabel="Close"
     >
-      Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
+        {props.message}
     </MessageBar>
 );
 type RtkQueryEmail = {
@@ -248,6 +252,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         () => {
             if(rtkQueryEmailState.skip === false && isLoadingCekUserName === false && 
                 isErrorConnectionCekUserName === false) { // sukses ambil data
+                props.setIsErrorConnection(false);
                 if(statusUserName != undefined) {
                     props.setIsLoading(false);
                     if(statusUserName === false) {   //data belum terdaftar                        
@@ -296,6 +301,10 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     const processNextStep = useCallback(
         () => {  
             if(userName.length > 0) {   //jika input userName tidak dikosongi
+                if(errorUserName.length > 0) {  //reset error warning text
+                    setErrorUserName('');
+                }
+
                 if(userName === rtkQueryEmailState.userName) {  //data tidak mengalami perubahan
                     props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
                     setTimeout(
@@ -323,11 +332,11 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                     }
                 }    
             }
-            else {
+            else if(errorUserName.length === 0) {
                 setErrorUserName(`Email tidak boleh dikosongi`);
             }        
         },
-        [userName, rtkQueryEmailState, props]
+        [userName, rtkQueryEmailState, errorUserName]
     );
     //rendered function
     return(
@@ -1039,11 +1048,23 @@ export const FormulirRegistrasi: FC = () => {
             scanKTP: '',
         }
     });    
+    //this function is used to close ErrorMessage component
+    const closeErrorMessage = useCallback(
+        () => {
+            setIsErrorConnection(false);
+        },
+        [isErrorConnection]
+    ); 
     //rendered function
     return(
         <>
         {
-            isErrorConnection && <ErrorConnectionMessage />
+            isErrorConnection && 
+            (
+                <div style={containerMessageStyles}>
+                    <ErrorMessage message="gagal melakukan sambungan ke server" resetChoice={closeErrorMessage}/>
+                </div>
+            )
         }
         {
             isLoading && (
@@ -1107,7 +1128,7 @@ export const FormulirRegistrasi: FC = () => {
                 <Stack.Item align="start">
                     <Label  styles={labelWarningStyle}>Perhatiaan!!</Label> 
                     <Label  styles={labelWarningStyle} style={{color: 'black'}}>
-                        Anda harus meyiapkan file hasil scan/foto KTP berformat jpg, file ini wajib diupload pada tahap berikutnya</Label>
+                        Anda harus menyiapkan file hasil scan KTP berformat jpg, file ini wajib diupload pada tahap berikutnya</Label>
                 </Stack.Item>
             </Stack>
         </div>

@@ -59,3 +59,8 @@ export interface HookFormUploadKTP {
     authentication?: any;
     setIsLoading?: any;
 }
+
+export interface HookMessageBarProps {
+    message?: string;
+    resetChoice?: () => void;
+}
