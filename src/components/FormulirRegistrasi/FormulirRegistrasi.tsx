@@ -227,10 +227,8 @@ const ErrorConnectionMessage = () => (
       Registrasi berhasil, silahkan cek email anda untuk pengaktifan akun.
     </MessageBar>
 );
-const FormEmail: FC<HookFormEmailProps> = (props) => {    
-    //local variable for email validation
-    
-     //local state
+const FormEmail: FC<HookFormEmailProps> = (props) => {  
+    //local state
     const [skipCekUserName, setSkipCekUserName] = useState(true);
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
@@ -291,7 +289,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     );
     //this function is used to process next step (FormPassword) with dependen on userName changes only
     const processNextStep = useCallback(
-        () => {         
+        (userName) => {         
             //cek validasi format penulisan email      
             if(regexpEmail.test(userName) == true){                
                 setSkipCekUserName(false);
@@ -303,7 +301,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                 setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
             }
         },
-        [userName]
+        []
     );
     //rendered function
     return(
@@ -335,7 +333,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
                     text="Berikutnya" 
-                    onClick={processNextStep} 
+                    onClick={(e) => processNextStep(userName)} 
                     style={{marginTop: 24, width: 100}}
                     disabled={isLoadingCekUserName}
                     />
