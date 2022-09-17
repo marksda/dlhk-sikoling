@@ -307,7 +307,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
 
                 if(userName === rtkQueryEmailState.userName) {  //data tidak mengalami perubahan
                     props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
-                    setTimeout(
+                    let timer = setTimeout(
                         () => {
                             props.changeHightContainer(350);                
                             props.setVariant(
@@ -316,6 +316,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                         },
                         duration*1000
                     );
+                    return () => clearTimeout(timer);
                 }
                 else {  //data mengalami perubahan          
                     if(regexpEmail.test(userName) == true){      //cek validasi format penulisan email 
@@ -437,7 +438,6 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     //this function is used to process next step (FormPersonIdentityStepOne) with dependen on userName changes only
     const processNextStep = useCallback(
         () => {
-            // let test = regexpPassword.test(loginAuthentication.password);
             let test = password.length > 7 ? true:false;
             if(test == true) {
                 if(errorPassword.length > 0) {
@@ -447,7 +447,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                 props.dispatch(setPasswordAUthentication(password));       
                 props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
 
-                setTimeout(
+                let timer = setTimeout(
                     () => {
                         props.changeHightContainer(570);
                         props.setVariant(
@@ -458,13 +458,13 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                     },
                     duration*1000
                 );
-                
+                return () => clearTimeout(timer);
             }
             else {
                 setErrorPassword("panjang sandi minimal 8 karakter");
             }
         },
-        []
+        [password]
     );
     //rendered function
     return(
