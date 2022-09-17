@@ -356,7 +356,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                     }
                 }
                 iconProps={contactIcon} 
-                disabled={isLoadingCekUserName}
+                disabled={false}
                 underlined 
                 autoFocus
                 errorMessage={errorUserName}
@@ -366,7 +366,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                     text="Berikutnya" 
                     onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
-                    disabled={isLoadingCekUserName}
+                    disabled={false}
                     />
             </Stack>
         </motion.div>
