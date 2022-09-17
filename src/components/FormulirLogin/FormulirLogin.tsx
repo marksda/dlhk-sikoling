@@ -5,7 +5,7 @@ import {
 import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
-import { useCekUserNameQuery, useGetTokenMutation } from "../../features/security/authorization-api-slice";
+import { useGetTokenMutation } from "../../features/security/authorization-api-slice";
 import { IResponseStatusToken } from "../../features/security/token-slice";
 import { useNavigate } from "react-router-dom";
 import { HookFormEmailProps, HookFormPasswordProps } from "../../app/HookFormProps";
@@ -117,33 +117,33 @@ const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
     //rtk query
-    const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
-    //react router
+    // const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
+    // //react router
     const navigate = useNavigate();
-    //animasi transisi FormEmail to next step
-    useEffect(
-        () => {
-            if(statusUserName == true && props.userName!.length > 0) {
-                if(errorUserName.length > 0) {
-                    setErrorUserName('');
-                }
-                props.setIsLoading(false);                
-                props.setVariant((prev: IStateAnimationFramer) =>({...prev, animUserName: 'closed'}));     
-                setTimeout(
-                    () => {
-                        props.setVariant((prev: IStateAnimationFramer) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-                    },
-                    duration*1000
-                ); 
-            }
-            else {
-                if(userName.length > 0) {
-                    setErrorUserName(`Akun ${props.userName} tidak dikenali, silahkan gunakan akun lain`);
-                } 
-            }
-        }, 
-        [props.userName]
-    );
+    // //animasi transisi FormEmail to next step
+    // useEffect(
+    //     () => {
+    //         if(statusUserName == true && props.userName!.length > 0) {
+    //             if(errorUserName.length > 0) {
+    //                 setErrorUserName('');
+    //             }
+    //             props.setIsLoading(false);                
+    //             props.setVariant((prev: IStateAnimationFramer) =>({...prev, animUserName: 'closed'}));     
+    //             setTimeout(
+    //                 () => {
+    //                     props.setVariant((prev: IStateAnimationFramer) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
+    //                 },
+    //                 duration*1000
+    //             ); 
+    //         }
+    //         else {
+    //             if(userName.length > 0) {
+    //                 setErrorUserName(`Akun ${props.userName} tidak dikenali, silahkan gunakan akun lain`);
+    //             } 
+    //         }
+    //     }, 
+    //     [props.userName]
+    // );
     //this function is used to track userName changes
     const processUserNameChange = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -186,7 +186,7 @@ const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
                     }
                 }
                 iconProps={contactIcon} 
-                disabled={isLoadingCekUserName && userName.length > 0}
+                disabled={true && userName.length > 0}
                 underlined 
                 errorMessage={errorUserName}
                 styles={{root: {marginBottom: 8, width: 300}}}/>
@@ -209,7 +209,7 @@ const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
                     text="Berikutnya" 
                     onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
-                    disabled={isLoadingCekUserName && userName.length > 0}
+                    disabled={true && userName.length > 0}
                     />
             </Stack>
         </motion.div>
