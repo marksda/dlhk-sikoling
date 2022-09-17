@@ -232,7 +232,6 @@ type RtkQueryEmail = {
     userName: string;
     skip: boolean
 };
-
 const FormEmail: FC<HookFormEmailProps> = (props) => {  
     //local state
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
@@ -244,45 +243,62 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         isLoading: isLoadingCekUserName, 
         isError: isErrorConnectionCekUserName,
     } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
-    // console.log(statusUserName);
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
-            console.log('effect dipanggil');
-            if(isLoadingCekUserName == false) {  
-                if(isErrorConnectionCekUserName) {
-                    props.setIsErrorConnection(isErrorConnectionCekUserName);
-                    props.setIsLoading(false);
-                }
-                else {                    
-                    if(statusUserName == false && props.userName!.length > 0) {
-                        if(errorUserName.length > 0) {
-                            setErrorUserName('');
-                        }
+            // if(isLoadingCekUserName == false) {  
+            //     if(isErrorConnectionCekUserName) {
+            //         props.setIsErrorConnection(isErrorConnectionCekUserName);
+            //         props.setIsLoading(false);
+            //     }
+            //     else {                    
+            //         if(statusUserName == false && props.userName!.length > 0) {
+            //             if(errorUserName.length > 0) {
+            //                 setErrorUserName('');
+            //             }
 
-                        props.setIsLoading(false);
-                        props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+            //             props.setIsLoading(false);
+            //             props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
 
-                        let timer = setTimeout(
-                            () => {
-                                props.changeHightContainer(350);                
-                                props.setVariant(
-                                    (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
-                                );
-                            },
-                            duration*1000
-                        );
-                        return () => clearTimeout(timer);
-                    }
-                    else {
-                        if(userName.length > 0) {
-                            setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-                        } 
-                    }
-                }
+            //             let timer = setTimeout(
+            //                 () => {
+            //                     props.changeHightContainer(350);                
+            //                     props.setVariant(
+            //                         (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+            //                     );
+            //                 },
+            //                 duration*1000
+            //             );
+            //             return () => clearTimeout(timer);
+            //         }
+            //         else {
+            //             if(userName.length > 0) {
+            //                 setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+            //             } 
+            //         }
+            //     }
+            // }
+            if(isLoadingCekUserName === false && isErrorConnectionCekUserName === false &&  statusUserName != undefined) {
+                if(statusUserName != undefined) {
+                    // props.setIsLoading(false);
+                    props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
+
+                    setTimeout(
+                        () => {                            
+                            props.setIsLoading(false);
+                            props.setValue("kontak.email", userName);
+                            props.dispatch(setUserNameAuthentication(userName));
+                            props.changeHightContainer(350);                
+                            props.setVariant(
+                                (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
+                            );
+                        },
+                        duration*1000
+                    );
+            }                    
             }
         }, 
-        []
+        [rtkQueryEmailState, statusUserName, isLoadingCekUserName, isErrorConnectionCekUserName]
     );
     //this function is used to track userName changes
     const processUserNameChange = useCallback(
@@ -321,7 +337,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                             setRtkQueryEmailState((prev) => ({...prev, userName: userName}));
                         }
                         // props.setValue("kontak.email", userName);
-                        // props.setIsLoading(true);
+                        props.setIsLoading(true);
                         // props.dispatch(setUserNameAuthentication(userName));
                     }         
                     else {
@@ -333,7 +349,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                 setErrorUserName(`Email tidak boleh dikosongi`);
             }        
         },
-        [userName, rtkQueryEmailState]
+        [userName, rtkQueryEmailState, props]
     );
     //rendered function
     return(
@@ -1068,7 +1084,6 @@ export const FormulirRegistrasi: FC = () => {
             </Stack>
             <div style={{height: 8}}></div>
             <FormEmail 
-                authentication={authentication}
                 variant={variant} 
                 setVariant={setVariant}
                 setValue={setValue} 

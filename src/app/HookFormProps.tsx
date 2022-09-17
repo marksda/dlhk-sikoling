@@ -15,12 +15,10 @@ export interface HookFluentUiDropDownProps extends HookFormProps {
 }
 
 export interface HookFormEmailProps {
-    authentication?: IAuthentication;
     variant?: any;
     setVariant?: any;
     setValue?: any;
     changeHightContainer?: any;
-    userName?: string;
     dispatch?: any;
     setIsLoading?: any;
     setIsErrorConnection?: any;
