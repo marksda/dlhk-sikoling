@@ -16,13 +16,6 @@ export const AuthorizationApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            cekUserName: builder.query<boolean, string>({
-                // query: (nama) => `user/cek_user_name?userName=${nama}`,
-                query: (nama) => ({
-                    url: `user/cek_user_name?userName=${nama}`,
-                    method: 'GET',
-                }),
-            }),
             addRegistrasi: builder.mutation<boolean, Partial<PostRegistrasi>>({
                 query: (body) => ({
                     url: `user/registrasi`,
@@ -43,8 +36,8 @@ export const AuthorizationApiSlice = createApi({
                     body: authenticationData,
                 }),
             }),            
-        }
-    }
+        };
+    },
 });
 
-export const { useCekUserNameQuery, useAddRegistrasiMutation, useGetTokenMutation } = AuthorizationApiSlice;
+export const { useAddRegistrasiMutation, useGetTokenMutation } = AuthorizationApiSlice;

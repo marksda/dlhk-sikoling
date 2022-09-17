@@ -20,6 +20,7 @@ import pemrakarsaReducer from "../features/pemrakarsa/pemrakarsa-slice";
 import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { JenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import authenticationReducer from "../features/security/authentication-slice";
+import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
 import { AuthorizationApiSlice } from "../features/security/authorization-api-slice";
 import tokenReducer from "../features/security/token-slice";
@@ -50,6 +51,7 @@ export const store = configureStore({
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
         authentication: authenticationReducer,
+        [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
         token: tokenReducer,
@@ -66,6 +68,7 @@ export const store = configureStore({
                                             .concat(PersonApiSlice.middleware)
                                             .concat(JenisPelakuUsahaApiSlice.middleware)
                                             .concat(BentukUsahaApiSlice.middleware)
+                                            .concat(AuthenticationApiSlice.middleware)
                                             .concat(AuthorizationApiSlice.middleware),
 })
 

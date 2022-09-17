@@ -1,4 +1,5 @@
 import { Control, UseControllerProps } from "react-hook-form";
+import { IAuthentication } from "../features/security/authentication-slice";
 
 export interface HookFormProps {
     control?: Control<any>;
@@ -14,6 +15,7 @@ export interface HookFluentUiDropDownProps extends HookFormProps {
 }
 
 export interface HookFormEmailProps {
+    authentication?: IAuthentication;
     variant?: any;
     setVariant?: any;
     setValue?: any;
