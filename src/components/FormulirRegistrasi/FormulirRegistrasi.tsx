@@ -504,7 +504,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             </Stack>                
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Buat kata sandi</Label>
-                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan dengan akun Anda.</Label>
+                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan pada akun ini.</Label>
             </Stack>                
             <TextField 
                 placeholder="kata sandi"
