@@ -587,7 +587,7 @@ const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props
     const processNextStep = useCallback(
         () => {
             props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID: 'closed'}));
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(570);
                     props.setVariant(
@@ -598,6 +598,8 @@ const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -759,7 +761,7 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
                 (prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID2: 'closed'})
             );
 
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(570);
                     props.setVariant(
@@ -768,6 +770,8 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -776,7 +780,7 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
         () => {
             props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID2: 'closed'}));
 
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(430);
                     props.setVariant(
@@ -785,6 +789,8 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -881,7 +887,7 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
                         control={props.control}
                         required 
                         multiline 
-                        resizable={false}                    /> 
+                        resizable={false} /> 
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
@@ -903,7 +909,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         () => {
             props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUploadKTP: 'closed'}));
 
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(570);
                     props.setVariant(
@@ -912,19 +918,21 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
     //this function is used to save data to backend server
     const save: SubmitHandler<IPerson> = async (data) => {
         try {
-            props.setIsLoading(true);
-            await addRegistrasi({auth: props.authentication, person: data}).unwrap();
-            props.setIsLoading(false);
-            <SuccessMessage />
+            // props.setIsLoading(true);
+            // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
+            // props.setIsLoading(false);
+            console.log(data);
         } catch (error) {
-            props.setIsLoading(false);
-            alert('Registrasi gagal');
+            // props.setIsLoading(false);
+            // props.setIsErrorConnection(true);
         }
 
         // handleSubmit(

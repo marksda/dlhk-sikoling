@@ -58,6 +58,7 @@ export interface HookFormUploadKTP {
     handleSubmit?: any;
     authentication?: any;
     setIsLoading?: any;
+    setIsErrorConnection?: any;
 }
 
 export interface HookMessageBarProps {
