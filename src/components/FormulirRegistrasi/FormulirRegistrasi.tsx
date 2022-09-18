@@ -908,17 +908,17 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const processBackToPreviousStep = useCallback(
         () => {
             props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUploadKTP: 'closed'}));
-
             let timer = setTimeout(
                 () => {
                     props.changeHightContainer(570);
                     props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'})
+                        (prev: IStateRegistrasiAnimationFramer) => (
+                            {...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}
+                        )
                     );
                 },
                 duration*1000
             );
-
             return () => clearTimeout(timer);
         },
         []
@@ -1158,6 +1158,7 @@ export const FormulirRegistrasi: FC = () => {
                 handleSubmit={handleSubmit}
                 authentication={authentication}
                 setIsLoading={setIsLoading}
+                changeHightContainer={setHeightArea}
             />
         </div>
         <div style={containerInformationStyles}>
