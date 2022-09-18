@@ -924,65 +924,70 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         []
     );
     //this function is used to save data to backend server
-    const save: SubmitHandler<IPerson> = async (data) => {
-        try {
-            // props.setIsLoading(true);
-            // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
-            // props.setIsLoading(false);
-            console.log(data);
-        } catch (error) {
-            // props.setIsLoading(false);
-            // props.setIsErrorConnection(true);
-        }
-
-        // handleSubmit(
-        //     async (d) => {
-        //         await addRegistrasi({
-        //             auth: loginAuthentication,
-        //             person: d
-        //         });
-        //     },            
-        //     (err) => {                
-        //       console.log(err);
-        //     }
-        // )();
-
-        // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
-        // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
-        // var reader = new FileReader();             
-        // reader.onload = () => {             
-        //     img.src = reader.result as string;
-        //     // canvas.height = img.naturalHeight;
-        //     // canvas.width = img.naturalWidth;
-        // };        
-        // reader.readAsDataURL(file!);
-
-        
-
-        // let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
-        // let context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
-        // let src = cv.imread("tesgbr");
-        // let dst = new cv.Mat();
-        // let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
-        // let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
-        // You can try more different parameters
-        // cv.inRange(src, low, high, dst);
-        // cv.imshow(canvas, dst);        
-        // src.delete(); dst.delete(); low.delete(); high.delete();        
-
-        // const worker = createWorker({
-        //     logger: m => console.log(m)
-        // });
-          
-        // (async () => {
-        // await worker.load();
-        // await worker.loadLanguage('eng');
-        // await worker.initialize('eng');
-        // const { data: { text } } = await worker.recognize(canvas);
-        // console.log(text);
-        // await worker.terminate();
-        // })();
-    };
+    const save: SubmitHandler<IPerson> = useCallback(
+        async(data) => {
+            try {
+                props.setIsLoading(true);            
+                // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
+                // props.setIsLoading(false);
+                console.log()
+                console.log(data);
+            } catch (error) {
+                // props.setIsLoading(false);
+                // props.setIsErrorConnection(true);
+            }
+    
+            // handleSubmit(
+            //     async (d) => {
+            //         await addRegistrasi({
+            //             auth: loginAuthentication,
+            //             person: d
+            //         });
+            //     },            
+            //     (err) => {                
+            //       console.log(err);
+            //     }
+            // )();
+    
+            // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
+            // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
+            // var reader = new FileReader();             
+            // reader.onload = () => {             
+            //     img.src = reader.result as string;
+            //     // canvas.height = img.naturalHeight;
+            //     // canvas.width = img.naturalWidth;
+            // };        
+            // reader.readAsDataURL(file!);
+    
+            
+    
+            // let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
+            // let context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
+            // let src = cv.imread("tesgbr");
+            // let dst = new cv.Mat();
+            // let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
+            // let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
+            // You can try more different parameters
+            // cv.inRange(src, low, high, dst);
+            // cv.imshow(canvas, dst);        
+            // src.delete(); dst.delete(); low.delete(); high.delete();        
+    
+            // const worker = createWorker({
+            //     logger: m => console.log(m)
+            // });
+                
+            // (async () => {
+            // await worker.load();
+            // await worker.loadLanguage('eng');
+            // await worker.initialize('eng');
+            // const { data: { text } } = await worker.recognize(canvas);
+            // console.log(text);
+            // await worker.terminate();
+            // })();
+        },
+        [props.authentication]
+    );
+    
     //rendered function
     return(
         <motion.div
@@ -1161,15 +1166,20 @@ export const FormulirRegistrasi: FC = () => {
                 changeHightContainer={setHeightArea}
             />
         </div>
-        <div style={containerInformationStyles}>
-            <Stack tokens={containerStackTokens}>
-                <Stack.Item align="start">
-                    <Label  styles={labelWarningStyle}>Perhatiaan!!</Label> 
-                    <Label  styles={labelWarningStyle} style={{color: 'black'}}>
-                        Anda harus menyiapkan file hasil scan KTP berformat jpg, file ini wajib diupload pada tahap berikutnya</Label>
-                </Stack.Item>
-            </Stack>
-        </div>
+        {
+            !variant.flipDisplayUploadKTP &&
+            (
+                <div style={containerInformationStyles}>
+                    <Stack tokens={containerStackTokens}>
+                        <Stack.Item align="start">
+                            <Label  styles={labelWarningStyle}>Perhatiaan!!</Label> 
+                            <Label  styles={labelWarningStyle} style={{color: 'black'}}>
+                                Anda harus menyiapkan file hasil scan KTP berformat jpg, file ini wajib diupload pada tahap berikutnya</Label>
+                        </Stack.Item>
+                    </Stack>
+                </div>
+            )
+        }        
         </>
     )
 }
