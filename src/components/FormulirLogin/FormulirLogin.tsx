@@ -379,7 +379,6 @@ export const FormulirLogin: FC = () => {
                 </Stack>            
                 <div style={{height: 8}}></div>
                 <FormEmail
-                    userName={authentication.userName}
                     variant={variant} 
                     setVariant={setVariant}
                     dispatch={dispatch}

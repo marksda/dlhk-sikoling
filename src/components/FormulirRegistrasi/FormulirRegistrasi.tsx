@@ -1,4 +1,4 @@
-import { DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar, MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
+import { ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar, MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
@@ -22,9 +22,9 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
 import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
+import { useNavigate } from "react-router-dom";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
-
 
 interface IStateRegistrasiAnimationFramer {
     animUserName: string;
@@ -106,6 +106,7 @@ const labelSandiStyle: ILabelStyles  = {
     }
 };
 const stackTokens = { childrenGap: 2 };
+const unlockIcon: IIconProps = { iconName: 'Unlock' };
 const duration: number = 0.5;
 const variantsUserName = {
     open: { 
@@ -241,6 +242,8 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
+    // //react router
+    const navigate = useNavigate();
     //rtk query
     const { 
         data: statusUserName, 
@@ -366,6 +369,20 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
                 autoFocus
                 errorMessage={errorUserName}
                 styles={{root: {marginBottom: 8}}}/>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Sudah punya akun?</Label> 
+                <ActionButton 
+                    iconProps={unlockIcon} 
+                    onClick={
+                        () => {
+                            navigate("/");
+                        }
+                    }
+                    styles={{root: {color: '#0067b8'}}}
+                >
+                    halaman login.
+                </ActionButton>
+            </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
                     text="Berikutnya" 
@@ -381,6 +398,13 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
     //local state
     const [password, setPassword] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
+    //clear password jika userName yang dipakai berbeda dari sebelumnya
+    useEffect(
+        () => {
+            setPassword('');
+        },
+        [props.userName]
+    )
     //animasi transisi FormPassword to next step
     // useEffect(
     //     () => {
@@ -407,7 +431,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                 (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPassword: 'closed'})
             );
 
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(300);
                     props.setVariant(
@@ -421,6 +445,8 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -491,7 +517,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             </Stack>                
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Buat kata sandi</Label>
-                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan pada akun ini.</Label>
+                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan.</Label>
             </Stack>                
             <TextField 
                 placeholder="kata sandi"
@@ -536,7 +562,7 @@ const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props
                 (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPID: 'closed'})
             );
 
-            setTimeout(
+            let timer = setTimeout(
                 () => {
                     props.changeHightContainer(350);
                     props.setVariant(
@@ -552,6 +578,8 @@ const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props
                 },
                 duration*1000
             );
+
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -851,8 +879,9 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
                         name={`alamat.keterangan`}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
                         control={props.control}
-                        required multiline autoAdjustHeight
-                    /> 
+                        required 
+                        multiline 
+                        resizable={false}                    /> 
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
