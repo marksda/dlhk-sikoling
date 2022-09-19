@@ -52,9 +52,8 @@ interface IUploadFilePropsComponent {
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
 
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
-    console.log(`props.uploadStatus: ${props.uploadStatus}`);
     //local state
-    const [uploadStatus, setUploadStatus] = useState<boolean>(typeof props.uploadStatus !== 'undefined' ? props.uploadStatus : false);
+    const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
@@ -66,8 +65,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const styleContainer: Record<string, any> = {};
     const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);
 
-    // console.log(`uploadStatus: ${uploadStatus}`);
-
+    console.log(`uploadStatus: ${uploadStatus}`);
+    
     if(typeof props.luasArea === 'undefined') {
         styleContainer.width = 300
         styleContainer.height = 100
@@ -79,6 +78,13 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         styleContainer.padding = 2;
         // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
     }
+
+    useEffect(
+        () => {
+            setUploadStatus(props.uploadStatus!);
+        },
+        [props.uploadStatus!]
+    );
 
     useEffect(
         () => {
