@@ -64,21 +64,24 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [message, setMessage] = useState<string>('');
     const [fileInfos, setFileInfos] = useState<any[]>([]);
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
-    const styleContainer: Record<string, any> = {};
-    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);
-    
+    const [styleContainer, setStyleContainer] = useState<Record<string, any>>({
+        'width': 300,
+        'height': 100,
+        'padding': 2,
+    });
+    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);    
     //jika props.luasArea dipakai maka setting styleContainer
     useEffect(
         () => {
-            if(typeof props.luasArea === 'undefined') {
-                styleContainer.width = 300
-                styleContainer.height = 100
-                // styleContainer.backgroundColor = '#ECECEC'
-            }
-            else {
-                styleContainer.width = props.luasArea?.panjang;
-                styleContainer.height = props.luasArea?.lebar;
-                styleContainer.padding = 2;
+            if(typeof props.luasArea !== 'undefined') {
+                setStyleContainer({
+                    'width': props.luasArea?.panjang,
+                    'height': props.luasArea?.lebar,
+                    'padding': 2,
+                })
+                // styleContainer.width = props.luasArea?.panjang;
+                // styleContainer.height = props.luasArea?.lebar;
+                // styleContainer.padding = 2;
                 // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
             }
         },
@@ -93,7 +96,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         },
         [props.uploadStatus]
     );
-    //proses upload dilakukan jika state uploadStatus = true
+    //proses upload dilakukan jika local state uploadStatus = true
     useEffect(
         () => {
             if(uploadStatus === true) {
@@ -124,7 +127,6 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         // })
         // setSelectedFiles(undefined)
     }
-    // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
         // alert('asu');
