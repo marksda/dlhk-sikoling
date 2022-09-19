@@ -902,6 +902,8 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
     );
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
+    //local state
+    const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
     const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
     //this function is used to go back to FormPersonIdentityStepTwo
@@ -930,7 +932,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 props.setIsLoading(true);            
                 // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
                 // props.setIsLoading(false);
-                console.log()
+                console.log(props.authentication);
                 console.log(data);
             } catch (error) {
                 // props.setIsLoading(false);
@@ -1027,6 +1029,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showButtonUpload={false}
                         showProgressBar={false}
                         id="tesgbr"
+                        uploadStatus={uploadStatus}
                     />
                 </Stack.Item>
             </Stack>

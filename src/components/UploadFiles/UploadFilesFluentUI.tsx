@@ -1,5 +1,5 @@
 import { CompoundButton, DirectionalHint, FontIcon, IButtonStyles, Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react"
-import { FC, FormEvent, MouseEventHandler, useState } from "react"
+import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react"
 import uploadService from "../../features/upload-files/FileUploadService" 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
@@ -46,11 +46,14 @@ interface IUploadFilePropsComponent {
     showButtonUpload?: boolean;
     showProgressBar?: boolean;
     setFile?: (File: File) => void;
+    uploadStatus?: boolean;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
 
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
+    //local state
+    const [uploadStatus, setUploadStatus] = useState<boolean>(typeof props.uploadStatus === 'boolean'? props.uploadStatus : false);
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
@@ -74,25 +77,35 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
     }
 
+    useEffect(
+        () => {
+            if(uploadStatus === true) {
+                upload();
+            }            
+        },
+        [uploadStatus] 
+    );
+
     const upload = () => {
-        setProgress(0)
-        uploadService.upload(currentFile, (event: ProgressEvent) => {
-            setProgress(Math.round(100 * event.loaded)/event.total)
-        })
-        .then((response) => {
-            setMessage(response.data.namaFile)
-            return 'as test' //uploadService.getFiles(response.data.namaFile)
-        })
-        .then((files) => {
-            console.log(files)
-            // setFileInfos(files.data)
-        })
-        .catch(() => {
-            setProgress(0)
-            setMessage("Could not upload the file!")
-            setCurrentFile(undefined)
-        })
-        setSelectedFiles(undefined)
+        console.log('sedang upload');
+        // setProgress(0)
+        // uploadService.upload(currentFile, (event: ProgressEvent) => {
+        //     setProgress(Math.round(100 * event.loaded)/event.total)
+        // })
+        // .then((response) => {
+        //     setMessage(response.data.namaFile)
+        //     return 'as test' //uploadService.getFiles(response.data.namaFile)
+        // })
+        // .then((files) => {
+        //     console.log(files)
+        //     // setFileInfos(files.data)
+        // })
+        // .catch(() => {
+        //     setProgress(0)
+        //     setMessage("Could not upload the file!")
+        //     setCurrentFile(undefined)
+        // })
+        // setSelectedFiles(undefined)
     }
 
     // useEffect(() => {
