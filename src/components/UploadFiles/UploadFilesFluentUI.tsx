@@ -64,8 +64,6 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const styleContainer: Record<string, any> = {};
     const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);
-
-    console.log(`uploadStatus: ${uploadStatus}`);
     
     if(typeof props.luasArea === 'undefined') {
         styleContainer.width = 300
@@ -81,9 +79,11 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
 
     useEffect(
         () => {
-            setUploadStatus(props.uploadStatus!);
+            if(typeof props.uploadStatus !== 'undefined') {
+                setUploadStatus(props.uploadStatus);
+            }            
         },
-        [props.uploadStatus!]
+        [props.uploadStatus]
     );
 
     useEffect(

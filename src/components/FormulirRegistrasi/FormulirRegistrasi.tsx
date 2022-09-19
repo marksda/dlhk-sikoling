@@ -930,11 +930,9 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         async(data) => {
             try {
                 props.setIsLoading(true);            
-                // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
-                // props.setIsLoading(false);
-                console.log(props.authentication);
-                console.log(data);
+                await addRegistrasi({auth: props.authentication, person: data}).unwrap();
                 setUploadStatus(true);
+                // props.setIsLoading(false);                
             } catch (error) {
                 // props.setIsLoading(false);
                 // props.setIsErrorConnection(true);
@@ -1030,7 +1028,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showButtonUpload={false}
                         showProgressBar={false}
                         id="tesgbr"
-                        uploadStatus={uploadStatus}
+                        
                     />
                 </Stack.Item>
             </Stack>
