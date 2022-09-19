@@ -1,6 +1,8 @@
-import { CompoundButton, DirectionalHint, FontIcon, IButtonStyles, Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react"
-import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react"
-import uploadService from "../../features/upload-files/FileUploadService" 
+import { 
+    CompoundButton, DirectionalHint, FontIcon, IButtonStyles, 
+    Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react";
+import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react";
+// import uploadService from "../../features/upload-files/FileUploadService"; 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
 import {useBoolean, useId} from "@fluentui/react-hooks";
