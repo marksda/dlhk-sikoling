@@ -934,6 +934,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 // props.setIsLoading(false);
                 console.log(props.authentication);
                 console.log(data);
+                setUploadStatus(true);
             } catch (error) {
                 // props.setIsLoading(false);
                 // props.setIsErrorConnection(true);
