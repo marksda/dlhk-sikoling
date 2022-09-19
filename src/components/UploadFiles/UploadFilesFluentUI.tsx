@@ -152,20 +152,20 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
     const handleFile = useCallback(
         (event: FormEvent<HTMLInputElement>) => {
-            // setSelectedFiles(event.currentTarget.files);
-            // let file = event.currentTarget.files![0];
-            // // props.setFile(file);
-            // setCurrentFile(file);
-            // switch (CekTypeFile(file.type)) {
-            //     case 'image':
-            //         setIsImageFile(true);
-            //         break;
-            //     case 'pdf':
-            //         setIsPdfFile(true);
-            //         break;
-            //     default:
-            //         break;
-            // }    
+            setSelectedFiles(event.currentTarget.files);
+            let file = event.currentTarget.files![0];
+            // props.setFile(file);
+            setCurrentFile(file);
+            switch (CekTypeFile(file.type)) {
+                case 'image':
+                    setIsImageFile(true);
+                    break;
+                case 'pdf':
+                    setIsPdfFile(true);
+                    break;
+                default:
+                    break;
+            }    
             console.log('this is responsibility of file event change');
             if(typeof props.setIsFileExist !== 'undefined') {
                 props.setIsFileExist(true);

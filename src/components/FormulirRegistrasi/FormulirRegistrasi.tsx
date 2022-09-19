@@ -939,9 +939,9 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const save: SubmitHandler<IPerson> = useCallback(
         async(data) => {
             try {
-                props.setIsLoading(true);            
-                await addRegistrasi({auth: props.authentication, person: data}).unwrap();
-                setUploadStatus(true);
+                // props.setIsLoading(true);            
+                // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
+                // setUploadStatus(true);
                 // props.setIsLoading(false);                
             } catch (error) {
                 props.setIsLoading(false);
