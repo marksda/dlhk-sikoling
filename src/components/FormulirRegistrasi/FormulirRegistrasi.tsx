@@ -987,8 +987,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
             // })();
         },
         [props.authentication]
-    );
-    
+    );    
     //rendered function
     return(
         <motion.div
