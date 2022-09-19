@@ -904,8 +904,18 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //local state
     const [uploadStatus, setUploadStatus] = useState<boolean>(false);
+    const [isFileExist, setIsFileExist] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
     const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
+    //this is used as feedback information to parent that if upload file has finished then stop status loading in parent
+    useEffect(
+        () => {
+            if(uploadStatus === false) {
+                props.setIsLoading(false);
+            }
+        },
+        [uploadStatus]
+    );
     //this function is used to go back to FormPersonIdentityStepTwo
     const processBackToPreviousStep = useCallback(
         () => {
@@ -934,8 +944,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 setUploadStatus(true);
                 // props.setIsLoading(false);                
             } catch (error) {
-                // props.setIsLoading(false);
-                // props.setIsErrorConnection(true);
+                props.setIsLoading(false);
+                props.setIsErrorConnection(true);
             }
     
             // handleSubmit(
@@ -1027,7 +1037,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showButtonUpload={false}
                         showProgressBar={false}
                         id="tesgbr"
-                        
+                        setIsFileExist={setIsFileExist}
+                        setUploadStatus={setUploadStatus}                     
                     />
                 </Stack.Item>
             </Stack>
@@ -1036,7 +1047,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                     text="Simpan" 
                     onClick={props.handleSubmit(save)}
                     style={{marginTop: 24, width: 100}}
-                    disabled={false}
+                    disabled={!isFileExist}
                     />
             </Stack>
         </motion.div>

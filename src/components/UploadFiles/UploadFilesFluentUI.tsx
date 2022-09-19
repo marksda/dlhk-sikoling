@@ -1,7 +1,7 @@
 import { 
     CompoundButton, DirectionalHint, FontIcon, IButtonStyles, 
     Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react";
-import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react";
+import { FC, FormEvent, MouseEventHandler, useCallback, useEffect, useState } from "react";
 // import uploadService from "../../features/upload-files/FileUploadService"; 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
@@ -49,6 +49,8 @@ interface IUploadFilePropsComponent {
     showProgressBar?: boolean;
     setFile?: (File: File) => void;
     uploadStatus?: boolean;
+    setIsFileExist?: (data: boolean) => void;
+    setUploadStatus?: (data: boolean) => void;    
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -87,11 +89,13 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         },
         [props.luasArea]
     );    
-    //jika props.uploadState dipakai maka trigger upload dilakukan disini
+    //this is used as monitoring to trigger upload function
     useEffect(
         () => {
             if(typeof props.uploadStatus !== 'undefined') {
-                setUploadStatus(props.uploadStatus);
+                if(props.uploadStatus === true) {
+                    setUploadStatus(props.uploadStatus);
+                }                
             }            
         },
         [props.uploadStatus]
@@ -101,32 +105,43 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         () => {
             if(uploadStatus === true) {
                 upload();
+            }
+            else {
+                if(typeof props.setUploadStatus !== 'undefined') {
+                    if(props.uploadStatus === true) {
+                        props.setUploadStatus(false);
+                    }                    
+                }                
             }            
         },
         [uploadStatus] 
     );
     //this function is used to save file to server back end
-    const upload = () => {
-        console.log('sedang upload');
-        // setProgress(0)
-        // uploadService.upload(currentFile, (event: ProgressEvent) => {
-        //     setProgress(Math.round(100 * event.loaded)/event.total)
-        // })
-        // .then((response) => {
-        //     setMessage(response.data.namaFile)
-        //     return 'as test' //uploadService.getFiles(response.data.namaFile)
-        // })
-        // .then((files) => {
-        //     console.log(files)
-        //     // setFileInfos(files.data)
-        // })
-        // .catch(() => {
-        //     setProgress(0)
-        //     setMessage("Could not upload the file!")
-        //     setCurrentFile(undefined)
-        // })
-        // setSelectedFiles(undefined)
-    }
+    const upload = useCallback(
+        () => {
+            console.log('sedang upload');
+            // setProgress(0)
+            // uploadService.upload(currentFile, (event: ProgressEvent) => {
+            //     setProgress(Math.round(100 * event.loaded)/event.total)
+            // })
+            // .then((response) => {
+            //     setMessage(response.data.namaFile)
+            //     props.setUploadStatus(false);
+            //     return 'as test' //uploadService.getFiles(response.data.namaFile)
+            // })
+            // .then((files) => {
+            //     console.log(files)
+            //     // setFileInfos(files.data)
+            // })
+            // .catch(() => {
+            //     setProgress(0)
+            //     setMessage("Could not upload the file!")
+            //     setCurrentFile(undefined)
+            // })
+            // setSelectedFiles(undefined)
+        },
+        []
+    );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
         // alert('asu');
@@ -135,23 +150,29 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         document.getElementById('fileUpload')!.click()
     }
     //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
-    const handleFile= (event: FormEvent<HTMLInputElement>) => {
-        // setSelectedFiles(event.currentTarget.files);
-        // let file = event.currentTarget.files![0];
-        // // props.setFile(file);
-        // setCurrentFile(file);
-        // switch (CekTypeFile(file.type)) {
-        //     case 'image':
-        //         setIsImageFile(true);
-        //         break;
-        //     case 'pdf':
-        //         setIsPdfFile(true);
-        //         break;
-        //     default:
-        //         break;
-        // }    
-        console.log('this is responsibility of file event change');    
-    }
+    const handleFile = useCallback(
+        (event: FormEvent<HTMLInputElement>) => {
+            // setSelectedFiles(event.currentTarget.files);
+            // let file = event.currentTarget.files![0];
+            // // props.setFile(file);
+            // setCurrentFile(file);
+            // switch (CekTypeFile(file.type)) {
+            //     case 'image':
+            //         setIsImageFile(true);
+            //         break;
+            //     case 'pdf':
+            //         setIsPdfFile(true);
+            //         break;
+            //     default:
+            //         break;
+            // }    
+            console.log('this is responsibility of file event change');
+            if(typeof props.setIsFileExist !== 'undefined') {
+                props.setIsFileExist(true);
+            }            
+        },
+        []
+    );
     //set id 
     const compoundButtonId = useId('targetCompoundButton');
     //rendered function
