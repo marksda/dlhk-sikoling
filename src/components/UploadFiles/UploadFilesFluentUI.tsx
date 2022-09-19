@@ -124,31 +124,31 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         // })
         // setSelectedFiles(undefined)
     }
-
     // const bindClickEventInputFile = (event: FormEvent<HTMLDivElement>) => {
-    //this function is used to binding button mouse event click to event listener mouse click input file type Html element
+    //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
         // alert('asu');
         event.stopPropagation();
         // if(typeof currentFile == 'undefined')
         document.getElementById('fileUpload')!.click()
     }
-    //this function is used to handle event listener of input type file HTML Element 
+    //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
     const handleFile= (event: FormEvent<HTMLInputElement>) => {
-        setSelectedFiles(event.currentTarget.files);
-        let file = event.currentTarget.files![0];
-        // props.setFile(file);
-        setCurrentFile(file);
-        switch (CekTypeFile(file.type)) {
-            case 'image':
-                setIsImageFile(true);
-                break;
-            case 'pdf':
-                setIsPdfFile(true);
-                break;
-            default:
-                break;
-        }        
+        // setSelectedFiles(event.currentTarget.files);
+        // let file = event.currentTarget.files![0];
+        // // props.setFile(file);
+        // setCurrentFile(file);
+        // switch (CekTypeFile(file.type)) {
+        //     case 'image':
+        //         setIsImageFile(true);
+        //         break;
+        //     case 'pdf':
+        //         setIsPdfFile(true);
+        //         break;
+        //     default:
+        //         break;
+        // }    
+        console.log('this is responsibility of file event change');    
     }
     //set id 
     const compoundButtonId = useId('targetCompoundButton');
