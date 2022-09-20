@@ -1,4 +1,8 @@
-import { ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar, MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
+import { 
+    ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, 
+    Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar,
+    MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField 
+} from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
@@ -20,7 +24,9 @@ import { IPerson } from "../../features/person/person-slice"
 import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
-import { HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
+import { 
+    HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, 
+    HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 import { useNavigate } from "react-router-dom";
 // import {createWorker}  from "tesseract.js";
@@ -939,8 +945,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const save: SubmitHandler<IPerson> = useCallback(
         async(data) => {
             try {
-                // props.setIsLoading(true);            
-                // await addRegistrasi({auth: props.authentication, person: data}).unwrap();
+                props.setIsLoading(true);         
+                await addRegistrasi({auth: props.authentication, person: data}).unwrap();
                 // setUploadStatus(true);
                 // props.setIsLoading(false);                
             } catch (error) {
