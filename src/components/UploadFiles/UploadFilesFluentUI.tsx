@@ -166,7 +166,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 default:
                     break;
             }    
-            console.log('this is responsibility of file event change');
+            // console.log('this is responsibility of file event change');
             if(typeof props.setIsFileExist !== 'undefined') {
                 props.setIsFileExist(true);
             }            
