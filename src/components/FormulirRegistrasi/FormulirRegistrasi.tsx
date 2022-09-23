@@ -912,16 +912,18 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
-    const [addRegistrasi, { isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
+    const [addRegistrasi, { data: simpleResponseAddRegister, isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
+    console.log(`simpleResponseAddRegister`);
+    console.log(simpleResponseAddRegister);
     //this is used as feedback information to parent that if upload file has finished then stop status loading in parent
-    useEffect(
-        () => {
-            if(uploadStatus === false) {
-                props.setIsLoading(false);
-            }
-        },
-        [uploadStatus]
-    );
+    // useEffect(
+    //     () => {
+    //         // if(uploadStatus === false) {
+    //         //     props.setIsLoading(false);
+    //         // }
+    //     },
+    //     [uploadStatus]
+    // );
     //this function is used to go back to FormPersonIdentityStepTwo
     const processBackToPreviousStep = useCallback(
         () => {

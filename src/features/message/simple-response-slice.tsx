@@ -12,7 +12,7 @@ const initialState: ISimpleResponse ={
 
 //redux busines logic
 export const SimpleResponseSlice = createSlice({
-    name: 'propinsi',
+    name: 'simpleResponse',
     initialState,
     reducers: {
         setSimpleResponse: (state, action: PayloadAction<ISimpleResponse>) => {

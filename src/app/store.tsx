@@ -24,6 +24,7 @@ import { AuthenticationApiSlice } from "../features/security/authentication-api-
 import authorizationReducer from "../features/security/authorization-slice";
 import { AuthorizationApiSlice } from "../features/security/authorization-api-slice";
 import tokenReducer from "../features/security/token-slice";
+import simpleResponseReducer from "../features/message/simple-response-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -54,6 +55,7 @@ export const store = configureStore({
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
+        simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         pemrakarsa: pemrakarsaReducer,
         login: loginReducer,
