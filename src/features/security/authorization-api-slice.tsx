@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../../features/config/config";
+import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
 import { IAuthentication } from "./authentication-slice";
 import { IResponseStatusToken } from "./token-slice";
@@ -16,7 +17,7 @@ export const AuthorizationApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            addRegistrasi: builder.mutation<boolean, Partial<PostRegistrasi>>({
+            addRegistrasi: builder.mutation<ISimpleResponse, Partial<PostRegistrasi>>({
                 query: (body) => ({
                     url: `user/registrasi`,
                     method: 'POST',
