@@ -29,6 +29,7 @@ import {
     HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 import { useNavigate } from "react-router-dom";
+import simpleResponseSlice from "../../features/message/simple-response-slice";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -922,7 +923,13 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         () => {
             if(simpleResponseAddRegister) {
                 props.setIsLoading(false);
-                navigate("/notif_registrasi");
+                if(simpleResponseAddRegister.status === "sukses") {
+                    navigate("/notif_registrasi");
+                }
+                else {
+                    props.setIsErrorConnection(true);
+                }
+                
             }
         },
         [simpleResponseAddRegister]
@@ -1187,6 +1194,7 @@ export const FormulirRegistrasi: FC = () => {
                 authentication={authentication}
                 setIsLoading={setIsLoading}
                 changeHightContainer={setHeightArea}
+                setIsErrorConnection={setIsErrorConnection}
             />
         </div>
         {
