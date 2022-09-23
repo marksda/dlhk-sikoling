@@ -248,7 +248,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
-    // //react router
+    //react router
     const navigate = useNavigate();
     //rtk query
     const { 
@@ -915,15 +915,18 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const [addRegistrasi, { data: simpleResponseAddRegister, isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
     console.log(`simpleResponseAddRegister`);
     console.log(simpleResponseAddRegister);
+    //react router
+    const navigate = useNavigate();
     //this is used as feedback information to parent that if upload file has finished then stop status loading in parent
-    // useEffect(
-    //     () => {
-    //         // if(uploadStatus === false) {
-    //         //     props.setIsLoading(false);
-    //         // }
-    //     },
-    //     [uploadStatus]
-    // );
+    useEffect(
+        () => {
+            if(simpleResponseAddRegister) {
+                props.setIsLoading(false);
+                navigate("/sukses_registrasi");
+            }
+        },
+        [simpleResponseAddRegister]
+    );
     //this function is used to go back to FormPersonIdentityStepTwo
     const processBackToPreviousStep = useCallback(
         () => {

@@ -8,6 +8,7 @@ import './index.css';
 // import RoutePage from './RoutePage';
 import { Home } from './page/home';
 import { UserRegistrasi } from './page/user-registrasi';
+import { NotifikasiRegistrasi } from './page/notif-registrasi';
 
 initializeIcons()
 
@@ -21,6 +22,7 @@ root.render(
         <Routes>
           <Route path="/" element={<Home/>}/>         
           <Route path="registrasi" element={<UserRegistrasi/>}/> 
+          <Route path="notif_registrasi"element={<NotifikasiRegistrasi/>}/> 
         </Routes>
       </BrowserRouter>
     </Provider>    

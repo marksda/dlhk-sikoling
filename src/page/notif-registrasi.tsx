@@ -13,7 +13,7 @@ const stackBodyStyles: IStackStyles = {
     },
 };
 
-export const Home: FC = () => {
+export const NotifikasiRegistrasi: FC = () => {
     return (
         <Stack tokens={containerStackTokens} >
             <Header />
