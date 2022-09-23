@@ -922,7 +922,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         () => {
             if(simpleResponseAddRegister) {
                 props.setIsLoading(false);
-                navigate("/sukses_registrasi");
+                navigate("/notif_registrasi");
             }
         },
         [simpleResponseAddRegister]
