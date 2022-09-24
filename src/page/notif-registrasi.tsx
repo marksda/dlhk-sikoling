@@ -1,5 +1,6 @@
 import { DefaultButton, DefaultEffects, DefaultPalette, IStackItemStyles, IStackStyles, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "./header";
 
 
@@ -17,10 +18,8 @@ const containerStyles: React.CSSProperties = {
     borderTop: '2px solid green', 
     // borderRadius: 3, 
     padding: 32,
-    minWidth:400,
-    maxWidth: 400,
-    // minHeight: 300,
-    height: 220,
+    width: 400,
+    height: 200,
     marginTop: 64,
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -36,6 +35,9 @@ const labelTitleStyles: IStackItemStyles = {
 };
 
 export const NotifikasiRegistrasi: FC = () => {
+    //react router
+    const navigate = useNavigate();
+    
     return (
         <Stack tokens={containerStackTokens} >
             <Header />
@@ -47,7 +49,7 @@ export const NotifikasiRegistrasi: FC = () => {
                         </Stack.Item> 
                         <Stack.Item align="center" styles={labelTitleStyles}>
                             <Label>
-                                Registrasi akun berhasil ditambahkan kedalam sistem sikoling. Petugas akan melakukan verifikasi file scan KTP yang sudah diupload. Jika proses verifikasi selesai dalam waktu paling lama 1 x 24 jam, Kami akan mengirimkan pemberitahun ke alamat email yang anda pakai saat registrasi. Sekian dan Terimakasih.
+                                Registrasi akun berhasil ditambahkan kedalam sistem sikoling. Petugas akan melakukan verifikasi dalam tempo 1 x 24 jam. Jika proses verifikasi selesai, email pemberitahuan dikirim ke alamat email yang dipakai saat registrasi.
                             </Label>
                         </Stack.Item>
                     </Stack>
@@ -55,6 +57,11 @@ export const NotifikasiRegistrasi: FC = () => {
                         <DefaultButton 
                             text="Tutup" 
                             style={{marginTop: 24, width: 120}}
+                            onClick={
+                                () => {
+                                    navigate("/");
+                                }
+                            }
                             />
                     </Stack>
                 </div>

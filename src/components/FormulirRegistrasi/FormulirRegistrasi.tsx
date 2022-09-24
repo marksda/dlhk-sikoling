@@ -29,7 +29,6 @@ import {
     HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 import { useNavigate } from "react-router-dom";
-import simpleResponseSlice from "../../features/message/simple-response-slice";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
