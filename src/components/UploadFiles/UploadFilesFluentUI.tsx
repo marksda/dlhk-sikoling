@@ -2,7 +2,7 @@ import {
     CompoundButton, DirectionalHint, FontIcon, IButtonStyles, 
     Label, mergeStyles, PrimaryButton, TeachingBubble } from "@fluentui/react";
 import { FC, FormEvent, MouseEventHandler, useCallback, useEffect, useState } from "react";
-// import uploadService from "../../features/upload-files/FileUploadService"; 
+import uploadService from "../../features/upload-files/FileUploadService"; 
 import { FileImageViewerFluentUi } from "../FileViewer/FileImageViewerFluentUi";
 import  CekTypeFile  from "../../features/file-utils/FileUtils";
 import {useBoolean, useId} from "@fluentui/react-hooks";
@@ -51,13 +51,17 @@ interface IUploadFilePropsComponent {
     uploadStatus?: boolean;
     setIsFileExist?: (data: boolean) => void;
     setUploadStatus?: (data: boolean) => void;    
+    uploadMode?: {
+        controlled: boolean;
+        startUpload: boolean;
+    };
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
 
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     //local state
-    const [uploadStatus, setUploadStatus] = useState<boolean>(false);
+    // const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
@@ -90,54 +94,47 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         [props.luasArea]
     );    
     //this is used as monitoring to trigger upload function
-    useEffect(
-        () => {
-            if(typeof props.uploadStatus !== 'undefined') {
-                if(props.uploadStatus === true) {
-                    setUploadStatus(props.uploadStatus);
-                }                
-            }            
-        },
-        [props.uploadStatus]
-    );
+    // useEffect(
+    //     () => {
+    //         if(typeof props.uploadStatus !== 'undefined') {
+    //             if(props.uploadStatus === true) {
+    //                 setUploadStatus(props.uploadStatus);
+    //             }                
+    //         }            
+    //     },
+    //     [props.uploadStatus]
+    // );
     //proses upload dilakukan jika local state uploadStatus = true
     useEffect(
         () => {
-            if(uploadStatus === true) {
+            if(props.uploadMode?.controlled === true && props.uploadMode.startUpload == true) {
                 upload();
             }
-            else {
-                if(typeof props.setUploadStatus !== 'undefined') {
-                    if(props.uploadStatus === true) {
-                        props.setUploadStatus(false);
-                    }                    
-                }                
-            }            
         },
-        [uploadStatus] 
+        [props.uploadMode] 
     );
     //this function is used to save file to server back end
     const upload = useCallback(
         () => {
-            console.log('sedang upload');
+            // console.log('sedang upload');
             // setProgress(0)
-            // uploadService.upload(currentFile, (event: ProgressEvent) => {
-            //     setProgress(Math.round(100 * event.loaded)/event.total)
-            // })
-            // .then((response) => {
-            //     setMessage(response.data.namaFile)
-            //     props.setUploadStatus(false);
-            //     return 'as test' //uploadService.getFiles(response.data.namaFile)
-            // })
-            // .then((files) => {
-            //     console.log(files)
-            //     // setFileInfos(files.data)
-            // })
-            // .catch(() => {
-            //     setProgress(0)
-            //     setMessage("Could not upload the file!")
-            //     setCurrentFile(undefined)
-            // })
+            uploadService.upload(currentFile, (event: ProgressEvent) => {
+                setProgress(Math.round(100 * event.loaded)/event.total)
+            })
+            .then((response) => {
+                // setMessage(response.data.namaFile)
+                // props.setUploadStatus(false);
+                // return 'as test' //uploadService.getFiles(response.data.namaFile)
+            })
+            .then((files) => {
+                console.log(files)
+                // setFileInfos(files.data)
+            })
+            .catch(() => {
+                // setProgress(0)
+                // setMessage("Could not upload the file!")
+                // setCurrentFile(undefined)
+            })
             // setSelectedFiles(undefined)
         },
         []

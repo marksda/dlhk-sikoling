@@ -909,12 +909,12 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //local state
-    const [uploadStatus, setUploadStatus] = useState<boolean>(false);
+    const [startUpload, setStartUpload] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
     const [addRegistrasi, { data: simpleResponseAddRegister, isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
-    console.log(`simpleResponseAddRegister`);
-    console.log(simpleResponseAddRegister);
+    // console.log(`simpleResponseAddRegister`);
+    // console.log(simpleResponseAddRegister);
     //react router
     const navigate = useNavigate();
     //this is used as feedback information to parent that if upload file has finished then stop status loading in parent
@@ -927,8 +927,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 }
                 else {
                     props.setIsErrorConnection(true);
-                }
-                
+                }                
             }
         },
         [simpleResponseAddRegister]
@@ -1055,7 +1054,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showProgressBar={false}
                         id="tesgbr"
                         setIsFileExist={setIsFileExist}
-                        setUploadStatus={setUploadStatus}                     
+                        uploadMode={{controlled: true, startUpload: startUpload}}                 
                     />
                 </Stack.Item>
             </Stack>
