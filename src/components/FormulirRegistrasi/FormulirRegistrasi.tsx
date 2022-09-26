@@ -921,11 +921,13 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     useEffect(
         () => {
             if(simpleResponseAddRegister) {
-                props.setIsLoading(false);
+                // props.setIsLoading(false);
                 if(simpleResponseAddRegister.status === "sukses") {
-                    navigate("/notif_registrasi");
+                    // navigate("/notif_registrasi");
+                    setStartUpload(true);
                 }
                 else {
+                    props.setIsLoading(false);
                     props.setIsErrorConnection(true);
                 }                
             }
