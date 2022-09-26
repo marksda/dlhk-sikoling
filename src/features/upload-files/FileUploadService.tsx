@@ -3,7 +3,7 @@ import http from "./http-common"
 const upload = (file: any, onUploadProgress: any) => {
     let formData = new FormData();
     formData.append("file", file);
-    return http.post("/files", formData, {
+    return http.post("/files/nosc", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
