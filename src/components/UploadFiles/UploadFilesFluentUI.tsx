@@ -65,7 +65,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
-    const [isPDFFile, setIsPdfFile] = useState<boolean>(false);
+    // const [isPDFFile, setIsPdfFile] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
     const [message, setMessage] = useState<string>('');
     const [fileInfos, setFileInfos] = useState<any[]>([]);
@@ -117,8 +117,9 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const upload = useCallback(
         () => {
             // console.log('sedang upload');
-            // setProgress(0)
-            uploadService.upload(currentFile, (event: ProgressEvent) => {
+            // setProgress(0)           
+
+            uploadService.upload(selectedFiles, (event: ProgressEvent) => {
                 setProgress(Math.round(100 * event.loaded)/event.total)
             })
             .then((response) => {
@@ -137,7 +138,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             })
             // setSelectedFiles(undefined)
         },
-        []
+        [selectedFiles]
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
@@ -150,19 +151,19 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const handleFile = useCallback(
         (event: FormEvent<HTMLInputElement>) => {
             setSelectedFiles(event.currentTarget.files);
-            let file = event.currentTarget.files![0];
+            // let file = event.currentTarget.files![0];
             // props.setFile(file);
-            setCurrentFile(file);
-            switch (CekTypeFile(file.type)) {
-                case 'image':
-                    setIsImageFile(true);
-                    break;
-                case 'pdf':
-                    setIsPdfFile(true);
-                    break;
-                default:
-                    break;
-            }    
+            // setCurrentFile(file);
+            // switch (CekTypeFile(file.type)) {
+            //     case 'image':
+            //         setIsImageFile(true);
+            //         break;
+            //     case 'pdf':
+            //         setIsPdfFile(true);
+            //         break;
+            //     default:
+            //         break;
+            // }    
             // console.log('this is responsibility of file event change');
             if(typeof props.setIsFileExist !== 'undefined') {
                 props.setIsFileExist(true);
