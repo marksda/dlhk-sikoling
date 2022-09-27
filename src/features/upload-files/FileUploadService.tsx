@@ -1,6 +1,6 @@
 import http from "./http-common"
 
-const upload = (files: any, onUploadProgress: any) => {
+const upload = (files: any, subPath: string, onUploadProgress: any) => {
     let formData = new FormData();
     let i: number = 1;
 
@@ -9,7 +9,7 @@ const upload = (files: any, onUploadProgress: any) => {
         i++;
     }    
     
-    return http.post("/files/nosec", formData, {
+    return http.post(`/files/nosec/${subPath}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
