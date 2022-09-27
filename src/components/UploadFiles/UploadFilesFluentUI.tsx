@@ -142,10 +142,11 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile = useCallback(
-        (event: MouseEvent) => {
-            event.stopPropagation();
+        (e) => {
+            // event.stopPropagation();
+            e.stopPropagation();
             // if(typeof currentFile == 'undefined')
-            document.getElementById('fileUpload')!.click()
+            document.getElementById('fileUpload')!.click();
         },
         []
     );
