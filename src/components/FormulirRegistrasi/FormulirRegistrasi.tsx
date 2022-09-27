@@ -917,7 +917,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     // console.log(simpleResponseAddRegister);
     //react router
     const navigate = useNavigate();
-    //this is used as feedback information to parent that if upload file has finished then stop status loading in parent
+    //this is used as feedback information to parent that if upload file has finished then start upload file personal identification
     useEffect(
         () => {
             if(simpleResponseAddRegister) {

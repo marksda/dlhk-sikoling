@@ -119,10 +119,12 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             // console.log('sedang upload');
             // setProgress(0)           
 
-            uploadService.upload(selectedFiles, "person_identification", (event: ProgressEvent) => {
+            uploadService.upload(selectedFiles, "personal_identification", (event: ProgressEvent) => {
                 setProgress(Math.round(100 * event.loaded)/event.total)
             })
             .then((response) => {
+                console.log(response);
+                return 'tes file';
                 // setMessage(response.data.namaFile)
                 // props.setUploadStatus(false);
                 // return 'as test' //uploadService.getFiles(response.data.namaFile)
