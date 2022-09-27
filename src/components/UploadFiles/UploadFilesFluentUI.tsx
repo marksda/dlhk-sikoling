@@ -67,8 +67,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
     // const [isPDFFile, setIsPdfFile] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
-    const [message, setMessage] = useState<string>('');
-    const [fileInfos, setFileInfos] = useState<any[]>([]);
+    // const [message, setMessage] = useState<string>('');
+    // const [fileInfos, setFileInfos] = useState<any[]>([]);
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const [styleContainer, setStyleContainer] = useState<Record<string, any>>({
         'width': 300,

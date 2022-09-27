@@ -17,8 +17,8 @@ const upload = (files: any, onUploadProgress: any) => {
     });
 };
 
-const getFiles = (namaFile: string) => {
+const getFile = (namaFile: string) => {
     return http.get(`/files/${namaFile}`)
 };
 
-export default { upload, getFiles }
+export default { upload, getFile }
