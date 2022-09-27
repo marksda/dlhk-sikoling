@@ -67,8 +67,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
     // const [isPDFFile, setIsPdfFile] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
-    // const [message, setMessage] = useState<string>('');
-    // const [fileInfos, setFileInfos] = useState<any[]>([]);
+    const [message, setMessage] = useState<string>('');
+    const [fileInfos, setFileInfos] = useState<any[]>([]);
     // const [imageProps, setImageProps] = useState<IImageProps|undefined>(undefined);
     const [styleContainer, setStyleContainer] = useState<Record<string, any>>({
         'width': 300,
@@ -84,7 +84,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     'width': props.luasArea?.panjang,
                     'height': props.luasArea?.lebar,
                     'padding': 2,
-                })
+                });
                 // styleContainer.width = props.luasArea?.panjang;
                 // styleContainer.height = props.luasArea?.lebar;
                 // styleContainer.padding = 2;
@@ -141,12 +141,14 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         [selectedFiles]
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
-    const bindClickEventInputFile: MouseEventHandler<HTMLElement> = (event) => {
-        // alert('asu');
-        event.stopPropagation();
-        // if(typeof currentFile == 'undefined')
-        document.getElementById('fileUpload')!.click()
-    }
+    const bindClickEventInputFile = useCallback(
+        (event: MouseEvent) => {
+            event.stopPropagation();
+            // if(typeof currentFile == 'undefined')
+            document.getElementById('fileUpload')!.click()
+        },
+        []
+    );
     //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
     const handleFile = useCallback(
         (event: FormEvent<HTMLInputElement>) => {
