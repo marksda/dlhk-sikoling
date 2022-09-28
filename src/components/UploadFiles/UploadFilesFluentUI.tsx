@@ -148,7 +148,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile = useCallback(
-        (e) => {
+        (e) => {            
             // event.stopPropagation();
             e.stopPropagation();
             // if(typeof currentFile == 'undefined')
@@ -159,24 +159,31 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
     const handleFile = useCallback(
         (event: FormEvent<HTMLInputElement>) => {
-            setSelectedFiles(event.currentTarget.files);
-            // let file = event.currentTarget.files![0];
-            // props.setFile(file);
-            // setCurrentFile(file);
-            // switch (CekTypeFile(file.type)) {
-            //     case 'image':
-            //         setIsImageFile(true);
-            //         break;
-            //     case 'pdf':
-            //         setIsPdfFile(true);
-            //         break;
-            //     default:
-            //         break;
-            // }    
-            // console.log('this is responsibility of file event change');
-            if(typeof props.setIsFileExist !== 'undefined') {
-                props.setIsFileExist(true);
-            }            
+            
+            if(event.currentTarget.files!.length > 0) {
+                setSelectedFiles(event.currentTarget.files);
+                let file = event.currentTarget.files![0];
+                // props.setFile(file);
+                // setCurrentFile(file);
+                switch (CekTypeFile(file.type)) {
+                    case 'image':
+                        setIsImageFile(true);
+                        break;
+                    case 'pdf':
+                        // setIsPdfFile(true);
+                        break;
+                    default:
+                        break;
+                }    
+                // console.log('this is responsibility of file event change');
+                if(typeof props.setIsFileExist !== 'undefined') {
+                    props.setIsFileExist(true);
+                }            
+            }
+            else {
+                //tidak ada file
+            }
+           
         },
         []
     );
@@ -190,18 +197,26 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 props.showPreview && 
                 (
                     <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
-                        {!currentFile && (<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>)}
-                        {!currentFile && (<Label disabled style={{cursor: 'pointer'}}>{`${props.label} (maksimal ${props.maxSize} KB)`}</Label>)}
                         {
-                        props.showPreview && isImageFile && 
-                        <FileImageViewerFluentUi 
-                            file={currentFile!} 
-                            area={
-                                {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
-                            }  
-                            onClick={bindClickEventInputFile}        
-                            id={props.id}         
-                        />
+                            !selectedFiles && 
+                            (<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>)
+                        }
+                        {
+                            !selectedFiles && 
+                            (<Label disabled style={{cursor: 'pointer'}}>{`${props.label} (maksimal ${props.maxSize} KB)`}</Label>)
+                        }
+                        {
+                            props.showPreview && isImageFile && 
+                            (
+                            <FileImageViewerFluentUi 
+                                file={selectedFiles![0]} 
+                                area={
+                                    {width: props.luasArea!.panjang, height: props.luasArea!.lebar}
+                                }  
+                                onClick={bindClickEventInputFile}        
+                                id={props.id}         
+                            />
+                            )
                         }
                         {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
                         {currentFile && false && <FontIcon aria-label="Ktp" iconName="Delete" />}
