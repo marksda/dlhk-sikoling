@@ -9,7 +9,7 @@ const upload = (files: any, subPath: string, onUploadProgress: any) => {
         i++;
     }    
     
-    return http.post(`/files/nosec/${subPath}`, formData, {
+    return http.post(subPath, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },

@@ -79,7 +79,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         'height': 100,
         'padding': 2,
     });
-    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);    
+    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);   
+    console.log(props.uploadMode); 
     //jika props.luasArea dipakai maka setting styleContainer
     useEffect(
         () => {

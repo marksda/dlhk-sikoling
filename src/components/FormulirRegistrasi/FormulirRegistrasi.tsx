@@ -927,7 +927,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 if(simpleResponseAddRegister.status === "sukses") {
                     // navigate("/notif_registrasi");
                     // setStartUpload(true);
-                    setUploadMode((p) => ({...p, startUpload: true, subUri: nik}));
+                    setUploadMode((p) => ({...p, startUpload: true, subUri: `/files/nosec/personal_identification/${nik}`}));
                 }
                 else {
                     props.setIsLoading(false);
@@ -960,7 +960,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const save: SubmitHandler<IPerson> = useCallback(
         async(data) => {
             try {
-                props.setIsLoading(true);         
+                props.setIsLoading(true);  
+                setNik(data.nik!);       
                 await addRegistrasi({auth: props.authentication, person: data}).unwrap();
                 // setUploadStatus(true);
                 // props.setIsLoading(false);                
