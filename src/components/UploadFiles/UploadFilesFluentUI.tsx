@@ -158,8 +158,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     );
     //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
     const handleFile = useCallback(
-        (event: FormEvent<HTMLInputElement>) => {
-            
+        (event: FormEvent<HTMLInputElement>) => {            
             if(event.currentTarget.files!.length > 0) {
                 setSelectedFiles(event.currentTarget.files);
                 let file = event.currentTarget.files![0];
