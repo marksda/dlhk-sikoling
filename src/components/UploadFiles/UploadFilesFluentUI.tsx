@@ -91,19 +91,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             }
         },
         [props.luasArea]
-    );    
-    //this is used as monitoring to trigger upload function
-    // useEffect(
-    //     () => {
-    //         if(typeof props.uploadStatus !== 'undefined') {
-    //             if(props.uploadStatus === true) {
-    //                 setUploadStatus(props.uploadStatus);
-    //             }                
-    //         }            
-    //     },
-    //     [props.uploadStatus]
-    // );
-    //proses upload dilakukan jika local state uploadStatus = true
+    );  
+    //this function is called for starting upload file 
     useEffect(
         () => {
             if(props.uploadMode?.controlled === true && props.uploadMode.startUpload == true) {
@@ -121,12 +110,11 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             .then((response) => {
                 return response.data.imageUrl;
             })
-            .then((files) => {
+            .then((imageUrl) => {
                 props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: ''}));
             })
             .catch(() => {
-                // setProgress(0)
-                // setMessage("Could not upload the file!")
+                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: 'gagal'}));
             })
         },
         [selectedFiles, props.uploadMode]

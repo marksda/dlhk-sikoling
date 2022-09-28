@@ -52,6 +52,7 @@ export interface HookFormPersonIdentityStepTwoProps {
 export interface HookFormUploadKTP {
     variant?: any;
     setVariant?: any;
+    setValue?: any;
     changeHightContainer?: any;
     userName?: string;
     handleSubmit?: any;

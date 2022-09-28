@@ -905,12 +905,18 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         () => {
             if(uploadMode.startUpload === false && uploadMode.subUri === '') {
                 props.setIsLoading(false);
+                // props.setValue();
                 navigate("/notif_registrasi");
             }
-        }        ,
+            else if(uploadMode.startUpload === false && uploadMode.subUri === 'gagal') {
+                props.setIsLoading(false);
+                props.setIsErrorConnection(true);
+            }
+        }        
+        ,
         [uploadMode]
     );
-
+    //this is used to monitoring sukses or not when saving data personal identification to backend server
     useEffect(
         () => {
             if(simpleResponseAddRegister) {
@@ -1186,6 +1192,7 @@ export const FormulirRegistrasi: FC = () => {
                 userName={authentication.userName}
                 variant={variant} 
                 setVariant={setVariant}
+                setValue={setValue}
                 handleSubmit={handleSubmit}
                 authentication={authentication}
                 setIsLoading={setIsLoading}
