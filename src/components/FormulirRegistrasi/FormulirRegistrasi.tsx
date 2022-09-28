@@ -410,26 +410,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
             setPassword('');
         },
         [props.userName]
-    )
-    //animasi transisi FormPassword to next step
-    // useEffect(
-    //     () => {
-    //         props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
-
-    //         setTimeout(
-    //             () => {
-    //                 props.changeHightContainer(570);
-    //                 props.setVariant(
-    //                     (prev: IStateRegistrasiAnimationFramer) => (
-    //                         {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
-    //                     )
-    //                 );
-    //             },
-    //             duration*1000
-    //         );
-    //     }, 
-    //     [props.password]
-    // );
+    );
     //this function is used to go back to FormEmail
     const processBackToPreviousStep = useCallback(
         () => {
