@@ -21,7 +21,7 @@ import logo from '../../sidoarjo.svg';
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
-import { UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
 import { 
@@ -909,7 +909,8 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //local state
-    const [startUpload, setStartUpload] = useState<boolean>(false);
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false});
+    // const [startUpload, setStartUpload] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
     const [addRegistrasi, { data: simpleResponseAddRegister, isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
@@ -924,7 +925,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 // props.setIsLoading(false);
                 if(simpleResponseAddRegister.status === "sukses") {
                     // navigate("/notif_registrasi");
-                    setStartUpload(true);
+                    // setStartUpload(true);
+                    setUploadMode((p) => ({...p, startUpload: true}));
                 }
                 else {
                     props.setIsLoading(false);
@@ -1056,7 +1058,8 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showProgressBar={false}
                         id="tesgbr"
                         setIsFileExist={setIsFileExist}
-                        uploadMode={{controlled: true, startUpload: startUpload}}                 
+                        uploadMode={uploadMode}
+                        setUploadMode={setUploadMode}                 
                     />
                 </Stack.Item>
             </Stack>

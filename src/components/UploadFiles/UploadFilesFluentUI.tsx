@@ -34,6 +34,11 @@ const containerClass = mergeStyles({
     },
 })
 
+export interface IUploadMode {
+    controlled: boolean;
+    startUpload: boolean;
+};
+
 interface IUploadFilePropsComponent {
     label?: string;
     id?: string;
@@ -51,10 +56,8 @@ interface IUploadFilePropsComponent {
     uploadStatus?: boolean;
     setIsFileExist?: (data: boolean) => void;
     setUploadStatus?: (data: boolean) => void;    
-    uploadMode?: {
-        controlled: boolean;
-        startUpload: boolean;
-    };
+    uploadMode?: IUploadMode;
+    setUploadMode: any;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -130,7 +133,8 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 // return 'as test' //uploadService.getFiles(response.data.namaFile)
             })
             .then((files) => {
-                console.log(files)
+                console.log(files);
+                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false}));
                 // setFileInfos(files.data)
             })
             .catch(() => {
