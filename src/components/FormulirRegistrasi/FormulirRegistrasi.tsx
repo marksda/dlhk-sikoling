@@ -909,7 +909,8 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //local state
-    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false});
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false, subUri: ''});
+    const [nik, setNik] = useState<string>('');
     // const [startUpload, setStartUpload] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
     //rtk mutation addRegistrasi variable
@@ -926,7 +927,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 if(simpleResponseAddRegister.status === "sukses") {
                     // navigate("/notif_registrasi");
                     // setStartUpload(true);
-                    setUploadMode((p) => ({...p, startUpload: true}));
+                    setUploadMode((p) => ({...p, startUpload: true, subUri: nik}));
                 }
                 else {
                     props.setIsLoading(false);
@@ -934,7 +935,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                 }                
             }
         },
-        [simpleResponseAddRegister]
+        [simpleResponseAddRegister, nik]
     );
     //this function is used to go back to FormPersonIdentityStepTwo
     const processBackToPreviousStep = useCallback(

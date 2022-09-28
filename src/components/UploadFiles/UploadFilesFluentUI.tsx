@@ -36,7 +36,8 @@ const containerClass = mergeStyles({
 
 export interface IUploadMode {
     controlled: boolean;
-    startUpload: boolean;
+    startUpload?: boolean;
+    subUri: string;
 };
 
 interface IUploadFilePropsComponent {
@@ -56,7 +57,7 @@ interface IUploadFilePropsComponent {
     uploadStatus?: boolean;
     setIsFileExist?: (data: boolean) => void;
     setUploadStatus?: (data: boolean) => void;    
-    uploadMode?: IUploadMode;
+    uploadMode: IUploadMode;
     setUploadMode: any;
 }
 
@@ -122,7 +123,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             // console.log('sedang upload');
             // setProgress(0)           
 
-            uploadService.upload(selectedFiles, "personal_identification", (event: ProgressEvent) => {
+            uploadService.upload(selectedFiles, props.uploadMode.subUri, (event: ProgressEvent) => {
                 setProgress(Math.round(100 * event.loaded)/event.total)
             })
             .then((response) => {
@@ -134,7 +135,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             })
             .then((files) => {
                 console.log(files);
-                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false}));
+                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: ''}));
                 // setFileInfos(files.data)
             })
             .catch(() => {
@@ -144,7 +145,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             })
             // setSelectedFiles(undefined)
         },
-        [selectedFiles]
+        [selectedFiles, props.uploadMode]
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile = useCallback(
