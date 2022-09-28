@@ -909,7 +909,7 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //local state
-    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false, subUri: ''});
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false, subUri: null});
     const [nik, setNik] = useState<string>('');
     // const [startUpload, setStartUpload] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
@@ -920,6 +920,16 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     //react router
     const navigate = useNavigate();
     //this is used as feedback information to parent that if upload file has finished then start upload file personal identification
+    useEffect(
+        () => {
+            if(uploadMode.startUpload === false && uploadMode.subUri === '') {
+                props.setIsLoading(false);
+                navigate("/notif_registrasi");
+            }
+        }        ,
+        [uploadMode]
+    );
+
     useEffect(
         () => {
             if(simpleResponseAddRegister) {

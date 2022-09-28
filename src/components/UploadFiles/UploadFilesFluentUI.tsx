@@ -65,7 +65,6 @@ const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
 
 export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     //local state
-    // const [uploadStatus, setUploadStatus] = useState<boolean>(false);
     const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
     const [currentFile, setCurrentFile] = useState<File|undefined>(undefined);
     const [isImageFile, setIsImageFile] = useState<boolean>(false);
@@ -79,8 +78,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         'height': 100,
         'padding': 2,
     });
-    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);   
-    console.log(props.uploadMode); 
+    const [teachingBubbleVisible, {toggle: toggleTeachingBubbleVisible}] = useBoolean(props.teachingBubbleVisible!);       
     //jika props.luasArea dipakai maka setting styleContainer
     useEffect(
         () => {
@@ -90,10 +88,6 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     'height': props.luasArea?.lebar,
                     'padding': 2,
                 });
-                // styleContainer.width = props.luasArea?.panjang;
-                // styleContainer.height = props.luasArea?.lebar;
-                // styleContainer.padding = 2;
-                // styleContainer.backgroundColor = typeof props.containerStyle.backgroundColor !== 'undefined'?props.containerStyle.backgroundColor:'#ECECEC'
             }
         },
         [props.luasArea]
@@ -121,39 +115,26 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
     //this function is used to save file to server back end
     const upload = useCallback(
         () => {
-            // console.log('sedang upload');
-            // setProgress(0)           
-
             uploadService.upload(selectedFiles, props.uploadMode.subUri, (event: ProgressEvent) => {
                 setProgress(Math.round(100 * event.loaded)/event.total)
             })
             .then((response) => {
-                console.log(response);
-                return 'tes file';
-                // setMessage(response.data.namaFile)
-                // props.setUploadStatus(false);
-                // return 'as test' //uploadService.getFiles(response.data.namaFile)
+                return response.data.imageUrl;
             })
             .then((files) => {
-                console.log(files);
                 props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: ''}));
-                // setFileInfos(files.data)
             })
             .catch(() => {
                 // setProgress(0)
                 // setMessage("Could not upload the file!")
-                // setCurrentFile(undefined)
             })
-            // setSelectedFiles(undefined)
         },
         [selectedFiles, props.uploadMode]
     );
     //this function is used to binding button's mouse click event to listener event of input file type Html element
     const bindClickEventInputFile = useCallback(
         (e) => {            
-            // event.stopPropagation();
             e.stopPropagation();
-            // if(typeof currentFile == 'undefined')
             document.getElementById('fileUpload')!.click();
         },
         []
@@ -164,8 +145,6 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
             if(event.currentTarget.files!.length > 0) {
                 setSelectedFiles(event.currentTarget.files);
                 let file = event.currentTarget.files![0];
-                // props.setFile(file);
-                // setCurrentFile(file);
                 switch (CekTypeFile(file.type)) {
                     case 'image':
                         setIsImageFile(true);
@@ -176,7 +155,7 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                     default:
                         break;
                 }    
-                // console.log('this is responsibility of file event change');
+                
                 if(typeof props.setIsFileExist !== 'undefined') {
                     props.setIsFileExist(true);
                 }            
