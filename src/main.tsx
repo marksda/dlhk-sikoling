@@ -7,6 +7,7 @@ import { store } from './app/store';
 import './index.css';
 // import RoutePage from './RoutePage';
 import { Home } from './page/home';
+import { AdminPage } from './page/main-admin';
 import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
 
@@ -20,7 +21,8 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home/>}/>         
+          <Route path="/" element={<Home/>}/>   
+          <Route path="admin" element={<AdminPage/>}/>      
           <Route path="registrasi" element={<UserRegistrasi/>}/> 
           <Route path="notif_registrasi"element={<NotifikasiRegistrasi/>}/> 
         </Routes>

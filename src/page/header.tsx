@@ -1,13 +1,16 @@
-import { DefaultPalette, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
+import { DefaultPalette, getTheme, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import logo from '../sidoarjo.svg';
 
+
+const theme = getTheme();
 const headerStackTokens: IStackTokens = { childrenGap: 16};
 const stackStyles: IStackStyles = {
     root: {
-      background: '#3c8dbc',
-      paddingLeft: 52,
-      paddingRight: 52,
+    //   background: '#3c8dbc',
+        backgroundColor: theme.palette.themePrimary,
+        paddingLeft: 52,
+        paddingRight: 52,
     },
 };
 const labelStyles: IStackItemStyles = {

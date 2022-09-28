@@ -12,7 +12,6 @@ const containerStyle: React.CSSProperties = {
 }
 
 export const UserRegistrasi: FC = () => {
-
     return (        
         <div style={containerStyle}>
             <FormulirRegistrasi />
