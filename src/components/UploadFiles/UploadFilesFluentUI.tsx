@@ -38,6 +38,7 @@ export interface IUploadMode {
     controlled: boolean;
     startUpload?: boolean;
     subUri: string|null;
+    handlerMessageToParent?: (data: any) => void;
 };
 
 interface IUploadFilePropsComponent {
@@ -58,7 +59,7 @@ interface IUploadFilePropsComponent {
     setIsFileExist?: (data: boolean) => void;
     setUploadStatus?: (data: boolean) => void;    
     uploadMode: IUploadMode;
-    setUploadMode: any;
+    // setUploadMode: any;
 }
 
 const buttonStyles: Partial<IButtonStyles> = { root: { maxWidth: 300 } };
@@ -111,10 +112,16 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                 return response.data.imageUrl;
             })
             .then((imageUrl) => {
-                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: ''}));
+                // props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: ''}));
+                props.uploadMode.handlerMessageToParent!({
+                    status: 'sukses'
+                });
             })
             .catch(() => {
-                props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: 'gagal'}));
+                // props.setUploadMode((p: IUploadMode) => ({...p, startUpload: false, subUri: 'gagal'}));
+                props.uploadMode.handlerMessageToParent!({
+                    status: 'gagal'
+                });
             })
         },
         [selectedFiles, props.uploadMode]

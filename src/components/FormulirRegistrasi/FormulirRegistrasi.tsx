@@ -889,8 +889,24 @@ const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props
     );
 };
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
+    const handlerMessageToParent = useCallback(
+        (data) => {
+            if(data.status === true) {
+
+            }
+            else {
+
+            }
+        },
+        []
+    );
     //local state
-    const [uploadMode, setUploadMode] = useState<IUploadMode>({controlled: true, startUpload: false, subUri: null});
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({
+        controlled: true, 
+        startUpload: false, 
+        subUri: null,
+        handlerMessageToParent: handlerMessageToParent,
+    });
     const [nik, setNik] = useState<string>('');
     // const [startUpload, setStartUpload] = useState<boolean>(false);
     const [isFileExist, setIsFileExist] = useState<boolean>(false);
@@ -900,6 +916,21 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     // console.log(simpleResponseAddRegister);
     //react router
     const navigate = useNavigate();
+    //this is used to monitoring sukses or not when saving data personal identification to backend server
+    useEffect(
+        () => {
+            if(simpleResponseAddRegister) {
+                if(simpleResponseAddRegister.status === "sukses") {
+                    setUploadMode((p) => ({...p, startUpload: true, subUri: `/files/nosec/personal_identification/${nik}`}));
+                }
+                else {
+                    props.setIsLoading(false);
+                    props.setIsErrorConnection(true);
+                }                
+            }
+        },
+        [simpleResponseAddRegister, nik]
+    );        
     //this is used as feedback information to parent that if upload file has finished then start upload file personal identification
     useEffect(
         () => {
@@ -915,24 +946,6 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
         }        
         ,
         [uploadMode]
-    );
-    //this is used to monitoring sukses or not when saving data personal identification to backend server
-    useEffect(
-        () => {
-            if(simpleResponseAddRegister) {
-                // props.setIsLoading(false);
-                if(simpleResponseAddRegister.status === "sukses") {
-                    // navigate("/notif_registrasi");
-                    // setStartUpload(true);
-                    setUploadMode((p) => ({...p, startUpload: true, subUri: `/files/nosec/personal_identification/${nik}`}));
-                }
-                else {
-                    props.setIsLoading(false);
-                    props.setIsErrorConnection(true);
-                }                
-            }
-        },
-        [simpleResponseAddRegister, nik]
     );
     //this function is used to go back to FormPersonIdentityStepTwo
     const processBackToPreviousStep = useCallback(
@@ -1057,8 +1070,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
                         showProgressBar={false}
                         id="tesgbr"
                         setIsFileExist={setIsFileExist}
-                        uploadMode={uploadMode}
-                        setUploadMode={setUploadMode}                 
+                        uploadMode={uploadMode}           
                     />
                 </Stack.Item>
             </Stack>

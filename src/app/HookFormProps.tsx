@@ -13,6 +13,10 @@ export interface HookFluentUiDropDownProps extends HookFormProps {
     isFetching?: boolean;
 }
 
+// export interface HookFluentUIUploadFileProps {
+
+// }
+
 export interface HookFormEmailProps {
     variant?: any;
     setVariant?: any;
