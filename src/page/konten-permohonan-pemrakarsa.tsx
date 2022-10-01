@@ -1,5 +1,11 @@
 import { FC, useState } from "react";
-import { Breadcrumb, IBreadcrumbItem, Stack } from "@fluentui/react";
+import { Breadcrumb, IBreadcrumbItem, IStackItemStyles, Stack } from "@fluentui/react";
+
+const kontenStyles: IStackItemStyles = {
+    root: {
+        padding: '0px 8px',        
+    },
+};
 
 export const KontenPermohonanPemrakarsa: FC = () => {
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
@@ -9,7 +15,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
     ]);
 
     return (
-        <Stack>
+        <Stack >
             <Stack.Item align="auto">                
                 <Breadcrumb
                     items={itemBreadcrumb}
@@ -18,7 +24,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                     overflowAriaLabel="More links"
                 />
             </Stack.Item>
-            <Stack.Item>
+            <Stack.Item styles={kontenStyles}>
                 Isi utama
             </Stack.Item>
         </Stack>

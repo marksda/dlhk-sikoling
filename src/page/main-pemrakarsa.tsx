@@ -33,9 +33,8 @@ const leftPanelStyles: IStackItemStyles = {
 };
 const rightPanelStyles: IStackItemStyles = {
     root: {
-        height: 'calc(100vh - 68px)',
-        // width: '100%',
-        padding: 8,        
+        height: 'calc(100vh - 60px)',
+        padding: '0px 4px 8px 4px',        
     },
 };
 
