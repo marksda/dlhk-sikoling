@@ -26,7 +26,7 @@ const labelStyles: IStackItemStyles = {
 const leftPanelStyles: IStackItemStyles = {
     root: {
         height: 'calc(100vh - 68px)',
-        width: 300,
+        width: 200,
         padding: 8,        
         border: '1px solid #eee',
     },
@@ -34,6 +34,7 @@ const leftPanelStyles: IStackItemStyles = {
 const rightPanelStyles: IStackItemStyles = {
     root: {
         height: 'calc(100vh - 68px)',
+        // width: '100%',
         padding: 8,        
     },
 };
@@ -50,7 +51,7 @@ export const PemrakarsaPage: FC = () => {
                 <Stack.Item styles={leftPanelStyles}>
                     <LeftMenuPage />
                 </Stack.Item>  
-                <Stack.Item styles={rightPanelStyles}>
+                <Stack.Item grow styles={rightPanelStyles}>
                     <KontenPermohonanPemrakarsa />
                 </Stack.Item>
             </Stack>
