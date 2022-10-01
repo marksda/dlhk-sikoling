@@ -13,6 +13,14 @@ const navLinkGroups: INavLinkGroup[] = [
     {
       links: [
         {
+          name: 'Beranda',
+          url: 'http://example.com',
+          icon: 'Home',
+          key: 'puh',
+          isExpanded: true,
+          target: '_blank',
+        },
+        {
           name: 'Permohonan',
           url: 'http://example.com',
           icon: 'ChangeEntitlements',
@@ -32,6 +40,13 @@ const navLinkGroups: INavLinkGroup[] = [
           url: 'http://cnn.com',
           icon: 'ComplianceAudit',
           key: 'key7',
+          target: '_blank',
+        },
+        {
+          name: 'Bantuan',
+          url: 'http://cnn.com',
+          icon: 'Dictionary',
+          key: 'bnt',
           target: '_blank',
         },
       ],

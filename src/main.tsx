@@ -8,6 +8,7 @@ import { Home } from './page/home';
 import { AdminPage } from './page/main-admin';
 import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
+import { PemrakarsaPage } from './page/main-pemrakarsa';
 
 initializeIcons()
 
@@ -19,8 +20,9 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AdminPage />}/>   
-          <Route path="admin" element={<Home />}/>      
+          <Route path="/" element={<Home />}/>   
+          <Route path="admin" element={<AdminPage />}/>    
+          <Route path="pemrakarsa" element={<PemrakarsaPage />}/>  
           <Route path="registrasi" element={<UserRegistrasi />}/> 
           <Route path="notif_registrasi"element={<NotifikasiRegistrasi />}/> 
         </Routes>
