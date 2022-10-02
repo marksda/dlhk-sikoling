@@ -1,6 +1,6 @@
 import { getTheme, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC } from "react";
-import { KontenPermohonanPemrakarsa } from "./konten-permohonan-pemrakarsa";
+import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { LeftMenuPage } from "./template-left-menu";
 
 const theme = getTheme();

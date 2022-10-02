@@ -25,7 +25,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 />
             </Stack.Item>
             <Stack.Item styles={kontenStyles}>
-                Isi utama
+                
             </Stack.Item>
         </Stack>
     );
