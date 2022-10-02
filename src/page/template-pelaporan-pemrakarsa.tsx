@@ -39,10 +39,10 @@ const classNames = mergeStyleSets({
     salmon: [{ color: 'salmon' }, iconClass, iconClass16],
 });
 
-export const KontenPermohonanPemrakarsa: FC = () => {
+export const KontenPelaporanPemrakarsa: FC = () => {
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
         {
-            text: 'Permohonan', key: 'pmh', href:''
+            text: 'Pelaporan', key: 'plp', href:''
         }
     ]);
 
@@ -52,7 +52,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 <Breadcrumb
                     items={itemBreadcrumb}
                     maxDisplayedItems={3}
-                    ariaLabel="Breadcrumb permohonan"
+                    ariaLabel="Breadcrumb pelaporan"
                     overflowAriaLabel="More links"
                 />
             </Stack.Item>
@@ -62,7 +62,20 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>
-                        ARAHAN PEMBUATAN DOKUMEN LINGKUNGAN HIDUP
+                        PELAPORAN DOKUMEN LINGKUNGAN HIDUP
+                    </Stack.Item>
+                    <Stack.Item align="center">
+                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue16} />
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>
+            <Stack.Item grow align="auto" style={containerDivStyles}>
+                <Stack horizontal tokens={kontenStackTokens}>
+                    <Stack.Item align="center">
+                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                    </Stack.Item>
+                    <Stack.Item grow>                        
+                        PELAPORAN PEMBUANGAN AIR LIMBAH
                     </Stack.Item>
                     <Stack.Item align="center">
                         <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
@@ -75,7 +88,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>                        
-                        SURAT PERNYATAAN KESANGGUPAN PENGELOLAAN LINGKUNGAN (SPPL)
+                        PELAPORAN PENYIMPANAN LIMBAH B3
                     </Stack.Item>
                     <Stack.Item align="center">
                         <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
@@ -88,33 +101,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>                        
-                        UPAYA PENGELOLAAN LINGKUNGAN (UKL) DAN UPAYA PEMANTAUAN LINGKUNGAN (UPL)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        PERSETUJUAN TEKNIS PEMENUHAN BAKU MUTU AIR LIMBAH (PERTEK BMAL)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        PERSETUJUAN TEKNIS PENGOLAHAN LIMBAH B3 (PERTEK LIMBAH B3)
+                        PELAPORAN KUALITAS UDARA
                     </Stack.Item>
                     <Stack.Item align="center">
                         <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />

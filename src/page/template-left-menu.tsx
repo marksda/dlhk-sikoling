@@ -16,7 +16,7 @@ const navLinkGroups: INavLinkGroup[] = [
           name: 'Beranda',
           url: 'http://example.com',
           icon: 'Home',
-          key: 'puh',
+          key: 'brd',
           isExpanded: true,
           target: '_blank',
         },
@@ -55,7 +55,7 @@ const navLinkGroups: INavLinkGroup[] = [
 export const LeftMenuPage: FC = () => {
     return (
         <Nav
-            selectedKey="pmh"
+            selectedKey="plp"
             ariaLabel="left menu sikoling"
             styles={navStyles}
             groups={navLinkGroups}

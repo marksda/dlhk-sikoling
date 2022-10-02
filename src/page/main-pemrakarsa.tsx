@@ -1,7 +1,7 @@
 import { getTheme, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC } from "react";
-import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { LeftMenuPage } from "./template-left-menu";
+import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 
 const theme = getTheme();
 const stackStyles: IStackStyles = {
@@ -34,11 +34,13 @@ const leftPanelStyles: IStackItemStyles = {
 const rightPanelStyles: IStackItemStyles = {
     root: {
         height: 'calc(100vh - 60px)',
-        padding: '0px 4px 8px 4px',        
+        // padding: '0px 4px 8px 4px',   
+        padding: 0,     
     },
 };
 
 export const PemrakarsaPage: FC = () => {
+
     return (        
         <Stack>
             <Stack horizontal styles={stackStyles}>
@@ -51,7 +53,7 @@ export const PemrakarsaPage: FC = () => {
                     <LeftMenuPage />
                 </Stack.Item>  
                 <Stack.Item grow styles={rightPanelStyles}>
-                    <KontenPermohonanPemrakarsa />
+                    <KontenPelaporanPemrakarsa />
                 </Stack.Item>
             </Stack>
         </Stack>
