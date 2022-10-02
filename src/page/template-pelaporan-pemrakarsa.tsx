@@ -59,52 +59,52 @@ export const KontenPelaporanPemrakarsa: FC = () => {
             <Stack.Item grow align="auto" style={containerDivStyles}>
                 <Stack horizontal tokens={kontenStackTokens}>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
+                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>
                         PELAPORAN DOKUMEN LINGKUNGAN HIDUP
                     </Stack.Item>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue16} />
+                        <FontIcon aria-label="ChevronRight" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
             <Stack.Item grow align="auto" style={containerDivStyles}>
                 <Stack horizontal tokens={kontenStackTokens}>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>                        
                         PELAPORAN PEMBUANGAN AIR LIMBAH
                     </Stack.Item>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        <FontIcon aria-label="ChevronRight" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
             <Stack.Item grow align="auto" style={containerDivStyles}>
                 <Stack horizontal tokens={kontenStackTokens}>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>                        
                         PELAPORAN PENYIMPANAN LIMBAH B3
                     </Stack.Item>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        <FontIcon aria-label="ChevronRight" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
             <Stack.Item grow align="auto" style={containerDivStyles}>
                 <Stack horizontal tokens={kontenStackTokens}>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        <FontIcon aria-label="CRMReport" iconName="CRMReport" className={classNames.deepSkyBlue} />
                     </Stack.Item>
                     <Stack.Item grow>                        
                         PELAPORAN KUALITAS UDARA
                     </Stack.Item>
                     <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        <FontIcon aria-label="ChevronRight" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
