@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { 
     Breadcrumb, DefaultEffects, FontIcon, IBreadcrumbItem, IStackStyles, IStackTokens, 
+    Label, 
     mergeStyles, mergeStyleSets, Stack 
 } from "@fluentui/react";
 
@@ -17,6 +18,18 @@ const containerDivStyles: React.CSSProperties = {
     // borderTop: '2px solid #0078D7', 
     // borderRadius: 3, 
     padding: 8,
+    marginLeft: 4,
+    background: 'white',
+    cursor: 'pointer',
+};
+const containerDivInformationStyles: React.CSSProperties = {  
+    marginTop: 16, 
+    // border: '1px solid red',
+    borderTop: '2px solid red', 
+    // borderTop: '2px solid #0078D7', 
+    borderRadius: 3, 
+    boxShadow: DefaultEffects.elevation4,
+    padding: 16,
     marginLeft: 4,
     background: 'white',
 };
@@ -45,82 +58,99 @@ export const KontenPermohonanPemrakarsa: FC = () => {
             text: 'Permohonan', key: 'pmh', href:''
         }
     ]);
+    const [isSubmenu, setIsSubmenu] = useState<boolean>(true);
+
+    const handleOnClickSubMenu = useCallback(
+        () => {
+            setIsSubmenu(false);
+        },
+        []
+    );
 
     return (
-        <Stack styles={kontenStyles} tokens={kontenStackTokens}>
-            <Stack.Item align="auto">                
-                <Breadcrumb
-                    items={itemBreadcrumb}
-                    maxDisplayedItems={3}
-                    ariaLabel="Breadcrumb permohonan"
-                    overflowAriaLabel="More links"
-                />
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>
-                        ARAHAN PEMBUATAN DOKUMEN LINGKUNGAN HIDUP
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        SURAT PERNYATAAN KESANGGUPAN PENGELOLAAN LINGKUNGAN (SPPL)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        UPAYA PENGELOLAAN LINGKUNGAN (UKL) DAN UPAYA PEMANTAUAN LINGKUNGAN (UPL)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        PERSETUJUAN TEKNIS PEMENUHAN BAKU MUTU AIR LIMBAH (PERTEK BMAL)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            <Stack.Item grow align="auto" style={containerDivStyles}>
-                <Stack horizontal tokens={kontenStackTokens}>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
-                    </Stack.Item>
-                    <Stack.Item grow>                        
-                        PERSETUJUAN TEKNIS PENGOLAHAN LIMBAH B3 (PERTEK LIMBAH B3)
-                    </Stack.Item>
-                    <Stack.Item align="center">
-                        <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-        </Stack>
+        <>
+        {
+            isSubmenu && 
+            <Stack styles={kontenStyles} tokens={kontenStackTokens}>
+                <Stack.Item align="auto">                
+                    <Breadcrumb
+                        items={itemBreadcrumb}
+                        maxDisplayedItems={3}
+                        ariaLabel="Breadcrumb permohonan"
+                        overflowAriaLabel="More links"
+                    />
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivStyles} onClick={handleOnClickSubMenu}>
+                    <Stack horizontal tokens={kontenStackTokens}>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            ARAHAN PEMBUATAN DOKUMEN LINGKUNGAN HIDUP
+                        </Stack.Item>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivStyles}>
+                    <Stack horizontal tokens={kontenStackTokens}>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        </Stack.Item>
+                        <Stack.Item grow>                        
+                            SURAT PERNYATAAN KESANGGUPAN PENGELOLAAN LINGKUNGAN (SPPL)
+                        </Stack.Item>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivStyles}>
+                    <Stack horizontal tokens={kontenStackTokens}>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        </Stack.Item>
+                        <Stack.Item grow>                        
+                            UPAYA PENGELOLAAN LINGKUNGAN (UKL) DAN UPAYA PEMANTAUAN LINGKUNGAN (UPL)
+                        </Stack.Item>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivStyles}>
+                    <Stack horizontal tokens={kontenStackTokens}>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        </Stack.Item>
+                        <Stack.Item grow>                        
+                            PERSETUJUAN TEKNIS PEMENUHAN BAKU MUTU AIR LIMBAH (PERTEK BMAL)
+                        </Stack.Item>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivStyles}>
+                    <Stack horizontal tokens={kontenStackTokens}>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
+                        </Stack.Item>
+                        <Stack.Item grow>                        
+                            PERSETUJUAN TEKNIS PENGOLAHAN LIMBAH B3 (PERTEK LIMBAH B3)
+                        </Stack.Item>
+                        <Stack.Item align="center">
+                            <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow align="auto" style={containerDivInformationStyles}>
+                    <Label>Perhatian!</Label>
+                </Stack.Item>
+            </Stack>
+            
+        }
+        </>
     );
 }

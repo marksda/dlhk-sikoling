@@ -1,7 +1,9 @@
-import { getTheme, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
-import { FC } from "react";
+import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
+import { FC, useCallback, useState } from "react";
+import { KontenBerandaPemrakarsa } from "./template-beranda-pemrakarsa";
 import { LeftMenuPage } from "./template-left-menu";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
+import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 
 const theme = getTheme();
 const stackStyles: IStackStyles = {
@@ -38,8 +40,87 @@ const rightPanelStyles: IStackItemStyles = {
         padding: 0,     
     },
 };
+const navStyles: Partial<INavStyles> = {
+    root: {
+      height: 'calc(100vh - 68px)',
+      boxSizing: 'border-box',
+      overflowY: 'auto',
+    },
+};
+const navLinkGroups: INavLinkGroup[] = [
+    {
+      links: [
+        {
+          name: 'Beranda',
+          url: '',
+          icon: 'Home',
+          key: 'brd',
+          isExpanded: true,
+          target: '_blank',
+        },
+        {
+          name: 'Permohonan',
+          url: '',
+          icon: 'ChangeEntitlements',
+          key: 'pmh',
+          isExpanded: true,
+          target: '_blank',
+        },
+        {
+          name: 'Pelaporan',
+          url: '',
+          icon: 'ReportDocument',
+          key: 'plp',
+          target: '_blank',
+        },
+        {
+          name: 'Pengawasan - SKPL',
+          url: '',
+          icon: 'ComplianceAudit',
+          key: 'key7',
+          target: '_blank',
+        },
+        {
+          name: 'Bantuan',
+          url: '',
+          icon: 'Dictionary',
+          key: 'bnt',
+          target: '_blank',
+        },
+      ],
+    },
+];
+
+const getKontent = (item: string) => {
+    let konten = null;
+    switch (item) {
+        case 'brd':
+            konten = <KontenBerandaPemrakarsa />;
+            break; 
+        case 'pmh':
+            konten = <KontenPermohonanPemrakarsa />;   
+            break;
+        case 'plp':
+            konten = <KontenPelaporanPemrakarsa />;   
+            break;
+        default:
+            konten = <KontenBerandaPemrakarsa />;
+            break;
+    }
+    return konten;
+} 
 
 export const PemrakarsaPage: FC = () => {
+    const [selectedKeyItemMenu, setSelectedKeyItemMenu] = useState<string>('brd');
+
+    const onItemMenuSelected = useCallback(
+        (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => {
+            if(item) {
+                setSelectedKeyItemMenu(item.key!);
+            }
+        },
+        []
+    );
 
     return (        
         <Stack>
@@ -50,10 +131,18 @@ export const PemrakarsaPage: FC = () => {
             </Stack>
             <Stack horizontal styles={stackMainContainerStyles}>
                 <Stack.Item styles={leftPanelStyles}>
-                    <LeftMenuPage />
+                    <LeftMenuPage 
+                        onLinkClick={onItemMenuSelected}
+                        selectedKey={selectedKeyItemMenu}
+                        ariaLabel="left menu sikoling"
+                        styles={navStyles}
+                        groups={navLinkGroups}
+                    />
                 </Stack.Item>  
                 <Stack.Item grow styles={rightPanelStyles}>
-                    <KontenPelaporanPemrakarsa />
+                    {
+                        getKontent(selectedKeyItemMenu)
+                    }
                 </Stack.Item>
             </Stack>
         </Stack>
