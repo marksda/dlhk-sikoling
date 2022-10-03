@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import { 
     Breadcrumb, DefaultEffects, FontIcon, IBreadcrumbItem, IStackStyles, IStackTokens, 
     Label, 
@@ -52,6 +52,18 @@ const classNames = mergeStyleSets({
     salmon: [{ color: 'salmon' }, iconClass, iconClass16],
 });
 
+const getSubKontenPermohonan = (jenisPermohonan: string) => {
+    let konten = null;
+    switch (jenisPermohonan) {
+        case 'arahan':
+            
+            break;    
+        default:
+            break;
+    }
+    return konten;
+}
+
 export const KontenPermohonanPemrakarsa: FC = () => {
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
         {
@@ -59,10 +71,12 @@ export const KontenPermohonanPemrakarsa: FC = () => {
         }
     ]);
     const [isSubmenu, setIsSubmenu] = useState<boolean>(true);
+    const [subKontenPermohonan, setSubKontenPermohonan] = useState<string|null>(null);
 
     const handleOnClickSubMenu = useCallback(
-        () => {
+        (jenisPermohonan: string) => {
             setIsSubmenu(false);
+            setSubKontenPermohonan(jenisPermohonan);
         },
         []
     );
@@ -80,7 +94,12 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         overflowAriaLabel="More links"
                     />
                 </Stack.Item>
-                <Stack.Item grow align="auto" style={containerDivStyles} onClick={handleOnClickSubMenu}>
+                <Stack.Item 
+                    grow 
+                    align="auto" 
+                    style={containerDivStyles} 
+                    onClick={(e) => (handleOnClickSubMenu('arahan'))}
+                >
                     <Stack horizontal tokens={kontenStackTokens}>
                         <Stack.Item align="center">
                             <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
@@ -93,7 +112,12 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         </Stack.Item>
                     </Stack>
                 </Stack.Item>
-                <Stack.Item grow align="auto" style={containerDivStyles}>
+                <Stack.Item 
+                    grow 
+                    align="auto" 
+                    style={containerDivStyles}
+                    onClick={(e) => (handleOnClickSubMenu('sppl'))}
+                >
                     <Stack horizontal tokens={kontenStackTokens}>
                         <Stack.Item align="center">
                             <FontIcon aria-label="Mail" iconName="Mail" className={classNames.deepSkyBlue} />
@@ -150,6 +174,9 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 </Stack.Item>
             </Stack>
             
+        }
+        {
+            isSubmenu && getSubKontenPermohonan(subKontenPermohonan)
         }
         </>
     );
