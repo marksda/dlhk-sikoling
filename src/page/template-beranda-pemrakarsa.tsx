@@ -34,7 +34,7 @@ export const KontenBerandaPemrakarsa: FC = () => {
             </Stack.Item>
             <Stack.Item grow align="auto">   
                 <div style={containerDivStyles}>
-                    
+                    Beranda
                 </div>   
             </Stack.Item>
         </Stack>
