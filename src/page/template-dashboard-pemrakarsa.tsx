@@ -12,15 +12,16 @@ const containerDivStyles: React.CSSProperties = {
     // borderTop: '2px solid orange', 
     borderTop: '2px solid #0078D7', 
     borderRadius: 3, 
-    padding: 48,
+    padding: 16,
     background: 'white',
-    height: 'calc(100vh - 216px)',
+    height: 'calc(100vh - 148px)',
+    marginLeft: 4,
 };
 
 export const KontenDashboardPemrakarsa: FC = () => {
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
         {
-            text: 'Beranda', key: 'brd', href:''
+            text: 'Dashboard', key: 'dsh', href:''
         }
     ]);
     
