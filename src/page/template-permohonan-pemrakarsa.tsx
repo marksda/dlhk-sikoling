@@ -4,6 +4,7 @@ import {
     Label, 
     mergeStyles, mergeStyleSets, Stack 
 } from "@fluentui/react";
+import { PermohonanArahan } from "./permohonan/template-arahan";
 
 const kontenStackTokens: IStackTokens = { childrenGap: 5 };
 const kontenStyles: IStackStyles = {
@@ -56,7 +57,7 @@ const getSubKontenPermohonan = (jenisPermohonan: string) => {
     let konten = null;
     switch (jenisPermohonan) {
         case 'arahan':
-            
+            konten = <PermohonanArahan />;
             break;    
         default:
             break;
@@ -65,22 +66,35 @@ const getSubKontenPermohonan = (jenisPermohonan: string) => {
 }
 
 export const KontenPermohonanPemrakarsa: FC = () => {
+    const resetPagePermohonan = useCallback(
+        () => {
+            setIsSubmenu(true);
+            setSubKontenPermohonan(undefined);
+            setItemBreadcrumb([
+                { text: 'Permohonan', key: 'pmh', onClick: resetPagePermohonan},
+            ]);
+        },
+        []
+    );
+
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
-        {
-            text: 'Permohonan', key: 'pmh', href:''
-        }
+        { text: 'Permohonan', key: 'pmh', onClick: resetPagePermohonan},
     ]);
     const [isSubmenu, setIsSubmenu] = useState<boolean>(true);
-    const [subKontenPermohonan, setSubKontenPermohonan] = useState<string|null>(null);
+    const [subKontenPermohonan, setSubKontenPermohonan] = useState<string|undefined>(undefined);
 
     const handleOnClickSubMenu = useCallback(
         (jenisPermohonan: string) => {
             setIsSubmenu(false);
             setSubKontenPermohonan(jenisPermohonan);
+            setItemBreadcrumb([
+                { text: 'Permohonan', key: 'pmh', onClick: resetPagePermohonan},
+                { text: 'Arahan', key: 'arh'},
+            ]);
         },
         []
     );
-
+    
     return (
         <>
         {
@@ -102,10 +116,10 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 >
                     <Stack horizontal tokens={kontenStackTokens}>
                         <Stack.Item align="center">
-                            <FontIcon aria-label="PagrLink" iconName="PageLink" className={classNames.deepSkyBlue} />
+                            <FontIcon aria-label="Assign" iconName="Assign" className={classNames.deepSkyBlue} />
                         </Stack.Item>
                         <Stack.Item grow>
-                            ARAHAN PEMBUATAN DOKUMEN LINGKUNGAN HIDUP
+                            ARAHAN PEMBUATAN DOKUMEN LINGKUNGAN HIDUP (ARAHAN)
                         </Stack.Item>
                         <Stack.Item align="center">
                             <FontIcon aria-label="Compass" iconName="ChevronRight" className={classNames.deepSkyBlue16} />
@@ -176,7 +190,27 @@ export const KontenPermohonanPemrakarsa: FC = () => {
             
         }
         {
-            isSubmenu && getSubKontenPermohonan(subKontenPermohonan)
+            !isSubmenu && (
+            <Stack styles={kontenStyles} tokens={kontenStackTokens}>
+                <Stack.Item align="auto">                
+                    <Breadcrumb
+                        items={itemBreadcrumb}
+                        maxDisplayedItems={3}
+                        ariaLabel={`Breadcrumb permohonan ${subKontenPermohonan}`}
+                        overflowAriaLabel="More links"
+                    />
+                </Stack.Item>
+                <Stack.Item 
+                    grow 
+                    align="auto" 
+                    style={containerDivStyles}
+                >
+                    {
+                        getSubKontenPermohonan(subKontenPermohonan!)
+                    }
+                </Stack.Item>
+            </Stack>            
+            )
         }
         </>
     );
