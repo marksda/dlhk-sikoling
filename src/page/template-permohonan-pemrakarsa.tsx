@@ -186,8 +186,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 <Stack.Item grow align="auto" style={containerDivInformationStyles}>
                     <Label>Perhatian!</Label>
                 </Stack.Item>
-            </Stack>
-            
+            </Stack>            
         }
         {
             !isSubmenu && (
