@@ -1,6 +1,6 @@
 import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
-import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa-backup";
 import { LeftMenuPage } from "./template-left-menu";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
