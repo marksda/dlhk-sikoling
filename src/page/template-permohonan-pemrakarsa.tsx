@@ -201,8 +201,8 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                     />
                 </Stack.Item>
                 <Stack.Item 
-                    grow 
-                    align="auto" 
+                    grow
+                    align="auto"
                     style={containerDivStyles}
                 >
                     {
