@@ -353,10 +353,7 @@ export const FormulirLogin: FC = () => {
     //redux global state
     const authentication = useAppSelector(state => state.authentication);        
     //redux action creator
-    const dispatch = useAppDispatch();
-    
-    
-        
+    const dispatch = useAppDispatch();        
 
     return(
         <div style={rootContainerStyle}>

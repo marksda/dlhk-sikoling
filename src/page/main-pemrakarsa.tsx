@@ -1,6 +1,6 @@
 import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
-import { KontenBerandaPemrakarsa } from "./template-beranda-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
 import { LeftMenuPage } from "./template-left-menu";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
@@ -51,7 +51,7 @@ const navLinkGroups: INavLinkGroup[] = [
     {
       links: [
         {
-          name: 'Beranda',
+          name: 'Dashboard',
           url: '',
           icon: 'Home',
           key: 'brd',
@@ -95,7 +95,7 @@ const getKontent = (item: string) => {
     let konten = null;
     switch (item) {
         case 'brd':
-            konten = <KontenBerandaPemrakarsa />;
+            konten = <KontenDashboardPemrakarsa />;
             break; 
         case 'pmh':
             konten = <KontenPermohonanPemrakarsa />;   
@@ -104,7 +104,7 @@ const getKontent = (item: string) => {
             konten = <KontenPelaporanPemrakarsa />;   
             break;
         default:
-            konten = <KontenBerandaPemrakarsa />;
+            konten = <KontenDashboardPemrakarsa />;
             break;
     }
     return konten;

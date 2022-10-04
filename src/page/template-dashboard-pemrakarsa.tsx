@@ -1,5 +1,6 @@
 import { Breadcrumb, DefaultEffects, IBreadcrumbItem, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
+import { ListDetailMessage } from "./dashboard/template-list-message";
 
 const kontenStyles: IStackStyles = {
     root: {
@@ -7,15 +8,16 @@ const kontenStyles: IStackStyles = {
     },
 };
 const containerDivStyles: React.CSSProperties = {    
-    // boxShadow: DefaultEffects.elevation4, 
+    boxShadow: DefaultEffects.elevation4, 
     // borderTop: '2px solid orange', 
     borderTop: '2px solid #0078D7', 
     borderRadius: 3, 
     padding: 48,
     background: 'white',
+    height: 'calc(100vh - 216px)',
 };
 
-export const KontenBerandaPemrakarsa: FC = () => {
+export const KontenDashboardPemrakarsa: FC = () => {
     const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
         {
             text: 'Beranda', key: 'brd', href:''
@@ -34,7 +36,11 @@ export const KontenBerandaPemrakarsa: FC = () => {
             </Stack.Item>
             <Stack.Item grow align="auto">   
                 <div style={containerDivStyles}>
-                    Beranda
+                    <Stack>
+                        <Stack.Item>
+                            <ListDetailMessage />
+                        </Stack.Item>
+                    </Stack>
                 </div>   
             </Stack.Item>
         </Stack>

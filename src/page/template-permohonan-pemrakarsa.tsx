@@ -199,15 +199,9 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                         overflowAriaLabel="More links"
                     />
                 </Stack.Item>
-                <Stack.Item 
-                    grow
-                    align="auto"
-                    style={containerDivStyles}
-                >
-                    {
-                        getSubKontenPermohonan(subKontenPermohonan!)
-                    }
-                </Stack.Item>
+                {
+                    getSubKontenPermohonan(subKontenPermohonan!)
+                }
             </Stack>            
             )
         }
