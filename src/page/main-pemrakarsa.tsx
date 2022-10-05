@@ -61,6 +61,7 @@ const navLinkGroups: INavLinkGroup[] = [
         {
           name: 'Permohonan',
           url: '',
+        //   url: 'http://localhost:3000/pemrakarsa/permohonan',
           icon: 'ChangeEntitlements',
           key: 'pmh',
           isExpanded: true,
@@ -90,7 +91,6 @@ const navLinkGroups: INavLinkGroup[] = [
       ],
     },
 ];
-
 const getKontent = (item: string) => {
     let konten = null;
     switch (item) {
