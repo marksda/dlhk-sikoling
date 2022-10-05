@@ -1,8 +1,10 @@
-import { Breadcrumb, DefaultEffects, DocumentCard, DocumentCardLogo, DocumentCardType, IBreadcrumbItem, IDocumentCardLogoProps, IDocumentCardStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
+import { Breadcrumb, DefaultEffects, DocumentCard, DocumentCardDetails, DocumentCardPreview, DocumentCardStatus, DocumentCardTitle, DocumentCardType, getTheme, IBreadcrumbItem, IDocumentCardLogoProps, IDocumentCardPreviewProps, IDocumentCardStyles, IStackStyles, IStackTokens, Label, mergeStyles, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
 import { ListDetailMessage } from "./dashboard/template-list-message";
 
-const stackTokens: IStackTokens = { childrenGap: 1 };
+const stackTokens: IStackTokens = { childrenGap: 16 };
+const theme = getTheme();
+const { palette, fonts } = theme;
 const kontenStyles: IStackStyles = {
     root: {
         padding: '0px 16px',        
@@ -18,14 +20,75 @@ const containerDivStyles: React.CSSProperties = {
     height: 'calc(100vh - 148px)',
     marginLeft: 4,
 };
-const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', marginRight: 20, width: 120 },
+const previewPropsUsingIcon: IDocumentCardPreviewProps = {
+    previewImages: [
+      {
+        previewIconProps: {
+            iconName: 'CityNext',
+            styles: { 
+                root: { 
+                    fontSize: fonts.xxLarge.fontSize, 
+                    color: palette.white 
+                } 
+            },
+        },
+        width: 64,
+      },
+    ],
+    styles: { 
+        root: {
+            height: 64,
+        },
+        previewIcon: { backgroundColor: palette.themePrimary },
+    },
 };
-const logoProps: IDocumentCardLogoProps = {
-    logoIcon: 'OutlookLogo',
+const previewPropsUsingIconPermohonan: IDocumentCardPreviewProps = {
+    previewImages: [
+      {
+        previewIconProps: {
+            iconName: 'AllApps',
+            styles: { 
+                root: { 
+                    fontSize: fonts.xxLarge.fontSize, 
+                    color: palette.white 
+                } 
+            },
+        },
+        width: 64,
+      },
+    ],
+    styles: { 
+        root: {
+            height: 64,
+        },
+        previewIcon: { backgroundColor: palette.green },
+    },
 };
-const logoPerusahaanProps: IDocumentCardLogoProps = {
-    logoIcon: 'CityNext',
+const previewPropsUsingIconPelaporan: IDocumentCardPreviewProps = {
+    previewImages: [
+      {
+        previewIconProps: {
+            iconName: 'Trackers',
+            styles: { 
+                root: { 
+                    fontSize: fonts.xxLarge.fontSize, 
+                    color: palette.white 
+                } 
+            },
+        },
+        width: 64,
+      },
+    ],
+    styles: { 
+        root: {
+            height: 64,
+        },
+        previewIcon: { backgroundColor: palette.red },
+    },
+};
+const conversationTileStyle: React.CSSProperties = { 
+    // height: 182,
+    padding: 8, 
 };
 
 export const KontenDashboardPemrakarsa: FC = () => {
@@ -52,17 +115,60 @@ export const KontenDashboardPemrakarsa: FC = () => {
                             <Stack horizontal tokens={stackTokens}>
                                 <DocumentCard
                                     aria-label="Perusahaan"
-                                    styles={cardStyles}
+                                    type={DocumentCardType.compact}
                                     onClickHref="http://bing.com"
+                                    styles={{root:{height: 64, minWidth: 204}}}
                                 >
-                                    <DocumentCardLogo {...logoPerusahaanProps} />
+                                    <DocumentCardPreview {...previewPropsUsingIcon} />
+                                    <div style={conversationTileStyle}>
+                                        <DocumentCardTitle 
+                                            title="Perusahaan" 
+                                            styles={{root: {height: 20, padding: 0}}} 
+                                        />
+                                        <DocumentCardStatus 
+                                            statusIcon="attach" 
+                                            status="4 terdaftar"
+                                            styles={{root: {margin: 0, paddingRight: 16}}}
+                                        />
+                                    </div>
                                 </DocumentCard>
                                 <DocumentCard
                                     aria-label="Permohonan"
-                                    styles={cardStyles}
+                                    type={DocumentCardType.compact}
                                     onClickHref="http://bing.com"
+                                    styles={{root:{height: 64, minWidth: 232}}}
                                 >
-                                    <DocumentCardLogo {...logoProps} />
+                                    <DocumentCardPreview {...previewPropsUsingIconPermohonan} />
+                                    <div style={conversationTileStyle}>
+                                        <DocumentCardTitle 
+                                            title="Permohonan" 
+                                            styles={{root: {height: 20, padding: 0}}} 
+                                        />
+                                        <DocumentCardStatus 
+                                            statusIcon="attach" 
+                                            status="4 dalam proses"
+                                            styles={{root: {margin: 0, paddingRight: 16}}}
+                                        />
+                                    </div>
+                                </DocumentCard>
+                                <DocumentCard
+                                    aria-label="Pelaporan"
+                                    type={DocumentCardType.compact}
+                                    onClickHref="http://bing.com"
+                                    styles={{root:{height: 64, minWidth: 242}}}
+                                >
+                                    <DocumentCardPreview {...previewPropsUsingIconPelaporan} />
+                                    <div style={conversationTileStyle}>
+                                        <DocumentCardTitle 
+                                            title="Pelaporan" 
+                                            styles={{root: {height: 20, padding: 0}}} 
+                                        />
+                                        <DocumentCardStatus 
+                                            statusIcon="attach" 
+                                            status="4 dalam tinjauan"
+                                            styles={{root: {margin: 0, paddingRight: 16}}}
+                                        />
+                                    </div>
                                 </DocumentCard>
                             </Stack>
                         </Stack.Item>
