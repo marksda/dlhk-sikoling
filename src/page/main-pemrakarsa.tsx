@@ -134,7 +134,7 @@ export const PemrakarsaPage: FC = () => {
                     <LeftMenuFluentUI 
                         onLinkClick={onItemMenuSelected}
                         selectedKey={selectedKeyItemMenu}
-                        ariaLabel="left menu sikoling"
+                        ariaLabel="left menu pemrakarsa"
                         styles={navStyles}
                         groups={navLinkGroups}
                     />
