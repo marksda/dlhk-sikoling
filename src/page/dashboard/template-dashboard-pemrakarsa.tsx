@@ -1,6 +1,6 @@
 import { Breadcrumb, DefaultEffects, DocumentCard, DocumentCardDetails, DocumentCardPreview, DocumentCardStatus, DocumentCardTitle, DocumentCardType, getTheme, IBreadcrumbItem, IDocumentCardLogoProps, IDocumentCardPreviewProps, IDocumentCardStyles, IStackStyles, IStackTokens, Label, mergeStyles, Stack } from "@fluentui/react";
 import { FC, useState } from "react";
-import { ListDetailMessage } from "./dashboard/template-list-message";
+import { ListDetailMessage } from "./template-list-message";
 
 const stackTokens: IStackTokens = { childrenGap: 16 };
 const theme = getTheme();

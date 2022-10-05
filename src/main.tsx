@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     element: <AdminPage />,
   },
   {
-    path: "pemrakarsa",
+    path: "pemrakarsa/:subMenu",
     element: <PemrakarsaPage />,
   }
 ]);
