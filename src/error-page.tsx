@@ -26,8 +26,8 @@ export const ErrorPage: FC = () => {
   return (
     <div style={containerStyles}>
         <div id="error-page" style={panelStyle}>
-            <h1 style={{marginTop: 0}}>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
+            <h1 style={{marginTop: 0}}>Ooops!</h1>
+            <p>Maaf, halaman yang anda minta tidak tersedia.</p>
             <p>
                 <i>{error.statusText || error.message}</i>
             </p>

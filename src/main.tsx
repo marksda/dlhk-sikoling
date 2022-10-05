@@ -10,6 +10,7 @@ import { AdminPage } from './page/main-admin';
 import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
 import { PemrakarsaPage } from './page/main-pemrakarsa';
+import { KontenDashboardPemrakarsa } from './page/template-dashboard-pemrakarsa-backup';
 
 initializeIcons();
 
@@ -32,8 +33,14 @@ const router = createBrowserRouter([
     element: <AdminPage />,
   },
   {
-    path: "pemrakarsa/:subMenu",
+    path: "pemrakarsa",
     element: <PemrakarsaPage />,
+    // children: [
+    //   {
+    //     path: "dashboard",
+    //     element: <KontenDashboardPemrakarsa />,
+    //   },
+    // ],
   }
 ]);
 

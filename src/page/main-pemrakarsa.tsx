@@ -1,7 +1,7 @@
 import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./dashboard/template-dashboard-pemrakarsa";
-import { LeftMenuPage } from "./template-left-menu";
+import { LeftMenuFluentUI } from "./LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 
@@ -54,9 +54,9 @@ const navLinkGroups: INavLinkGroup[] = [
           name: 'Dashboard',
           url: '',
           icon: 'Home',
-          key: 'brd',
+          key: 'dsb',
           isExpanded: true,
-          target: '_blank',
+          target: '_self',
         },
         {
           name: 'Permohonan',
@@ -65,7 +65,7 @@ const navLinkGroups: INavLinkGroup[] = [
           icon: 'ChangeEntitlements',
           key: 'pmh',
           isExpanded: true,
-          target: '_blank',
+          target: '_self',
         },
         {
           name: 'Pelaporan',
@@ -111,7 +111,7 @@ const getKontent = (item: string) => {
 } 
 
 export const PemrakarsaPage: FC = () => {
-    const [selectedKeyItemMenu, setSelectedKeyItemMenu] = useState<string>('brd');
+    const [selectedKeyItemMenu, setSelectedKeyItemMenu] = useState<string>('dsb');
 
     const onItemMenuSelected = useCallback(
         (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => {
@@ -131,7 +131,7 @@ export const PemrakarsaPage: FC = () => {
             </Stack>
             <Stack horizontal styles={stackMainContainerStyles}>
                 <Stack.Item styles={leftPanelStyles}>
-                    <LeftMenuPage 
+                    <LeftMenuFluentUI 
                         onLinkClick={onItemMenuSelected}
                         selectedKey={selectedKeyItemMenu}
                         ariaLabel="left menu sikoling"

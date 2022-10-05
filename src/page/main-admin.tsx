@@ -1,6 +1,5 @@
 import { getTheme, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC } from "react";
-import { LeftMenuPage } from "./template-left-menu";
 
 const theme = getTheme();
 const stackStyles: IStackStyles = {
@@ -47,7 +46,7 @@ export const AdminPage: FC = () => {
             </Stack>
             <Stack horizontal styles={stackMainContainerStyles}>
                 <Stack.Item styles={leftPanelStyles}>
-                    <LeftMenuPage />
+                    
                 </Stack.Item>  
                 <Stack.Item styles={rightPanelStyles}>
                     <Stack>
