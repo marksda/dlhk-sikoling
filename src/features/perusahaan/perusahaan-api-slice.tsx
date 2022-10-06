@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseRestAPIUrl, defaultKabupaten } from "../config/config";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { baseRestAPIUrl } from "../config/config";
 import { IPerusahaan } from "./perusahaan-slice";
 
 export const PerusahaanApiSlice = createApi({
@@ -10,23 +10,25 @@ export const PerusahaanApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllPerusahaan: builder.query<IPerusahaan[], number|void>({
-                query: () => `kecamatan`,
+                query: () => `pemrakarsa`,
             }),
             getPerusahaanByPage: builder.query<IPerusahaan[], number|void>({
-                query: (page = 1, pageSize = 10) => `kecamatan/page?page=${page}&pageSize=${pageSize}`,
+                query: (page = 1, pageSize = 10) => `pemrakarsa/page?page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanByNama: builder.query<IPerusahaan[], string|void>({
-                query: (nama) => `kecamatan/nama?nama=${nama}`,
+                query: (nama) => `pemrakarsa/nama?nama=${nama}`,
             }),
             getPerusahaanByNamaAndPage: builder.query<IPerusahaan[], string|void>({
-                query: (nama, page=1, pageSize=10) => `kecamatan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+                query: (nama, page=1, pageSize=10) => `pemrakarsa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanById: builder.query<IPerusahaan[], string|void>({
-                query: (idPerusahaan) => `kecamatan/kabupaten?idKabupaten=${idPerusahaan}`,
+                query: (idPerusahaan) => `pemrakarsa/kabupaten?idKabupaten=${idPerusahaan}`,
             }),
         }
     }
-})
+});
 
-export const { useGetAllPerusahaanQuery, useGetPerusahaanByPageQuery, useGetPerusahaanByNamaAndPageQuery, 
-    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery } = PerusahaanApiSlice
+export const { 
+    useGetAllPerusahaanQuery, useGetPerusahaanByPageQuery, useGetPerusahaanByNamaAndPageQuery, 
+    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery 
+} = PerusahaanApiSlice;
