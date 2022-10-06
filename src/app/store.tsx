@@ -16,7 +16,8 @@ import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-ap
 import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
-import pemrakarsaReducer from "../features/pemrakarsa/pemrakarsa-slice";
+import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
+import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { JenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import authenticationReducer from "../features/security/authentication-slice";
@@ -57,7 +58,8 @@ export const store = configureStore({
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
-        pemrakarsa: pemrakarsaReducer,
+        perusahaan: perusahaanReducer,
+        [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
@@ -71,7 +73,8 @@ export const store = configureStore({
                                             .concat(JenisPelakuUsahaApiSlice.middleware)
                                             .concat(BentukUsahaApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
-                                            .concat(AuthorizationApiSlice.middleware),
+                                            .concat(AuthorizationApiSlice.middleware)
+                                            .concat(PerusahaanApiSlice.middleware),
 })
 
 // Aliasing variable in typescript

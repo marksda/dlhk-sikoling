@@ -5,7 +5,7 @@ import { IPenanggungJawab } from "../penanggung-jawab/penanggung-jawab-slice";
 import { IKontak } from "../person/person-slice";
 
 
-export interface IAktaPemrakarsa {
+export interface IAktaPerusahaan {
     nomor: string|null;
     tanggal: string|null;
     namaNotaris: string|null;
@@ -22,12 +22,12 @@ export interface IOss {
     kbli: IKbli[];
 }
 
-export interface IPemrakarsa {
+export interface IPerusahaan {
     id: string|null;
     bentukUsaha: IBentukUsaha|null;
-    aktaPemrakarsa: IAktaPemrakarsa|null;
+    aktaPerusahaan: IAktaPerusahaan|null;
     alamat: IAlamat|null;
-    kontakPemrakarsa: IKontak|null;
+    kontakPerusahaan: IKontak|null;
     oss: IOss|null;    
     nama: string|null;    
     npwp: string|null;
@@ -35,12 +35,12 @@ export interface IPemrakarsa {
     idCreator: string|null;    
 };
 
-const initialState: IPemrakarsa = {
+const initialState: IPerusahaan = {
     id: null,
     bentukUsaha: null,
-    aktaPemrakarsa: null,
+    aktaPerusahaan: null,
     alamat: null,
-    kontakPemrakarsa: null,
+    kontakPerusahaan: null,
     oss: null,
     nama: null,
     npwp: null,
@@ -48,11 +48,11 @@ const initialState: IPemrakarsa = {
     idCreator: null
 }
 
-export const pemrakarsaSlice = createSlice({
-    name: 'pemrakarsa',
+export const perusahaanSlice = createSlice({
+    name: 'perusahaan',
     initialState,
     reducers: {
-        setPemrakarsa:  (state, action: PayloadAction<IPemrakarsa>) => {
+        setPerusahaan:  (state, action: PayloadAction<IPerusahaan>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
         },
@@ -63,8 +63,8 @@ export const pemrakarsaSlice = createSlice({
                 singkatan: action.payload.singkatan,
             }
         },
-        setAktaPemrakarsa: (state, action: PayloadAction<IAktaPemrakarsa>) => {
-            state.aktaPemrakarsa = {
+        setAktaPerusahaan: (state, action: PayloadAction<IAktaPerusahaan>) => {
+            state.aktaPerusahaan = {
                 nomor: action.payload.nomor,
                 tanggal: action.payload.tanggal,
                 namaNotaris: action.payload.namaNotaris,
@@ -93,6 +93,6 @@ export const pemrakarsaSlice = createSlice({
     }
 });
 
-export const { setPemrakarsa, setBentukUsaha, setAktaPemrakarsa, setAlamat } = pemrakarsaSlice.actions;
+export const { setPerusahaan: setPemrakarsa, setBentukUsaha, setAktaPerusahaan: setAktaPemrakarsa, setAlamat } = perusahaanSlice.actions;
 
-export default pemrakarsaSlice.reducer;
+export default perusahaanSlice.reducer;

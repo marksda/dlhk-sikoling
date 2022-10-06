@@ -5,7 +5,7 @@ import { useGetBentukUsahaByPelakuUsahaQuery } from "../../features/bentuk-usaha
 import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import { IJenisPelakuUsaha } from "../../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
-import { IPemrakarsa } from "../../features/pemrakarsa/pemrakarsa-slice";
+import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { AktaGroup } from "../AktaGroup/AktaGroup";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
@@ -20,12 +20,12 @@ export const FormulirPemrakarsa: FC = () => {
 
     const [jenisPelakuUsaha, setJenisPelakuUsaha] = useState<IJenisPelakuUsaha|undefined>(undefined);
 
-    const { control, handleSubmit, setValue } = useForm<IPemrakarsa>({
+    const { control, handleSubmit, setValue } = useForm<IPerusahaan>({
         mode: 'onSubmit',
         defaultValues: {
             id: null,
             bentukUsaha: null,
-            aktaPemrakarsa: null,
+            aktaPerusahaan: null,
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -33,7 +33,7 @@ export const FormulirPemrakarsa: FC = () => {
                 desa: defaultDesa,
                 keterangan: '',
             },
-            kontakPemrakarsa: {
+            kontakPerusahaan: {
                 telepone: null,
                 fax: null,
                 email: null,
