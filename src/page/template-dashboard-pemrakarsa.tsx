@@ -38,22 +38,33 @@ const getKontentDashboard = (item: string, ft: any) => {
 };
 
 export const KontenDashboardPemrakarsa: FC = () => {
-    const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
-        {
-            text: 'Dashboard', key: 'dsh', href:''
-        }
-    ]);
+    //this is used to handling event breadcrumb onClick
+    const _onBreadcrumbItemClicked = useCallback(
+        (ev?: React.MouseEvent<HTMLElement>, item?: IBreadcrumbItem) => {
+            console.log(item);
+            setItemBreadcrumb([{text: 'Dashboard', key: item!.key, onClick: _onBreadcrumbItemClicked}]);
+            setKontenSelected(item!.key);
+        },
+        []
+    );
+    //local state    
     const [kontenSelected, setKontenSelected] = useState<string>('dashboard-default');    
+    const [itemBreadcrumb, setItemBreadcrumb] = useState<IBreadcrumbItem[]>([
+        {text: 'Dashboard', key: 'dashboard-default', onClick: _onBreadcrumbItemClicked}
+    ]);
 
     const handleChangeKontenPage = useCallback(
         (item) => {
             switch (item) {
                 case 'dashboard-default':
-                    setItemBreadcrumb([{text: 'Dashboard', key: 'dsh', href:''}]);
+                    setItemBreadcrumb([{text: 'Dashboard', key: 'dashboard-default', onClick: _onBreadcrumbItemClicked}]);
                     setKontenSelected(item);
                     break;
                 case 'Perusahaan':
-                    setItemBreadcrumb([{text: 'Dashboard', key: 'dsh', href:''}]);
+                    setItemBreadcrumb([
+                        {text: 'Dashboard', key: 'dashboard-default', onClick: _onBreadcrumbItemClicked},
+                        {text: 'Perusahaan', key: 'Perusahaan', href:''}
+                    ]);
                     setKontenSelected(item);
                     break;
                 default:
