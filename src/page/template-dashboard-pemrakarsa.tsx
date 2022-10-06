@@ -1,6 +1,7 @@
 import { Breadcrumb, DefaultEffects, IBreadcrumbItem, IStackStyles, Stack } from "@fluentui/react";
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import { KontenDashboardDefault } from "./dashboard/template-konten-dashboard-default";
+import { KontenDashboardPerusahaan } from "./dashboard/template-konten-dashboard-perusahaan";
 
 const kontenStyles: IStackStyles = {
     root: {
@@ -23,8 +24,8 @@ const getKontentDashboard = (item: string, ft: any) => {
         case 'dashboard-default':
             konten = <KontenDashboardDefault setKontenSelected={ft}/>;
             break; 
-        case 'pmh':
-            // konten = <KontenPermohonanPemrakarsa />;   
+        case 'Perusahaan':
+            konten = <KontenDashboardPerusahaan />;   
             break;
         case 'plp':
             // konten = <KontenPelaporanPemrakarsa />;   
@@ -43,7 +44,27 @@ export const KontenDashboardPemrakarsa: FC = () => {
         }
     ]);
     const [kontenSelected, setKontenSelected] = useState<string>('dashboard-default');    
-    
+
+    const handleChangeKontenPage = useCallback(
+        (item) => {
+            switch (item) {
+                case 'dashboard-default':
+                    setItemBreadcrumb([{text: 'Dashboard', key: 'dsh', href:''}]);
+                    setKontenSelected(item);
+                    break;
+                case 'Perusahaan':
+                    setItemBreadcrumb([{text: 'Dashboard', key: 'dsh', href:''}]);
+                    setKontenSelected(item);
+                    break;
+                default:
+                    setItemBreadcrumb([{text: 'Dashboard', key: 'dsh', href:''}]);
+                    setKontenSelected(item);
+                    break;
+            }
+        },
+        []
+    );
+
     return(
         <Stack styles={kontenStyles}>
             <Stack.Item align="auto">                
@@ -57,10 +78,10 @@ export const KontenDashboardPemrakarsa: FC = () => {
             <Stack.Item grow align="auto">   
                 <div style={containerDivStyles}>
                     {
-                        getKontentDashboard(kontenSelected, setKontenSelected)
+                        getKontentDashboard(kontenSelected, handleChangeKontenPage)
                     }
                 </div>   
             </Stack.Item>
         </Stack>
     );
-}
+};
