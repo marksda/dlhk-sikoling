@@ -1,6 +1,6 @@
 import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
-import { KontenDashboardPemrakarsa } from "./dashboard/template-dashboard-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
 import { LeftMenuFluentUI } from "../components/menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
@@ -91,10 +91,10 @@ const navLinkGroups: INavLinkGroup[] = [
       ],
     },
 ];
-const getKontent = (item: string) => {
+const getKontentPemrakarsa = (item: string) => {
     let konten = null;
     switch (item) {
-        case 'brd':
+        case 'dsb':
             konten = <KontenDashboardPemrakarsa />;
             break; 
         case 'pmh':
@@ -108,7 +108,7 @@ const getKontent = (item: string) => {
             break;
     }
     return konten;
-} 
+};
 
 export const PemrakarsaPage: FC = () => {
     const [selectedKeyItemMenu, setSelectedKeyItemMenu] = useState<string>('dsb');
@@ -141,10 +141,11 @@ export const PemrakarsaPage: FC = () => {
                 </Stack.Item>  
                 <Stack.Item grow styles={rightPanelStyles}>
                     {
-                        getKontent(selectedKeyItemMenu)
+                        getKontentPemrakarsa(selectedKeyItemMenu)
                     }
                 </Stack.Item>
             </Stack>
         </Stack>
     );
-}
+};
+

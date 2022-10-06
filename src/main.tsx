@@ -3,14 +3,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
-import './index.css';
 import { Home } from './page/home';
 import { ErrorPage } from './error-page';
 import { AdminPage } from './page/main-admin';
 import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
 import { PemrakarsaPage } from './page/main-pemrakarsa';
-import { KontenDashboardPemrakarsa } from './page/template-dashboard-pemrakarsa-backup';
+import './index.css';
 
 initializeIcons();
 
@@ -39,6 +38,10 @@ const router = createBrowserRouter([
     //   {
     //     path: "dashboard",
     //     element: <KontenDashboardPemrakarsa />,
+    //   },
+    //   {
+    //     path: "permohonan",
+    //     element: <KontenPermohonanPemrakarsa />,
     //   },
     // ],
   }
