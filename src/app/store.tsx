@@ -24,7 +24,7 @@ import tokenReducer from "../features/security/token-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
 import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha";
-import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha";
+import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 
@@ -34,8 +34,6 @@ import loginReducer from "../features/login/login-slice"
 
 export const store = configureStore({
     reducer: {
-        jenisPelakuUsaha: jenisPelakuUsahaReducer,
-        [JenisPelakuUsahaApiSlice.reducerPath]: JenisPelakuUsahaApiSlice.reducer,
         bentukUsaha: bentukUsahaReducer,
         [BentukUsahaApiSlice.reducerPath]: BentukUsahaApiSlice.reducer,
         propinsi: propinsiReducer,

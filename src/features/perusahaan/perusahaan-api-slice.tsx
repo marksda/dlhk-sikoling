@@ -31,13 +31,13 @@ export const PerusahaanApiSlice = createApi({
                 query: ({page, pageSize}) => `pemrakarsa/page?page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanByNama: builder.query<IPerusahaan[], string|void>({
-                query: (nama) => `pemrakarsa/nama?nama=${nama}`,
+                query: (nama) => `perusahaan/nama?nama=${nama}`,
             }),
             getPerusahaanByNamaAndPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSizeAndNama>({
-                query: ({nama, page=1, pageSize=10}) => `pemrakarsa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+                query: ({nama, page=1, pageSize=10}) => `perusahaan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanById: builder.query<IPerusahaan[], string|void>({
-                query: (idPerusahaan) => `pemrakarsa/kabupaten?idKabupaten=${idPerusahaan}`,
+                query: (idPerusahaan) => `perusahaan/kabupaten?idKabupaten=${idPerusahaan}`,
             }),
         }
     }
