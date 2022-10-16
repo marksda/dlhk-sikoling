@@ -30,7 +30,7 @@ export interface IPerusahaan {
     bentukUsaha: IBentukUsaha|null;
     modelPerizinan: IModelPerizinan|null;
     skalaUsaha: ISkalaUsaha|null;
-    
+    pelakuUsaha: IPelakuUsaha|null;
 
     aktaPerusahaan: IAktaPerusahaan|null;
     alamat: IAlamat|null;
