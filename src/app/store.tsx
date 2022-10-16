@@ -16,8 +16,6 @@ import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-ap
 import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
-import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
-import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { JenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import authenticationReducer from "../features/security/authentication-slice";
@@ -26,6 +24,10 @@ import authorizationReducer from "../features/security/authorization-slice";
 import { AuthorizationApiSlice } from "../features/security/authorization-api-slice";
 import tokenReducer from "../features/security/token-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
+import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
+import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha";
+import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
+import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -58,6 +60,8 @@ export const store = configureStore({
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
+        [ModelPerizinanApiSlice.reducerPath]: ModelPerizinanApiSlice.reducer,
+        [SkalaUsahaApiSlice.reducerPath]: SkalaUsahaApiSlice.reducer, 
         perusahaan: perusahaanReducer,
         [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
         login: loginReducer,
@@ -74,6 +78,8 @@ export const store = configureStore({
                                             .concat(BentukUsahaApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(AuthorizationApiSlice.middleware)
+                                            .concat(ModelPerizinanApiSlice.middleware)
+                                            .concat(SkalaUsahaApiSlice.middleware)
                                             .concat(PerusahaanApiSlice.middleware),
 })
 

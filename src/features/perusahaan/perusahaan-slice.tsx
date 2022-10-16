@@ -3,6 +3,8 @@ import { IAlamat } from "../alamat/alamat-slice";
 import { IBentukUsaha } from "../bentuk-usaha/bentuk-usaha-slice";
 import { IPenanggungJawab } from "../penanggung-jawab/penanggung-jawab-slice";
 import { IKontak } from "../person/person-slice";
+import { IModelPerizinan } from "./model-perizinan-api-slice";
+import { ISkalaUsaha } from "./skala-usaha";
 
 
 export interface IAktaPerusahaan {
@@ -24,12 +26,16 @@ export interface IOss {
 
 export interface IPerusahaan {
     id: string|null;
+    nama: string|null;
     bentukUsaha: IBentukUsaha|null;
+    modelPerizinan: IModelPerizinan|null;
+    skalaUsaha: ISkalaUsaha|null;
+    
+
     aktaPerusahaan: IAktaPerusahaan|null;
     alamat: IAlamat|null;
     kontakPerusahaan: IKontak|null;
-    oss: IOss|null;    
-    nama: string|null;    
+    oss: IOss|null;     
     npwp: string|null;
     penanggungJawab: IPenanggungJawab|null;
     idCreator: string|null;    

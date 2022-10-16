@@ -8,7 +8,7 @@ export interface IModelPerizinan {
     singkatan: string;
 };
 
-export const PerusahaanApiSlice = createApi({
+export const ModelPerizinanApiSlice = createApi({
     reducerPath: 'modelPerizinanApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
@@ -44,3 +44,9 @@ export const PerusahaanApiSlice = createApi({
         }
     }
 });
+
+export const {
+    useAddModelPerizinanMutation, useUpdateModelPerizinanMutation,
+    useGetAllModelPerizinanQuery, useGetModelPerizinanByPageQuery,
+    useGetModelPerizinanByNamaQuery, useGetModelPerizinanByNamaAndPageQuery
+} = ModelPerizinanApiSlice;
