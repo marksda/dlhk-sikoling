@@ -36,7 +36,6 @@ export interface IPerusahaan {
 const initialState: IPerusahaan = {
     id: null,
     nama: null,
-    bentukUsaha: null,
     modelPerizinan: null,
     skalaUsaha: null,
     pelakuUsaha: null,
