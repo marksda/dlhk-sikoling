@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
+import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
 import { IPerusahaan } from "./perusahaan-slice";
 
 export const PerusahaanApiSlice = createApi({
@@ -9,17 +10,31 @@ export const PerusahaanApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            getAllPerusahaan: builder.query<IPerusahaan[], number|void>({
+            addPerusahaan: builder.mutation({
+                query: (body) => ({
+                    url: 'perusahaan',
+                    method: 'POST',
+                    body,
+                })
+            }),
+            updatePerusahaan: builder.mutation({
+                query: (body) => ({
+                    url: 'perusahaan',
+                    method: 'PUT',
+                    body,
+                })
+            }),
+            getAllPerusahaan: builder.query<IPerusahaan[], void>({
                 query: () => `pemrakarsa`,
             }),
-            getPerusahaanByPage: builder.query<IPerusahaan[], number|void>({
-                query: (page = 1, pageSize = 10) => `pemrakarsa/page?page=${page}&pageSize=${pageSize}`,
+            getPerusahaanByPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSize>({
+                query: ({page, pageSize}) => `pemrakarsa/page?page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanByNama: builder.query<IPerusahaan[], string|void>({
                 query: (nama) => `pemrakarsa/nama?nama=${nama}`,
             }),
-            getPerusahaanByNamaAndPage: builder.query<IPerusahaan[], string|void>({
-                query: (nama, page=1, pageSize=10) => `pemrakarsa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            getPerusahaanByNamaAndPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSizeAndNama>({
+                query: ({nama, page=1, pageSize=10}) => `pemrakarsa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanById: builder.query<IPerusahaan[], string|void>({
                 query: (idPerusahaan) => `pemrakarsa/kabupaten?idKabupaten=${idPerusahaan}`,

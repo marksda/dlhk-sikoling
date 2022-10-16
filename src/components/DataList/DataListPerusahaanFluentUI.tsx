@@ -1,5 +1,5 @@
-import { DetailsList, DetailsListLayoutMode, Stack } from "@fluentui/react";
-import { FC } from "react";
+import { DetailsList, DetailsListLayoutMode, IObjectWithKey, Selection, Stack } from "@fluentui/react";
+import { FC, useMemo, useState } from "react";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 
 const columns = [
@@ -10,14 +10,22 @@ const columns = [
 ];
 
 export const KontenDashboardPerusahaan: FC = (props) => {
-    
+    // local state
+    const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>();
+
     //rtk query perusahaan variable hook
     const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan } = useGetAllPerusahaanQuery(); 
     const _daftarPerusahaan = daftarPerusahaan.map(
         (t) => { return {key: t.id as string, text: t.nama as string}; }
     );
 
-    // _selection = new Selection({
+    // const selection = new Selection([
+    //     onSelectionChanged: () => this.setState({ selectionDetails: this._getSelectionDetails() }),
+    // ]);
+
+
+
+    // const _selection = new Selection({
     //     onSelectionChanged: () => this.setState({ selectionDetails: this._getSelectionDetails() }),
     // });
 
