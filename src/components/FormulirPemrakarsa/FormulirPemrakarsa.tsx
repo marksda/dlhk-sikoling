@@ -2,9 +2,8 @@ import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, PrimaryButton, 
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useGetBentukUsahaByPelakuUsahaQuery } from "../../features/bentuk-usaha/bentuk-usaha-api-slice";
-import { useGetAllJenisPelakuUsahaQuery } from "../../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
-import { IJenisPelakuUsaha } from "../../features/bentuk-usaha/jenis-pelaku-usaha-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { IKategoriPelakuUsaha, useGetAllKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { AktaGroup } from "../AktaGroup/AktaGroup";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
@@ -18,14 +17,13 @@ const dropdownStyles: Partial<IDropdownStyles> = {dropdown: {width: 300}};
 
 export const FormulirPemrakarsa: FC = () => {
 
-    const [jenisPelakuUsaha, setJenisPelakuUsaha] = useState<IJenisPelakuUsaha|undefined>(undefined);
+    const [kategoriPelakuUsaha, setKategoriPelakuUsaha] = useState<IKategoriPelakuUsaha|undefined>(undefined);
 
     const { control, handleSubmit, setValue } = useForm<IPerusahaan>({
         mode: 'onSubmit',
         defaultValues: {
             id: null,
             bentukUsaha: null,
-            aktaPerusahaan: null,
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -54,11 +52,11 @@ export const FormulirPemrakarsa: FC = () => {
         }
     });
 
-    const { data: dataJenisPelakuUsaha = [], isFetching: isFetchingJenisPelakuUsaha} = useGetAllJenisPelakuUsahaQuery();
-    const dataJenisPelakuUsahaOptions = dataJenisPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha} = useGetAllKategoriPelakuUsahaQuery();
+    const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
     const { data: dataBentukUsaha = [], isFetching: isFetchingBentukUsaha} = useGetBentukUsahaByPelakuUsahaQuery(
-        jenisPelakuUsaha?.id as string
+        kategoriPelakuUsaha?.id as string
         );
         
     const dataBentukUsahaOptions = dataBentukUsaha.map((t) => { 
@@ -66,7 +64,7 @@ export const FormulirPemrakarsa: FC = () => {
     });
 
     const loadBadanUsaha = (item: IJenisPelakuUsaha) => {
-        setJenisPelakuUsaha(item);
+        setKategoriPelakuUsaha(item);
         setValue("bentukUsaha", {
             id: null,
             nama: null,
@@ -95,11 +93,11 @@ export const FormulirPemrakarsa: FC = () => {
                     <ControlledFluentUiDropDown
                         label="Jenis Pelaku Usaha"
                         placeholder="Pilih Jenis Pelaku Usaha"
-                        options={dataJenisPelakuUsahaOptions}
+                        options={dataKategoriPelakuUsahaOptions}
                         required
                         name="jenisPelakuUsaha"
                         styles={dropdownStyles}           
-                        isFetching={isFetchingJenisPelakuUsaha}      
+                        isFetching={isFetchingKategoriPelakuUsaha}      
                         onChangeItem={loadBadanUsaha}
                     /> 
                     <ControlledFluentUiDropDown
