@@ -16,8 +16,6 @@ import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-ap
 import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
-import jenisPelakuUsahaReducer from "../features/bentuk-usaha/jenis-pelaku-usaha-slice";
-import { JenisPelakuUsahaApiSlice } from "../features/bentuk-usaha/jenis-pelaku-usaha-api-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
@@ -26,6 +24,7 @@ import tokenReducer from "../features/security/token-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
 import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha";
+import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 
@@ -62,6 +61,7 @@ export const store = configureStore({
         token: tokenReducer,
         [ModelPerizinanApiSlice.reducerPath]: ModelPerizinanApiSlice.reducer,
         [SkalaUsahaApiSlice.reducerPath]: SkalaUsahaApiSlice.reducer, 
+        [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
         [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
         login: loginReducer,
@@ -74,12 +74,12 @@ export const store = configureStore({
                                             .concat(DesaApiSlice.middleware)
                                             .concat(JenisKelaminApiSlice.middleware)
                                             .concat(PersonApiSlice.middleware)
-                                            .concat(JenisPelakuUsahaApiSlice.middleware)
                                             .concat(BentukUsahaApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(AuthorizationApiSlice.middleware)
                                             .concat(ModelPerizinanApiSlice.middleware)
                                             .concat(SkalaUsahaApiSlice.middleware)
+                                            .concat(PelakuUsahaApiSlice.middleware)
                                             .concat(PerusahaanApiSlice.middleware),
 })
 
