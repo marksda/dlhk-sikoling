@@ -27,7 +27,9 @@ export const KontenDashboardPerusahaan: FC = (props) => {
                     SIKOLING   
                 </Stack.Item>  
             </Stack>
-            <DataListPerusahaanFluentUI />
+            <Stack>
+                <DataListPerusahaanFluentUI />
+            </Stack>            
         </div>
         
     );

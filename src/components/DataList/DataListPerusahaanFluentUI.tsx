@@ -60,23 +60,19 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
         []
     );
     
-    return(        
-        <Stack>            
-            <Stack.Item>
-                <DetailsList
-                    items={_daftarPerusahaan}
-                    columns={_columns}
-                    setKey="set"
-                    layoutMode={DetailsListLayoutMode.justified}
-                    selection={_selection}
-                    selectionPreservedOnEmptyClick={true}
-                    ariaLabelForSelectionColumn="Toggle selection"
-                    ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-                    checkButtonAriaLabel="select row"
-                    onItemInvoked={_onItemInvoked}
-                />
-            </Stack.Item>
-        </Stack>        
+    return(     
+        <DetailsList
+            items={_daftarPerusahaan}
+            columns={_columns}
+            setKey="set"
+            layoutMode={DetailsListLayoutMode.justified}
+            selection={_selection}
+            selectionPreservedOnEmptyClick={true}
+            ariaLabelForSelectionColumn="Toggle selection"
+            ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+            checkButtonAriaLabel="select row"
+            onItemInvoked={_onItemInvoked}
+        />     
     );
     
 }
