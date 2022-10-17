@@ -25,10 +25,10 @@ export const PerusahaanApiSlice = createApi({
                 })
             }),
             getAllPerusahaan: builder.query<IPerusahaan[], void>({
-                query: () => `pemrakarsa`,
+                query: () => `perusahaan`,
             }),
             getPerusahaanByPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSize>({
-                query: ({page, pageSize}) => `pemrakarsa/page?page=${page}&pageSize=${pageSize}`,
+                query: ({page, pageSize}) => `perusahaan/page?page=${page}&pageSize=${pageSize}`,
             }),
             getPerusahaanByNama: builder.query<IPerusahaan[], string|void>({
                 query: (nama) => `perusahaan/nama?nama=${nama}`,
