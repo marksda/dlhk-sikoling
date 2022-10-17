@@ -86,12 +86,10 @@ export const KontenDashboardPemrakarsa: FC = () => {
                     overflowAriaLabel="More links"
                 />
             </Stack.Item>
-            <Stack.Item grow align="auto">   
-                <div style={containerDivStyles}>
-                    {
-                        getKontentDashboard(kontenSelected, handleChangeKontenPage)
-                    }
-                </div>   
+            <Stack.Item grow align="auto"> 
+                {
+                    getKontentDashboard(kontenSelected, handleChangeKontenPage)
+                } 
             </Stack.Item>
         </Stack>
     );
