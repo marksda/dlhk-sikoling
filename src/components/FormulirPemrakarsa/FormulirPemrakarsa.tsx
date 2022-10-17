@@ -1,9 +1,9 @@
 import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, PrimaryButton, Stack } from "@fluentui/react";
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useGetBentukUsahaByPelakuUsahaQuery } from "../../features/bentuk-usaha/bentuk-usaha-api-slice";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
-import { IKategoriPelakuUsaha, useGetAllKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+import { IModelPerizinan, useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
+import { IKategoriPelakuUsaha, IPelakuUsaha, useGetAllKategoriPelakuUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { AktaGroup } from "../AktaGroup/AktaGroup";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
@@ -18,12 +18,15 @@ const dropdownStyles: Partial<IDropdownStyles> = {dropdown: {width: 300}};
 export const FormulirPemrakarsa: FC = () => {
 
     const [kategoriPelakuUsaha, setKategoriPelakuUsaha] = useState<IKategoriPelakuUsaha|undefined>(undefined);
+    // const [pelakuUsaha, setPelakuUsaha] = useState<IPelakuUsaha|undefined>(undefined);
 
     const { control, handleSubmit, setValue } = useForm<IPerusahaan>({
         mode: 'onSubmit',
         defaultValues: {
             id: null,
-            bentukUsaha: null,
+            modelPerizinan: null,
+            skalaUsaha: null,
+            pelakuUsaha: null,
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -36,42 +39,43 @@ export const FormulirPemrakarsa: FC = () => {
                 fax: null,
                 email: null,
             },
-            oss: {
-                nib: null,
-                tanggal: null,
-                kbli: []
-            },
-            nama: null,
-            npwp: null,
-            penanggungJawab: {
-                id: null,
-                person: null,
-                jabatan: null,
-            },
-            idCreator: '00001'
         }
     });
+
+    const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan} = useGetAllModelPerizinanQuery();
+    const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
     const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha} = useGetAllKategoriPelakuUsahaQuery();
     const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
 
-    const { data: dataBentukUsaha = [], isFetching: isFetchingBentukUsaha} = useGetBentukUsahaByPelakuUsahaQuery(
-        kategoriPelakuUsaha?.id as string
-        );
-        
-    const dataBentukUsahaOptions = dataBentukUsaha.map((t) => { 
+    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha} = useGetPelakuUsahaByKategoriPelakuUsahaQuery(
+        kategoriPelakuUsaha?.id as string, { skip: kategoriPelakuUsaha === undefined ? true: false});        
+    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { 
         return {key: t.id as string, text: `${t.nama} (${t.singkatan})`}; 
     });
 
-    const loadBadanUsaha = (item: IJenisPelakuUsaha) => {
-        setKategoriPelakuUsaha(item);
-        setValue("bentukUsaha", {
-            id: null,
-            nama: null,
-            singkatan: null,
-        })
-    };
+    const handleOnChangeKategoriPelakuUsaha = useCallback(
+        (item: IKategoriPelakuUsaha) => {
+            setKategoriPelakuUsaha(item);
+        },
+        []
+    );
 
+    const handleOnChangePelakuUsaha = useCallback(
+        (item: IPelakuUsaha) => {
+            // setPelakuUsaha(item);
+            setValue("pelakuUsaha", item);
+        },
+        []
+    );
+
+    const handleOnChangeModelPerizinan = useCallback(
+        (item: IModelPerizinan) => {
+            setValue("modelPerizinan", item);
+        },
+        []
+    );
+    
     const onButtonSimpanClick = () => { 
         handleSubmit(
             (data) => {
@@ -91,25 +95,36 @@ export const FormulirPemrakarsa: FC = () => {
             <div style={{marginLeft: 8}}>
                 <Stack tokens={stackTokens}>
                     <ControlledFluentUiDropDown
-                        label="Jenis Pelaku Usaha"
-                        placeholder="Pilih Jenis Pelaku Usaha"
+                        label="Verifikasi OSS"
+                        placeholder="Pilih OSS atau NON OSS"
+                        options={dataModelPerizinanOptions}
+                        required
+                        name="modelPerizinan"
+                        styles={dropdownStyles}           
+                        isFetching={isFetchingModelPerizinan}      
+                        onChangeItem={handleOnChangeModelPerizinan}
+                    /> 
+                    <ControlledFluentUiDropDown
+                        label="Kategori Pelaku Usaha"
+                        placeholder="Pilih Kategori Pelaku Usaha"
                         options={dataKategoriPelakuUsahaOptions}
                         required
-                        name="jenisPelakuUsaha"
+                        name="kategoriPelakuUsaha"
                         styles={dropdownStyles}           
                         isFetching={isFetchingKategoriPelakuUsaha}      
-                        onChangeItem={loadBadanUsaha}
+                        onChangeItem={handleOnChangeKategoriPelakuUsaha}
                     /> 
                     <ControlledFluentUiDropDown
                         label="Bentuk Usaha"
                         placeholder="Pilih Bentuk Usaha"
-                        options={dataBentukUsahaOptions}
+                        options={dataPelakuUsahaOptions}
                         required
                         name="bentukUsaha"
                         styles={dropdownStyles}           
-                        isFetching={isFetchingBentukUsaha}      
+                        isFetching={isFetchingPelakuUsaha}      
                         control={control}                     
                         rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
+                        onChangeItem={handleOnChangePelakuUsaha}
                     /> 
                     <ControlledFluentUiTextField
                         label="Nama"

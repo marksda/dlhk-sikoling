@@ -72,6 +72,9 @@ export const PelakuUsahaApiSlice = createApi({
             }),
             getPelakuUsahaByNamaAndPage: builder.query<IPelakuUsaha[], IHalamanBasePageAndPageSizeAndNama>({
                 query: ({nama, page=1, pageSize=10}) => `pelaku_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            }),
+            getPelakuUsahaByKategoriPelakuUsaha: builder.query<IPelakuUsaha[], string>({
+                query: (idKategori) => `pelaku_usaha/bykategori?idKategori=${idKategori}`,
             })
         }
     }
@@ -83,5 +86,6 @@ export const {
     useGetAllKategoriPelakuUsahaQuery, useGetAllPelakuUsahaQuery,
     useGetKategoriPelakuUsahaByPageQuery, useGetPelakuUsahaByPageQuery,
     useGetKategoriPelakuUsahaByNamaQuery, useGetPelakuUsahaByNamaQuery,
-    useGetKategoriPelakuUsahaByNamaAndPageQuery, useGetPelakuUsahaByNamaAndPageQuery
+    useGetKategoriPelakuUsahaByNamaAndPageQuery, useGetPelakuUsahaByNamaAndPageQuery,
+    useGetPelakuUsahaByKategoriPelakuUsahaQuery
 } = PelakuUsahaApiSlice;
