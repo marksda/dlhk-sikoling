@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, Selection, Stack } from "@fluentui/react";
+import { DetailsList, DetailsListLayoutMode, IDetailsHeaderProps, IRenderFunction, Selection } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 
@@ -16,6 +16,20 @@ export interface IDetailsListBasicExampleItem {
     kontak: string;
     alamat: string;
 };
+
+const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
+    if (!headerProps || !defaultRender) {
+        return null;
+    }
+    return defaultRender({
+        ...headerProps,
+        styles: {
+            root: {                
+                paddingTop: 0,
+            },
+        },
+    })
+}
 
 export const DataListPerusahaanFluentUI: FC = (props) => {
     const [selectionDetails, setSelectionDetails] = useState<string>('');
@@ -72,6 +86,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
             ariaLabelForSelectAllCheckbox="Toggle selection for all items"
             checkButtonAriaLabel="select row"
             onItemInvoked={_onItemInvoked}
+            onRenderDetailsHeader={onRenderDetailsHeader}
         />     
     );
     

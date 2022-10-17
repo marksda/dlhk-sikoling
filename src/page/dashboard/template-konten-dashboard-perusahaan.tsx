@@ -1,4 +1,4 @@
-import { DefaultEffects, IStackTokens, Stack } from "@fluentui/react";
+import { CommandBar, DefaultEffects, ICommandBarItemProps, IDetailsHeader, IDetailsHeaderProps, IDetailsHeaderStyles, IRenderFunction, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUI";
 
@@ -13,6 +13,24 @@ const containerDivStyles: React.CSSProperties = {
     marginLeft: 4,
 };
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
+const _items: ICommandBarItemProps[] = [
+    {
+        key: 'add',
+        text: 'Add',
+        iconProps: { iconName: 'Add' },
+        onClick: () => console.log('Share'),
+    }
+];
+
+const dataListStyles: Partial<IDetailsHeaderStyles> ={
+    root: {
+        selectors: {
+            '.root-215': {
+                paddingTop: 0
+            }
+        }
+    }
+}
 
 
 export const KontenDashboardPerusahaan: FC = (props) => {
@@ -21,7 +39,12 @@ export const KontenDashboardPerusahaan: FC = (props) => {
         <div style={containerDivStyles}>
             <Stack horizontal tokens={containerLoginStackTokens}>
                 <Stack.Item grow>
-                    asdasd
+                    <CommandBar
+                        items={_items}
+                        ariaLabel="Inbox actions"
+                        primaryGroupAriaLabel="Email actions"
+                        farItemsGroupAriaLabel="More actions"                
+                    />
                 </Stack.Item>
                 <Stack.Item align="center" >
                     SIKOLING   

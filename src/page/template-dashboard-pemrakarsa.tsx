@@ -8,16 +8,6 @@ const kontenStyles: IStackStyles = {
         padding: '0px 16px',        
     },
 };
-const containerDivStyles: React.CSSProperties = {    
-    boxShadow: DefaultEffects.elevation4, 
-    // borderTop: '2px solid orange', 
-    borderTop: '2px solid #0078D7', 
-    borderRadius: 3, 
-    padding: 16,
-    background: 'white',
-    height: 'calc(100vh - 148px)',
-    marginLeft: 4,
-};
 const getKontentDashboard = (item: string, ft: any) => {
     let konten = null;
     switch (item) {
