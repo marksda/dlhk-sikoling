@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, IDetailsHeaderProps, IRenderFunction, Selection } from "@fluentui/react";
+import { DefaultPalette, DetailsList, DetailsListLayoutMode, IDetailsHeaderProps, IRenderFunction, Selection } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 
@@ -25,7 +25,8 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
         ...headerProps,
         styles: {
             root: {                
-                paddingTop: 0,
+                // paddingTop: 0,                
+                // borderTop : '1px solid rgb(237, 235, 233)',
             },
         },
     })

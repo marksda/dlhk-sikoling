@@ -16,39 +16,35 @@ const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 const _items: ICommandBarItemProps[] = [
     {
         key: 'add',
-        text: 'Add',
+        text: 'Tambah',
         iconProps: { iconName: 'Add' },
+        onClick: () => console.log('Share'),
+    },
+    {
+        key: 'add',
+        text: 'Ubah',
+        iconProps: { iconName: 'Edit' },
+        onClick: () => console.log('Share'),
+    },
+    {
+        key: 'add',
+        text: 'Hapus',
+        iconProps: { iconName: 'Delete' },
         onClick: () => console.log('Share'),
     }
 ];
-
-const dataListStyles: Partial<IDetailsHeaderStyles> ={
-    root: {
-        selectors: {
-            '.root-215': {
-                paddingTop: 0
-            }
-        }
-    }
-}
 
 
 export const KontenDashboardPerusahaan: FC = (props) => {
       
     return(
         <div style={containerDivStyles}>
-            <Stack horizontal tokens={containerLoginStackTokens}>
-                <Stack.Item grow>
+            <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
+                <Stack.Item>
                     <CommandBar
-                        items={_items}
-                        ariaLabel="Inbox actions"
-                        primaryGroupAriaLabel="Email actions"
-                        farItemsGroupAriaLabel="More actions"                
+                        items={_items}   
                     />
                 </Stack.Item>
-                <Stack.Item align="center" >
-                    SIKOLING   
-                </Stack.Item>  
             </Stack>
             <Stack>
                 <DataListPerusahaanFluentUI />
