@@ -1,8 +1,10 @@
 import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, mergeStyleSets, Modal } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { useForm } from "react-hook-form";
+import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 
-export interface IFormulirPerusahaanProps {
+interface IFormulirPerusahaanProps {
     isModalOpen: boolean;
     hideModal: () => void
 };
@@ -57,10 +59,40 @@ const dragOptions: IDragOptions = {
     dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
+interface IStateFormulirAddPerusahaanAnimationFramer {
+    animModelPerizinan: string;
+    flipDisplayModelPerizinan: boolean;
+};
 
-export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) => {    
+export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) => {  
+    //* local state *   
+    //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
+    const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
+        animModelPerizinan: 'open',
+        flipDisplayModelPerizinan: true,
+    });  
     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     const titleId = useId('Formulir Perusahaan');
+    const { control, handleSubmit, setValue } = useForm<IPerusahaan>({
+        mode: 'onSubmit',
+        defaultValues: {
+            // nik: '',
+            // nama: '',
+            // jenisKelamin: null,
+            // alamat: {
+            //     propinsi: defaultPropinsi,
+            //     kabupaten: defaultKabupaten,
+            //     kecamatan: defaultKecamatan,
+            //     desa: defaultDesa,
+            //     keterangan: '',
+            // },
+            // kontak: {
+            //     telepone: '', 
+            //     email: '',
+            // },
+            // scanKTP: '',
+        }
+    });    
     
     return (
         <Modal
@@ -72,13 +104,16 @@ export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) 
             dragOptions={isDraggable ? dragOptions : undefined}
         >
             <div className={contentStyles.header}>
-                <span id={titleId}>Formulir Tambah Perusahaan</span>
+                <span id={titleId}>Tambah Perusahaan</span>
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
                     ariaLabel="Close popup modal"
                     onClick={props.hideModal}
                 />
+            </div>
+            <div className={contentStyles.body}>
+                safaf
             </div>
         </Modal>
     );
