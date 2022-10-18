@@ -1,6 +1,8 @@
-import { CommandBar, DefaultEffects, ICommandBarItemProps, IDetailsHeader, IDetailsHeaderProps, IDetailsHeaderStyles, IRenderFunction, IStackTokens, Stack } from "@fluentui/react";
+import { CommandBar, DefaultEffects, ICommandBarItemProps, IStackTokens, Stack } from "@fluentui/react";
+import { useBoolean } from "@fluentui/react-hooks";
 import { FC } from "react";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUI";
+import { ModalFormulirAddPerusahaan } from "../../components/Modal/ModalFormulirAddPerusahaan";
 
 const containerDivStyles: React.CSSProperties = {    
     boxShadow: DefaultEffects.elevation4, 
@@ -13,30 +15,30 @@ const containerDivStyles: React.CSSProperties = {
     marginLeft: 4,
 };
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
-const _items: ICommandBarItemProps[] = [
-    {
-        key: 'add',
-        text: 'Tambah',
-        iconProps: { iconName: 'Add' },
-        onClick: () => console.log('Share'),
-    },
-    {
-        key: 'add',
-        text: 'Ubah',
-        iconProps: { iconName: 'Edit' },
-        onClick: () => console.log('Share'),
-    },
-    {
-        key: 'add',
-        text: 'Hapus',
-        iconProps: { iconName: 'Delete' },
-        onClick: () => console.log('Share'),
-    }
-];
-
 
 export const KontenDashboardPerusahaan: FC = (props) => {
-      
+    const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
+    const _items: ICommandBarItemProps[] = [
+        {
+            key: 'add',
+            text: 'Tambah',
+            iconProps: { iconName: 'Add' },
+            onClick: showModal,
+        },
+        {
+            key: 'add',
+            text: 'Ubah',
+            iconProps: { iconName: 'Edit' },
+            onClick: () => console.log('Share'),
+        },
+        {
+            key: 'add',
+            text: 'Hapus',
+            iconProps: { iconName: 'Delete' },
+            onClick: () => console.log('Share'),
+        }
+    ];
+    
     return(
         <div style={containerDivStyles}>
             <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
@@ -48,7 +50,11 @@ export const KontenDashboardPerusahaan: FC = (props) => {
             </Stack>
             <Stack>
                 <DataListPerusahaanFluentUI />
-            </Stack>            
+            </Stack>   
+            <ModalFormulirAddPerusahaan 
+                isModalOpen={isModalOpen}
+                hideModal={hideModal}
+            />         
         </div>
         
     );
