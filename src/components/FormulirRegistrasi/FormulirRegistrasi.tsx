@@ -1228,4 +1228,4 @@ export const FormulirRegistrasi: FC = () => {
         }        
         </>
     )
-}
+};
