@@ -41,10 +41,10 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
             selectedKey={typeof item != 'undefined' ? item.id : undefined}
             onChange={
                 (_e, item) => {
-                    let itemSelected = {id: item?.key as string, nama: item?.text};
-                    setItem(itemSelected);
+                    // let itemSelected = {id: item?.key as string, nama: item?.text};
+                    // setItem(itemSelected);
                     if(typeof props.onChangeItem != 'undefined') {
-                        props.onChangeItem(itemSelected);
+                        props.onChangeItem(item);
                     }                            
                 }
             }

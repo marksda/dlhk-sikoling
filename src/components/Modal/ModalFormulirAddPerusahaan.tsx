@@ -2,20 +2,22 @@ import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOpti
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
+import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 
 
 interface IStateFormulirAddPerusahaanAnimationFramer {
     animModelPerizinan: string;
     flipDisplayModelPerizinan: boolean;
+    animSkalaUsaha: string;
+    flipDisplaySkalaUsaha: boolean;
 };
-
 const duration: number = 0.5;
-const variantsModelPerizinan = {
+const variantModelPerizinan = {
     open: { 
         opacity: 1, 
         x: 0,      
@@ -31,12 +33,26 @@ const variantsModelPerizinan = {
         },
     },
 };
-
+const variantSkalaUsaha = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "-10%", 
+        transition: {
+            duration
+        },
+    },
+};
 interface IFormulirPerusahaanProps {
     isModalOpen: boolean;
     hideModal: () => void
 };
-
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
     container: {
@@ -63,6 +79,7 @@ const contentStyles = mergeStyleSets({
         flex: '4 4 auto',        
         padding: '0 24px 24px 24px',
         overflowY: 'hidden',
+        overflowX: 'hidden',
         selectors: {
           p: { margin: '14px 0' },
           'p:first-child': { marginTop: 0 },
@@ -111,6 +128,8 @@ export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) 
     const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
         animModelPerizinan: 'open',
         flipDisplayModelPerizinan: true,
+        animSkalaUsaha: 'close',
+        flipDisplaySkalaUsaha: false,
     });  
     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
@@ -157,6 +176,13 @@ export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) 
                 variant={variant} 
                 setVariant={setVariant}
                 control={control}
+                setValue={setValue}
+            />
+            <FormSkalaUsaha
+                variant={variant} 
+                setVariant={setVariant}
+                control={control}
+                setValue={setValue}
             />
             {
             isLoading && (
@@ -185,8 +211,8 @@ interface IFormModelPerizinanProps {
     variant?: any;
     setVariant?: any;
     control?: Control<any>;
+    setValue?: any;
 };
-
 const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {  
     //rtk query modelperizinan variable hook
     const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
@@ -200,7 +226,7 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
             //         props.changeHightContainer(570);
                     props.setVariant(
                         (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
-                            {...prev, flipDisplayModelPerizinan: false, flipDisplayPID2: true, animPID2: 'open'}
+                            {...prev, flipDisplayModelPerizinan: false, flipDisplaySkalaUsaha: true, animSkalaUsaha: 'open'}
                         )
                     );
                 },
@@ -212,22 +238,37 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
         []
     );
 
+    const handleSetModelPerizinan = useCallback(
+        (itemSelected) => {
+            let itemModelPerizinanSelected = dataModelPerizinan.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            props.setValue("modelPerizinan", itemModelPerizinanSelected);
+        },
+        [dataModelPerizinan]
+    )
+
     return (
-        <motion.div className={contentStyles.body}>
+        <motion.div 
+            animate={props.variant.animModelPerizinan}
+            variants={variantModelPerizinan}
+            style={props.variant.flipDisplayModelPerizinan?{display:'block'}:{display:'none'}}
+            className={contentStyles.body} 
+        >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Status OSS-RBA?</Label>
-                <Label styles={subLabelStyle}>Kami perlu mengetahui status OSS atau NON OSS perusahaan, untuk menentukan isian tahab berikutnya.</Label>
+                <Label styles={subLabelStyle}>Status OSS-RBA perusahaan menentukan isian tahab berikutnya.</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
-                        label="Status OSS"
-                        placeholder="Pilih status OSS"
+                        label="Status OSS-RBA"
+                        placeholder="Pilih status OSS-RBA"
                         options={dataModelPerizinanOptions}
                         required
                         name="modelPerizinan"
                         rules={{ required: "harus diisi" }} 
-                        control={props.control}
+                        onChangeItem={handleSetModelPerizinan}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -240,4 +281,121 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
             </Stack>   
         </motion.div>
     );
-}
+};
+
+interface IFormSkalaUsahaProps {
+    variant?: any;
+    setVariant?: any;
+    control?: Control<any>;
+    setValue?: any;
+};
+const backIcon: IIconProps = { 
+    iconName: 'Back',
+    style: {
+        color: 'grey',
+        fontSize: '0.8rem',
+    }
+};
+const labelTitleBack: ILabelStyles  = {
+    root: {
+       fontWeight: 400,
+       fontSize: '1rem', 
+    }
+};
+const FormSkalaUsaha: FC<IFormSkalaUsahaProps> = (props) => {
+    //rtk query modelperizinan variable hook
+    const { data: dataSkalaUsaha = [], isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
+    const dataSkalaUsahaOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
+    const [modelPerizinan] = useWatch({
+        control: props.control, 
+        name: ['modelPerizinan']
+    });
+
+    const processBackToPreviousStep = useCallback(
+        () => {
+            props.setVariant(
+                (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animSkalaUsaha: 'closed'})
+            );
+
+            let timer = setTimeout(
+                () => {
+                    // props.changeHightContainer(300);
+                    props.setVariant(
+                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
+                            ...prev,                             
+                            animModelPerizinan: 'open',
+                            flipDisplaySkalaUsaha: false, 
+                            flipDisplayModelPerizinan: true, 
+                        })
+                    );
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    const handleSetSkalaUsaha = useCallback(
+        (itemSelected) => {
+            let itemSkalaUsahaSelected = dataSkalaUsaha.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            props.setValue("skalaUsaha", itemSkalaUsahaSelected);
+        },
+        [dataSkalaUsaha]
+    )
+
+    return (
+        <motion.div
+            animate={props.variant.animSkalaUsaha}
+            variants={variantSkalaUsaha}
+            style={props.variant.flipDisplaySkalaUsaha?{display:'block'}:{display:'none'}}
+            className={contentStyles.body} 
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelTitleBack}>
+                    {
+                        modelPerizinan != null ? `${modelPerizinan!.nama} (${modelPerizinan!.singkatan})`:null
+                    }
+                </Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Skala Usaha</Label>
+                <Label styles={subLabelStyle}>Skala usaha harus sesuai dengan skala usaha pada OSS-RBA.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Skala Usaha"
+                        placeholder="Pilih skala usaha"
+                        options={dataSkalaUsahaOptions}
+                        required
+                        name="skalaUsaha"
+                        rules={{ required: "harus diisi" }} 
+                        onChangeItem={handleSetSkalaUsaha}
+                    /> 
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    style={{marginTop: 24, width: 100}}
+                    />
+            </Stack>   
+        </motion.div>
+    );
+};

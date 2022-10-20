@@ -26,13 +26,13 @@ export const KontenDashboardPerusahaan: FC = (props) => {
             onClick: showModal,
         },
         {
-            key: 'add',
+            key: 'edit',
             text: 'Ubah',
             iconProps: { iconName: 'Edit' },
             onClick: () => console.log('Share'),
         },
         {
-            key: 'add',
+            key: 'delete',
             text: 'Hapus',
             iconProps: { iconName: 'Delete' },
             onClick: () => console.log('Share'),
