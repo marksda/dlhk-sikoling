@@ -122,6 +122,7 @@ const dragOptions: IDragOptions = {
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 
+/*-------------------------------------------------------------------------------------------------------*/
 export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) => {  
     //* local state *   
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
@@ -191,7 +192,7 @@ export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) 
         </Modal>
     );
 };
-
+/*-------------------------------------------------------------------------------------------------------*/
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
     root: {
@@ -282,7 +283,7 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
         </motion.div>
     );
 };
-
+/*---------------------------------------------------------------------------*/
 interface IFormSkalaUsahaProps {
     variant?: any;
     setVariant?: any;
@@ -399,3 +400,4 @@ const FormSkalaUsaha: FC<IFormSkalaUsahaProps> = (props) => {
         </motion.div>
     );
 };
+/*----------------------------------------------------------------------------*/
