@@ -8,6 +8,7 @@ import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-pe
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
+import { HookFormAnimProps } from "../../app/HookFormProps";
 
 
 interface IStateFormulirAddPerusahaanAnimationFramer {
@@ -48,10 +49,6 @@ const variantSkalaUsaha = {
             duration
         },
     },
-};
-interface IFormulirPerusahaanProps {
-    isModalOpen: boolean;
-    hideModal: () => void
 };
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -123,7 +120,11 @@ const dragOptions: IDragOptions = {
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 
 /*-------------------------------------------------------------------------------------------------------*/
-export const ModalFormulirAddPerusahaan: FC<IFormulirPerusahaanProps> = (props) => {  
+interface IModalFormulirPerusahaanProps {
+    isModalOpen: boolean;
+    hideModal: () => void
+};
+export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (props) => {  
     //* local state *   
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
     const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
@@ -208,9 +209,7 @@ const subLabelStyle: ILabelStyles  = {
        fontSize: '1rem', 
     }
 };
-interface IFormModelPerizinanProps {
-    variant?: any;
-    setVariant?: any;
+interface IFormModelPerizinanProps extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
 };
@@ -284,9 +283,7 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
     );
 };
 /*---------------------------------------------------------------------------*/
-interface IFormSkalaUsahaProps {
-    variant?: any;
-    setVariant?: any;
+interface IFormSkalaUsahaProps extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
 };

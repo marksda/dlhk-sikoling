@@ -5,13 +5,18 @@ export interface HookFormProps {
     name: string;
     rules?: UseControllerProps["rules"];
     defaultValue?: any;
+};
+
+export interface HookFormAnimProps {
+    variant?: any;
+    setVariant?: any;
 }
 
 export interface HookFluentUiDropDownProps extends HookFormProps {
     defaultItemSelected?: any;
     onChangeItem?: any;
     isFetching?: boolean;
-}
+};
 
 // export interface HookFluentUIUploadFileProps {
 
