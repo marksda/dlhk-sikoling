@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
 import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
+import { ISkalaUsaha } from "./skala-usaha";
 
 export interface IKategoriPelakuUsaha {
     id: string|null;
@@ -52,6 +53,9 @@ export const PelakuUsahaApiSlice = createApi({
             getAllKategoriPelakuUsaha: builder.query<IKategoriPelakuUsaha[], void>({
                 query: () => `pelaku_usaha/kategori`,
             }),
+            getAllKategoriPelakuUsahaBySkalaUsaha: builder.query<IKategoriPelakuUsaha[], ISkalaUsaha>({
+                query: (skalaUsaha) => `pelaku_usaha/kategori/skala_usaha?idSkalaUsaha=${skalaUsaha.id}`,
+            }),
             getAllPelakuUsaha: builder.query<IPelakuUsaha[], void>({
                 query: () => `pelaku_usaha`,
             }),
@@ -87,5 +91,5 @@ export const {
     useGetKategoriPelakuUsahaByPageQuery, useGetPelakuUsahaByPageQuery,
     useGetKategoriPelakuUsahaByNamaQuery, useGetPelakuUsahaByNamaQuery,
     useGetKategoriPelakuUsahaByNamaAndPageQuery, useGetPelakuUsahaByNamaAndPageQuery,
-    useGetPelakuUsahaByKategoriPelakuUsahaQuery
+    useGetPelakuUsahaByKategoriPelakuUsahaQuery, useGetAllKategoriPelakuUsahaBySkalaUsahaQuery
 } = PelakuUsahaApiSlice;

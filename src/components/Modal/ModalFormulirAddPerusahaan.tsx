@@ -7,8 +7,9 @@ import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
+import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 import { HookFormAnimProps } from "../../app/HookFormProps";
+import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 
 
 interface IStateFormulirAddPerusahaanAnimationFramer {
@@ -16,6 +17,8 @@ interface IStateFormulirAddPerusahaanAnimationFramer {
     flipDisplayModelPerizinan: boolean;
     animSkalaUsaha: string;
     flipDisplaySkalaUsaha: boolean;
+    animPelakuUsaha: string;
+    flipDisplayPelakuUsaha: boolean;
 };
 const duration: number = 0.5;
 const variantModelPerizinan = {
@@ -35,6 +38,22 @@ const variantModelPerizinan = {
     },
 };
 const variantSkalaUsaha = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            duration
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "-10%", 
+        transition: {
+            duration
+        },
+    },
+};
+const variantPelakuUsaha = {
     open: {       
         opacity: 1, 
         x: 0,
@@ -132,6 +151,8 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
         flipDisplayModelPerizinan: true,
         animSkalaUsaha: 'close',
         flipDisplaySkalaUsaha: false,
+        animPelakuUsaha: 'close',
+        flipDisplayPelakuUsaha: false,
     });  
     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
@@ -143,8 +164,17 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
             id: '',
             nama: '',
             modelPerizinan: null,
-            skalaUsaha: null,
-            pelakuUsaha: null,
+            skalaUsaha: {
+                id: '',
+                nama: '',
+                singkatan:''
+            },
+            pelakuUsaha: {
+                id: '',
+                nama: '',
+                singkatan:'',
+                kategoriPelakuUsaha: null
+            },
             alamat: {
                 propinsi: defaultPropinsi,
                 kabupaten: defaultKabupaten,
@@ -181,6 +211,12 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
                 setValue={setValue}
             />
             <FormSkalaUsaha
+                variant={variant} 
+                setVariant={setVariant}
+                control={control}
+                setValue={setValue}
+            />
+            <FormPelakuUsaha
                 variant={variant} 
                 setVariant={setVariant}
                 control={control}
@@ -342,7 +378,27 @@ const FormSkalaUsaha: FC<IFormSkalaUsahaProps> = (props) => {
             props.setValue("skalaUsaha", itemSkalaUsahaSelected);
         },
         [dataSkalaUsaha]
-    )
+    );
+
+    const processNextStep = useCallback(
+        () => {
+            props.setVariant((prev: IStateFormulirAddPerusahaanAnimationFramer) =>({...prev, animSkalaUsaha: 'closed'}));
+            let timer = setTimeout(
+                () => {
+            //         props.changeHightContainer(570);
+                    props.setVariant(
+                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
+                            {...prev, flipDisplaySkalaUsaha: false, flipDisplayPelakuUsaha: true, animPelakuUsaha: 'open'}
+                        )
+                    );
+                },
+                duration*1000
+            );
+
+            return () => clearTimeout(timer);
+        },
+        []
+    );
 
     return (
         <motion.div
@@ -392,9 +448,105 @@ const FormSkalaUsaha: FC<IFormSkalaUsahaProps> = (props) => {
                 <PrimaryButton 
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
-                    />
+                    onClick={processNextStep}
+                />
             </Stack>   
         </motion.div>
     );
 };
 /*----------------------------------------------------------------------------*/
+interface IFormKategoriPelakuUsahaProps extends HookFormAnimProps {
+    control?: Control<any>;
+    setValue?: any;
+};
+
+const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
+    const [skalaUsaha, pelakuUsaha] = useWatch({
+        control: props.control, 
+        name: ['skalaUsaha', 'pelakuUsaha']
+    });
+    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingkategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
+    const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
+
+    const processBackToPreviousStep = useCallback(
+        () => {
+            props.setVariant(
+                (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animPelakuUsaha: 'closed'})
+            );
+
+            let timer = setTimeout(
+                () => {
+                    // props.changeHightContainer(300);
+                    props.setVariant(
+                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
+                            ...prev,                             
+                            animSkalaUsaha: 'open',
+                            flipDisplayPelakuUsaha: false, 
+                            flipDisplaySkalaUsaha: true, 
+                        })
+                    );
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    const handleSetJenisPelakuUsaha = useCallback(
+        (itemSelected) => {
+            let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            props.setValue("pelakuUsaha", {...pelakuUsaha, kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
+        },
+        [dataKategoriPelakuUsaha, pelakuUsaha]
+    );
+
+    return (
+        <motion.div
+            animate={props.variant.animPelakuUsaha}
+            variants={variantPelakuUsaha}
+            style={props.variant.flipDisplayPelakuUsaha?{display:'block'}:{display:'none'}}
+            className={contentStyles.body} 
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelTitleBack}>
+                    {
+                        skalaUsaha != null ? `${skalaUsaha!.nama}`:null
+                    }
+                </Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Jenis Pelaku Usaha</Label>
+                <Label styles={subLabelStyle}>Jenis pelaku usaha harus sesuai dengan data pada OSS-RBA.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Jenis pelaku Usaha"
+                        placeholder="Pilih jenis pelaku usaha"
+                        options={dataKategoriPelakuUsahaOptions}
+                        required
+                        name="jenisPelakuUsaha"
+                        rules={{ required: "harus diisi" }} 
+                        onChangeItem={handleSetJenisPelakuUsaha}
+                    /> 
+                </Stack.Item>
+            </Stack>
+        </motion.div>
+    );
+}
