@@ -84,7 +84,8 @@ export const KontenDashboardDefault: FC<IKontenDashboardDefaultProps> = (props) 
 
     const handleOnClickCardItem = useCallback(
         (e?: React.SyntheticEvent<HTMLElement>) => {
-            props.setKontenSelected(e?.currentTarget.ariaLabel!);
+            // props.setKontenSelected(e!.currentTarget.ariaLabel!);
+            props.setKontenSelected(e!.currentTarget.attributes[2].value);
         },
         []
     );

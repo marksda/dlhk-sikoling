@@ -8,7 +8,7 @@ const kontenStyles: IStackStyles = {
         padding: '0px 16px',        
     },
 };
-const getKontentDashboard = (item: string, ft: any) => {
+const getKontentDashboard = (item: string, ft: (item: string) => void) => {
     let konten = null;
     switch (item) {
         case 'dashboard-default':
