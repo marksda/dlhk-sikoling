@@ -189,6 +189,10 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
         flipDisplaySkalaUsaha: false,
         animPelakuUsaha: 'close',
         flipDisplayPelakuUsaha: false,
+        animDetailPerusahaanOSS: 'closed',
+        flipDisplayDetailPerusahaanOSS: false,
+        animDetailPerusahaanNonOSS: 'closed',
+        flipDisplayDetailPerusahaanNonOSS: false,
     });  
     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
