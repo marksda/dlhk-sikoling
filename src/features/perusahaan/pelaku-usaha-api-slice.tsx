@@ -54,7 +54,7 @@ export const PelakuUsahaApiSlice = createApi({
                 query: () => `pelaku_usaha/kategori`,
             }),
             getAllKategoriPelakuUsahaBySkalaUsaha: builder.query<IKategoriPelakuUsaha[], ISkalaUsaha>({
-                query: (skalaUsaha) => `pelaku_usaha/kategori/skala_usaha?idSkalaUsaha=${skalaUsaha.id}`,
+                query: (skalaUsaha) => `pelaku_usaha/kategori/by_skala_usaha?idSkalaUsaha=${skalaUsaha.id}`,
             }),
             getAllPelakuUsaha: builder.query<IPelakuUsaha[], void>({
                 query: () => `pelaku_usaha`,
@@ -77,8 +77,8 @@ export const PelakuUsahaApiSlice = createApi({
             getPelakuUsahaByNamaAndPage: builder.query<IPelakuUsaha[], IHalamanBasePageAndPageSizeAndNama>({
                 query: ({nama, page=1, pageSize=10}) => `pelaku_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
-            getPelakuUsahaByKategoriPelakuUsaha: builder.query<IPelakuUsaha[], string>({
-                query: (idKategori) => `pelaku_usaha/bykategori?idKategori=${idKategori}`,
+            getPelakuUsahaByKategoriPelakuUsaha: builder.query<IPelakuUsaha[], IKategoriPelakuUsaha>({
+                query: (kategoriPelakuUsaha) => `pelaku_usaha/by_kategori?idKategori=${kategoriPelakuUsaha.id}`,
             })
         }
     }

@@ -1,6 +1,6 @@
 import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Control, useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
@@ -9,7 +9,7 @@ import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 import { HookFormAnimProps } from "../../app/HookFormProps";
-import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 
 
 interface IStateFormulirAddPerusahaanAnimationFramer {
@@ -651,8 +651,15 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
         name: ['pelakuUsaha']
     });
 
-    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } =
+    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
+    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
     
+    useEffect(
+        () => {
+            
+        },
+        [dataPelakuUsaha]
+    );
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -702,7 +709,7 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                     }}/>
                 <Label styles={labelTitleBack}>
                     {
-                        pelakuUsaha != null ? `${pelakuUsaha.kategoriPelakuUsaha.nama}`:null
+                        pelakuUsaha.kategoriPelakuUsaha != null ? `${pelakuUsaha.kategoriPelakuUsaha.nama}`:null
                     }
                 </Label>
             </Stack>
