@@ -22,7 +22,7 @@ interface IStateFormulirAddPerusahaanAnimationFramer {
     animDetailPerusahaanOSS: string;
     flipDisplayDetailPerusahaanOSS: boolean;
     animDetailPerusahaanNonOSS: string;
-    flipDisplayDetailPerusahaanNonOSS: boolean;
+    flipDisplayDetailPerusahaanNonOSS: boolean;    
 };
 const duration: number = 0.5;
 const variantModelPerizinan = {
@@ -257,6 +257,12 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
                 setValue={setValue}
             />
             <FormPelakuUsaha
+                variant={variant} 
+                setVariant={setVariant}
+                control={control}
+                setValue={setValue}
+            />
+            <FormDetailPerusahaanOSS
                 variant={variant} 
                 setVariant={setVariant}
                 control={control}
@@ -505,7 +511,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
         control: props.control, 
         name: ['skalaUsaha', 'pelakuUsaha', 'modelPerizinan']
     });
-    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingkategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
+    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
     const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
 
     const processBackToPreviousStep = useCallback(
@@ -645,6 +651,34 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
         name: ['pelakuUsaha']
     });
 
+    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } =
+    
+
+    const processBackToPreviousStep = useCallback(
+        () => {
+            props.setVariant(
+                (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animDetailPerusahaanOSS: 'closed'})
+            );
+
+            let timer = setTimeout(
+                () => {
+                    // props.changeHightContainer(300);
+                    props.setVariant(
+                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
+                            ...prev,                             
+                            animPelakuUsaha: 'open',
+                            flipDisplayDetailPerusahaanOSS: false, 
+                            flipDisplayPelakuUsaha: true, 
+                        })
+                    );
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
     return (
         <motion.div
             animate={props.variant.animDetailPerusahaanOSS}
@@ -652,6 +686,26 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
             style={props.variant.flipDisplayDetailPerusahaanOSS?{display:'block'}:{display:'none'}}
             className={contentStyles.body} 
         >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelTitleBack}>
+                    {
+                        pelakuUsaha != null ? `${pelakuUsaha.kategoriPelakuUsaha.nama}`:null
+                    }
+                </Label>
+            </Stack>
 
         </motion.div>
     );
