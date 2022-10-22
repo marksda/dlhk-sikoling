@@ -637,7 +637,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
 interface IFormDetailPerusahaanOSS extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
-}
+};
 
 const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
     const [pelakuUsaha] = useWatch({
