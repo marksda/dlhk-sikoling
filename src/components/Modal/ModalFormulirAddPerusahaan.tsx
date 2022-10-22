@@ -10,6 +10,7 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
 interface IStateFormulirAddPerusahaanAnimationFramer {
@@ -717,7 +718,8 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                 <Label styles={labelStyle}>Data Perusahaan</Label>
                 <Label styles={subLabelStyle}>Isikan detail data perusahaan sesuai dengan data OSS-RBA.</Label>
             </Stack>
-            <Stack.Item>
+            <Stack>
+                <Stack.Item>
                     <ControlledFluentUiDropDown
                         label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
                         placeholder="Silahkan pilih "
@@ -727,6 +729,14 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                         rules={{ required: "harus diisi" }} 
                     /> 
                 </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiTextField 
+                        label="Nama"
+                        name="nama"
+                        control={props.control}
+                    />
+                </Stack.Item>
+            </Stack>
         </motion.div>
     );
 }
