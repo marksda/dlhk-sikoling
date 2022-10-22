@@ -608,7 +608,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
                     }}/>
                 <Label styles={labelTitleBack}>
                     {
-                        skalaUsaha != null ? `${skalaUsaha!.nama}`:null
+                        skalaUsaha != null ? `Skala usaha - ${skalaUsaha!.singkatan}`:null
                     }
                 </Label>
             </Stack>
@@ -619,7 +619,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
-                        label="Jenis pelaku Usaha"
+                        label="Jenis pelaku usaha"
                         placeholder="Pilih jenis pelaku usaha"
                         options={dataKategoriPelakuUsahaOptions}
                         required
@@ -652,11 +652,11 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
     });
 
     const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
-    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
+    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
     
     useEffect(
         () => {
-            
+
         },
         [dataPelakuUsaha]
     );
@@ -707,13 +707,26 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                             marginTop: 2,
                         }
                     }}/>
-                <Label styles={labelTitleBack}>
+                <Label styles={labelTitleBack}>                    
                     {
-                        pelakuUsaha.kategoriPelakuUsaha != null ? `${pelakuUsaha.kategoriPelakuUsaha.nama}`:null
+                        pelakuUsaha.kategoriPelakuUsaha != null ? `Jenis pelaku usaha - ${pelakuUsaha.kategoriPelakuUsaha.nama}`:null
                     }
                 </Label>
             </Stack>
-
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Data Perusahaan</Label>
+                <Label styles={subLabelStyle}>Isikan detail data perusahaan sesuai dengan data OSS-RBA.</Label>
+            </Stack>
+            <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
+                        placeholder="Silahkan pilih "
+                        options={dataPelakuUsahaOptions}
+                        required
+                        name="jenisPelakuUsaha"
+                        rules={{ required: "harus diisi" }} 
+                    /> 
+                </Stack.Item>
         </motion.div>
     );
 }
