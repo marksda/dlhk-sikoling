@@ -1,11 +1,11 @@
 import { Stack } from "@fluentui/react";
 import { FC, ReactNode } from "react";
 
-interface IApp1Props {
+interface IAppLayoutProps {
     children?: ReactNode;
 };
 
-export const App1Layout: FC<IApp1Props> = ({children}) => {
+export const AppLayout: FC<IAppLayoutProps> = ({children}) => {
     return (
         <Stack>
             {children}

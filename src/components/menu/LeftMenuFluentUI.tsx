@@ -10,6 +10,7 @@ interface IHookFormLeftNavigationProps {
 }
 
 export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = (Props) => {
+    console.log('menu');
     return (
         <Nav {...Props}/>  
     );

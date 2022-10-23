@@ -6,13 +6,8 @@ import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { TopBarFluentUI } from "../components/TopBar/TopBarFluentUI";
 import { SideBarFluentUI } from "../components/SideBar/SideBarFluentUI";
-import { App1Layout } from "../components/Layout/App-1";
-
-const stackMainContainerStyles: IStackStyles = {
-    root: {
-        backgroundColor: '#F6F8F9'
-    },
-};
+import { AppLayout } from "../components/Layout/AppLayout";
+import { MainLayout } from "../components/Layout/MainLayout";
 
 const rightPanelStyles: IStackItemStyles = {
     root: {
@@ -104,9 +99,9 @@ export const PemrakarsaPage: FC = () => {
     );
 
     return (        
-        <App1Layout>
+        <AppLayout>
             <TopBarFluentUI />
-            <Stack horizontal styles={stackMainContainerStyles} className="main-content">
+            <MainLayout>
                 <SideBarFluentUI>
                     <LeftMenuFluentUI 
                         onLinkClick={onItemMenuSelected}
@@ -121,8 +116,8 @@ export const PemrakarsaPage: FC = () => {
                         getKontentPemrakarsa(selectedKeyItemMenu)
                     }
                 </Stack.Item>
-            </Stack>
-        </App1Layout>
+            </MainLayout>
+        </AppLayout>
     );
 };
 
