@@ -1,6 +1,6 @@
 import { INavLinkGroup } from "@fluentui/react";
 import { FC, useState } from "react";
-import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";

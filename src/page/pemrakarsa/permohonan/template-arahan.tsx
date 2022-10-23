@@ -1,6 +1,6 @@
 import { DefaultEffects, Stack } from "@fluentui/react";
 import { FC } from "react";
-import { FormulirPemrakarsa } from "../../components/FormulirPemrakarsa/FormulirPemrakarsa";
+import { FormulirPemrakarsa } from "../../../components/FormulirPemrakarsa/FormulirPemrakarsa";
 
 const kontenStyles: React.CSSProperties = {    
     // boxShadow: DefaultEffects.elevation4, 

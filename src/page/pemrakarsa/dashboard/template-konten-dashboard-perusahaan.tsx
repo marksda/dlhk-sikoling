@@ -1,8 +1,8 @@
 import { CommandBar, DefaultEffects, ICommandBarItemProps, IStackTokens, Stack } from "@fluentui/react";
 import { useBoolean } from "@fluentui/react-hooks";
 import { FC } from "react";
-import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUI";
-import { ModalFormulirAddPerusahaan } from "../../components/Modal/ModalFormulirAddPerusahaan";
+import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUI";
+import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
 
 const containerDivStyles: React.CSSProperties = {    
     boxShadow: DefaultEffects.elevation4, 
