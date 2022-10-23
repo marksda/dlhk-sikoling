@@ -181,7 +181,7 @@ interface IModalFormulirPerusahaanProps {
     hideModal: () => void
 };
 export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (props) => {  
-    console.log('parent');
+    // console.log('parent');
     //* local state *   
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
     const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
