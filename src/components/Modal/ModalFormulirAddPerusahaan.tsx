@@ -195,49 +195,60 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
         animDetailPerusahaanNonOSS: 'closed',
         flipDisplayDetailPerusahaanNonOSS: false,
     });  
-    const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
-    const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false); 
-    const titleId = useId('Formulir Perusahaan');
-    const { control, handleSubmit, setValue } = useForm<IPerusahaan>({
-        mode: 'onSubmit',
-        defaultValues: {
-            id: '',
-            nama: '',
-            modelPerizinan: null,
-            skalaUsaha: {
-                id: '',
-                nama: '',
-                singkatan:''
-            },
-            pelakuUsaha: {
-                id: '',
-                nama: '',
-                singkatan:'',
-                kategoriPelakuUsaha: null
-            },
-            alamat: {
-                propinsi: defaultPropinsi,
-                kabupaten: defaultKabupaten,
-                kecamatan: defaultKecamatan,
-                desa: defaultDesa,
-                keterangan: '',
-            },
-            kontakPerusahaan: null
-        }
-    });    
+    // const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
+    // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
+    // const [isLoading, setIsLoading] = useState<boolean>(false); 
+    // const titleId = useId('Formulir Perusahaan');
+    // const { control, handleSubmit, setValue, reset } = useForm<IPerusahaan>({
+    //     mode: 'onSubmit',
+    //     defaultValues: {
+    //         id: '',
+    //         nama: '',
+    //         modelPerizinan: {
+    //             id: '',
+    //             nama: '',
+    //             singkatan: ''
+    //         },
+    //         skalaUsaha: {
+    //             id: '',
+    //             nama: '',
+    //             singkatan:''
+    //         },
+    //         pelakuUsaha: {
+    //             id: '',
+    //             nama: '',
+    //             singkatan:'',
+    //             kategoriPelakuUsaha: null
+    //         },
+    //         alamat: {
+    //             propinsi: defaultPropinsi,
+    //             kabupaten: defaultKabupaten,
+    //             kecamatan: defaultKecamatan,
+    //             desa: defaultDesa,
+    //             keterangan: '',
+    //         },
+    //         kontakPerusahaan: null
+    //     }
+    // });   
+    
+    const handleCloseModal = useCallback(
+        () => {
+            props.hideModal();
+        },
+        []
+    );
     
     return (
         <Modal
-            titleAriaId={titleId}
+            // titleAriaId={titleId}
             isOpen={props.isModalOpen}
-            onDismiss={props.hideModal}
+            onDismiss={handleCloseModal}
             isBlocking={true}
             containerClassName={contentStyles.container}
-            dragOptions={isDraggable ? dragOptions : undefined}
+            // dragOptions={isDraggable ? dragOptions : undefined}
         >
             <div className={contentStyles.header}>
-                <span id={titleId}>Tambah Perusahaan</span>
+                <span id={'123'}>Tambah Perusahaan</span>
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
@@ -248,31 +259,9 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
             <FormModelPerizinan
                 variant={variant} 
                 setVariant={setVariant}
-                control={control}
-                setValue={setValue}
+                // control={control}
+                // setValue={setValue}
             />
-            <FormSkalaUsaha
-                variant={variant} 
-                setVariant={setVariant}
-                control={control}
-                setValue={setValue}
-            />
-            <FormPelakuUsaha
-                variant={variant} 
-                setVariant={setVariant}
-                control={control}
-                setValue={setValue}
-            />
-            <FormDetailPerusahaanOSS
-                variant={variant} 
-                setVariant={setVariant}
-                control={control}
-                setValue={setValue}
-            />
-            {
-            isLoading && (
-                <ProgressIndicator styles={progressStyle}/>)
-            }  
         </Modal>
     );
 };
@@ -297,6 +286,11 @@ interface IFormModelPerizinanProps extends HookFormAnimProps {
     setValue?: any;
 };
 const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {  
+    // const [modelPerizinan] = useWatch({
+    //     control: props.control, 
+    //     name: ['modelPerizinan']
+    // });
+    // console.log(modelPerizinan);
     //rtk query modelperizinan variable hook
     const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
     const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
@@ -323,6 +317,7 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
 
     const handleSetModelPerizinan = useCallback(
         (itemSelected) => {
+            console.log(itemSelected);
             let itemModelPerizinanSelected = dataModelPerizinan.find(
                 (item) => { return item.id == itemSelected.key; } 
             )
@@ -351,7 +346,7 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
                         required
                         name="modelPerizinan"
                         rules={{ required: "harus diisi" }} 
-                        onChangeItem={handleSetModelPerizinan}
+                        control={props.control}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -359,8 +354,8 @@ const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {
                 <PrimaryButton 
                     text="Lanjut" 
                     onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    />
+                    style={{marginTop: 24, width: 100}}        
+                />
             </Stack>   
         </motion.div>
     );
@@ -488,6 +483,7 @@ const FormSkalaUsaha: FC<IFormSkalaUsahaProps> = (props) => {
                         name="skalaUsaha"
                         rules={{ required: "harus diisi" }} 
                         onChangeItem={handleSetSkalaUsaha}
+                        control={props.control}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -627,6 +623,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
                         name="jenisPelakuUsaha"
                         rules={{ required: "harus diisi" }} 
                         onChangeItem={handleSetJenisPelakuUsaha}
+                        control={props.control}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -640,7 +637,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
         </motion.div>
     );
 };
-/*----------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------*/
 interface IFormDetailPerusahaanOSS extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
@@ -727,6 +724,7 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                         required
                         name="jenisPelakuUsaha"
                         rules={{ required: "harus diisi" }} 
+                        control={props.control}
                     /> 
                 </Stack.Item>
                 <Stack.Item>
@@ -739,4 +737,5 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
             </Stack>
         </motion.div>
     );
-}
+};
+/*----------------------------------------------------------------------------------------*/
