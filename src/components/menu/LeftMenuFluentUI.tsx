@@ -9,8 +9,8 @@ interface IHookFormLeftNavigationProps {
   onLinkClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => void;
 }
 
-export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = (props) => {
+export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = (Props) => {
     return (
-        <Nav {...props}/>  
+        <Nav {...Props}/>  
     );
 }

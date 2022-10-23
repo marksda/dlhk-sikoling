@@ -181,6 +181,7 @@ interface IModalFormulirPerusahaanProps {
     hideModal: () => void
 };
 export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (props) => {  
+    console.log('parent');
     //* local state *   
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
     const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
@@ -198,38 +199,38 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
     // const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     // const [isLoading, setIsLoading] = useState<boolean>(false); 
-    // const titleId = useId('Formulir Perusahaan');
-    // const { control, handleSubmit, setValue, reset } = useForm<IPerusahaan>({
-    //     mode: 'onSubmit',
-    //     defaultValues: {
-    //         id: '',
-    //         nama: '',
-    //         modelPerizinan: {
-    //             id: '',
-    //             nama: '',
-    //             singkatan: ''
-    //         },
-    //         skalaUsaha: {
-    //             id: '',
-    //             nama: '',
-    //             singkatan:''
-    //         },
-    //         pelakuUsaha: {
-    //             id: '',
-    //             nama: '',
-    //             singkatan:'',
-    //             kategoriPelakuUsaha: null
-    //         },
-    //         alamat: {
-    //             propinsi: defaultPropinsi,
-    //             kabupaten: defaultKabupaten,
-    //             kecamatan: defaultKecamatan,
-    //             desa: defaultDesa,
-    //             keterangan: '',
-    //         },
-    //         kontakPerusahaan: null
-    //     }
-    // });   
+    const titleId = useId('Formulir Perusahaan');
+    const { control, handleSubmit, setValue, reset } = useForm<IPerusahaan>({
+        mode: 'onSubmit',
+        defaultValues: {
+            id: '',
+            nama: '',
+            modelPerizinan: {
+                id: '',
+                nama: '',
+                singkatan: ''
+            },
+            skalaUsaha: {
+                id: '',
+                nama: '',
+                singkatan:''
+            },
+            pelakuUsaha: {
+                id: '',
+                nama: '',
+                singkatan:'',
+                kategoriPelakuUsaha: null
+            },
+            alamat: {
+                propinsi: defaultPropinsi,
+                kabupaten: defaultKabupaten,
+                kecamatan: defaultKecamatan,
+                desa: defaultDesa,
+                keterangan: '',
+            },
+            kontakPerusahaan: null
+        }
+    });   
     
     const handleCloseModal = useCallback(
         () => {
@@ -237,10 +238,10 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
         },
         []
     );
-    
+   
     return (
         <Modal
-            // titleAriaId={titleId}
+            titleAriaId={titleId}
             isOpen={props.isModalOpen}
             onDismiss={handleCloseModal}
             isBlocking={true}
@@ -248,7 +249,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
             // dragOptions={isDraggable ? dragOptions : undefined}
         >
             <div className={contentStyles.header}>
-                <span id={'123'}>Tambah Perusahaan</span>
+                <span id={titleId}>Tambah Perusahaan</span>
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
@@ -259,7 +260,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
             <FormModelPerizinan
                 variant={variant} 
                 setVariant={setVariant}
-                // control={control}
+                control={control}
                 // setValue={setValue}
             />
         </Modal>
@@ -286,11 +287,11 @@ interface IFormModelPerizinanProps extends HookFormAnimProps {
     setValue?: any;
 };
 const FormModelPerizinan: FC<IFormModelPerizinanProps> = (props) => {  
+    console.log('anak');
     // const [modelPerizinan] = useWatch({
     //     control: props.control, 
     //     name: ['modelPerizinan']
     // });
-    // console.log(modelPerizinan);
     //rtk query modelperizinan variable hook
     const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
     const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });

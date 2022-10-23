@@ -1,38 +1,19 @@
-import { getTheme, INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
+import { INavLink, INavLinkGroup, INavStyles, IStackItemStyles, IStackStyles, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
-import { LeftMenuFluentUI } from "../components/menu/LeftMenuFluentUI";
+import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
+import { TopBarFluentUI } from "../components/TopBar/TopBarFluentUI";
+import { SideBarFluentUI } from "../components/SideBar/SideBarFluentUI";
+import { App1Layout } from "../components/Layout/App-1";
 
-const theme = getTheme();
-const stackStyles: IStackStyles = {
-    root: {
-        backgroundColor: theme.palette.themePrimary,
-        color: theme.palette.white,
-        lineHeight: '50px',
-        padding: '0 20px',
-    },
-};
 const stackMainContainerStyles: IStackStyles = {
     root: {
         backgroundColor: '#F6F8F9'
     },
 };
-const labelStyles: IStackItemStyles = {
-    root: {
-      fontSize: '1.2em',
-      fontWeight: 500
-    },
-};
-const leftPanelStyles: IStackItemStyles = {
-    root: {
-        height: 'calc(100vh - 68px)',
-        width: 200,
-        padding: 8,        
-        border: '1px solid #eee',
-    },
-};
+
 const rightPanelStyles: IStackItemStyles = {
     root: {
         height: 'calc(100vh - 60px)',
@@ -123,14 +104,10 @@ export const PemrakarsaPage: FC = () => {
     );
 
     return (        
-        <Stack>
-            <Stack horizontal styles={stackStyles}>
-                <Stack.Item grow align="center" styles={labelStyles}>
-                    Sikoling  
-                </Stack.Item>  
-            </Stack>
-            <Stack horizontal styles={stackMainContainerStyles}>
-                <Stack.Item styles={leftPanelStyles}>
+        <App1Layout>
+            <TopBarFluentUI />
+            <Stack horizontal styles={stackMainContainerStyles} className="main-content">
+                <SideBarFluentUI>
                     <LeftMenuFluentUI 
                         onLinkClick={onItemMenuSelected}
                         selectedKey={selectedKeyItemMenu}
@@ -138,14 +115,14 @@ export const PemrakarsaPage: FC = () => {
                         styles={navStyles}
                         groups={navLinkGroups}
                     />
-                </Stack.Item>  
+                </SideBarFluentUI>
                 <Stack.Item grow styles={rightPanelStyles}>
                     {
                         getKontentPemrakarsa(selectedKeyItemMenu)
                     }
                 </Stack.Item>
             </Stack>
-        </Stack>
+        </App1Layout>
     );
 };
 
