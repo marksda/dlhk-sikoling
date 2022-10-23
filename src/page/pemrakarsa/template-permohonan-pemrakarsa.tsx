@@ -4,7 +4,7 @@ import {
     Label, 
     mergeStyles, mergeStyleSets, Stack 
 } from "@fluentui/react";
-import { PermohonanArahan } from "./pemrakarsa/permohonan/template-arahan";
+import { PermohonanArahan } from "./permohonan/template-arahan";
 
 const kontenStackTokens: IStackTokens = { childrenGap: 5 };
 const kontenStyles: IStackStyles = {
