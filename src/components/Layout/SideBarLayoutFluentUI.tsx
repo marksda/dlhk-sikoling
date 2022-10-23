@@ -16,7 +16,7 @@ const RootStackItemStyles: IStackItemStyles = {
     },
 };
 
-export const SideBarFluentUI: FC<ISideBarProps> = ({children}) => {
+export const SideBarLayoutFluentUI: FC<ISideBarProps> = ({children}) => {
     return (
         <Stack.Item styles={RootStackItemStyles}>
             {children}

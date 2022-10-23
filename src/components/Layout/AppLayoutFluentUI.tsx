@@ -5,7 +5,7 @@ interface IAppLayoutProps {
     children?: ReactNode;
 };
 
-export const AppLayout: FC<IAppLayoutProps> = ({children}) => {
+export const AppLayoutFluentUI: FC<IAppLayoutProps> = ({children}) => {
     return (
         <Stack>
             {children}

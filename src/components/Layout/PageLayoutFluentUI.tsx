@@ -13,7 +13,7 @@ const RootIStackStyles: IStackItemStyles = {
     },
 };
 
-export const PageLayout: FC<IPageLayoutProps> = ({children}) => {
+export const PageLayoutFluentUI: FC<IPageLayoutProps> = ({children}) => {
     return (
         <Stack.Item grow styles={RootIStackStyles}>
             {children}

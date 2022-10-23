@@ -11,7 +11,7 @@ const RootStackStyles: IStackStyles = {
     },
 };
 
-export const MainLayout: FC<IMainLayoutProps> = ({children}) => {
+export const MainLayoutFluentUI: FC<IMainLayoutProps> = ({children}) => {
     return (
         <Stack horizontal styles={RootStackStyles}>
             {children}

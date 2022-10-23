@@ -5,10 +5,10 @@ import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { TopBarFluentUI } from "../components/TopBar/TopBarFluentUI";
-import { SideBarFluentUI } from "../components/SideBar/SideBarFluentUI";
-import { AppLayout } from "../components/Layout/AppLayout";
-import { MainLayout } from "../components/Layout/MainLayout";
-import { PageLayout } from "../components/Layout/PageLayout";
+import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
+import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
+import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
+import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
 
 const navLinkGroups: INavLinkGroup[] = [
   {
@@ -78,21 +78,21 @@ export const PemrakarsaPage: FC = () => {
     const [idContentPage, setIdContentPage] = useState<string>('dsb');
 
     return (        
-        <AppLayout>
+        <AppLayoutFluentUI>
             <TopBarFluentUI />
-            <MainLayout>
-                <SideBarFluentUI>
+            <MainLayoutFluentUI>
+                <SideBarLayoutFluentUI>
                     <LeftMenuFluentUI 
                       menus={navLinkGroups}
                       setIdContentPage={setIdContentPage}/>
-                </SideBarFluentUI>
-                <PageLayout>
+                </SideBarLayoutFluentUI>
+                <PageLayoutFluentUI>
                     {
                         getContentPage(idContentPage)
                     }
-                </PageLayout>
-            </MainLayout>
-        </AppLayout>
+                </PageLayoutFluentUI>
+            </MainLayoutFluentUI>
+        </AppLayoutFluentUI>
     );
 };
 
