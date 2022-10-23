@@ -1,5 +1,5 @@
 import { IStackStyles, Stack } from "@fluentui/react";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface IMainLayoutProps {
     children?: ReactNode;

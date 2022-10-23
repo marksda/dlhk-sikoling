@@ -8,14 +8,8 @@ import { TopBarFluentUI } from "../components/TopBar/TopBarFluentUI";
 import { SideBarFluentUI } from "../components/SideBar/SideBarFluentUI";
 import { AppLayout } from "../components/Layout/AppLayout";
 import { MainLayout } from "../components/Layout/MainLayout";
+import { PageLayout } from "../components/Layout/PageLayout";
 
-const rightPanelStyles: IStackItemStyles = {
-    root: {
-        height: 'calc(100vh - 60px)',
-        // padding: '0px 4px 8px 4px',   
-        padding: 0,     
-    },
-};
 const navStyles: Partial<INavStyles> = {
     root: {
       height: 'calc(100vh - 68px)',
@@ -23,6 +17,7 @@ const navStyles: Partial<INavStyles> = {
       overflowY: 'auto',
     },
 };
+
 const navLinkGroups: INavLinkGroup[] = [
     {
       links: [
@@ -111,11 +106,11 @@ export const PemrakarsaPage: FC = () => {
                         groups={navLinkGroups}
                     />
                 </SideBarFluentUI>
-                <Stack.Item grow styles={rightPanelStyles}>
+                <PageLayout>
                     {
                         getKontentPemrakarsa(selectedKeyItemMenu)
                     }
-                </Stack.Item>
+                </PageLayout>
             </MainLayout>
         </AppLayout>
     );

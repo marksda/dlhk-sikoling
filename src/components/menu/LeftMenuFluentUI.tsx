@@ -9,8 +9,15 @@ interface IHookFormLeftNavigationProps {
   onLinkClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => void;
 }
 
+const navStyles: Partial<INavStyles> = {
+  root: {
+    height: 'calc(100vh - 68px)',
+    boxSizing: 'border-box',
+    overflowY: 'auto',
+  },
+};
+
 export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = (Props) => {
-    console.log('menu');
     return (
         <Nav {...Props}/>  
     );

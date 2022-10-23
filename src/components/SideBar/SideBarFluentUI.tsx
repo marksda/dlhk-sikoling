@@ -17,7 +17,6 @@ const RootStackItemStyles: IStackItemStyles = {
 };
 
 export const SideBarFluentUI: FC<ISideBarProps> = ({children}) => {
-    console.log('samping');
     return (
         <Stack.Item styles={RootStackItemStyles}>
             {children}
