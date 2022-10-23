@@ -4,7 +4,7 @@ import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
-import { TopBarFluentUI } from "../components/TopBar/TopBarFluentUI";
+import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
 import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
 import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
 import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
@@ -79,12 +79,13 @@ export const PemrakarsaPage: FC = () => {
 
     return (        
         <AppLayoutFluentUI>
-            <TopBarFluentUI />
+            <TopBarLayoutFluentUI />
             <MainLayoutFluentUI>
                 <SideBarLayoutFluentUI>
-                    <LeftMenuFluentUI 
-                      menus={navLinkGroups}
-                      setIdContentPage={setIdContentPage}/>
+                  <LeftMenuFluentUI 
+                    menus={navLinkGroups}
+                    setIdContentPage={setIdContentPage}
+                  />
                 </SideBarLayoutFluentUI>
                 <PageLayoutFluentUI>
                     {

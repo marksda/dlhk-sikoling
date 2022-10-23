@@ -17,7 +17,7 @@ const labelTopBarStyles: IStackItemStyles = {
     },
 };
 
-export const TopBarFluentUI: FC = () => {
+export const TopBarLayoutFluentUI: FC = () => {
     return (
         <Stack horizontal styles={RootStackStyles}>
             <Stack.Item grow align="center" styles={labelTopBarStyles}>
