@@ -1,12 +1,9 @@
 import { INavLink, INavLinkGroup, INavStyles, Nav } from "@fluentui/react";
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
 interface IHookFormLeftNavigationProps {
-  selectedKey: string;
-  ariaLabel: string;
-  styles: Partial<INavStyles>;
-  groups: INavLinkGroup[];
-  onLinkClick: (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => void;
+  menus: INavLinkGroup[];
+  setIdContentPage: (idPage: string) => void;
 }
 
 const navStyles: Partial<INavStyles> = {
@@ -17,8 +14,26 @@ const navStyles: Partial<INavStyles> = {
   },
 };
 
-export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = (Props) => {
+export const LeftMenuFluentUI: FC<IHookFormLeftNavigationProps> = ({menus,setIdContentPage}) => {
+    const [selectedKeyItemMenu, setSelectedKeyItemMenu] = useState<string>(menus![0].links![0].key!);
+
+    const onItemMenuSelected = useCallback(
+      (ev?: React.MouseEvent<HTMLElement>, item?: INavLink) => {
+          if(item) {
+              setSelectedKeyItemMenu(item.key!);
+              setIdContentPage(item.key!);
+          }
+      },
+      []
+    );
+
     return (
-        <Nav {...Props}/>  
+        <Nav 
+          onLinkClick={onItemMenuSelected}
+          selectedKey={selectedKeyItemMenu}
+          ariaLabel="left menu pemrakarsa"
+          styles={navStyles}
+          groups={menus}
+        />  
     );
 }
