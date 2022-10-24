@@ -1,13 +1,10 @@
 import { Dropdown, IDropdownProps } from "@fluentui/react";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Controller } from "react-hook-form";
 import { HookFluentUiDropDownProps } from "../../app/HookFormProps";
 
 
-export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdownProps> = (props) => {
-    // const [item, setItem] = useState(props.defaultItemSelected);
-    // console.log(props.defaultItemSelected);
-    
+export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdownProps> = (props) => {    
     return (        
         <Controller 
             name={props.name}
