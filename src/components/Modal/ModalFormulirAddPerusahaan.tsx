@@ -12,7 +12,6 @@ import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
-
 interface IStateFormulirAddPerusahaanAnimationFramer {
     animModelPerizinan: string;
     flipDisplayModelPerizinan: boolean;
