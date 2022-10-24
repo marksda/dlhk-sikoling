@@ -1,6 +1,5 @@
 import { CommandBar, DefaultEffects, ICommandBarItemProps, IStackTokens, Stack } from "@fluentui/react";
 import { useBoolean } from "@fluentui/react-hooks";
-import { AnimatePresence, motion } from "framer-motion";
 import { FC } from "react";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUI";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";

@@ -1,4 +1,4 @@
-import { Breadcrumb, DefaultEffects, IBreadcrumbItem, IStackStyles, Stack } from "@fluentui/react";
+import { Breadcrumb, IBreadcrumbItem, IStackStyles, Stack } from "@fluentui/react";
 import React, { FC, useCallback, useState } from "react";
 import { KontenDashboardDefault } from "./dashboard/template-konten-dashboard-default";
 import { KontenDashboardPerusahaan } from "./dashboard/template-konten-dashboard-perusahaan";
