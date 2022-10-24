@@ -182,23 +182,23 @@ interface IModalFormulirPerusahaanProps {
     children?: ReactNode;
 };
 
-export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (props) => {  
+export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, children}) => {  
     
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('modelPerizinan')
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
-    const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
-        animModelPerizinan: 'open',
-        flipDisplayModelPerizinan: true,
-        animSkalaUsaha: 'close',
-        flipDisplaySkalaUsaha: false,
-        animPelakuUsaha: 'close',
-        flipDisplayPelakuUsaha: false,
-        animDetailPerusahaanOSS: 'closed',
-        flipDisplayDetailPerusahaanOSS: false,
-        animDetailPerusahaanNonOSS: 'closed',
-        flipDisplayDetailPerusahaanNonOSS: false,
-    });  
+    // const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
+    //     animModelPerizinan: 'open',
+    //     flipDisplayModelPerizinan: true,
+    //     animSkalaUsaha: 'close',
+    //     flipDisplaySkalaUsaha: false,
+    //     animPelakuUsaha: 'close',
+    //     flipDisplayPelakuUsaha: false,
+    //     animDetailPerusahaanOSS: 'closed',
+    //     flipDisplayDetailPerusahaanOSS: false,
+    //     animDetailPerusahaanNonOSS: 'closed',
+    //     flipDisplayDetailPerusahaanNonOSS: false,
+    // });  
     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     // const [isLoading, setIsLoading] = useState<boolean>(false); 
@@ -237,7 +237,8 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
     
     const handleCloseModal = useCallback(
         () => {
-            props.hideModal();
+            setMotionKey('modelPerizinan');
+            hideModal();
         },
         []
     );
@@ -245,7 +246,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
     return (
         <Modal
             titleAriaId={titleId}
-            isOpen={props.isModalOpen}
+            isOpen={isModalOpen}
             onDismiss={handleCloseModal}
             isBlocking={true}
             containerClassName={contentStyles.container}
@@ -257,7 +258,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
                     ariaLabel="Close popup modal"
-                    onClick={props.hideModal}
+                    onClick={handleCloseModal}
                 />
             </div>
             {
