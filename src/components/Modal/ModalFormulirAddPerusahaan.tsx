@@ -1,13 +1,13 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack } from "@fluentui/react";
+import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Control, useForm, UseFormSetValue, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
-import { IModelPerizinan, useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
+import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
+import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
@@ -175,15 +175,14 @@ const dragOptions: IDragOptions = {
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 
-/*-------------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------Modal Container--------------------------------------------------------------*/
 interface IModalFormulirPerusahaanProps {
     isModalOpen: boolean;
     hideModal: () => void;
     children?: ReactNode;
 };
 
-export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, children}) => {  
-    
+export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, children}) => {    
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('modelPerizinan')
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
@@ -237,6 +236,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
     
     const handleCloseModal = useCallback(
         () => {
+            reset();
             setMotionKey('modelPerizinan');
             hideModal();
         },
@@ -273,7 +273,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
     );
 };
 
-interface IParamSlideSubFormPerusahaan {
+interface ISlideSubFormPerusahaanParam {
     motionKey: string;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
     control: Control<IPerusahaan, Object>;
@@ -281,7 +281,7 @@ interface IParamSlideSubFormPerusahaan {
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue}: IParamSlideSubFormPerusahaan) => {
+    {motionKey, setMotionKey, control, setValue}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -314,7 +314,7 @@ const getSlideSubFormPerusahaan = (
     }
     return konten;
 };
-/*-------------------------------------------------------------------------------------------------------*/
+/*-------------------------------------------Model Perizinan------------------------------------------------------------*/
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
     root: {
@@ -361,6 +361,10 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
     //rtk query modelperizinan variable hook
     const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
     const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
+    const [modelPerizinan] = useWatch({
+        control: control, 
+        name: ['modelPerizinan']
+    });
 
     const processNextStep = useCallback(
         () => {
@@ -378,9 +382,10 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
 
     const handleSetModelPerizinan = useCallback(
         (itemSelected) => {
+            
             let itemModelPerizinanSelected = dataModelPerizinan.find(
                 (item) => { return item.id == itemSelected.key; } 
-            )
+            );
             setValue("modelPerizinan", itemModelPerizinanSelected!);
         },
         [dataModelPerizinan]
@@ -406,6 +411,8 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
                         name="modelPerizinan"
                         rules={{ required: "harus diisi" }} 
                         control={control}
+                        onChangeItem={handleSetModelPerizinan}
+                        selectedKey={modelPerizinan.id != '' ? modelPerizinan.id : undefined}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -413,13 +420,14 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
                 <PrimaryButton 
                     text="Lanjut" 
                     onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}        
+                    style={{marginTop: 24, width: 100}}       
+                    disabled={modelPerizinan.id == ''? true:false} 
                 />
             </Stack>   
         </motion.div>
     );
 };
-/*---------------------------------------------------------------------------*/
+/*-------------------------------------------Skala Usaha-------------------------------------------------------------*/
 const backIcon: IIconProps = { 
     iconName: 'Back',
     style: {
@@ -438,9 +446,9 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
     //rtk query modelperizinan variable hook
     const { data: dataSkalaUsaha = [], isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
     const dataSkalaUsahaOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-    const [modelPerizinan] = useWatch({
+    const [modelPerizinan, skalaUsaha] = useWatch({
         control: control, 
-        name: ['modelPerizinan']
+        name: ['modelPerizinan', 'skalaUsaha']
     });
 
     const processBackToPreviousStep = useCallback(
@@ -509,7 +517,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
                     }}/>
                 <Label styles={labelTitleBack}>
                     {
-                        modelPerizinan != null ? `${modelPerizinan!.nama} (${modelPerizinan!.singkatan})`:null
+                        modelPerizinan != null ? `Status OSS-RBA : ${modelPerizinan!.singkatan}`:null
                     }
                 </Label>
             </Stack>
@@ -536,12 +544,13 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
                     onClick={processNextStep}
+                    disabled={skalaUsaha.id == ''? true:false}
                 />
             </Stack>   
         </motion.div >
     );
 };
-/*----------------------------------------------------------------------------*/
+/*-------------------------------------------Pelaku Usaha--------------------------------------------------------------*/
 interface IFormKategoriPelakuUsahaProps extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
@@ -681,7 +690,7 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
         </motion.div>
     );
 };
-/*---------------------------------------------------------------------------------------*/
+/*-------------------------------------------Data Detail Perusahaan---------------------------------------------------------------*/
 interface IFormDetailPerusahaanOSS extends HookFormAnimProps {
     control?: Control<any>;
     setValue?: any;
@@ -782,4 +791,4 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
         </motion.div>
     );
 };
-/*----------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/

@@ -16,27 +16,15 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
             render={
                 (
                     {
-                        field: { onChange, onBlur, name: fieldName, value },
+                        field: { onBlur},
                         fieldState: { error }
                     }
                 ) => (
                 <Dropdown
                     {...props}
-                    // selectedKey={value.id != '' ? item.id : undefined}
                     onChange={
-                        (_e, item) => {                            
-                            let itemModelPerizinanSelected = props.options.find(
-                                (itemSelected) => { return itemSelected.id == item!.key; } 
-                            )
-                            console.log(value);
-                            // onChange(itemModelPerizinanSelected);
-                            
-                            // let itemSelected = {id: item?.key as string, nama: item?.text};
-                            // setItem(itemSelected);
-                            // onChange(itemSelected);
-                            // if(typeof props.onChangeItem != 'undefined') {
-                            //     props.onChangeItem(itemSelected);
-                            // }                            
+                        (_e, item) => {      
+                            props.onChangeItem(item);                       
                         }
                     }
                     onBlur={onBlur}
