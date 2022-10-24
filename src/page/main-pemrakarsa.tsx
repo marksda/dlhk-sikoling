@@ -9,6 +9,7 @@ import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentU
 import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
 import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
 import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
+import { AnimatePresence, motion } from "framer-motion";
 
 const navLinkGroups: INavLinkGroup[] = [
   {
@@ -59,7 +60,8 @@ const getContentPage = (idContentPage: string) => {
     let konten = null;
     switch (idContentPage) {
         case 'dsb':
-            konten = <KontenDashboardPemrakarsa />;
+            konten =             
+              <KontenDashboardPemrakarsa />;
             break; 
         case 'pmh':
             konten = <KontenPermohonanPemrakarsa />;   
@@ -75,7 +77,7 @@ const getContentPage = (idContentPage: string) => {
 };
 
 export const PemrakarsaPage: FC = () => {
-    const [idContentPage, setIdContentPage] = useState<string>('dsb');
+    const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);
 
     return (        
         <AppLayoutFluentUI>
@@ -88,9 +90,18 @@ export const PemrakarsaPage: FC = () => {
                   />
                 </SideBarLayoutFluentUI>
                 <PageLayoutFluentUI>
-                    {
+                  <AnimatePresence>
+                    <motion.div
+                      key={idContentPage}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {
                         getContentPage(idContentPage)
-                    }
+                      }
+                    </motion.div>
+                  </AnimatePresence>
                 </PageLayoutFluentUI>
             </MainLayoutFluentUI>
         </AppLayoutFluentUI>

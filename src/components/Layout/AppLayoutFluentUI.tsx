@@ -1,13 +1,14 @@
-import { Stack } from "@fluentui/react";
+import { IStackStyles, Stack } from "@fluentui/react";
 import { FC, ReactNode } from "react";
 
 interface IAppLayoutProps {
     children?: ReactNode;
+    styles?: IStackStyles;
 };
 
-export const AppLayoutFluentUI: FC<IAppLayoutProps> = ({children}) => {
+export const AppLayoutFluentUI: FC<IAppLayoutProps> = ({children, styles}) => {
     return (
-        <Stack>
+        <Stack styles={styles}>
             {children}
         </Stack>
     );
