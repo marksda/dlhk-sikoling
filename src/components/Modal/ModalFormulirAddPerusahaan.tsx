@@ -334,29 +334,8 @@ interface ISubFormPerusahaanProps extends HookFormAnimProps {
     setValue: UseFormSetValue<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
-export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
+const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
     const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
-    // const variantModelPerizinan = {
-    //     open: { 
-    //         opacity: 1, 
-    //         x: 0,      
-    //         transition: {
-    //             duration
-    //         },   
-    //     },
-    //     closed: { 
-    //         opacity: 0, 
-    //         x: '-10%', 
-    //         transition: {
-    //             duration
-    //         },
-    //     },
-    // };
-
-    // const [modelPerizinan] = useWatch({
-    //     control: props.control, 
-    //     name: ['modelPerizinan']
-    // });
     //rtk query modelperizinan variable hook
     const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
     const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
@@ -434,12 +413,14 @@ const backIcon: IIconProps = {
         fontSize: '0.8rem',
     }
 };
+
 const labelTitleBack: ILabelStyles  = {
     root: {
        fontWeight: 400,
        fontSize: '1rem', 
     }
 };
+
 const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
     const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
     //rtk query modelperizinan variable hook
