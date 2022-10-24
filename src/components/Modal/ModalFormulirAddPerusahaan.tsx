@@ -260,23 +260,14 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = (pr
                     onClick={props.hideModal}
                 />
             </div>
-            <AnimatePresence>
-                <motion.div
-                    key={motionKey}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}                   
-                >
-                    {
-                        getSlideSubFormPerusahaan({
-                            motionKey, 
-                            setMotionKey,
-                            control, 
-                            setValue,
-                        })
-                    }                    
-                </motion.div>
-            </AnimatePresence>            
+            {
+                getSlideSubFormPerusahaan({
+                    motionKey, 
+                    setMotionKey,
+                    control, 
+                    setValue,
+                })
+            }             
         </Modal>
     );
 };
@@ -344,6 +335,24 @@ interface ISubFormPerusahaanProps extends HookFormAnimProps {
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
 export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
+    const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
+    // const variantModelPerizinan = {
+    //     open: { 
+    //         opacity: 1, 
+    //         x: 0,      
+    //         transition: {
+    //             duration
+    //         },   
+    //     },
+    //     closed: { 
+    //         opacity: 0, 
+    //         x: '-10%', 
+    //         transition: {
+    //             duration
+    //         },
+    //     },
+    // };
+
     // const [modelPerizinan] = useWatch({
     //     control: props.control, 
     //     name: ['modelPerizinan']
@@ -354,20 +363,14 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
 
     const processNextStep = useCallback(
         () => {
-            setMotionKey('skalaUsaha')
-            // props.setVariant((prev: IStateFormulirAddPerusahaanAnimationFramer) =>({...prev, animModelPerizinan: 'closed'}));
-            // let timer = setTimeout(
-            //     () => {
-            //         props.setVariant(
-            //             (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
-            //                 {...prev, flipDisplayModelPerizinan: false, flipDisplaySkalaUsaha: true, animSkalaUsaha: 'open'}
-            //             )
-            //         );
-            //     },
-            //     duration*1000
-            // );
-
-            // return () => clearTimeout(timer);
+            setAnimModelPerizinan('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('skalaUsaha');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -383,7 +386,11 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
     )
 
     return (
-        <div className={contentStyles.body}>
+        <motion.div 
+            animate={animModelPerizinan}
+            variants={variantModelPerizinan}
+            className={contentStyles.body} 
+        >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Status OSS-RBA?</Label>
                 <Label styles={subLabelStyle}>Status OSS-RBA perusahaan menentukan isian tahab berikutnya.</Label>
@@ -408,7 +415,7 @@ export const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setVal
                     style={{marginTop: 24, width: 100}}        
                 />
             </Stack>   
-        </div>
+        </motion.div>
     );
 };
 /*---------------------------------------------------------------------------*/
@@ -426,6 +433,7 @@ const labelTitleBack: ILabelStyles  = {
     }
 };
 const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
     //rtk query modelperizinan variable hook
     const { data: dataSkalaUsaha = [], isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
     const dataSkalaUsahaOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
@@ -436,26 +444,14 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
 
     const processBackToPreviousStep = useCallback(
         () => {
-            setMotionKey('modelPerizinan')
-            // props.setVariant(
-            //     (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animSkalaUsaha: 'closed'})
-            // );
-
-            // let timer = setTimeout(
-            //     () => {
-            //         // props.changeHightContainer(300);
-            //         props.setVariant(
-            //             (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
-            //                 ...prev,                             
-            //                 animModelPerizinan: 'open',
-            //                 flipDisplaySkalaUsaha: false, 
-            //                 flipDisplayModelPerizinan: true, 
-            //             })
-            //         );
-            //     },
-            //     duration*1000
-            // );
-            // return () => clearTimeout(timer);
+            setAnimSkalaUsaha('closed');            
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('modelPerizinan');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -491,7 +487,11 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
     );
 
     return (
-        <div className={contentStyles.body}>
+        <motion.div 
+            animate={animSkalaUsaha}
+            variants={variantSkalaUsaha}
+            className={contentStyles.body} 
+        >
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
                 <IconButton 
                     iconProps={backIcon} 
@@ -537,7 +537,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
                     onClick={processNextStep}
                 />
             </Stack>   
-        </div>
+        </motion.div >
     );
 };
 /*----------------------------------------------------------------------------*/
