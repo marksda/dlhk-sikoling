@@ -12,20 +12,9 @@ import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
-interface IStateFormulirAddPerusahaanAnimationFramer {
-    animModelPerizinan: string;
-    flipDisplayModelPerizinan: boolean;
-    animSkalaUsaha: string;
-    flipDisplaySkalaUsaha: boolean;
-    animPelakuUsaha: string;
-    flipDisplayPelakuUsaha: boolean;
-    animDetailPerusahaanOSS: string;
-    flipDisplayDetailPerusahaanOSS: boolean;
-    animDetailPerusahaanNonOSS: string;
-    flipDisplayDetailPerusahaanNonOSS: boolean;    
-};
+
 const duration: number = 0.5;
-const variantModelPerizinan = {
+const variantAnimPerusahaan = {
     open: { 
         opacity: 1, 
         x: 0,      
@@ -36,70 +25,6 @@ const variantModelPerizinan = {
     closed: { 
         opacity: 0, 
         x: '-10%', 
-        transition: {
-            duration
-        },
-    },
-};
-const variantSkalaUsaha = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const variantPelakuUsaha = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const variantDetailPerusahaanOSS = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const variantDetailPerusahaanNonOSS = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
         transition: {
             duration
         },
@@ -173,7 +98,6 @@ const dragOptions: IDragOptions = {
     dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
-
 /*-----------------------------------------Modal Container--------------------------------------------------------------*/
 interface IModalFormulirPerusahaanProps {
     isModalOpen: boolean;
@@ -299,9 +223,22 @@ const getSlideSubFormPerusahaan = (
                     setMotionKey={setMotionKey}
                 />;   
             break;
-        // case 'plp':
-        //     // konten = <KontenPelaporanPemrakarsa />;   
-        //     break;
+        case 'pelakuUsaha':
+            konten = 
+            <FormPelakuUsaha
+                control={control}
+                setValue={setValue}
+                setMotionKey={setMotionKey}
+            />;   
+            break;
+        case 'detailPerusahaanOSS':
+            konten = 
+            <FormDetailPerusahaanOSS
+                control={control}
+                setValue={setValue}
+                setMotionKey={setMotionKey}
+            />;   
+            break;            
         default:
             konten = 
             <FormModelPerizinan
@@ -372,7 +309,7 @@ const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, set
     return (
         <motion.div 
             animate={animModelPerizinan}
-            variants={variantModelPerizinan}
+            variants={variantAnimPerusahaan}
             className={contentStyles.body} 
         >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
@@ -413,14 +350,12 @@ const backIcon: IIconProps = {
         fontSize: '0.8rem',
     }
 };
-
 const labelTitleBack: ILabelStyles  = {
     root: {
        fontWeight: 400,
        fontSize: '1rem', 
     }
 };
-
 const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
     const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
     //rtk query modelperizinan variable hook
@@ -457,20 +392,14 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
 
     const processNextStep = useCallback(
         () => {
-            // props.setVariant((prev: IStateFormulirAddPerusahaanAnimationFramer) =>({...prev, animSkalaUsaha: 'closed'}));
-            // let timer = setTimeout(
-            //     () => {
-            // //         props.changeHightContainer(570);
-            //         props.setVariant(
-            //             (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
-            //                 {...prev, flipDisplaySkalaUsaha: false, flipDisplayPelakuUsaha: true, animPelakuUsaha: 'open'}
-            //             )
-            //         );
-            //     },
-            //     duration*1000
-            // );
-
-            // return () => clearTimeout(timer);
+            setAnimSkalaUsaha('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('PelakuUsaha');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
         },
         []
     );
@@ -478,7 +407,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
     return (
         <motion.div 
             animate={animSkalaUsaha}
-            variants={variantSkalaUsaha}
+            variants={variantAnimPerusahaan}
             className={contentStyles.body} 
         >
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
@@ -531,36 +460,22 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
     );
 };
 /*-------------------------------------------Pelaku Usaha--------------------------------------------------------------*/
-interface IFormKategoriPelakuUsahaProps extends HookFormAnimProps {
-    control?: Control<any>;
-    setValue?: any;
-};
-
-const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
-    const [skalaUsaha, pelakuUsaha, modelPerizinan] = useWatch({
-        control: props.control, 
-        name: ['skalaUsaha', 'pelakuUsaha', 'modelPerizinan']
+const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open');
+    
+    const [skalaUsaha, pelakuUsaha] = useWatch({
+        control: control, 
+        name: ['skalaUsaha', 'pelakuUsaha']
     });
     const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
     const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
 
     const processBackToPreviousStep = useCallback(
         () => {
-            props.setVariant(
-                (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animPelakuUsaha: 'closed'})
-            );
-
+            setAnimKategoriPelakuUsaha('closed');            
             let timer = setTimeout(
                 () => {
-                    // props.changeHightContainer(300);
-                    props.setVariant(
-                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
-                            ...prev,                             
-                            animSkalaUsaha: 'open',
-                            flipDisplayPelakuUsaha: false, 
-                            flipDisplaySkalaUsaha: true, 
-                        })
-                    );
+                    setMotionKey('skalaUsaha');
                 },
                 duration*1000
             );
@@ -574,52 +489,29 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
             let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
                 (item) => { return item.id == itemSelected.key; } 
             )
-            props.setValue("pelakuUsaha", {...pelakuUsaha, kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
+            setValue("pelakuUsaha", {...pelakuUsaha, kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
         },
         [dataKategoriPelakuUsaha, pelakuUsaha]
     );
 
     const processNextStep = useCallback(
         () => {
-            if(modelPerizinan.id == '1') {  //oss
-                props.setVariant((prev: IStateFormulirAddPerusahaanAnimationFramer) =>({...prev, animPelakuUsaha: 'closed'}));
-
-                let timer = setTimeout(
-                    () => {
-                        props.setVariant(
-                            (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
-                                {...prev, flipDisplayPelakuUsaha: false, flipDisplayDetailPerusahaanOSS: true, animDetailPerusahaanOSS: 'open'}
-                            )
-                        );
-                    },
-                    duration*1000
-                );
-                return () => clearTimeout(timer);
-            }
-            else {  //non oss
-                props.setVariant((prev: IStateFormulirAddPerusahaanAnimationFramer) =>({...prev, animPelakuUsaha: 'closed'}));
-
-                let timer = setTimeout(
-                    () => {
-                        props.setVariant(
-                            (prev: IStateFormulirAddPerusahaanAnimationFramer) => (
-                                {...prev, flipDisplayPelakuUsaha: false, flipDisplayDetailPerusahaanNonOSS: true, animDetailPerusahaanNonOSS: 'open'}
-                            )
-                        );
-                    },
-                    duration*1000
-                );
-                return () => clearTimeout(timer);
-            }            
+            setAnimKategoriPelakuUsaha('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('detailPerusahaanOSS');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
         },
-        [modelPerizinan]
+        []
     );
 
     return (
         <motion.div
-            animate={props.variant.animPelakuUsaha}
-            variants={variantPelakuUsaha}
-            style={props.variant.flipDisplayPelakuUsaha?{display:'block'}:{display:'none'}}
+            animate={animKategoriPelakuUsaha}
+            variants={variantAnimPerusahaan}
             className={contentStyles.body} 
         >
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
@@ -653,10 +545,10 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
                         placeholder="Pilih jenis pelaku usaha"
                         options={dataKategoriPelakuUsahaOptions}
                         required
-                        name="jenisPelakuUsaha"
+                        name="pelakuUsaha"
                         rules={{ required: "harus diisi" }} 
                         onChangeItem={handleSetJenisPelakuUsaha}
-                        control={props.control}
+                        control={control}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -665,50 +557,29 @@ const FormPelakuUsaha: FC<IFormKategoriPelakuUsahaProps> = (props) => {
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
                     onClick={processNextStep}
+                    disabled={pelakuUsaha.kategoriPelakuUsaha.id == ''? true:false}
                 />
             </Stack>   
         </motion.div>
     );
 };
 /*-------------------------------------------Data Detail Perusahaan---------------------------------------------------------------*/
-interface IFormDetailPerusahaanOSS extends HookFormAnimProps {
-    control?: Control<any>;
-    setValue?: any;
-};
-
-const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
-    const [pelakuUsaha] = useWatch({
-        control: props.control, 
-        name: ['pelakuUsaha']
+const FormDetailPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
+    const [modelPerizinan, skalaUsaha, pelakuUsaha] = useWatch({
+        control: control, 
+        name: ['modelPerizinan', 'skalaUsaha', 'pelakuUsaha']
     });
 
     const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
     const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-    
-    useEffect(
-        () => {
-
-        },
-        [dataPelakuUsaha]
-    );
 
     const processBackToPreviousStep = useCallback(
         () => {
-            props.setVariant(
-                (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({...prev, animDetailPerusahaanOSS: 'closed'})
-            );
-
+            setAnimDetailPerusahaan('closed');            
             let timer = setTimeout(
                 () => {
-                    // props.changeHightContainer(300);
-                    props.setVariant(
-                        (prev: IStateFormulirAddPerusahaanAnimationFramer) => ({
-                            ...prev,                             
-                            animPelakuUsaha: 'open',
-                            flipDisplayDetailPerusahaanOSS: false, 
-                            flipDisplayPelakuUsaha: true, 
-                        })
-                    );
+                    setMotionKey('pelakuUsaha');
                 },
                 duration*1000
             );
@@ -717,11 +588,34 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
         []
     );
 
+    const handleSetPelakuUsaha = useCallback(
+        (itemSelected) => {
+            let itemPelakuUsahaSelected = dataPelakuUsaha.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            setValue("pelakuUsaha", {...pelakuUsaha, id: itemPelakuUsahaSelected!.id, nama: itemPelakuUsahaSelected!.nama, singkatan: itemPelakuUsahaSelected!.singkatan});
+        },
+        [dataPelakuUsaha, pelakuUsaha]
+    );
+
+    const processNextStep = useCallback(
+        () => {
+            // setAnimKategoriPelakuUsaha('closed');
+            // let timer = setTimeout(
+            //     () => {
+            //         setMotionKey('detailPerusahaanOSS');
+            //     },
+            //     duration*1000
+            // );
+            // return () => clearTimeout(timer);
+        },
+        []
+    );
+
     return (
         <motion.div
-            animate={props.variant.animDetailPerusahaanOSS}
-            variants={variantDetailPerusahaanOSS}
-            style={props.variant.flipDisplayDetailPerusahaanOSS?{display:'block'}:{display:'none'}}
+            animate={animDetailPerusahaan}
+            variants={variantAnimPerusahaan}
             className={contentStyles.body} 
         >
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
@@ -755,17 +649,11 @@ const FormDetailPerusahaanOSS: FC<IFormDetailPerusahaanOSS> = (props) => {
                         placeholder="Silahkan pilih "
                         options={dataPelakuUsahaOptions}
                         required
-                        name="jenisPelakuUsaha"
+                        name="pelakuUsaha"
                         rules={{ required: "harus diisi" }} 
-                        control={props.control}
+                        control={control}
+                        onChangeItem={handleSetPelakuUsaha}
                     /> 
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField 
-                        label="Nama"
-                        name="nama"
-                        control={props.control}
-                    />
                 </Stack.Item>
             </Stack>
         </motion.div>
