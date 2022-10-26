@@ -6,7 +6,6 @@ import { HookFormProps } from "../../app/HookFormProps"
 
 export const ControlledFluentUiTextField: FC<HookFormProps & ITextFieldProps> = (props) => {
     return (
-        typeof props.control != 'undefined' ?
         <Controller 
             name={props.name}
             control={props.control}
@@ -20,12 +19,10 @@ export const ControlledFluentUiTextField: FC<HookFormProps & ITextFieldProps> = 
                     onChange={onChange}
                     onBlur={onBlur}
                     name={fieldName}
-                    errorMessage={error && error.message}             
+                    errorMessage={error && error.message} 
+                    value={value}            
                 />
             )}  
-        /> :
-        <TextField 
-            {...props}        
-        />
+        /> 
     );
 }

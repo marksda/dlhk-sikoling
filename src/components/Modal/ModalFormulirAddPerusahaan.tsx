@@ -11,6 +11,7 @@ import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha"
 import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 
 
 const duration: number = 0.5;
@@ -233,7 +234,7 @@ const getSlideSubFormPerusahaan = (
             break;
         case 'detailPerusahaanOSS':
             konten = 
-            <FormDetailPerusahaanOSS
+            <FormNpwpPerusahaanOSS
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
@@ -395,7 +396,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
             setAnimSkalaUsaha('closed');
             let timer = setTimeout(
                 () => {
-                    setMotionKey('PelakuUsaha');
+                    setMotionKey('pelakuUsaha');
                 },
                 duration*1000
             );
@@ -445,6 +446,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
                         rules={{ required: "harus diisi" }} 
                         onChangeItem={handleSetSkalaUsaha}
                         control={control}
+                        selectedKey={skalaUsaha.id != '' ? skalaUsaha.id : undefined}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -461,12 +463,12 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
 };
 /*-------------------------------------------Pelaku Usaha--------------------------------------------------------------*/
 const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open');
-    
+    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open');    
     const [skalaUsaha, pelakuUsaha] = useWatch({
         control: control, 
         name: ['skalaUsaha', 'pelakuUsaha']
     });
+    console.log(pelakuUsaha);
     const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
     const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
 
@@ -549,6 +551,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
                         rules={{ required: "harus diisi" }} 
                         onChangeItem={handleSetJenisPelakuUsaha}
                         control={control}
+                        selectedKey={pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.id : undefined}
                     /> 
                 </Stack.Item>
             </Stack>
@@ -557,20 +560,38 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
                     onClick={processNextStep}
-                    disabled={pelakuUsaha.kategoriPelakuUsaha.id == ''? true:false}
+                    disabled={pelakuUsaha.kategoriPelakuUsaha == null? true:false}
                 />
             </Stack>   
         </motion.div>
     );
 };
 /*-------------------------------------------Data Detail Perusahaan---------------------------------------------------------------*/
-const FormDetailPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
-    const [modelPerizinan, skalaUsaha, pelakuUsaha] = useWatch({
-        control: control, 
-        name: ['modelPerizinan', 'skalaUsaha', 'pelakuUsaha']
-    });
+const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    const handlerMessageToParent = useCallback(
+        (data) => {
+            if(data.status === true) {
 
+            }
+            else {
+
+            }
+        },
+        []
+    );
+    const [isFileExist, setIsFileExist] = useState<boolean>(false);
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({
+        controlled: true, 
+        startUpload: false, 
+        subUri: null,
+        handlerMessageToParent: handlerMessageToParent,
+    });
+    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
+    const [id, modelPerizinan, skalaUsaha, pelakuUsaha] = useWatch({
+        control: control, 
+        name: ['id', 'modelPerizinan', 'skalaUsaha', 'pelakuUsaha']
+    });    
+    
     const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
     const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
 
@@ -639,10 +660,12 @@ const FormDetailPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue
                 </Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Data Perusahaan</Label>
-                <Label styles={subLabelStyle}>Isikan detail data perusahaan sesuai dengan data OSS-RBA.</Label>
+                <Label styles={labelStyle}>
+                    {`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
+                </Label>
+                <Label styles={subLabelStyle}>Isikan data npwp perusahaan sesuai dengan data OSS-RBA.</Label>
             </Stack>
-            <Stack>
+            <Stack tokens={stackTokens}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
                         label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
@@ -653,8 +676,46 @@ const FormDetailPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue
                         rules={{ required: "harus diisi" }} 
                         control={control}
                         onChangeItem={handleSetPelakuUsaha}
+                        selectedKey={pelakuUsaha.id != null ? pelakuUsaha.id : undefined}
+                        disabled={
+                            (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? true:false
+                        }
                     /> 
                 </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiTextField 
+                        label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
+                        placeholder="Isikan npwp sesuai dengan data oss-rba"
+                        name="id"
+                        control={control}
+                        disabled={
+                            (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
+                        }
+                    />
+                </Stack.Item>
+                <Stack.Item align="center" style={{marginTop: 16}}>
+                    <UploadFilesFluentUi 
+                        label='Upload file hasil scan npwp'
+                        maxSize={350}
+                        jenisFile='image'
+                        showPreview={true}
+                        showListFile={false}
+                        luasArea={{panjang: 310, lebar: 193}}
+                        showButtonUpload={false}
+                        showProgressBar={false}
+                        id="tesgbr"
+                        setIsFileExist={setIsFileExist}
+                        uploadMode={uploadMode}           
+                    />
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'center'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    style={{marginTop: 24, width: 100}}
+                    onClick={processNextStep}
+                    disabled={!isFileExist}
+                />
             </Stack>
         </motion.div>
     );
