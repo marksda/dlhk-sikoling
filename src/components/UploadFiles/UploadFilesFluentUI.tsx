@@ -32,8 +32,14 @@ const containerClass = mergeStyles({
         cursor: 'pointer',
         border: '1px solid #D7D7D7'
     },
-})
-
+});
+const containerDisableClass = mergeStyles({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '1px solid #DDDCDC',
+});
 export interface IUploadMode {
     controlled: boolean;
     startUpload?: boolean;
@@ -43,7 +49,8 @@ export interface IUploadMode {
 
 interface IUploadFilePropsComponent {
     label?: string;
-    id?: string;
+    id?: string;    
+    disabled?: boolean;
     showPreview?: boolean;
     showListFile: boolean;
     containerStyle?: IContainerUploadStyle;
@@ -169,12 +176,12 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
         <>            
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={handleFile}/> 
             {
-                props.showPreview && 
+                props.showPreview && !props.disabled &&
                 (
                     <div style={styleContainer} className={containerClass} onClick={bindClickEventInputFile}>                    
                         {
                             !selectedFiles && 
-                            (<FontIcon aria-label="Ktp" iconName="OpenFile" className={iconClass}/>)
+                            (<FontIcon aria-label="Icon" iconName="OpenFile" className={iconClass}/>)
                         }
                         {
                             !selectedFiles && 
@@ -195,6 +202,17 @@ export const UploadFilesFluentUi: FC<IUploadFilePropsComponent> = (props) => {
                         }
                         {!props.showPreview && isImageFile && <FontIcon aria-label="image" iconName="FileImage" />}
                         {selectedFiles && false && <FontIcon aria-label="Ktp" iconName="Delete" />}
+                    </div>
+                )
+            }
+            {
+                props.showPreview && props.disabled &&
+                (
+                    <div style={styleContainer} className={containerDisableClass} >
+                        {
+                            !selectedFiles && 
+                            (<FontIcon aria-label="Icon" iconName="OpenFile" className={iconClass}/>)
+                        }
                     </div>
                 )
             }

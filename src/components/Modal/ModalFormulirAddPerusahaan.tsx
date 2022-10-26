@@ -695,9 +695,10 @@ const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, 
                 </Stack.Item>
                 <Stack.Item align="center" style={{marginTop: 16}}>
                     <UploadFilesFluentUi 
-                        label='Upload file hasil scan npwp'
+                        label='Upload file npwp'
                         maxSize={350}
                         jenisFile='image'
+                        disabled={id == '' ? true: false}
                         showPreview={true}
                         showListFile={false}
                         luasArea={{panjang: 310, lebar: 193}}
