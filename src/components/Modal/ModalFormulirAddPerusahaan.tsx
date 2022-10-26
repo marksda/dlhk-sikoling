@@ -2,7 +2,7 @@ import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOpti
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Control, useForm, UseFormSetValue, useWatch } from "react-hook-form";
+import { Control, SubmitHandler, useForm, UseFormHandleSubmit, UseFormSetValue, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
@@ -191,6 +191,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     setMotionKey,
                     control, 
                     setValue,
+                    handleSubmit,
                 })
             }             
         </Modal>
@@ -202,10 +203,11 @@ interface ISlideSubFormPerusahaanParam {
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
     control: Control<IPerusahaan, Object>;
     setValue: UseFormSetValue<IPerusahaan>;
+    handleSubmit: UseFormHandleSubmit<IPerusahaan>;
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue}: ISlideSubFormPerusahaanParam) => {
+    {motionKey, setMotionKey, control, setValue, handleSubmit}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -238,6 +240,7 @@ const getSlideSubFormPerusahaan = (
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
+                handleSubmit={handleSubmit}
             />;   
             break;            
         default:
@@ -567,7 +570,10 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
     );
 };
 /*-------------------------------------------Data Detail Perusahaan---------------------------------------------------------------*/
-const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
+    handleSubmit: UseFormHandleSubmit<IPerusahaan>;
+};
+const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {
     const handlerMessageToParent = useCallback(
         (data) => {
             if(data.status === true) {
@@ -619,19 +625,26 @@ const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, 
         [dataPelakuUsaha, pelakuUsaha]
     );
 
-    const processNextStep = useCallback(
-        () => {
-            // setAnimKategoriPelakuUsaha('closed');
-            // let timer = setTimeout(
-            //     () => {
-            //         setMotionKey('detailPerusahaanOSS');
-            //     },
-            //     duration*1000
-            // );
-            // return () => clearTimeout(timer);
+    const save: SubmitHandler<IPerusahaan> = useCallback(
+        async(data) => {
+            console.log(data);
         },
         []
-    );
+    );    
+
+    // const processNextStep = useCallback(
+    //     () => {
+    //         // setAnimKategoriPelakuUsaha('closed');
+    //         // let timer = setTimeout(
+    //         //     () => {
+    //         //         setMotionKey('detailPerusahaanOSS');
+    //         //     },
+    //         //     duration*1000
+    //         // );
+    //         // return () => clearTimeout(timer);
+    //     },
+    //     []
+    // );
 
     return (
         <motion.div
@@ -714,7 +727,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, 
                 <PrimaryButton 
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
-                    onClick={processNextStep}
+                    onClick={handleSubmit(save)}
                     disabled={!isFileExist}
                 />
             </Stack>
