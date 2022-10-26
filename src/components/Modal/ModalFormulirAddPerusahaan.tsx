@@ -573,7 +573,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
 interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
 };
-const FormNpwpPerusahaanOSS: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {
+const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {
     const handlerMessageToParent = useCallback(
         (data) => {
             if(data.status === true) {
