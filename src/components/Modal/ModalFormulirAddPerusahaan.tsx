@@ -471,7 +471,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
         control: control, 
         name: ['skalaUsaha', 'pelakuUsaha']
     });
-    console.log(pelakuUsaha);
+    
     const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
     const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
 
