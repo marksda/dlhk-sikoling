@@ -16,14 +16,14 @@ const containerDivStyles: React.CSSProperties = {
 };
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
-export const KontenDashboardPerusahaan: FC = (props) => {
-    const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
+export const KontenDashboardPerusahaan: FC = () => {
+    const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
     const _items: ICommandBarItemProps[] = [
         {
             key: 'add',
             text: 'Tambah',
             iconProps: { iconName: 'Add' },
-            onClick: showModal,
+            onClick: showModalAddPerusahaan,
         },
         {
             key: 'edit',
@@ -51,10 +51,14 @@ export const KontenDashboardPerusahaan: FC = (props) => {
             <Stack>
                 <DataListPerusahaanFluentUI />
             </Stack>   
+            {
+            isModalAddPerusahaanOpen &&
             <ModalFormulirAddPerusahaan 
-                isModalOpen={isModalOpen}
-                hideModal={hideModal}
-            />         
+                isModalOpen={isModalAddPerusahaanOpen}
+                hideModal={hideModalAddModalPerusahaan}
+                isDraggable={true}
+            />  
+            }                   
         </div>
         
     );

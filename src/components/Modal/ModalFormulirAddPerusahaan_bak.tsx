@@ -1,4 +1,4 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IDropdownOption, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
+import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -103,12 +103,26 @@ const cancelIcon: IIconProps = { iconName: 'Cancel' };
 interface IModalFormulirPerusahaanProps {
     isModalOpen: boolean;
     hideModal: () => void;
-    isDraggable: boolean;
+    children?: ReactNode;
 };
 
-export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, isDraggable}) => {  
+export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, children}) => {    
     //* local state *   
-    const [motionKey, setMotionKey] = useState<string>('modelPerizinan');    
+    const [motionKey, setMotionKey] = useState<string>('modelPerizinan')
+    //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
+    // const [variant, setVariant] = useState<IStateFormulirAddPerusahaanAnimationFramer>({
+    //     animModelPerizinan: 'open',
+    //     flipDisplayModelPerizinan: true,
+    //     animSkalaUsaha: 'close',
+    //     flipDisplaySkalaUsaha: false,
+    //     animPelakuUsaha: 'close',
+    //     flipDisplayPelakuUsaha: false,
+    //     animDetailPerusahaanOSS: 'closed',
+    //     flipDisplayDetailPerusahaanOSS: false,
+    //     animDetailPerusahaanNonOSS: 'closed',
+    //     flipDisplayDetailPerusahaanNonOSS: false,
+    // });  
+    const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     // const [isLoading, setIsLoading] = useState<boolean>(false); 
     const titleId = useId('Formulir Perusahaan');
@@ -134,16 +148,16 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                 kategoriPelakuUsaha: null
             },
             alamat: {
-                propinsi: null,
-                kabupaten: null,
-                kecamatan: null,
-                desa: null,
+                propinsi: defaultPropinsi,
+                kabupaten: defaultKabupaten,
+                kecamatan: defaultKecamatan,
+                desa: defaultDesa,
                 keterangan: '',
             },
             kontakPerusahaan: null
         }
-    });  
-
+    });   
+    
     const handleCloseModal = useCallback(
         () => {
             reset();
@@ -171,7 +185,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     onClick={handleCloseModal}
                 />
             </div>
-            {                
+            {
                 getSlideSubFormPerusahaan({
                     motionKey, 
                     setMotionKey,
@@ -183,7 +197,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
         </Modal>
     );
 };
-/*******************************************helper function**************************************************************/
+/*******************************************helper function************************************************************************** */
 interface ISlideSubFormPerusahaanParam {
     motionKey: string;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
@@ -261,27 +275,15 @@ interface ISubFormPerusahaanProps extends HookFormAnimProps {
     setValue: UseFormSetValue<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
-
 const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
     const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    //hook variable from react form hook state variable
+    //rtk query modelperizinan variable hook
+    const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();
+    const dataModelPerizinanOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
     const [modelPerizinan] = useWatch({
         control: control, 
         name: ['modelPerizinan']
     });
-    //rtk query modelperizinan variable hook
-    const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();    
-    
-    useEffect(
-        () => {
-            if(isFetchingModelPerizinan == false) {
-                let tmpOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
-            }
-        },
-        [isFetchingModelPerizinan, dataModelPerizinan]
-    );
 
     const processNextStep = useCallback(
         () => {
@@ -323,7 +325,7 @@ const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, set
                     <ControlledFluentUiDropDown
                         label="Status OSS-RBA"
                         placeholder="Pilih status OSS-RBA"
-                        options={options}
+                        options={dataModelPerizinanOptions}
                         required
                         name="modelPerizinan"
                         rules={{ required: "harus diisi" }} 
@@ -360,24 +362,13 @@ const labelTitleBack: ILabelStyles  = {
 };
 const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
     const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
     //rtk query modelperizinan variable hook
     const { data: dataSkalaUsaha = [], isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
-    //hook variable from form hook
+    const dataSkalaUsahaOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
     const [modelPerizinan, skalaUsaha] = useWatch({
         control: control, 
         name: ['modelPerizinan', 'skalaUsaha']
     });
-
-    useEffect(
-        () => {
-            if(isFetchingSkalaUsaha == false) {
-                let tmpOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
-            }
-        },
-        [isFetchingSkalaUsaha, dataSkalaUsaha]
-    );
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -452,7 +443,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
                     <ControlledFluentUiDropDown
                         label="Skala Usaha"
                         placeholder="Pilih skala usaha"
-                        options={options}
+                        options={dataSkalaUsahaOptions}
                         required
                         name="skalaUsaha"
                         rules={{ required: "harus diisi" }} 
@@ -475,25 +466,14 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
 };
 /*-------------------------------------------Pelaku Usaha--------------------------------------------------------------*/
 const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    //local state
-    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open'); 
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    //hook variable from react form hook state variable   
+    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open');    
     const [skalaUsaha, pelakuUsaha] = useWatch({
         control: control, 
         name: ['skalaUsaha', 'pelakuUsaha']
     });
+    
     const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
-
-    useEffect(
-        () => {
-            if(isFetchingKategoriPelakuUsaha == false) {
-                let tmpOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setOptions(tmpOptions);
-            }
-        },
-        [isFetchingKategoriPelakuUsaha, dataKategoriPelakuUsaha]
-    );
+    const dataKategoriPelakuUsahaOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama}` as string}; });
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -568,7 +548,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
                     <ControlledFluentUiDropDown
                         label="Jenis pelaku usaha"
                         placeholder="Pilih jenis pelaku usaha"
-                        options={options}
+                        options={dataKategoriPelakuUsahaOptions}
                         required
                         name="pelakuUsaha"
                         rules={{ required: "harus diisi" }} 
@@ -593,27 +573,33 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
 interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
 };
-const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {    
-    //local state
-    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    //hook variable from react form hook state variable
-    const [id, pelakuUsaha] = useWatch({
-        control: control, 
-        name: ['id', 'pelakuUsaha']
-    });      
-    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
-    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
+const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {
+    const handlerMessageToParent = useCallback(
+        (data) => {
+            if(data.status === true) {
 
-    useEffect(
-        () => {
-            if(isFetchingPelakuUsaha == false) {
-                let tmpOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
+            }
+            else {
+
             }
         },
-        [isFetchingPelakuUsaha, dataPelakuUsaha]
+        []
     );
+    const [isFileExist, setIsFileExist] = useState<boolean>(false);
+    const [uploadMode, setUploadMode] = useState<IUploadMode>({
+        controlled: true, 
+        startUpload: false, 
+        subUri: null,
+        handlerMessageToParent: handlerMessageToParent,
+    });
+    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
+    const [id, modelPerizinan, skalaUsaha, pelakuUsaha] = useWatch({
+        control: control, 
+        name: ['id', 'modelPerizinan', 'skalaUsaha', 'pelakuUsaha']
+    });    
+    
+    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
+    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -692,12 +678,12 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                 </Label>
                 <Label styles={subLabelStyle}>Isikan data npwp perusahaan sesuai dengan data OSS-RBA.</Label>
             </Stack>
-            <Stack tokens={stackTokens}>                
+            <Stack tokens={stackTokens}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
                         label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
                         placeholder="Silahkan pilih "
-                        options={options}
+                        options={dataPelakuUsahaOptions}
                         required
                         name="pelakuUsaha"
                         rules={{ required: "harus diisi" }} 
@@ -720,13 +706,29 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                         }
                     />
                 </Stack.Item>
+                <Stack.Item align="center" style={{marginTop: 16}}>
+                    <UploadFilesFluentUi 
+                        label='Upload file npwp'
+                        maxSize={350}
+                        jenisFile='image'
+                        disabled={id == '' ? true: false}
+                        showPreview={true}
+                        showListFile={false}
+                        luasArea={{panjang: 310, lebar: 193}}
+                        showButtonUpload={false}
+                        showProgressBar={false}
+                        id="tesgbr"
+                        setIsFileExist={setIsFileExist}
+                        uploadMode={uploadMode}           
+                    />
+                </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'center'}}}>
                 <PrimaryButton 
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
                     onClick={handleSubmit(save)}
-                    disabled={id == '' ? true: false}
+                    disabled={!isFileExist}
                 />
             </Stack>
         </motion.div>
