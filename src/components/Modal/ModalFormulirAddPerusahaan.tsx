@@ -601,9 +601,9 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
     const [id, pelakuUsaha] = useWatch({
         control: control, 
         name: ['id', 'pelakuUsaha']
-    });      
+    }); 
+    //rtk query hook variable     
     const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
-    const dataPelakuUsahaOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
 
     useEffect(
         () => {
