@@ -1,4 +1,4 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IDropdownOption, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
+import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IDropdownOption, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -719,6 +719,9 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                             (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
                         }
                     />
+                </Stack.Item>
+                <Stack.Item>
+                    <MaskedTextField label="With input mask" mask="(999) 999 - 9999" title="A 10 digit number" />
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'center'}}}>
