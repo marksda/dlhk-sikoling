@@ -1,17 +1,13 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IDropdownOption, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
-import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IDropdownOption, IIconProps, ILabelStyles, IProgressIndicatorStyles, Label, mergeStyleSets, Modal, PrimaryButton, Stack } from "@fluentui/react";
+import { useId } from "@fluentui/react-hooks";
+import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Control, SubmitHandler, useForm, UseFormHandleSubmit, UseFormSetValue, useWatch } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
+import { Control, SubmitHandler, useForm, UseFormHandleSubmit, UseFormReset, UseFormSetValue, useWatch } from "react-hook-form";
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
-import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
-import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
 
 
@@ -178,6 +174,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     setMotionKey,
                     control, 
                     setValue,
+                    reset,
                     handleSubmit,
                 })
             }             
@@ -190,11 +187,12 @@ interface ISlideSubFormPerusahaanParam {
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
     control: Control<IPerusahaan, Object>;
     setValue: UseFormSetValue<IPerusahaan>;
+    reset: UseFormReset<IPerusahaan>;
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue, handleSubmit}: ISlideSubFormPerusahaanParam) => {
+    {motionKey, setMotionKey, control, setValue, reset, handleSubmit}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -515,8 +513,8 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
             let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
                 (item) => { return item.id == itemSelected.key; } 
             )
-            setValue("pelakuUsaha", {...pelakuUsaha, kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
-
+            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected!});
+            setValue("id", '');
         },
         [dataKategoriPelakuUsaha, pelakuUsaha]
     );
@@ -618,7 +616,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                 }
             }
         },
-        [isFetchingPelakuUsaha, dataPelakuUsaha, pelakuUsaha]
+        [isFetchingPelakuUsaha]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -722,7 +720,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                         mask="99.999.999.9-999.999" 
                         control={control}
                         disabled={
-                            (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
+                            pelakuUsaha.id == '' ? true : false
                         }
                     />
                 </Stack.Item>
