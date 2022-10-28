@@ -257,7 +257,7 @@ const subLabelStyle: ILabelStyles  = {
        fontSize: '1rem', 
     }
 };
-interface ISubFormPerusahaanProps extends HookFormAnimProps {
+interface ISubFormPerusahaanProps {
     control?: Control<any>;
     setValue: UseFormSetValue<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
@@ -516,6 +516,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
                 (item) => { return item.id == itemSelected.key; } 
             )
             setValue("pelakuUsaha", {...pelakuUsaha, kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
+
         },
         [dataKategoriPelakuUsaha, pelakuUsaha]
     );
@@ -611,9 +612,13 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
             if(isFetchingPelakuUsaha == false) {
                 let tmpOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
                 setOptions(tmpOptions);
+                if(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') {
+                    let tmpFirstPelakuUsaha = dataPelakuUsaha[0];
+                    setValue("pelakuUsaha", {...pelakuUsaha, id: tmpFirstPelakuUsaha!.id, nama: tmpFirstPelakuUsaha!.nama, singkatan: tmpFirstPelakuUsaha!.singkatan});
+                }
             }
         },
-        [isFetchingPelakuUsaha, dataPelakuUsaha]
+        [isFetchingPelakuUsaha, dataPelakuUsaha, pelakuUsaha]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -634,7 +639,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
         (itemSelected) => {
             let itemPelakuUsahaSelected = dataPelakuUsaha.find(
                 (item) => { return item.id == itemSelected.key; } 
-            )
+            );
             setValue("pelakuUsaha", {...pelakuUsaha, id: itemPelakuUsahaSelected!.id, nama: itemPelakuUsahaSelected!.nama, singkatan: itemPelakuUsahaSelected!.singkatan});
         },
         [dataPelakuUsaha, pelakuUsaha]
