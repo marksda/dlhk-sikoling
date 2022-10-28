@@ -711,21 +711,10 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                     /> 
                 </Stack.Item>
                 <Stack.Item>
-                    <ControlledFluentUiTextField 
-                        name="id"
-                        label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
-                        placeholder="Isikan npwp sesuai dengan data oss-rba"
-                        control={control}
-                        disabled={
-                            (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
-                        }
-                    />
-                </Stack.Item>
-                <Stack.Item>
                     <ControlledFluentUiMaskTextField 
                         name="id"
                         label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
-                        mask="(999) 999 - 9999" 
+                        mask="99.999.999.9-999.999" 
                         control={control}
                         disabled={
                             (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
@@ -733,7 +722,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                     />
                 </Stack.Item>
             </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'center'}}}>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'right'}}}>
                 <PrimaryButton 
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
