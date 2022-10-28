@@ -12,6 +12,7 @@ import { HookFormAnimProps } from "../../app/HookFormProps";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
 
 
 const duration: number = 0.5;
@@ -711,9 +712,9 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                 </Stack.Item>
                 <Stack.Item>
                     <ControlledFluentUiTextField 
+                        name="id"
                         label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
                         placeholder="Isikan npwp sesuai dengan data oss-rba"
-                        name="id"
                         control={control}
                         disabled={
                             (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
@@ -721,7 +722,15 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
                     />
                 </Stack.Item>
                 <Stack.Item>
-                    <MaskedTextField label="With input mask" mask="(999) 999 - 9999" title="A 10 digit number" />
+                    <ControlledFluentUiMaskTextField 
+                        name="id"
+                        label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
+                        mask="(999) 999 - 9999" 
+                        control={control}
+                        disabled={
+                            (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? false:(pelakuUsaha.id == '' ? true:false)
+                        }
+                    />
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'center'}}}>
