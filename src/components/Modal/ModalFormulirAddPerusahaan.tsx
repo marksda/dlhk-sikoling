@@ -233,12 +233,7 @@ const getSlideSubFormPerusahaan = (
             />;   
             break;            
         default:
-            konten = 
-            <FormModelPerizinan
-                control={control}
-                setValue={setValue}
-                setMotionKey={setMotionKey}
-            />;
+            konten = null;
             break;
     }
     return konten;
