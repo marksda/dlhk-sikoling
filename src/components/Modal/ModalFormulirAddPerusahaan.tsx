@@ -222,7 +222,7 @@ const getSlideSubFormPerusahaan = (
                 setMotionKey={setMotionKey}
             />;   
             break;
-        case 'detailPerusahaanOSS':
+        case 'npwpPerusahaan':
             konten = 
             <FormNpwpPerusahaanOSS
                 control={control}
@@ -531,7 +531,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
             setAnimKategoriPelakuUsaha('closed');
             let timer = setTimeout(
                 () => {
-                    setMotionKey('detailPerusahaanOSS');
+                    setMotionKey('npwpPerusahaan');
                 },
                 duration*1000
             );
@@ -817,7 +817,7 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
             setAnimIdentitasPerusahaan('closed');            
             let timer = setTimeout(
                 () => {
-                    setMotionKey('skalaUsaha');
+                    setMotionKey('npwpPerusahaan');
                 },
                 duration*1000
             );
