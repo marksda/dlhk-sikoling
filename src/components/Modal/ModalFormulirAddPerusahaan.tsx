@@ -814,7 +814,7 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
 
     const processBackToPreviousStep = useCallback(
         () => {
-            setAnimKategoriPelakuUsaha('closed');            
+            setAnimIdentitasPerusahaan('closed');            
             let timer = setTimeout(
                 () => {
                     setMotionKey('skalaUsaha');
@@ -839,7 +839,7 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
 
     const processNextStep = useCallback(
         () => {
-            setAnimKategoriPelakuUsaha('closed');
+            setAnimIdentitasPerusahaan('closed');
             let timer = setTimeout(
                 () => {
                     setMotionKey('detailPerusahaanOSS');
