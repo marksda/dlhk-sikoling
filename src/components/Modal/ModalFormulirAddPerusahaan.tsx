@@ -198,6 +198,7 @@ const getSlideSubFormPerusahaan = (
         case 'modelPerizinan':
             konten = 
                 <FormModelPerizinan
+                    key='model_perizinan'
                     control={control}
                     setValue={setValue}
                     setMotionKey={setMotionKey}
@@ -206,6 +207,7 @@ const getSlideSubFormPerusahaan = (
         case 'skalaUsaha':
             konten = 
                 <FormSkalaUsaha
+                    key='skala_usaha'
                     control={control}
                     setValue={setValue}
                     setMotionKey={setMotionKey}
@@ -214,6 +216,7 @@ const getSlideSubFormPerusahaan = (
         case 'pelakuUsaha':
             konten = 
             <FormPelakuUsaha
+                key="pelaku_usaha"
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
@@ -222,6 +225,7 @@ const getSlideSubFormPerusahaan = (
         case 'detailPerusahaanOSS':
             konten = 
             <FormNpwpPerusahaanOSS
+                key="detail_perusahaan_oss"
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
@@ -256,12 +260,13 @@ const subLabelStyle: ILabelStyles  = {
     }
 };
 interface ISubFormPerusahaanProps {
+    key: string;
     control?: Control<any>;
     setValue: UseFormSetValue<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
+const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey, key}) => {  
     const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
     //hook variable from react form hook state variable
@@ -309,6 +314,7 @@ const FormModelPerizinan: FC<ISubFormPerusahaanProps> = ({control, setValue, set
 
     return (
         <motion.div 
+            key={key}
             animate={animModelPerizinan}
             variants={variantAnimPerusahaan}
             className={contentStyles.body} 
@@ -357,7 +363,7 @@ const labelTitleBack: ILabelStyles  = {
        fontSize: '1rem', 
     }
 };
-const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey, key}) => {
     const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
     //rtk query modelperizinan variable hook
@@ -418,6 +424,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
 
     return (
         <motion.div 
+            key={key}
             animate={animSkalaUsaha}
             variants={variantAnimPerusahaan}
             className={contentStyles.body} 
@@ -473,7 +480,7 @@ const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMoti
     );
 };
 /*-------------------------------------------Pelaku Usaha--------------------------------------------------------------*/
-const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey, key}) => {
     //local state
     const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open'); 
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
@@ -535,6 +542,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
 
     return (
         <motion.div
+            key={key}
             animate={animKategoriPelakuUsaha}
             variants={variantAnimPerusahaan}
             className={contentStyles.body} 
@@ -593,7 +601,7 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
 interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
 };
-const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {    
+const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit, key}) => {    
     //local state
     const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
@@ -666,6 +674,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
 
     return (
         <motion.div
+            key={key}
             animate={animDetailPerusahaan}
             variants={variantAnimPerusahaan}
             className={contentStyles.body} 

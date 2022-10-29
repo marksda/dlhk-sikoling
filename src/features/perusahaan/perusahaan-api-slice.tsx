@@ -39,11 +39,14 @@ export const PerusahaanApiSlice = createApi({
             getPerusahaanById: builder.query<IPerusahaan[], string|void>({
                 query: (idPerusahaan) => `perusahaan/kabupaten?idKabupaten=${idPerusahaan}`,
             }),
+            isEksisPeusahaan: builder.query<boolean, string|void>({
+                query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,
+            }),
         }
     }
 });
 
 export const { 
     useGetAllPerusahaanQuery, useGetPerusahaanByPageQuery, useGetPerusahaanByNamaAndPageQuery, 
-    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery 
+    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery, useIsEksisPeusahaanQuery
 } = PerusahaanApiSlice;
