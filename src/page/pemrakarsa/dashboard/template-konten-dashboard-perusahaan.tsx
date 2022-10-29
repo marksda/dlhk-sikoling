@@ -56,7 +56,7 @@ export const KontenDashboardPerusahaan: FC = () => {
             <ModalFormulirAddPerusahaan 
                 isModalOpen={isModalAddPerusahaanOpen}
                 hideModal={hideModalAddModalPerusahaan}
-                isDraggable={true}
+                isDraggable={false}
             />  
             }                   
         </div>

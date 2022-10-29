@@ -2,13 +2,14 @@ import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOpti
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Control, SubmitHandler, useForm, UseFormHandleSubmit, UseFormReset, UseFormSetValue, useWatch } from "react-hook-form";
+import { Control, SubmitHandler, useForm, UseFormHandleSubmit, UseFormReset, UseFormSetError, UseFormSetValue, useWatch } from "react-hook-form";
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha";
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
+import { useIsEksisPeusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 
 
 const duration: number = 0.5;
@@ -109,7 +110,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     // const [isLoading, setIsLoading] = useState<boolean>(false); 
     const titleId = useId('Formulir Perusahaan');
-    const { control, handleSubmit, setValue, reset } = useForm<IPerusahaan>({
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IPerusahaan>({
         mode: 'onSubmit',
         defaultValues: {
             id: '',
@@ -160,7 +161,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
             dragOptions={isDraggable ? dragOptions : undefined}
         >
             <div className={contentStyles.header}>
-                <span id={titleId}>Tambah Perusahaan</span>
+                <span id={titleId}>Formulir Perusahaan</span>
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
@@ -176,6 +177,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     setValue,
                     reset,
                     handleSubmit,
+                    setError,
                 })
             }             
         </Modal>
@@ -189,10 +191,11 @@ interface ISlideSubFormPerusahaanParam {
     setValue: UseFormSetValue<IPerusahaan>;
     reset: UseFormReset<IPerusahaan>;
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
+    setError: UseFormSetError<IPerusahaan>;
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue, reset, handleSubmit}: ISlideSubFormPerusahaanParam) => {
+    {motionKey, setMotionKey, control, setValue, reset, handleSubmit, setError}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -224,17 +227,21 @@ const getSlideSubFormPerusahaan = (
             <FormNpwpPerusahaanOSS
                 control={control}
                 setValue={setValue}
+                setError={setError}
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
             />;   
-            break;            
-        default:
+            break;  
+        case 'identitasPerusahaan':
             konten = 
-            <FormModelPerizinan
+            <FormIdentitasPerusahaan
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
-            />;
+            />;   
+            break; 
+        default:
+            konten = null;
             break;
     }
     return konten;
@@ -592,19 +599,25 @@ const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMot
 /*-------------------------------------------Data Detail Perusahaan---------------------------------------------------------------*/
 interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
+    setError: UseFormSetError<IPerusahaan>;
 };
-const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit}) => {    
+const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit, setError}) => {    
     //local state
-    const [animDetailPerusahaan, setAnimDetailPerusahaan] = useState<string>('open');
+    const [animNpwpPerusahaan, setAnimNpwpPerusahaan] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
+    const [npwp, setNpwp] = useState<string|undefined>(undefined);
+    // const [errorNpwp, setErrorNpwp] = useState<string>('');
     //hook variable from react form hook state variable
     const [id, pelakuUsaha] = useWatch({
         control: control, 
         name: ['id', 'pelakuUsaha']
     }); 
-    //rtk query hook variable     
+    //hook variable from rtk query
     const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
-
+    
+    const { data: isEksisPerusahaan, isFetching: isFetchingIsEksisPerusahaan, isError: isErrorEksisPerusahaan} = useIsEksisPeusahaanQuery(npwp, {skip: npwp == undefined ? true : false});
+    
+    //deteksi data options pelaku usaha sudah tersedia
     useEffect(
         () => {
             if(isFetchingPelakuUsaha == false) {
@@ -618,10 +631,42 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
         },
         [isFetchingPelakuUsaha]
     );
+    //deteksi apakah npwp sudah terdaftar disistem apa belum
+    useEffect(
+        () => {
+            if(isEksisPerusahaan == true) {
+                // setErrorNpwp(`Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`)
+                setError("id", {
+                    type: "manual",
+                    message: `Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`
+                });
+            }
+            else if(isEksisPerusahaan == false) {
+                setAnimNpwpPerusahaan('closed');
+                let timer = setTimeout(
+                    () => {
+                        setMotionKey('identitasPerusahaan');
+                    },
+                    duration*1000
+                );
+                return () => clearTimeout(timer);
+            }
+        },
+        [isFetchingIsEksisPerusahaan, isEksisPerusahaan]
+    );
+    //deteksi error koneksi remote API
+    useEffect(
+        () => {
+            if(isErrorEksisPerusahaan == true) {
+                console.log(isErrorEksisPerusahaan);
+            }            
+        },
+        [isErrorEksisPerusahaan]
+    );
 
     const processBackToPreviousStep = useCallback(
         () => {
-            setAnimDetailPerusahaan('closed');            
+            setAnimNpwpPerusahaan('closed');            
             let timer = setTimeout(
                 () => {
                     setMotionKey('pelakuUsaha');
@@ -643,11 +688,20 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
         [dataPelakuUsaha, pelakuUsaha]
     );
 
+    //this function is used to track npwp changes
+    // const processUserNameChange = useCallback(
+    //     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+    //         setNpwp(newValue||'');
+    //     },
+    //     [],
+    // );
+
     const save: SubmitHandler<IPerusahaan> = useCallback(
-        async(data) => {
+        async (data) => {
             console.log(data);
+            setNpwp(id);
         },
-        []
+        [id]
     );    
 
     // const processNextStep = useCallback(
@@ -666,7 +720,7 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
 
     return (
         <motion.div
-            animate={animDetailPerusahaan}
+            animate={animNpwpPerusahaan}
             variants={variantAnimPerusahaan}
             className={contentStyles.body} 
         >
@@ -737,3 +791,119 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
     );
 };
 /*-----------------------------------------------------------------------------------------------------------*/
+const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    //local state
+    const [animIdentitasPerusahaan, setAnimIdentitasPerusahaan] = useState<string>('open'); 
+    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
+    //hook variable from react form hook state variable   
+    const [skalaUsaha, pelakuUsaha, id] = useWatch({
+        control: control, 
+        name: ['skalaUsaha', 'pelakuUsaha', 'id']
+    });
+    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
+
+    useEffect(
+        () => {
+            if(isFetchingKategoriPelakuUsaha == false) {
+                let tmpOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+                setOptions(tmpOptions);
+            }
+        },
+        [isFetchingKategoriPelakuUsaha, dataKategoriPelakuUsaha]
+    );
+
+    const processBackToPreviousStep = useCallback(
+        () => {
+            setAnimKategoriPelakuUsaha('closed');            
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('skalaUsaha');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    const handleSetJenisPelakuUsaha = useCallback(
+        (itemSelected) => {
+            let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected!});
+            setValue("id", '');
+        },
+        [dataKategoriPelakuUsaha, pelakuUsaha]
+    );
+
+    const processNextStep = useCallback(
+        () => {
+            setAnimKategoriPelakuUsaha('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('detailPerusahaanOSS');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    return (
+        <motion.div
+            animate={animIdentitasPerusahaan}
+            variants={variantAnimPerusahaan}
+            className={contentStyles.body} 
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelTitleBack}>
+                    {
+                        skalaUsaha != null ? `Npwp - ${id}`:null
+                    }
+                </Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Identitas Perusahaan</Label>
+                <Label styles={subLabelStyle}>Lengkapi identitas perusahaan sesuai dengan dokumen legalitas pendirian.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Jenis pelaku usaha"
+                        placeholder="Pilih jenis pelaku usaha"
+                        options={options}
+                        required
+                        name="pelakuUsaha"
+                        rules={{ required: "harus diisi" }} 
+                        onChangeItem={handleSetJenisPelakuUsaha}
+                        control={control}
+                        selectedKey={pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.id : undefined}
+                    /> 
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    style={{marginTop: 24, width: 100}}
+                    onClick={processNextStep}
+                    disabled={pelakuUsaha.kategoriPelakuUsaha == null? true:false}
+                />
+            </Stack>   
+        </motion.div>
+    );
+};
