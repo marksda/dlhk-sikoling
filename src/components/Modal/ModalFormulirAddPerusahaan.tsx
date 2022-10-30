@@ -802,7 +802,7 @@ const tableIdentityPerusahaanStyles = mergeStyleSets({
         },
     }
 })
-const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKey}) => {
     //local state
     const [animIdentitasPerusahaan, setAnimIdentitasPerusahaan] = useState<string>('open'); 
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
@@ -923,3 +923,4 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
         </motion.div>
     );
 };
+/*-----------------------------------------------------------------------------------------------------------*/
