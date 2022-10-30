@@ -792,6 +792,16 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
     );
 };
 /*-----------------------------------------------------------------------------------------------------------*/
+const tableIdentityPerusahaanStyles = mergeStyleSets({
+    body: {
+        width: '100%',
+        selectors: {            
+          'td:nth-child(1)': { width: 100, textAlign: 'left', padding: 4 },
+          'td:nth-child(2)': { padding: 4 },
+          'td:nth-child(3)': { backgroundColor: '#3CEDF7', padding: 4 },
+        },
+    }
+})
 const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
     //local state
     const [animIdentitasPerusahaan, setAnimIdentitasPerusahaan] = useState<string>('open'); 
@@ -825,17 +835,6 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
             return () => clearTimeout(timer);
         },
         []
-    );
-
-    const handleSetJenisPelakuUsaha = useCallback(
-        (itemSelected) => {
-            let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
-            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected!});
-            setValue("id", '');
-        },
-        [dataKategoriPelakuUsaha, pelakuUsaha]
     );
 
     const processNextStep = useCallback(
@@ -884,11 +883,30 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
+                    <table className={tableIdentityPerusahaanStyles.body} >
+                        <tr>
+                            <td>Skala usaha</td>
+                            <td>:</td>
+                            <td>{skalaUsaha.nama}</td>
+                        </tr>
+                        <tr>
+                            <td>Pelaku usaha</td>
+                            <td>:</td>
+                            <td>{`${pelakuUsaha.kategoriPelakuUsaha.nama} - ${pelakuUsaha.singkatan}`}</td>
+                        </tr>
+                        <tr>
+                            <td>{`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}</td>
+                            <td>:</td>
+                            <td>{id}</td>
+                        </tr>
+                    </table>
+                </Stack.Item>
+                <Stack.Item>
                     <ControlledFluentUiTextField
                         label="Nama perusahaan"
                         prefix={`${pelakuUsaha.singkatan}.`}
                         name="nama"
-                        rules={{ required: "harus diisi" }} 
+                        rules={{ required: "Nama perusahaan harus diisi" }} 
                         required
                         control={control}
                     />
