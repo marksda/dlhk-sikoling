@@ -241,6 +241,14 @@ const getSlideSubFormPerusahaan = (
                 setMotionKey={setMotionKey}
             />;   
             break; 
+        case 'alamatPerusahaan':
+            konten = 
+            <FormAlamatPerusahaan
+                control={control}
+                setValue={setValue}
+                setMotionKey={setMotionKey}
+            />;   
+            break;             
         default:
             konten = null;
             break;
@@ -842,7 +850,7 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotio
             setAnimIdentitasPerusahaan('closed');
             let timer = setTimeout(
                 () => {
-                    setMotionKey('detailPerusahaanOSS');
+                    setMotionKey('alamatPerusahaan');
                 },
                 duration*1000
             );
@@ -924,3 +932,46 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotio
     );
 };
 /*-----------------------------------------------------------------------------------------------------------*/
+const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKey}) => {
+    //local state
+    const [animAlamatPerusahaan, setAnimAlamatPerusahaan] = useState<string>('open');
+
+    const processBackToPreviousStep = useCallback(
+        () => {
+            setAnimAlamatPerusahaan('closed');            
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('identitasPerusahaan');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    return (
+        <motion.div
+            animate={animAlamatPerusahaan}
+            variants={variantAnimPerusahaan}
+            className={contentStyles.body} 
+        >
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
+                <IconButton 
+                    iconProps={backIcon} 
+                    title="Back" 
+                    ariaLabel="Back"
+                    onClick={processBackToPreviousStep} 
+                    styles={{
+                        root: {
+                            borderStyle: 'none',
+                            borderRadius: '50%',
+                            padding: 0,
+                            marginTop: 2,
+                        }
+                    }}/>
+                <Label styles={labelTitleBack}>Identitas perusahaan</Label>
+            </Stack>
+        </motion.div>
+    );
+};
