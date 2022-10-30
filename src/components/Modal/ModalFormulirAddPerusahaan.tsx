@@ -10,6 +10,7 @@ import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha"
 import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
 import { useIsEksisPeusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 
 
 const duration: number = 0.5;
@@ -883,17 +884,14 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Jenis pelaku usaha"
-                        placeholder="Pilih jenis pelaku usaha"
-                        options={options}
-                        required
-                        name="pelakuUsaha"
+                    <ControlledFluentUiTextField
+                        label="Nama perusahaan"
+                        prefix={`${pelakuUsaha.singkatan}.`}
+                        name="nama"
                         rules={{ required: "harus diisi" }} 
-                        onChangeItem={handleSetJenisPelakuUsaha}
+                        required
                         control={control}
-                        selectedKey={pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.id : undefined}
-                    /> 
+                    />
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
