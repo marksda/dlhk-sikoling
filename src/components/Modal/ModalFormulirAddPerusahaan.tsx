@@ -11,6 +11,10 @@ import { useGetAllKategoriPelakuUsahaBySkalaUsahaQuery, useGetPelakuUsahaByKateg
 import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
 import { useIsEksisPeusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
+import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
+import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
+import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 
 
 const duration: number = 0.5;
@@ -706,26 +710,11 @@ const FormNpwpPerusahaanOSS: FC<ISubFormNpwpPerusahaanProps> = ({control, setVal
     // );
 
     const save: SubmitHandler<IPerusahaan> = useCallback(
-        async (data) => {
-            console.log(data);
+        () => {
             setNpwp(id);
         },
         [id]
-    );    
-
-    // const processNextStep = useCallback(
-    //     () => {
-    //         // setAnimKategoriPelakuUsaha('closed');
-    //         // let timer = setTimeout(
-    //         //     () => {
-    //         //         setMotionKey('detailPerusahaanOSS');
-    //         //     },
-    //         //     duration*1000
-    //         // );
-    //         // return () => clearTimeout(timer);
-    //     },
-    //     []
-    // );
+    );
 
     return (
         <motion.div
@@ -813,24 +802,12 @@ const tableIdentityPerusahaanStyles = mergeStyleSets({
 const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKey}) => {
     //local state
     const [animIdentitasPerusahaan, setAnimIdentitasPerusahaan] = useState<string>('open'); 
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
     //hook variable from react form hook state variable   
-    const [skalaUsaha, pelakuUsaha, id] = useWatch({
+    const [skalaUsaha, pelakuUsaha, id, nama] = useWatch({
         control: control, 
-        name: ['skalaUsaha', 'pelakuUsaha', 'id']
+        name: ['skalaUsaha', 'pelakuUsaha', 'id', 'nama']
     });
-    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetAllKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha);
-
-    useEffect(
-        () => {
-            if(isFetchingKategoriPelakuUsaha == false) {
-                let tmpOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setOptions(tmpOptions);
-            }
-        },
-        [isFetchingKategoriPelakuUsaha, dataKategoriPelakuUsaha]
-    );
-
+    
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimIdentitasPerusahaan('closed');            
@@ -892,21 +869,23 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotio
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <table className={tableIdentityPerusahaanStyles.body} >
-                        <tr>
-                            <td>Skala usaha</td>
-                            <td>:</td>
-                            <td>{skalaUsaha.nama}</td>
-                        </tr>
-                        <tr>
-                            <td>Pelaku usaha</td>
-                            <td>:</td>
-                            <td>{`${pelakuUsaha.kategoriPelakuUsaha.nama} - ${pelakuUsaha.singkatan}`}</td>
-                        </tr>
-                        <tr>
-                            <td>{`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}</td>
-                            <td>:</td>
-                            <td>{id}</td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>Skala usaha</td>
+                                <td>:</td>
+                                <td>{skalaUsaha.nama}</td>
+                            </tr>
+                            <tr>
+                                <td>Pelaku usaha</td>
+                                <td>:</td>
+                                <td>{`${pelakuUsaha.kategoriPelakuUsaha.nama} - ${pelakuUsaha.singkatan}`}</td>
+                            </tr>
+                            <tr>
+                                <td>{`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}</td>
+                                <td>:</td>
+                                <td>{id}</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </Stack.Item>
                 <Stack.Item>
@@ -925,16 +904,74 @@ const FormIdentitasPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotio
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
                     onClick={processNextStep}
-                    disabled={pelakuUsaha.kategoriPelakuUsaha == null? true:false}
+                    disabled={nama.length == 0 ? true:false}
                 />
             </Stack>   
         </motion.div>
     );
 };
 /*-----------------------------------------------------------------------------------------------------------*/
-const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKey}) => {
+const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+    //hook variable from react form hook
+    const [alamat] = useWatch({
+        control: control, 
+        name: ['alamat']
+    });
     //local state
     const [animAlamatPerusahaan, setAnimAlamatPerusahaan] = useState<string>('open');
+    const [propinsiOptions, setPropinsiOptions] = useState<IDropdownOption<any>[]>([]);
+    const [kabupatenOptions, setKabupatenOptions] = useState<IDropdownOption<any>[]>([]); 
+    const [kecamatanOptions, setKecamatanOptions] = useState<IDropdownOption<any>[]>([]);   
+    const [desaOptions, setDesaOptions] = useState<IDropdownOption<any>[]>([]);
+    //hook variable rtk query
+    const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi, isError: isErrorPropinsi } = useGetAllPropinsiQuery();
+    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten, isError: isErrorKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi != null ? alamat.propinsi.id : null, {skip: alamat.propinsi == null ? true : false});
+    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan, isError: isErrorKecamatan } = useGetKecamatanByKabupatenQuery(alamat.kabupaten != null ? alamat.kabupaten.id : null, {skip: alamat.kabupaten == null ? true : false});
+    const { data: dataDesa = [], isFetching: isFetchingDataDesa, isError: isErrorDesa } = useGetDesaByKecamatanQuery(alamat.kecamatan != null ? alamat.kecamatan.id : null, {skip: alamat.kecamatan == null ? true : false});
+
+    //deteksi data options propinsi sudah tersedia
+    useEffect(
+        () => {
+            if(isFetchingDataPropinsi == false) {
+                let tmpOptions = dataPropinsi.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+                setPropinsiOptions(tmpOptions);
+            }
+        },
+        [isFetchingDataPropinsi]
+    );
+
+    //deteksi data options kabupaten sudah tersedia
+    useEffect(
+        () => {
+            if(isFetchingDataKabupaten == false) {
+                let tmpOptions = dataKabupaten.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+                setKabupatenOptions(tmpOptions);
+            }
+        },
+        [isFetchingDataKabupaten]
+    );
+
+    //deteksi data options kecamatan sudah tersedia
+    useEffect(
+        () => {
+            if(isFetchingDataKecamatan == false) {
+                let tmpOptions = dataKecamatan.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+                setKecamatanOptions(tmpOptions);
+            }
+        },
+        [isFetchingDataKecamatan]
+    );
+
+    //deteksi data options desa sudah tersedia
+    useEffect(
+        () => {
+            if(isFetchingDataDesa == false) {
+                let tmpOptions = dataDesa.map((t) => { return {key: t.id as string, text: t.nama as string}; });
+                setDesaOptions(tmpOptions);
+            }
+        },
+        [isFetchingDataDesa]
+    );
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -942,6 +979,78 @@ const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKe
             let timer = setTimeout(
                 () => {
                     setMotionKey('identitasPerusahaan');
+                },
+                duration*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
+
+    const handleChangePropinsi = useCallback(
+        (itemSelected) => {
+            let itemPropinsiSelected = dataPropinsi.find(
+                (item) => { return item.id == itemSelected.key; } 
+            );  
+            setValue("alamat", {
+                ...alamat, 
+                propinsi: {id: itemPropinsiSelected!.id, nama: itemPropinsiSelected!.nama},
+                kabupaten: null,
+                kecamatan: null,
+                desa: null,
+            });
+        },
+        [dataPropinsi, alamat]
+    );
+
+    const handleChangeKabupaten = useCallback(
+        (itemSelected) => {
+            let itemKabupatenSelected = dataKabupaten.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            setValue("alamat", {
+                ...alamat, 
+                kabupaten: {id: itemKabupatenSelected!.id, nama: itemKabupatenSelected!.nama},
+                kecamatan: null,
+                desa: null
+            });
+        },
+        [dataKabupaten, alamat]
+    );
+
+    const handleChangeKecamatan = useCallback(
+        (itemSelected) => {
+            let itemKecamatanSelected = dataKecamatan.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            setValue("alamat", {
+                ...alamat, 
+                kecamatan: {id: itemKecamatanSelected!.id, nama: itemKecamatanSelected!.nama},
+                desa: null
+            });
+        },
+        [dataKecamatan, alamat]
+    );
+
+    const handleChangeDesa = useCallback(
+        (itemSelected) => {
+            let itemDesaSelected = dataDesa.find(
+                (item) => { return item.id == itemSelected.key; } 
+            )
+            setValue("alamat", {
+                ...alamat, 
+                desa: {id: itemDesaSelected!.id, nama: itemDesaSelected!.nama}
+            });
+        },
+        [dataDesa, alamat]
+    );
+
+    const processNextStep = useCallback(
+        () => {
+            setAnimAlamatPerusahaan('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('alamatPerusahaan');
                 },
                 duration*1000
             );
@@ -972,6 +1081,75 @@ const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setMotionKe
                     }}/>
                 <Label styles={labelTitleBack}>Identitas perusahaan</Label>
             </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
+                <Label styles={labelStyle}>Alamat Perusahaan</Label>
+                <Label styles={subLabelStyle}>Lengkapi alamat perusahaan sesuai dengan dokumen legalitas pendirian.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Propinsi"
+                        placeholder="Pilih propinsi"
+                        options={propinsiOptions}
+                        required
+                        name="alamat.propinsi"
+                        rules={{ required: "harus diisi" }} 
+                        onChangeItem={handleChangePropinsi}
+                        control={control}
+                        selectedKey={alamat.propinsi != null ? alamat.propinsi.id : null}
+                    /> 
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Kabupaten"
+                        placeholder="Pilih kabupaten"
+                        options={kabupatenOptions}
+                        required
+                        name="alamat.kabupaten"
+                        rules={{ required: "kabupaten harus diisi" }} 
+                        onChangeItem={handleChangeKabupaten}
+                        control={control}
+                        selectedKey={alamat.kabupaten != null ? alamat.kabupaten.id : null}
+                        disabled={alamat.propinsi == null ? true : false}
+                    /> 
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Kecamatan"
+                        placeholder="Pilih kecamatan"
+                        options={kecamatanOptions}
+                        required
+                        name="alamat.kecamatan"
+                        rules={{ required: "kecamatan harus diisi" }} 
+                        onChangeItem={handleChangeKecamatan}
+                        control={control}
+                        selectedKey={alamat.kecamatan != null ? alamat.kecamatan.id : null}
+                        disabled={alamat.kabupaten == null ? true : false}
+                    /> 
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Desa"
+                        placeholder="Pilih desa"
+                        options={desaOptions}
+                        required
+                        name="alamat.desa"
+                        rules={{ required: "desa harus diisi" }} 
+                        onChangeItem={handleChangeDesa}
+                        control={control}
+                        selectedKey={alamat.desa != null ? alamat.desa.id : null}
+                        disabled={alamat.kecamatan == null ? true : false}
+                    /> 
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    style={{marginTop: 24, width: 100}}
+                    onClick={processNextStep}
+                    disabled={alamat.desa == null ? true : false}
+                />
+            </Stack>  
         </motion.div>
     );
 };
