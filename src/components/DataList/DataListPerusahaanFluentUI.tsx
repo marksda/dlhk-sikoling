@@ -62,7 +62,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                 key: t.id, 
                 npwp: t.id, 
                 nama: `${t.pelakuUsaha?.singkatan}. ${t.nama}`,
-                kontak:`Email: ${t.kontakPerusahaan?.email}, Telp: ${t.kontakPerusahaan?.telepone}, Fax: ${t.kontakPerusahaan?.fax}`,
+                kontak:`Email: ${t.kontak?.email}, Telp: ${t.kontak?.telepone}, Fax: ${t.kontak?.fax}`,
                 alamat: `${t.alamat?.keterangan} Desa: ${t.alamat?.desa}, Kecamatan: ${t.alamat?.kecamatan}, Kabupaten; ${t.alamat?.kabupaten}, Propinsi: ${t.alamat?.propinsi}`
             }; 
         }

@@ -30,7 +30,7 @@ export interface IPerusahaan {
     skalaUsaha: ISkalaUsaha|null;
     pelakuUsaha: IPelakuUsaha|null;
     alamat: IAlamat|null;
-    kontakPerusahaan: IKontak|null;
+    kontak: IKontak|null;
 };
 
 const initialState: IPerusahaan = {
@@ -40,7 +40,7 @@ const initialState: IPerusahaan = {
     skalaUsaha: null,
     pelakuUsaha: null,
     alamat: null,
-    kontakPerusahaan: null,
+    kontak: null,
 }
 
 export const perusahaanSlice = createSlice({

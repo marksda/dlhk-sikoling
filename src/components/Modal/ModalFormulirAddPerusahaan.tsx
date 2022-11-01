@@ -10,6 +10,7 @@ import { FormPelakuUsaha } from "../FormulirPerusahaanFormHook/FormPelakuUsaha";
 import { FormSkalaUsaha } from "../FormulirPerusahaanFormHook/FormSkalaUsaha";
 import { FormModelPerizinanPerusahaan } from "../FormulirPerusahaanFormHook/FormModelPerizinanPerusahaan";
 import { cancelIcon, dragOptions, IModalFormulirPerusahaanProps, ISlideSubFormPerusahaanParam } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
+import { FormKontakPerusahaan } from "../FormulirPerusahaanFormHook/FormKontakPerusahaan";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -108,7 +109,11 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                 desa: null,
                 keterangan: '',
             },
-            kontakPerusahaan: null
+            kontak: {
+                telepone: '',
+                fax: '',
+                email: '',
+            }
         }
     });  
 
@@ -207,7 +212,15 @@ const getSlideSubFormPerusahaan = (
                 setValue={setValue}
                 setMotionKey={setMotionKey}
             />;   
-            break;             
+            break;   
+        case 'kontakPerusahaan':
+            konten = 
+            <FormKontakPerusahaan
+                control={control}
+                setValue={setValue}
+                setMotionKey={setMotionKey}
+            />;   
+            break;   
         default:
             konten = null;
             break;

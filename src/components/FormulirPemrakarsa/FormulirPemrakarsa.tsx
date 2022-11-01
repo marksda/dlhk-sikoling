@@ -34,7 +34,7 @@ export const FormulirPemrakarsa: FC = () => {
                 desa: defaultDesa,
                 keterangan: '',
             },
-            kontakPerusahaan: {
+            kontak: {
                 telepone: null,
                 fax: null,
                 email: null,

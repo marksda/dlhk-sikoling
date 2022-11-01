@@ -149,7 +149,7 @@ export const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setV
             setAnimAlamatPerusahaan('closed');
             let timer = setTimeout(
                 () => {
-                    setMotionKey('alamatPerusahaan');
+                    setMotionKey('kontakPerusahaan');
                 },
                 duration*1000
             );
