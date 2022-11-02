@@ -1,11 +1,17 @@
 import { IconButton, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
-import { useWatch } from "react-hook-form";
+import { SubmitHandler, useWatch } from "react-hook-form";
+import { useAddPerusahaanMutation } from "../../features/perusahaan/perusahaan-api-slice";
+import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
-export const FormKontakPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
+
+interface IFormKOntakPerusahaanProps extends ISubFormPerusahaanProps {
+    handleSubmit: any;
+}
+export const FormKontakPerusahaan: FC<IFormKOntakPerusahaanProps> = ({control, setMotionKey, handleSubmit}) => {
     //hook variable from react form hook
     const [kontak] = useWatch({
         control: control, 
@@ -14,23 +20,28 @@ export const FormKontakPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setV
     //local state
     const [animKontakPerusahaan, setAnimKontakPerusahaan] = useState<string>('open');
 
+    //rtk query mutation addPerusahaan variable
+    const [addPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddPerusahaanMutation();
+
+    const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
+        async(data) => {
+            try {
+                // props.setIsLoading(true);  
+                // setNik(data.nik!);       
+                // await addPerusahaan(data).unwrap();
+                // setUploadStatus(true);
+                // props.setIsLoading(false);   
+            } catch (error) {
+                // props.setIsLoading(false);
+                // props.setIsErrorConnection(true);
+            }
+        },
+        []
+    );    
+
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimKontakPerusahaan('closed');            
-            let timer = setTimeout(
-                () => {
-                    setMotionKey('alamatPerusahaan');
-                },
-                duration*1000
-            );
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-
-    const processNextStep = useCallback(
-        () => {
-            setAnimKontakPerusahaan('closed');
             let timer = setTimeout(
                 () => {
                     setMotionKey('alamatPerusahaan');
@@ -101,7 +112,7 @@ export const FormKontakPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setV
                 <PrimaryButton 
                     text="Lanjut" 
                     style={{marginTop: 24, width: 100}}
-                    onClick={processNextStep}
+                    onClick={handleSubmit(successfulCallBack)}
                     disabled={kontak.telepone == '' ? true:false}
                 />
             </Stack>

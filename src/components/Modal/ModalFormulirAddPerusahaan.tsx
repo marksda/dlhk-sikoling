@@ -1,4 +1,4 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IProgressIndicatorStyles, mergeStyleSets, Modal } from "@fluentui/react";
+import { FontSizes, FontWeights, getTheme, IconButton, mergeStyleSets, Modal } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -81,6 +81,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     // const [isLoading, setIsLoading] = useState<boolean>(false); 
     const titleId = useId('Formulir Perusahaan');
+    //hook variable form hook
     const { control, handleSubmit, setValue, reset, setError } = useForm<IPerusahaan>({
         mode: 'onSubmit',
         defaultValues: {
@@ -115,8 +116,8 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                 email: '',
             }
         }
-    });  
-
+    });
+    
     const handleCloseModal = useCallback(
         () => {
             reset();
@@ -152,7 +153,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     setValue,
                     reset,
                     handleSubmit,
-                    setError,
+                    setError
                 })
             }             
         </Modal>
@@ -160,7 +161,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue, reset, handleSubmit, setError}: ISlideSubFormPerusahaanParam) => {
+    {motionKey, setMotionKey, control, setValue, handleSubmit, setError}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -219,6 +220,7 @@ const getSlideSubFormPerusahaan = (
                 control={control}
                 setValue={setValue}
                 setMotionKey={setMotionKey}
+                handleSubmit={handleSubmit}
             />;   
             break;   
         default:

@@ -47,6 +47,7 @@ export const PerusahaanApiSlice = createApi({
 });
 
 export const { 
+    useAddPerusahaanMutation, useUpdatePerusahaanMutation,
     useGetAllPerusahaanQuery, useGetPerusahaanByPageQuery, useGetPerusahaanByNamaAndPageQuery, 
     useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery, useIsEksisPeusahaanQuery
 } = PerusahaanApiSlice;

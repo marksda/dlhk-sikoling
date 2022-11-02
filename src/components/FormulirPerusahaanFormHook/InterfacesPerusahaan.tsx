@@ -1,5 +1,5 @@
 import { ContextualMenu, IDragOptions, IIconProps, ILabelStyles, mergeStyleSets } from "@fluentui/react";
-import { Control, UseFormHandleSubmit, UseFormReset, UseFormSetError, UseFormSetValue } from "react-hook-form";
+import { Control, SubmitHandler, UseFormHandleSubmit, UseFormReset, UseFormSetError, UseFormSetValue } from "react-hook-form";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 
 
