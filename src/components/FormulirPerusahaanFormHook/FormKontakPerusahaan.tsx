@@ -23,22 +23,6 @@ export const FormKontakPerusahaan: FC<IFormKOntakPerusahaanProps> = ({control, s
     //rtk query mutation addPerusahaan variable
     const [addPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddPerusahaanMutation();
 
-    const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
-        async(data) => {
-            try {
-                // props.setIsLoading(true);  
-                // setNik(data.nik!);       
-                // await addPerusahaan(data).unwrap();
-                // setUploadStatus(true);
-                // props.setIsLoading(false);   
-            } catch (error) {
-                // props.setIsLoading(false);
-                // props.setIsErrorConnection(true);
-            }
-        },
-        []
-    );    
-
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimKontakPerusahaan('closed');            
@@ -52,6 +36,22 @@ export const FormKontakPerusahaan: FC<IFormKOntakPerusahaanProps> = ({control, s
         },
         []
     );
+    const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
+        async(data) => {
+            try {
+                // props.setIsLoading(true);  
+                // setNik(data.nik!);       
+                await addPerusahaan(data).unwrap();
+                // setUploadStatus(true);
+                // props.setIsLoading(false);   
+            } catch (error) {
+                // props.setIsLoading(false);
+                // props.setIsErrorConnection(true);
+            }
+        },
+        []
+    );    
+
 
     return (
         <motion.div
