@@ -219,6 +219,7 @@ const getSlideSubFormPerusahaan = (
             <FormKontakPerusahaan
                 control={control}
                 setValue={setValue}
+                setError={setError}
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
             />;   

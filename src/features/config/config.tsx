@@ -1,12 +1,10 @@
-import { IDesa } from "../desa/desa-slice"
-import { IKabupaten } from "../kabupaten/kabupaten-slice"
-import { IKecamatan } from "../kecamatan/kecamatan-slice"
-import { IPropinsi } from "../propinsi/propinsi-slice"
-import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging"
-import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice"
-import { IDatePickerStrings } from "@fluentui/react"
-import { useEffect } from "react"
-
+import { IDesa } from "../desa/desa-slice";
+import { IKabupaten } from "../kabupaten/kabupaten-slice";
+import { IKecamatan } from "../kecamatan/kecamatan-slice";
+import { IPropinsi } from "../propinsi/propinsi-slice";
+import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging";
+import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
+import { IDatePickerStrings } from "@fluentui/react";
 
 export const baseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
 export const baseIdentityProviderUrl = 'http://localhost:8082/';
@@ -18,6 +16,7 @@ export const defaultHalaman: IHalaman = {page: 1, pageSize: 10};
 export const defaultJenisKelamin: IJenisKelamin = {id: 'L', nama: 'Laki-Laki'};
 export const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 export const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+export const regexpNomorTelepone = new RegExp(/^\+?([-]?\d+)+|\(\d+\)([-]\d+)/);
 export const DayPickerIndonesiaStrings: IDatePickerStrings = {
     months: [
         'Januari',

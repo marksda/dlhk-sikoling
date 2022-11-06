@@ -1,17 +1,19 @@
 import { IconButton, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
-import { SubmitHandler, useWatch } from "react-hook-form";
+import { SubmitHandler, UseFormSetError, useWatch } from "react-hook-form";
+import { regexpEmail, regexpNomorTelepone } from "../../features/config/config";
 import { useAddPerusahaanMutation } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
 
-interface IFormKOntakPerusahaanProps extends ISubFormPerusahaanProps {
+interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: any;
+    setError: UseFormSetError<IPerusahaan>;
 }
-export const FormKontakPerusahaan: FC<IFormKOntakPerusahaanProps> = ({control, setMotionKey, handleSubmit}) => {
+export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError}) => {
     //hook variable from react form hook
     const [kontak] = useWatch({
         control: control, 
@@ -36,22 +38,69 @@ export const FormKontakPerusahaan: FC<IFormKOntakPerusahaanProps> = ({control, s
         },
         []
     );
+
     const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
         async(data) => {
-            try {
-                // props.setIsLoading(true);  
-                // setNik(data.nik!);       
-                await addPerusahaan(data).unwrap();
-                // setUploadStatus(true);
-                // props.setIsLoading(false);   
+            console.log(kontak);
+            try {   
+                let isValid = true;
+                if(regexpEmail.test(data!.kontak!.email!) == false) {
+                    isValid = false;
+                    setError("kontak.email", {
+                        type: "manual",
+                        message: `penulisan email tidak sesuai dengan format`
+                    });
+                }
+
+                if(regexpNomorTelepone.test(data!.kontak!.telepone!) == false) {
+                    isValid = false;
+                    setError("kontak.telepone", {
+                        type: "manual",
+                        message: `penulisan nomor telepone tidak sesuai dengan format`
+                    });
+                } 
+
+                if(data!.kontak!.fax! != '') {
+                    if(data!.kontak!.fax! != '-') {
+                        if(regexpNomorTelepone.test(data!.kontak!.fax!) == false) {
+                            isValid = false;
+                            setError("kontak.fax", {
+                                type: "manual",
+                                message: `penulisan fax tidak sesuai dengan format`
+                            });
+                        } 
+                    }
+                }
+
+                if(isValid == true) {
+                    // props.setIsLoading(true);  
+                    // setNik(data.nik!);       
+                    // await addPerusahaan(data).unwrap();
+                    // setUploadStatus(true);
+                    // props.setIsLoading(false); 
+                }         
             } catch (error) {
                 // props.setIsLoading(false);
                 // props.setIsErrorConnection(true);
             }
         },
-        []
+        [kontak]
     );    
 
+    // const handleEmailValidation = useCallback(
+    //     (email) => {
+    //         let isValid = regexpEmail.test(email);
+    //         if( isValid == false) {
+    //             setError("kontak.email", {
+    //                 type: "manual",
+    //                 message: `penulisan email tidak sesuai dengan format`
+    //             });
+    //         }
+            
+    //         return isValid;
+    //     },
+    //     [setError]
+    // )
 
     return (
         <motion.div
