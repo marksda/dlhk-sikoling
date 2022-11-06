@@ -160,7 +160,7 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
                     <ControlledFluentUiMaskTextField 
                         name="id"
                         label={`NPWP ${(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? 'Pribadi':'Badan'}`}
-                        mask="99.999.999.9-999.999" 
+                        mask="99\.999\.999\.9\-999\.999"
                         control={control}
                         disabled={
                             pelakuUsaha.id == '' ? true : false

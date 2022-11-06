@@ -6,7 +6,7 @@ const _columns = [
     { key: 'c1', name: 'Npwp', fieldName: 'npwp', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c2', name: 'Nama', fieldName: 'nama', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c3', name: 'Kontak', fieldName: 'kontak', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'c4', name: 'Alamat', fieldName: 'Alamat', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 
 export interface IDetailsListBasicExampleItem {
@@ -63,7 +63,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                 npwp: t.id, 
                 nama: `${t.pelakuUsaha?.singkatan}. ${t.nama}`,
                 kontak:`Email: ${t.kontak?.email}, Telp: ${t.kontak?.telepone}, Fax: ${t.kontak?.fax}`,
-                alamat: `${t.alamat?.keterangan} Desa: ${t.alamat?.desa}, Kecamatan: ${t.alamat?.kecamatan}, Kabupaten; ${t.alamat?.kabupaten}, Propinsi: ${t.alamat?.propinsi}`
+                alamat: `${t.alamat?.keterangan} ${t.alamat!.desa!.nama}, ${t.alamat!.kecamatan!.nama}, ${t.alamat!.kabupaten!.nama}, ${t.alamat!.propinsi!.nama}`
             }; 
         }
     );
