@@ -10,19 +10,21 @@ export const ControlledFluentUiTextField: FC<HookFormProps & ITextFieldProps> = 
             name={props.name}
             control={props.control}
             rules={props.rules}
-            render={({
-                field: { onChange, onBlur, name: fieldName, value },
-                fieldState: { error }
-            }) => (
-                <TextField 
-                    {...props}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    name={fieldName}
-                    errorMessage={error && error.message} 
-                    value={value}            
-                />
-            )}  
+            render={
+                ({
+                    field: { onChange, onBlur, name: fieldName, value },
+                    fieldState: { error }
+                }) => (
+                    <TextField 
+                        {...props}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        name={fieldName}
+                        errorMessage={error && error.message} 
+                        value={value}            
+                    />
+                )
+            }  
         /> 
     );
 }

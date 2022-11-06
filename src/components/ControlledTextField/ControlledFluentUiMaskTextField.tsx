@@ -16,7 +16,11 @@ export const ControlledFluentUiMaskTextField: FC<HookFormProps & IMaskedTextFiel
             }) => (
                 <MaskedTextField 
                     {...props}
-                    onChange={onChange}
+                    onChange={
+                        (event, v) => {
+                            onChange(v);
+                        }
+                    }
                     onBlur={onBlur}
                     name={fieldName}
                     errorMessage={error && error.message} 
