@@ -41,7 +41,6 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
 
     const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
         async(data) => {
-            console.log(kontak);
             try {   
                 let isValid = true;
                 if(regexpEmail.test(data!.kontak!.email!) == false) {
@@ -75,7 +74,7 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                 if(isValid == true) {
                     // props.setIsLoading(true);  
                     // setNik(data.nik!);       
-                    // await addPerusahaan(data).unwrap();
+                    await addPerusahaan(data).unwrap();
                     // setUploadStatus(true);
                     // props.setIsLoading(false); 
                 }         
@@ -84,23 +83,8 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                 // props.setIsErrorConnection(true);
             }
         },
-        [kontak]
-    );    
-
-    // const handleEmailValidation = useCallback(
-    //     (email) => {
-    //         let isValid = regexpEmail.test(email);
-    //         if( isValid == false) {
-    //             setError("kontak.email", {
-    //                 type: "manual",
-    //                 message: `penulisan email tidak sesuai dengan format`
-    //             });
-    //         }
-            
-    //         return isValid;
-    //     },
-    //     [setError]
-    // )
+        []
+    );  
 
     return (
         <motion.div

@@ -3,11 +3,14 @@ import { baseRestAPIUrl } from "../config/config";
 import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
 import { IPerusahaan } from "./perusahaan-slice";
 
+type PerusahaanResponse = IPerusahaan[];
+
 export const PerusahaanApiSlice = createApi({
     reducerPath: 'perusahaanApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
     }),
+    tagTypes:['Perusahaan'],
     endpoints(builder) {
         return {
             addPerusahaan: builder.mutation({
@@ -15,28 +18,42 @@ export const PerusahaanApiSlice = createApi({
                     url: 'perusahaan',
                     method: 'POST',
                     body,
-                })
+                }),
+                invalidatesTags: [{type: 'Perusahaan', id: 'LIST'}],
             }),
             updatePerusahaan: builder.mutation({
                 query: (body) => ({
                     url: 'perusahaan',
                     method: 'PUT',
                     body,
-                })
+                }),
+                invalidatesTags: [{type: 'Perusahaan', id: 'LIST'}],
             }),
-            getAllPerusahaan: builder.query<IPerusahaan[], void>({
+            getAllPerusahaan: builder.query<PerusahaanResponse, void>({
                 query: () => `perusahaan`,
+                transformResponse: (response: {data: PerusahaanResponse}, meta, args) => {
+                    return response.data;
+                },
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'Perusahaan' as const, id })
+                        ),
+                        { type: 'Perusahaan', id: 'LIST' },
+                    ]:
+                    [{type: 'Perusahaan', id: 'LIST'}],
             }),
-            getPerusahaanByPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSize>({
+            getPerusahaanByPage: builder.query<PerusahaanResponse, IHalamanBasePageAndPageSize>({
                 query: ({page, pageSize}) => `perusahaan/page?page=${page}&pageSize=${pageSize}`,
             }),
-            getPerusahaanByNama: builder.query<IPerusahaan[], string|void>({
+            getPerusahaanByNama: builder.query<PerusahaanResponse, string|void>({
                 query: (nama) => `perusahaan/nama?nama=${nama}`,
             }),
-            getPerusahaanByNamaAndPage: builder.query<IPerusahaan[], IHalamanBasePageAndPageSizeAndNama>({
+            getPerusahaanByNamaAndPage: builder.query<PerusahaanResponse, IHalamanBasePageAndPageSizeAndNama>({
                 query: ({nama, page=1, pageSize=10}) => `perusahaan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
-            getPerusahaanById: builder.query<IPerusahaan[], string|void>({
+            getPerusahaanById: builder.query<PerusahaanResponse, string|void>({
                 query: (idPerusahaan) => `perusahaan/kabupaten?idKabupaten=${idPerusahaan}`,
             }),
             isEksisPeusahaan: builder.query<boolean, string|void>({

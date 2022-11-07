@@ -24,23 +24,23 @@ import { ISkalaUsaha } from "./skala-usaha";
 // }
 
 export interface IPerusahaan {
-    id: string|null;
-    nama: string|null;
-    modelPerizinan: IModelPerizinan|null;
-    skalaUsaha: ISkalaUsaha|null;
-    pelakuUsaha: IPelakuUsaha|null;
-    alamat: IAlamat|null;
-    kontak: IKontak|null;
+    id: string|undefined;
+    nama: string|undefined;
+    modelPerizinan: IModelPerizinan|undefined;
+    skalaUsaha: ISkalaUsaha|undefined;
+    pelakuUsaha: IPelakuUsaha|undefined;
+    alamat: IAlamat|undefined;
+    kontak: IKontak|undefined;
 };
 
 const initialState: IPerusahaan = {
-    id: null,
-    nama: null,
-    modelPerizinan: null,
-    skalaUsaha: null,
-    pelakuUsaha: null,
-    alamat: null,
-    kontak: null,
+    id: undefined,
+    nama: undefined,
+    modelPerizinan: undefined,
+    skalaUsaha: undefined,
+    pelakuUsaha: undefined,
+    alamat: undefined,
+    kontak: undefined,
 }
 
 export const perusahaanSlice = createSlice({
