@@ -3,11 +3,6 @@ import React, { FC, useCallback, useState } from "react";
 import { KontenDashboardDefault } from "./dashboard/template-konten-dashboard-default";
 import { KontenDashboardPerusahaan } from "./dashboard/template-konten-dashboard-perusahaan";
 
-const kontenStyles: IStackStyles = {
-    root: {
-        padding: '0px 16px',       
-    },
-};
 const getKontentDashboard = (item: string, ft: (item: string) => void) => {
     let konten = null;
     switch (item) {
@@ -67,8 +62,8 @@ export const KontenDashboardPemrakarsa: FC = () => {
     );
 
     return(
-        <Stack styles={kontenStyles}>
-            <Stack.Item align="auto">                
+        <Stack>
+            <Stack.Item>                
                 <Breadcrumb
                     items={itemBreadcrumb}
                     maxDisplayedItems={3}
