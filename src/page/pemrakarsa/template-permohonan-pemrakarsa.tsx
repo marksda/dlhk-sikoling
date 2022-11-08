@@ -5,6 +5,7 @@ import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPe
 const kontenStyles: IStackStyles = {
     root: {
         padding: 0,     
+        background: 'white'
     },
 };
 

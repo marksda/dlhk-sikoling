@@ -46,7 +46,7 @@ export const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, 
             let itemSkalaUsahaSelected = dataSkalaUsaha.find(
                 (item) => { return item.id == itemSelected.key; } 
             )
-            setValue("skalaUsaha", itemSkalaUsahaSelected || null);
+            setValue("skalaUsaha", itemSkalaUsahaSelected || undefined);
         },
         [dataSkalaUsaha]
     );

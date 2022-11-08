@@ -31,9 +31,10 @@ export const PerusahaanApiSlice = createApi({
             }),
             getAllPerusahaan: builder.query<PerusahaanResponse, void>({
                 query: () => `perusahaan`,
-                transformResponse: (response: {data: PerusahaanResponse}, meta, args) => {
-                    return response.data;
-                },
+                // transformResponse: (response: {data: PerusahaanResponse}, meta, args) => {
+                //     console.log(response);
+                //     return response.data;
+                // },
                 providesTags: (result) => 
                     result ?
                     [

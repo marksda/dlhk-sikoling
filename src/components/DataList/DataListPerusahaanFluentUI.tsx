@@ -1,5 +1,5 @@
-import { DefaultPalette, DetailsList, DetailsListLayoutMode, IDetailsHeaderProps, IRenderFunction, Selection } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { DetailsList, DetailsListLayoutMode, IDetailsHeaderProps, IRenderFunction, Selection } from "@fluentui/react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 
 const _columns = [
@@ -34,6 +34,7 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
 
 export const DataListPerusahaanFluentUI: FC = (props) => {
     const [selectionDetails, setSelectionDetails] = useState<string>('');
+    const [dataPerusahaan, setDataPerusahaan] = useState<any[]>([]);
 
     const _selection = new Selection({
         onSelectionChanged: () => {
@@ -55,17 +56,28 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
     };
 
     //rtk query perusahaan variable hook
-    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan } = useGetAllPerusahaanQuery();  
-    const _daftarPerusahaan = daftarPerusahaan.map(
-        (t) => { 
-            return {
-                key: t.id, 
-                npwp: t.id, 
-                nama: `${t.pelakuUsaha?.singkatan}. ${t.nama}`,
-                kontak:`Email: ${t.kontak?.email}, Telp: ${t.kontak?.telepone}, Fax: ${t.kontak?.fax}`,
-                alamat: `${t.alamat?.keterangan} ${t.alamat!.desa!.nama}, ${t.alamat!.kecamatan!.nama}, ${t.alamat!.kabupaten!.nama}, ${t.alamat!.propinsi!.nama}`
-            }; 
-        }
+    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan } = useGetAllPerusahaanQuery(); 
+
+    //deteksi data perusahaan sudah tersedia
+    useEffect(
+        () => {
+            // if(isFetchingDaftarPerusahaan == false){
+                setDataPerusahaan([
+                    ...daftarPerusahaan.map(
+                        (t) => (
+                            {
+                                key: t.id, 
+                                npwp: t.id, 
+                                nama: `${t.pelakuUsaha?.singkatan}. ${t.nama}`,
+                                kontak:`Email: ${t.kontak?.email}, Telp: ${t.kontak?.telepone}, Fax: ${t.kontak?.fax}`,
+                                alamat: `${t.alamat?.keterangan} ${t.alamat!.desa!.nama}, ${t.alamat!.kecamatan!.nama}, ${t.alamat!.kabupaten!.nama}, ${t.alamat!.propinsi!.nama}`
+                            }
+                        )
+                    )
+                ]);
+            // }            
+        },
+        [daftarPerusahaan]
     );
 
     const _onItemInvoked = useCallback(
@@ -77,7 +89,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
     
     return(     
         <DetailsList
-            items={_daftarPerusahaan}
+            items={dataPerusahaan}
             columns={_columns}
             setKey="set"
             layoutMode={DetailsListLayoutMode.justified}

@@ -10,6 +10,7 @@ const RootIStackStyles: IStackItemStyles = {
         height: 'calc(100vh - 60px)',
         // padding: '0px 4px 8px 4px',   
         padding: 0,     
+        backgroundColor: 'white'
     },
 };
 

@@ -5,7 +5,7 @@ import { KontenDashboardPerusahaan } from "./dashboard/template-konten-dashboard
 
 const kontenStyles: IStackStyles = {
     root: {
-        padding: '0px 16px',        
+        padding: '0px 16px',       
     },
 };
 const getKontentDashboard = (item: string, ft: (item: string) => void) => {

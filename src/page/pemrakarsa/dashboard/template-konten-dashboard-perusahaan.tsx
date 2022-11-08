@@ -40,7 +40,7 @@ export const KontenDashboardPerusahaan: FC = () => {
     ];
     
     return(
-        <div style={containerDivStyles}>
+        <>
             <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
                 <Stack.Item>
                     <CommandBar
@@ -59,7 +59,7 @@ export const KontenDashboardPerusahaan: FC = () => {
                 isDraggable={true}
             />  
             }                   
-        </div>
+        </>
         
     );
     
