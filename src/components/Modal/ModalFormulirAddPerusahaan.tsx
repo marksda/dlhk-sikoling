@@ -11,6 +11,7 @@ import { FormSkalaUsaha } from "../FormulirPerusahaanFormHook/FormSkalaUsaha";
 import { FormModelPerizinanPerusahaan } from "../FormulirPerusahaanFormHook/FormModelPerizinanPerusahaan";
 import { cancelIcon, dragOptions, IModalFormulirPerusahaanProps, ISlideSubFormPerusahaanParam } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { FormKontakPerusahaan } from "../FormulirPerusahaanFormHook/FormKontakPerusahaan";
+import { FormDokumenOssPerusahaan } from "../FormulirPerusahaanFormHook/FormDokumenOssPerusahaan";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -237,7 +238,17 @@ const getSlideSubFormPerusahaan = (
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
             />;   
-            break;   
+            break;  
+        case 'dokumenOssPerusahaan':
+            konten = 
+            <FormDokumenOssPerusahaan
+                control={control}
+                setValue={setValue}
+                setError={setError}
+                setMotionKey={setMotionKey}
+                handleSubmit={handleSubmit}
+            />;   
+            break;       
         default:
             konten = null;
             break;
