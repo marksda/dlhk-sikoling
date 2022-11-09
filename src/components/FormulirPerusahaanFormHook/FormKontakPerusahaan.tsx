@@ -8,11 +8,12 @@ import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
-
 interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: any;
-}
-export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError}) => {
+    setError: UseFormSetError<IPerusahaan>;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError, setIsLoading}) => {
     //hook variable from react form hook
     const [kontak] = useWatch({
         control: control, 
@@ -71,9 +72,9 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                 }
 
                 if(isValid == true) {
-                    // props.setIsLoading(true);  
-                    // setNik(data.nik!);       
+                    setIsLoading(true);   
                     await addPerusahaan(data).unwrap();
+                    setIsLoading(false);
                     setAnimKontakPerusahaan('closed');
                     let timer = setTimeout(
                         () => {
@@ -82,12 +83,9 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                         duration*1000
                     );
                     return () => clearTimeout(timer);
-                    // setUploadStatus(true);
-                    // props.setIsLoading(false); 
                 }         
             } catch (error) {
-                // props.setIsLoading(false);
-                // props.setIsErrorConnection(true);
+                setIsLoading(false);
             }
         },
         []

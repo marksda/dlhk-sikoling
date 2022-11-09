@@ -79,7 +79,6 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
     const [motionKey, setMotionKey] = useState<string>('modelPerizinan');    
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false); 
-    console.log(isLoading);
     const titleId = useId('Formulir Perusahaan');
     //hook variable form hook
     const { control, handleSubmit, setValue, reset, setError } = useForm<IPerusahaan>({
@@ -234,6 +233,7 @@ const getSlideSubFormPerusahaan = (
             <FormKontakPerusahaan
                 control={control}
                 setValue={setValue}
+                setIsLoading={setIsLoading}
                 setError={setError}
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
@@ -244,6 +244,7 @@ const getSlideSubFormPerusahaan = (
             <FormDokumenOssPerusahaan
                 control={control}
                 setValue={setValue}
+                setIsLoading={setIsLoading}
                 setError={setError}
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
