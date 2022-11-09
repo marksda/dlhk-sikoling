@@ -57,12 +57,22 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
     };
 
     //rtk query perusahaan variable hook
-    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan } = useGetAllPerusahaanQuery(); 
+    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetAllPerusahaanQuery();
+
+    //deteksi error koneksi dengan backend
+    useEffect(
+        () => {
+            if(isError == true) {
+                // alert('Koneksi ke server mengalami gangguan');
+            }                
+        },
+        [isError]
+    );
 
     //deteksi data perusahaan sudah tersedia
     useEffect(
         () => {
-            // if(isFetchingDaftarPerusahaan == false){
+            if(isFetchingDaftarPerusahaan == false && daftarPerusahaan.length > 0){
                 setDataPerusahaan([
                     ...daftarPerusahaan.map(
                         (t) => (
@@ -76,9 +86,9 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                         )
                     )
                 ]);
-            // }            
+            }            
         },
-        [daftarPerusahaan]
+        [daftarPerusahaan, isFetchingDaftarPerusahaan]
     );
 
     const _onItemInvoked = useCallback(
@@ -116,25 +126,25 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                               })}
                             >
                                 {`Email: ${kontak!.email}`}<br />
-                                <div style={{display: 'flex'}}>
-                                    <span className={mergeStyles({ 
+                                <span style={{display: 'flex'}}>
+                                    <label className={mergeStyles({ 
                                             padding: '4px 0px',
                                             display: 'block'
                                           })}
                                     >
                                         Telp: 
-                                    </span>
-                                    <span className={mergeStyles({ 
-                                            borderRadius: 3,
-                                            marginLeft: 4,
-                                            padding: 4,
-                                            backgroundColor: 'green',
-                                            boxShadow: DefaultEffects.elevation4,
-                                            display: 'block',
-                                            color: 'white'
-                                          })}
-                                        >{`${kontak!.telepone}`}</span>
-                                </div>
+                                    </label>
+                                    <label className={mergeStyles({ 
+                                        borderRadius: 3,
+                                        marginLeft: 4,
+                                        padding: 4,
+                                        backgroundColor: 'green',
+                                        boxShadow: DefaultEffects.elevation4,
+                                        display: 'block',
+                                        color: 'white'
+                                        })}
+                                    >{`${kontak!.telepone}`}</label>
+                                </span>
                                 {`Fax: ${kontak!.fax}`}
                             </p>
                         </div>

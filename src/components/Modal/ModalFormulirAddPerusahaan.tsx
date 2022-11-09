@@ -1,4 +1,4 @@
-import { FontSizes, FontWeights, getTheme, IconButton, mergeStyleSets, Modal } from "@fluentui/react";
+import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,14 +24,13 @@ const contentStyles = mergeStyleSets({
         // eslint-disable-next-line deprecation/deprecation
         theme.fonts.xLargePlus,
         {
-          flex: '1 1 auto',
+          display: 'flex',
+          flexDirection: 'column',
           borderTop: `4px solid ${theme.palette.themePrimary}`,
           color: theme.palette.neutralPrimary,
-          display: 'flex',
-          alignItems: 'center',
+          alignItems: 'left',
           fontWeight: FontWeights.semibold,
           fontSize: FontSizes.large,
-          padding: '12px 12px 14px 24px',
         },
     ],
     body: {
@@ -44,7 +43,8 @@ const contentStyles = mergeStyleSets({
           'p:first-child': { marginTop: 0 },
           'p:last-child': { marginBottom: 0 },
         },
-    }
+    },
+    
 });
 const iconButtonStyles = {
     root: {
@@ -57,29 +57,28 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-// const progressStyle: IProgressIndicatorStyles ={
-//     root: {
-//         // width: 464,
-//         // marginLeft: 'auto',
-//         // marginRight: 'auto',
-//         // height: 8,
-//         flex: '1 1 auto',
-//     },
-//     itemName: null,
-//     itemDescription: null,
-//     itemProgress: null,
-//     progressBar: {
-//         background: '#ff6300'
-//     },
-//     progressTrack: null,
-// };
-
+const progressStyle: IProgressIndicatorStyles ={
+    root: {
+        flex: '1 1 auto',
+        width: '100%'
+    },
+    itemName: null,
+    itemDescription: null,
+    itemProgress: {
+        padding: 0
+    },
+    progressBar: {
+        background: '#ff6300',     
+    },
+    progressTrack: null,
+};
 
 export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({isModalOpen, hideModal, isDraggable}) => {  
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('modelPerizinan');    
     // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
-    // const [isLoading, setIsLoading] = useState<boolean>(false); 
+    const [isLoading, setIsLoading] = useState<boolean>(false); 
+    console.log(isLoading);
     const titleId = useId('Formulir Perusahaan');
     //hook variable form hook
     const { control, handleSubmit, setValue, reset, setError } = useForm<IPerusahaan>({
@@ -136,14 +135,27 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
             containerClassName={contentStyles.container}
             dragOptions={isDraggable ? dragOptions : undefined}
         >
+         
             <div className={contentStyles.header}>
-                <span id={titleId}>Formulir Perusahaan</span>
-                <IconButton
-                    styles={iconButtonStyles}
-                    iconProps={cancelIcon}
-                    ariaLabel="Close popup modal"
-                    onClick={handleCloseModal}
-                />
+            {
+                isLoading && (
+                    <ProgressIndicator styles={progressStyle}/>
+                )
+            }   
+                <div style={{
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '8px 12px 14px 24px'}}
+                >
+                    <span id={titleId}>Formulir Perusahaan</span>
+                    <IconButton
+                        styles={iconButtonStyles}
+                        iconProps={cancelIcon}
+                        ariaLabel="Close popup modal"
+                        onClick={handleCloseModal}
+                    />
+                </div>                  
             </div>
             {                
                 getSlideSubFormPerusahaan({
@@ -153,15 +165,16 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                     setValue,
                     reset,
                     handleSubmit,
-                    setError
+                    setError,
+                    setIsLoading
                 })
-            }             
+            }         
         </Modal>
     );
 };
 
 const getSlideSubFormPerusahaan = (
-    {motionKey, setMotionKey, control, setValue, handleSubmit, setError}: ISlideSubFormPerusahaanParam) => {
+    {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormPerusahaanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'modelPerizinan':
@@ -196,6 +209,7 @@ const getSlideSubFormPerusahaan = (
                 setError={setError}
                 setMotionKey={setMotionKey}
                 handleSubmit={handleSubmit}
+                setIsLoading={setIsLoading}
             />;   
             break;  
         case 'identitasPerusahaan':

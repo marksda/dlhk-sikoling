@@ -10,6 +10,8 @@ export const PerusahaanApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
     }),
+    refetchOnReconnect: true,
+    keepUnusedDataFor: 30,
     tagTypes:['Perusahaan'],
     endpoints(builder) {
         return {

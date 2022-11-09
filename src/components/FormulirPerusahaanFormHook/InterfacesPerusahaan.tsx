@@ -24,6 +24,7 @@ export interface ISlideSubFormPerusahaanParam {
     reset: UseFormReset<IPerusahaan>;
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
     setError: UseFormSetError<IPerusahaan>;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export interface ISubFormPerusahaanProps {
     control?: Control<any>;

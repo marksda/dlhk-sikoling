@@ -12,9 +12,10 @@ import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle,
 interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: UseFormHandleSubmit<IPerusahaan>;
     setError: UseFormSetError<IPerusahaan>;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit, setError}) => {    
+export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit, setError, setIsLoading}) => {    
     //local state
     const [animNpwpPerusahaan, setAnimNpwpPerusahaan] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
@@ -45,9 +46,9 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
     );
     //deteksi apakah npwp sudah terdaftar disistem apa belum
     useEffect(
-        () => {
+        () => {            
+            setIsLoading(false);
             if(isEksisPerusahaan == true) {
-                // setErrorNpwp(`Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`)
                 setError("id", {
                     type: "manual",
                     message: `Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`
@@ -70,6 +71,7 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
     useEffect(
         () => {
             if(isErrorEksisPerusahaan == true) {
+                setIsLoading(false);
                 console.log(isErrorEksisPerusahaan);
             }            
         },
@@ -102,6 +104,7 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
 
     const save = useCallback(
         () => {
+            setIsLoading(true);
             setNpwp(id);
         },
         [id]
