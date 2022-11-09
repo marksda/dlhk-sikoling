@@ -11,7 +11,6 @@ import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle,
 
 interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
     handleSubmit: any;
-    setError: UseFormSetError<IPerusahaan>;
 }
 export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError}) => {
     //hook variable from react form hook
@@ -75,6 +74,14 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                     // props.setIsLoading(true);  
                     // setNik(data.nik!);       
                     await addPerusahaan(data).unwrap();
+                    setAnimKontakPerusahaan('closed');
+                    let timer = setTimeout(
+                        () => {
+                            setMotionKey('dokumenOssPerusahaan');
+                        },
+                        duration*1000
+                    );
+                    return () => clearTimeout(timer);
                     // setUploadStatus(true);
                     // props.setIsLoading(false); 
                 }         

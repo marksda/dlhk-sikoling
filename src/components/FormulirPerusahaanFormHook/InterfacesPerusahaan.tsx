@@ -29,6 +29,7 @@ export interface ISlideSubFormPerusahaanParam {
 export interface ISubFormPerusahaanProps {
     control?: Control<any>;
     setValue: UseFormSetValue<IPerusahaan>;
+    setError?: UseFormSetError<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
 /***************************style**********************************/
