@@ -27,6 +27,8 @@ import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha";
 import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
+import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
+import dokumenReducer from "../features/dokumen/dokumen-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -62,6 +64,8 @@ export const store = configureStore({
         [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
         [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
+        kategoriDokumen: kategoriDokumenReducer,
+        dokumen: dokumenReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },

@@ -47,7 +47,7 @@ export const perusahaanSlice = createSlice({
     name: 'perusahaan',
     initialState,
     reducers: {
-        setPerusahaan:  (state, action: PayloadAction<IPerusahaan>) => {
+        setPerusahaan: (state, action: PayloadAction<IPerusahaan>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
         },

@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
+import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
+import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
 interface IFormDokumenOssPerusahaanProps extends ISubFormPerusahaanProps {
@@ -62,7 +64,31 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Dokumen OSS Perusahaan</Label>
-                <Label styles={subLabelStyle}>Upload file dokumen OSS sebagai bukti bahwa perusahaan sudah memilikinya.</Label>
+                <Label styles={subLabelStyle}>Upload file dokumen OSS sebagai bukti sudah memiliki.</Label>
+            </Stack>
+            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+                <Stack.Item>
+                    <ControlledFluentUiTextField
+                        label="NIB"
+                        name="kontak.email"
+                        rules={{ required: "email perusahaan harus diisi" }} 
+                        required
+                        control={control}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                <ControlledFluentUiDropDown
+                        label="Propinsi"
+                        placeholder="Pilih propinsi"
+                        options={propinsiOptions}
+                        required
+                        name="alamat.propinsi"
+                        rules={{ required: "harus diisi" }} 
+                        onChangeItem={handleChangePropinsi}
+                        control={control}
+                        selectedKey={alamat.propinsi != null ? alamat.propinsi.id : null}
+                    /> 
+                </Stack.Item>
             </Stack>
         </motion.div>
     );
