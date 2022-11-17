@@ -4,7 +4,7 @@ import { IKategoriDokumen } from "./kategori-dokumen-slice";
 
 type daftarKategoriDokumen = IKategoriDokumen[];
 
-export const PerusahaanApiSlice = createApi({
+export const KategoriDokumenApiSlice = createApi({
     reducerPath: 'kategoriDokumenApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
@@ -16,12 +16,43 @@ export const PerusahaanApiSlice = createApi({
         return {
             addKategoriDokumen: builder.mutation({
                 query: (body) => ({
-                    url: 'perusahaan',
+                    url: 'kategori_dokumen',
                     method: 'POST',
                     body,
                 }),
                 invalidatesTags: [{type: 'kategoriDokumen', id: 'LIST'}],
             }),
+            updateKategoriDokumen: builder.mutation({
+                query: (body) => ({
+                    url: 'kategori_dokumen',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: [{type: 'kategoriDokumen', id: 'LIST'}],
+            }),
+            deleteKategoriDokumen: builder.mutation<{ success: boolean; id: string }, string>({
+                query(id) {
+                  return {
+                    url: `posts/${id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result, error, id) => [{ type: 'kategoriDokumen', id }],
+            }),
+            getAllKategoriDokumen: builder.query<daftarKategoriDokumen, void>({
+                query: () => `perusahaan`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'kategoriDokumen' as const, id })
+                        ),
+                        { type: 'kategoriDokumen', id: 'LIST' },
+                    ]:
+                    [{type: 'kategoriDokumen', id: 'LIST'}],
+            }),
         }
     },
 });
+
+export const {  } = KategoriDokumenApiSlice;
