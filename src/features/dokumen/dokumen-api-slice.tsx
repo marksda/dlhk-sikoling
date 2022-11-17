@@ -26,4 +26,4 @@ export const DokumenApiSlice = createApi({
     }
 });
 
-export const {add} = DokumenApiSlice;
+export const {} = DokumenApiSlice;
