@@ -54,5 +54,3 @@ export const KategoriDokumenApiSlice = createApi({
         }
     },
 });
-
-export const {  } = KategoriDokumenApiSlice;
