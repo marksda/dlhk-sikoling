@@ -13,8 +13,8 @@ export const DesaApiSlice = createApi({
             getAllDesa: builder.query<IDesa[], number|void>({
                 query: () => `desa`,
             }),
-            getDesaByPage: builder.query<IDesa[], number|void>({
-                query: (page = 1, pageSize = 10) => `desa/page?page=${page}&pageSize=${pageSize}`,
+            getDesaByPage: builder.query<IDesa[], {page: number, pageSize: number}>({
+                query: ({page = 1, pageSize = 10}) => `desa/page?page=${page}&pageSize=${pageSize}`,
             }),
             getDesaByNama: builder.query<IDesa[], string|void>({
                 query: (nama = 'jawa timur') => `desa/nama?nama=${nama}`,

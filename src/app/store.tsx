@@ -28,7 +28,9 @@ import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-sli
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
+import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-api-slice";
 import dokumenReducer from "../features/dokumen/dokumen-slice";
+import { DokumenApiSlice } from "../features/dokumen/dokumen-api-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -65,7 +67,9 @@ export const store = configureStore({
         perusahaan: perusahaanReducer,
         [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
         kategoriDokumen: kategoriDokumenReducer,
+        [KategoriDokumenApiSlice.reducerPath]: KategoriDokumenApiSlice.reducer,
         dokumen: dokumenReducer,
+        [DokumenApiSlice.reducerPath]: DokumenApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
@@ -82,7 +86,9 @@ export const store = configureStore({
                                             .concat(ModelPerizinanApiSlice.middleware)
                                             .concat(SkalaUsahaApiSlice.middleware)
                                             .concat(PelakuUsahaApiSlice.middleware)
-                                            .concat(PerusahaanApiSlice.middleware),
+                                            .concat(PerusahaanApiSlice.middleware)
+                                            .concat(KategoriDokumenApiSlice.middleware)
+                                            .concat(DokumenApiSlice.middleware),
 })
 
 // Aliasing variable in typescript

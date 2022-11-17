@@ -13,7 +13,7 @@ const initialState: IKategoriDokumen = {
 };
 
 export const kategoriDokumenSlice = createSlice({
-    name: 'kategoriDokumen',
+    name: 'KategoriDokumen',
     initialState,
     reducers: {
         setKategoriDokumen: (state, action: PayloadAction<IKategoriDokumen>) => {
