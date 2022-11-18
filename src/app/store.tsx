@@ -31,6 +31,7 @@ import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
 import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-api-slice";
 import dokumenReducer from "../features/dokumen/dokumen-slice";
 import { DokumenApiSlice } from "../features/dokumen/dokumen-api-slice";
+import registerDokumenReducer from "../features/dokumen/register-dokumen-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -70,6 +71,7 @@ export const store = configureStore({
         [KategoriDokumenApiSlice.reducerPath]: KategoriDokumenApiSlice.reducer,
         dokumen: dokumenReducer,
         [DokumenApiSlice.reducerPath]: DokumenApiSlice.reducer,
+        dokumenRegister: registerDokumenReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },

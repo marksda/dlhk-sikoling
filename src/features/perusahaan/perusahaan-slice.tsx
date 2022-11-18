@@ -1,34 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
 import { IKontak } from "../person/person-slice";
 import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-api-slice";
 import { ISkalaUsaha } from "./skala-usaha";
 
-
-// export interface IAktaPerusahaan {
-//     nomor: string|null;
-//     tanggal: string|null;
-//     namaNotaris: string|null;
-// };
-
-// export interface IKbli {
-//     kode: string;
-//     nama: string;
-// }
-
-// export interface IOss {
-//     nib: string|null;
-//     tanggal: string|null;
-//     kbli: IKbli[];
-// }
-
 export interface IPerusahaan {
     id: string|undefined;
     nama: string|undefined;
-    modelPerizinan: IModelPerizinan|undefined;
-    skalaUsaha: ISkalaUsaha|undefined;
-    pelakuUsaha: IPelakuUsaha|undefined;
+    modelPerizinan: Pick<IModelPerizinan, 'id'> & Partial<IModelPerizinan> | undefined;
+    skalaUsaha: Pick<ISkalaUsaha, 'id'> & Partial<ISkalaUsaha> | undefined;
+    pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | undefined;
     alamat: IAlamat|undefined;
     kontak: IKontak|undefined;
 };
@@ -50,30 +33,40 @@ export const perusahaanSlice = createSlice({
         setPerusahaan: (state, action: PayloadAction<IPerusahaan>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
+            state.modelPerizinan = cloneDeep(action.payload.modelPerizinan!);
+            state.skalaUsaha = cloneDeep(action.payload.skalaUsaha!);
+            state.pelakuUsaha = cloneDeep(action.payload.pelakuUsaha!);
+            state.alamat = cloneDeep(action.payload.alamat!);
+            state.kontak = cloneDeep(action.payload.kontak);
         },
-        setAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.alamat = {
-                desa: {
-                    id: action.payload.desa!.id, nama: action.payload.desa!.nama
-                },
-                kecamatan: {
-                    id: action.payload.kecamatan!.id, 
-                    nama: action.payload.kecamatan!.nama
-                },
-                kabupaten: {
-                    id: action.payload.kabupaten!.id, 
-                    nama: action.payload.kabupaten!.nama
-                },
-                propinsi: {
-                    id: action.payload.propinsi!.id, 
-                    nama: action.payload.propinsi!.nama
-                },
-                keterangan: action.payload.keterangan,
-            }
+        setIdPerusahaan: (state, action: PayloadAction<string>) => {
+            state.id = action.payload;
+        },
+        setNamaPerusahaan: (state, action: PayloadAction<string>) => {
+            state.nama = action.payload;
+        },
+        setModelPerizinanPerusahaan: (state, action: PayloadAction<Pick<IModelPerizinan, 'id'> & Partial<IModelPerizinan>>) => {
+            state.modelPerizinan = cloneDeep(action.payload);
+        },
+        setSkalaUsahaPerusahaan: (state, action: PayloadAction<Pick<ISkalaUsaha, 'id'> & Partial<ISkalaUsaha>>) => {
+            state.skalaUsaha = cloneDeep(action.payload);
+        },
+        setPelakuUsahaPerusahaan: (state, action: PayloadAction<Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha>>) => {
+            state.pelakuUsaha = cloneDeep(action.payload);
+        },
+        setAlamatPerusahaan: (state, action: PayloadAction<IAlamat>) => {
+            state.alamat = cloneDeep(action.payload);
+        },
+        setKontakPerusahaan: (state, action: PayloadAction<IKontak>) => {
+            state.kontak = cloneDeep(action.payload);
         },
     }
 });
 
-export const { setPerusahaan, setAlamat } = perusahaanSlice.actions;
+export const { 
+    setPerusahaan, setIdPerusahaan, setNamaPerusahaan,
+    setModelPerizinanPerusahaan, setSkalaUsahaPerusahaan,
+    setPelakuUsahaPerusahaan, setAlamatPerusahaan, setKontakPerusahaan
+} = perusahaanSlice.actions;
 
 export default perusahaanSlice.reducer;
