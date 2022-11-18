@@ -87,7 +87,7 @@ export const DokumenApiSlice = createApi({
                     ]:
                     [{type: 'DokumenNamaPage', id: 'LIST'}],
             }),
-        }
+        };
     }
 });
 
