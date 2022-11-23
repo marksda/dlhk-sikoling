@@ -64,7 +64,18 @@ export const RegisterKbliApiSlice = createApi({
                     ]:
                     [{type: 'RegisterKbli', id: 'LIST'}],
             }),
-            
+            getRegisterKbliByNama: builder.query<daftarRegisterKbli, string>({
+                query: (nama) => `register_kbli/nama?nama=${nama}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliNama' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliNama', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliNama', id: 'LIST'}],
+            }),
         }
     }
 });
@@ -74,4 +85,6 @@ export const {
     useUpdateRegisterKbliMutation, 
     useDeleteRegisterKbliMutation,
     useGetAllRegisterKbliQuery,
+    useGetRegisterKbliByPageQuery,
+    useGetRegisterKbliByNamaQuery,
 } = RegisterKbliApiSlice;
