@@ -34,6 +34,7 @@ import { DokumenApiSlice } from "../features/dokumen/dokumen-api-slice";
 import registerDokumenReducer from "../features/dokumen/register-dokumen-slice";
 import kbliReducer from "../features/dokumen/kbli-slice";
 import { KbliApiSlice } from "../features/dokumen/kbli-api-slice";
+import registerKbliReducer from "../features/dokumen/register-kbli-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
@@ -76,6 +77,7 @@ export const store = configureStore({
         dokumenRegister: registerDokumenReducer,
         kbli: kbliReducer,
         [KbliApiSlice.reducerPath]: KbliApiSlice.reducer,
+        registerKbli: registerKbliReducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
