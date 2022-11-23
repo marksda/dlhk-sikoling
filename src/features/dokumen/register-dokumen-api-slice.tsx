@@ -22,11 +22,11 @@ export const RegisterDokumenApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'RegisterDokumen', id: 'LIST'}, {type: 'RegisterDokumenPage', id: 'LIST'}, {type: 'RegisterDokumenNama', id: 'LIST'}, {type: 'RegisterDokumenNamaPage', id: 'LIST'}],
             }),
-            updateRegisterDokumen: builder.mutation<void, Pick<IRegisterDokumen, 'id'> & Partial<IRegisterDokumen>>({
-                query: ({id, ...patch}) => ({
+            updateRegisterDokumen: builder.mutation<void, {id: string; registerDokumen: IRegisterDokumen}>({
+                query: ({id, registerDokumen}) => ({
                     url: `register_dokumen/${id}`,
                     method: 'PUT',
-                    patch,
+                    body: registerDokumen,
                 }),
                 invalidatesTags: (result, error, { id }) => [{type: 'RegisterDokumen', id}, {type: 'RegisterDokumenPage', id}, {type: 'RegisterDokumenNama', id}, {type: 'RegisterDokumenNamaPage', id}],
             }),
@@ -51,7 +51,7 @@ export const RegisterDokumenApiSlice = createApi({
                     ]:
                     [{type: 'RegisterDokumen', id: 'LIST'}],
             }),
-            getRegisterDokumenByPage: builder.query<daftarRegisterDokumen, {page: number, pageSize: number}>({
+            getRegisterDokumenByPage: builder.query<daftarRegisterDokumen, {page: number; pageSize: number}>({
                 query: ({page = 1, pageSize = 10}) => `register_dokumen/page?page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?

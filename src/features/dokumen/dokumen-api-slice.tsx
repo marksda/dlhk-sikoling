@@ -22,11 +22,11 @@ export const DokumenApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'Dokumen', id: 'LIST'}, {type: 'DokumenPage', id: 'LIST'}, {type: 'DokumenNama', id: 'LIST'}, {type: 'DokumenNamaPage', id: 'LIST'}],
             }),
-            updateDokumen: builder.mutation<void, Pick<IDokumen, 'id'> & Partial<IDokumen>>({
-                query: ({id, ...patch}) => ({
+            updateDokumen: builder.mutation<void, {id: string; dokumen: IDokumen}>({
+                query: ({id, dokumen}) => ({
                     url: `dokumen/${id}`,
                     method: 'PUT',
-                    patch,
+                    body: dokumen,
                 }),
                 invalidatesTags: (result, error, { id }) => [{type: 'Dokumen', id}, {type: 'DokumenPage', id}, {type: 'DokumenNama', id}, {type: 'DokumenNamaPage', id}],
             }),
@@ -51,7 +51,7 @@ export const DokumenApiSlice = createApi({
                     ]:
                     [{type: 'Dokumen', id: 'LIST'}],
             }),
-            getDokumenByPage: builder.query<daftarDokumen, {page: number, pageSize: number}>({
+            getDokumenByPage: builder.query<daftarDokumen, {page: number; pageSize: number}>({
                 query: ({page = 1, pageSize = 10}) => `dokumen/page?page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
@@ -75,7 +75,7 @@ export const DokumenApiSlice = createApi({
                     ]:
                     [{type: 'DokumenNama', id: 'LIST'}],
             }),
-            getDokumenByNamaAndPage: builder.query<daftarDokumen, {nama: string, page: number, pageSize: number}>({
+            getDokumenByNamaAndPage: builder.query<daftarDokumen, {nama: string; page: number; pageSize: number}>({
                 query: ({nama = '', page=1, pageSize=10}) => `dokumen/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?

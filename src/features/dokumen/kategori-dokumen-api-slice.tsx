@@ -22,11 +22,11 @@ export const KategoriDokumenApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'KategoriDokumen', id: 'LIST'}, {type: 'KategoriDokumenPage', id: 'LIST'}, {type: 'KategoriDokumenNama', id: 'LIST'}, {type: 'KategoriDokumenNamaPage', id: 'LIST'}],
             }),
-            updateKategoriDokumen: builder.mutation<void, Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>>({
-                query: (body) => ({
-                    url: 'kategori_dokumen',
+            updateKategoriDokumen: builder.mutation<void, {id: string; kategoriDokumen: IKategoriDokumen}>({
+                query: ({id, kategoriDokumen}) => ({
+                    url: `kategori_dokumen/${id}`,
                     method: 'PUT',
-                    body,
+                    body: kategoriDokumen,
                 }),
                 invalidatesTags: (result, error, { id }) => [{type: 'KategoriDokumen', id}, {type: 'KategoriDokumenPage', id}, {type: 'KategoriDokumenNama', id}, {type: 'KategoriDokumenNamaPage', id}],
             }),
@@ -51,7 +51,7 @@ export const KategoriDokumenApiSlice = createApi({
                     ]:
                     [{type: 'KategoriDokumen', id: 'LIST'}],
             }),
-            getKategoriDokumenByPage: builder.query<daftarKategoriDokumen, {page: number, pageSize: number}>({
+            getKategoriDokumenByPage: builder.query<daftarKategoriDokumen, {page: number; pageSize: number}>({
                 query: ({page = 1, pageSize = 10}) => `kategori_dokumen/page?page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
@@ -75,7 +75,7 @@ export const KategoriDokumenApiSlice = createApi({
                     ]:
                     [{type: 'KategoriDokumenNama', id: 'LIST'}],
             }),
-            getKategoriDokumenByNamaAndPage: builder.query<daftarKategoriDokumen, {nama: string, page: number, pageSize: number}>({
+            getKategoriDokumenByNamaAndPage: builder.query<daftarKategoriDokumen, {nama: string; page: number; pageSize: number}>({
                 query: ({nama = '', page=1, pageSize=10}) => `kategori_dokumen/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?

@@ -22,11 +22,11 @@ export const KbliApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'Kbli', id: 'LIST'}, {type: 'KbliPage', id: 'LIST'}, {type: 'KbliNama', id: 'LIST'}, {type: 'KbliNamaPage', id: 'LIST'}, {type: 'KbliKode', id: 'LIST'}, {type: 'KbliKodePage', id: 'LIST'}, {type: 'KbliKategori', id: 'LIST'}, {type: 'KbliKategoriPage', id: 'LIST'}]
             }),
-            updateKbli: builder.mutation<void, Pick<IKbli, 'kode'> & Partial<IKbli>>({
-                query: ({kode, ...patch}) => ({
+            updateKbli: builder.mutation<void, {kode: string; kbli: IKbli}>({
+                query: ({kode, kbli}) => ({
                     url: `kbli/${kode}`,
                     method: 'PUT',
-                    patch,
+                    body: kbli,
                 }),
                 invalidatesTags: (result, error, { kode }) => [{type: 'Kbli', id: kode}, {type: 'KbliPage', id: kode}, {type: 'KbliNama', id: kode}, {type: 'KbliNamaPage', id: kode}, {type: 'KbliKode', id: kode}, {type: 'KbliKodePage', id: kode}, {type: 'KbliKategori', id: kode}, {type: 'KbliKategoriPage', id: kode}]
             }),
@@ -51,7 +51,7 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'Kbli', id: 'LIST'}],
             }),
-            getKbliByPage: builder.query<daftarKbli, {page: number, pageSize: number}>({
+            getKbliByPage: builder.query<daftarKbli, {page: number; pageSize: number}>({
                 query: ({page = 1, pageSize = 10}) => `kbli/page?page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
@@ -75,7 +75,7 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'KbliNama', id: 'LIST'}],
             }),
-            getKbliByNamaAndPage: builder.query<daftarKbli, {nama: string, page: number, pageSize: number}>({
+            getKbliByNamaAndPage: builder.query<daftarKbli, {nama: string; page: number; pageSize: number}>({
                 query: ({nama = '', page=1, pageSize=10}) => `kbli/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
@@ -99,7 +99,7 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'KbliKode', id: 'LIST'}],
             }),
-            getKbliByKodeAndPage: builder.query<daftarKbli, {kode: string, page: number, pageSize: number}>({
+            getKbliByKodeAndPage: builder.query<daftarKbli, {kode: string; page: number; pageSize: number}>({
                 query: ({kode = '', page=1, pageSize=10}) => `kbli/kode?kode=${kode}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
@@ -123,7 +123,7 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'KbliKategori', id: 'LIST'}],
             }),
-            getKbliByKategoriAndPage: builder.query<daftarKbli, {kategori: string, page: number, pageSize: number}>({
+            getKbliByKategoriAndPage: builder.query<daftarKbli, {kategori: string; page: number; pageSize: number}>({
                 query: ({kategori = '', page=1, pageSize=10}) => `kbli/kategori?kategori=${kategori}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
