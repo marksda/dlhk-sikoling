@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import bentukUsahaReducer from "../features/bentuk-usaha/bentuk-usaha-slice";
-import { BentukUsahaApiSlice } from "../features/bentuk-usaha/bentuk-usaha-api-slice";
 import propinsiReducer from "../features/propinsi/propinsi-slice";
 import { PropinsiApiSlice } from "../features/propinsi/propinsi-api-slice";
 import kabupatenReducer from "../features/kabupaten/kabupaten-slice";
@@ -43,8 +41,6 @@ import loginReducer from "../features/login/login-slice"
 
 export const store = configureStore({
     reducer: {
-        bentukUsaha: bentukUsahaReducer,
-        [BentukUsahaApiSlice.reducerPath]: BentukUsahaApiSlice.reducer,
         propinsi: propinsiReducer,
         [PropinsiApiSlice.reducerPath]: PropinsiApiSlice.reducer,
         kabupaten: kabupatenReducer,
@@ -90,7 +86,6 @@ export const store = configureStore({
                                             .concat(DesaApiSlice.middleware)
                                             .concat(JenisKelaminApiSlice.middleware)
                                             .concat(PersonApiSlice.middleware)
-                                            .concat(BentukUsahaApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(AuthorizationApiSlice.middleware)
                                             .concat(ModelPerizinanApiSlice.middleware)

@@ -8,6 +8,8 @@ export const BentukUsahaApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
     }),
+    refetchOnReconnect: true,
+    keepUnusedDataFor: 30,
     endpoints: (builder) => {
         return {
             getAllBentukUsaha: builder.query<IBentukUsaha[], void>({
