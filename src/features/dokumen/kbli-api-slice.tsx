@@ -140,8 +140,15 @@ export const KbliApiSlice = createApi({
 });
 
 export const {
-    useAddKbliMutation, useUpdateKbliMutation, useDeleteKbliMutation,
-    useGetAllKbliQuery, useGetKbliByPageQuery, useGetKbliByNamaQuery,
-    useGetKbliByNamaAndPageQuery, useGetKbliByKodeQuery, useGetKbliByKodeAndPageQuery,
-    useGetKbliByKategoriQuery, useGetKbliByKategoriAndPageQuery
+    useAddKbliMutation, 
+    useUpdateKbliMutation, 
+    useDeleteKbliMutation,
+    useGetAllKbliQuery, 
+    useGetKbliByPageQuery, 
+    useGetKbliByNamaQuery,
+    useGetKbliByNamaAndPageQuery, 
+    useGetKbliByKodeQuery, 
+    useGetKbliByKodeAndPageQuery,
+    useGetKbliByKategoriQuery, 
+    useGetKbliByKategoriAndPageQuery
 } = KbliApiSlice;

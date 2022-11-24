@@ -6,7 +6,7 @@ import { IRegisterKbli } from "./register-kbli-slice";
 type daftarRegisterKbli = IRegisterKbli[];
 
 export const RegisterKbliApiSlice = createApi({
-    reducerPath: 'kbliApi',
+    reducerPath: 'registerKbliApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
     }),
