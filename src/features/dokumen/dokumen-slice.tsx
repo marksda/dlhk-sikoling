@@ -21,11 +21,7 @@ export const dokumenSlice = createSlice({
         setDokumen: (state, action: PayloadAction<IDokumen>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
-            state.kategoriDokumen = {
-                id: action.payload.kategoriDokumen?.id,
-                nama: action.payload.kategoriDokumen?.nama,
-                parent: action.payload.kategoriDokumen?.parent
-            };
+            state.kategori = cloneDeep(action.payload.kategori);
         },
         setIdDokumen: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
