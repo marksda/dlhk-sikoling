@@ -80,7 +80,6 @@ export const store = configureStore({
         // [loginApi.reducerPath]: loginApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-                                            .concat(PropinsiApiSlice.middleware)
                                             .concat(KabupatenApiSlice.middleware)
                                             .concat(KecamatanApiSlice.middleware)
                                             .concat(DesaApiSlice.middleware)
@@ -96,7 +95,7 @@ export const store = configureStore({
                                             .concat(DokumenApiSlice.middleware)
                                             .concat(KbliApiSlice.middleware)
                                             .concat(RegisterKbliApiSlice.middleware),
-})
+});
 
 // Aliasing variable in typescript
 export type AppDispatch = typeof store.dispatch
