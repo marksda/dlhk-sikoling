@@ -4,7 +4,7 @@ import { IPerusahaan } from "../perusahaan/perusahaan-slice";
 import { IDokumen } from "./dokumen-slice";
 import { IKbli } from "./kbli-slice";
 
-export interface IDetailDokumen {
+export interface IDetailDokumen {    
     dokumen: Pick<IDokumen, 'id'> & Partial<IDokumen> | undefined;
     lokasiFile: string | undefined;
 };

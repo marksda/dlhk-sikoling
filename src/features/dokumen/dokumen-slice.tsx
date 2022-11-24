@@ -5,15 +5,13 @@ import { IKategoriDokumen } from "./kategori-dokumen-slice";
 export interface IDokumen {
     id: string|undefined;
     nama: string|undefined;
-    kategoriDokumen: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen> | undefined;
-    detailDokumen: any|undefined;
+    kategori: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen> | undefined;
 };
 
 const initialState: IDokumen = {
     id: undefined,
     nama: undefined,
-    kategoriDokumen: undefined,
-    detailDokumen: undefined,
+    kategori: undefined,
 };
 
 export const dokumenSlice = createSlice({
@@ -36,7 +34,7 @@ export const dokumenSlice = createSlice({
             state.nama = action.payload;
         },
         setKategoriDokumen: (state, action: PayloadAction<Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>>) => {
-            state.kategoriDokumen = cloneDeep(action.payload);
+            state.kategori = cloneDeep(action.payload);
         },
     },
 });
