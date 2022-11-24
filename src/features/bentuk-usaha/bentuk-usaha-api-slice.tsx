@@ -29,5 +29,9 @@ export const BentukUsahaApiSlice = createApi({
     },
 });
 
-export const { useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, useGetBentukUsahaByNamaQuery, useLazyGetBentukUsahaByNamaAndPageQuery, useGetBentukUsahaByPelakuUsahaQuery} = BentukUsahaApiSlice;
+export const { 
+    useGetAllBentukUsahaQuery, useGetBentukUsahaByPageQuery, 
+    useGetBentukUsahaByNamaQuery, useGetBentukUsahaByNamaAndPageQuery, 
+    useGetBentukUsahaByPelakuUsahaQuery
+} = BentukUsahaApiSlice;
 

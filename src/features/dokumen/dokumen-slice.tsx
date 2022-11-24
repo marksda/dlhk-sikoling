@@ -6,12 +6,14 @@ export interface IDokumen {
     id: string|undefined;
     nama: string|undefined;
     kategoriDokumen: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen> | undefined;
+    detailDokumen: any|undefined;
 };
 
 const initialState: IDokumen = {
     id: undefined,
     nama: undefined,
     kategoriDokumen: undefined,
+    detailDokumen: undefined,
 };
 
 export const dokumenSlice = createSlice({

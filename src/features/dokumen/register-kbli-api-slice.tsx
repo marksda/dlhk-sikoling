@@ -76,6 +76,66 @@ export const RegisterKbliApiSlice = createApi({
                     ]:
                     [{type: 'RegisterKbliNama', id: 'LIST'}],
             }),
+            getRegisterKbliByNamaAndPage: builder.query<daftarRegisterKbli, {nama: string; page: number; pageSize: number}>({
+                query: ({nama = '', page=1, pageSize=10}) => `register_kbli/nama/page?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliNamaPage' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliNamaPage', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliNamaPage', id: 'LIST'}],
+            }),
+            getRegisterKbliByKode: builder.query<daftarRegisterKbli, string>({
+                query: (kode) => `register_kbli/kode?kode=${kode}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliKode' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliKode', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliKode', id: 'LIST'}],
+            }),
+            getRegisterKbliByKodeAndPage: builder.query<daftarRegisterKbli, {kode: string; page: number; pageSize: number}>({
+                query: ({kode = '', page=1, pageSize=10}) => `register_kbli/kode/page?kode=${kode}&page=${page}&pageSize=${pageSize}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliKodePage' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliKodePage', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliKodePage', id: 'LIST'}],
+            }),
+            getRegisterKbliByNib: builder.query<daftarRegisterKbli, string>({
+                query: (nib) => `register_kbli/nib?nib=${nib}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliNib' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliNib', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliNib', id: 'LIST'}],
+            }),
+            getRegisterKbliByNibAndPage: builder.query<daftarRegisterKbli, {nib: string; page: number; pageSize: number}>({
+                query: ({nib = '', page=1, pageSize=10}) => `register_kbli/nib/page?kode=${nib}&page=${page}&pageSize=${pageSize}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nib, kode }) => ({ type: 'RegisterKbliNibPage' as const, id: `${nib}-${kode}` })
+                        ),
+                        { type: 'RegisterKbliNibPage', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterKbliNibPage', id: 'LIST'}],
+            }),
         }
     }
 });
@@ -87,4 +147,8 @@ export const {
     useGetAllRegisterKbliQuery,
     useGetRegisterKbliByPageQuery,
     useGetRegisterKbliByNamaQuery,
+    useGetRegisterKbliByKodeQuery,
+    useGetRegisterKbliByKodeAndPageQuery,
+    useGetRegisterKbliByNibQuery,
+    useGetRegisterKbliByNibAndPageQuery,
 } = RegisterKbliApiSlice;

@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IBentukUsaha {
-    id: String|null;
-    nama: string|null;
-    singkatan: string|null;
+    id: string|undefined;
+    nama: string|undefined;
+    singkatan: string|undefined;
 }
 
 const initialState: IBentukUsaha = {
-    id: null,
-    nama: null,
-    singkatan: null,
+    id: undefined,
+    nama: undefined,
+    singkatan: undefined,
 }
 
 const bentukUsahaSlice = createSlice({

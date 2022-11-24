@@ -1,10 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
+import { IDokumen } from "../dokumen/dokumen-slice";
 import { IKontak } from "../person/person-slice";
 import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-api-slice";
 import { ISkalaUsaha } from "./skala-usaha";
+
+type IDaftarDokumen = IDokumen[];
 
 export interface IPerusahaan {
     id: string|undefined;
@@ -14,6 +17,7 @@ export interface IPerusahaan {
     pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | undefined;
     alamat: IAlamat|undefined;
     kontak: IKontak|undefined;
+    daftarDokumen: IDaftarDokumen|undefined;
 };
 
 const initialState: IPerusahaan = {
@@ -24,6 +28,7 @@ const initialState: IPerusahaan = {
     pelakuUsaha: undefined,
     alamat: undefined,
     kontak: undefined,
+    daftarDokumen: undefined,
 }
 
 export const perusahaanSlice = createSlice({
@@ -33,11 +38,12 @@ export const perusahaanSlice = createSlice({
         setPerusahaan: (state, action: PayloadAction<IPerusahaan>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
-            state.modelPerizinan = cloneDeep(action.payload.modelPerizinan!);
-            state.skalaUsaha = cloneDeep(action.payload.skalaUsaha!);
-            state.pelakuUsaha = cloneDeep(action.payload.pelakuUsaha!);
-            state.alamat = cloneDeep(action.payload.alamat!);
+            state.modelPerizinan = cloneDeep(action.payload.modelPerizinan);
+            state.skalaUsaha = cloneDeep(action.payload.skalaUsaha);
+            state.pelakuUsaha = cloneDeep(action.payload.pelakuUsaha);
+            state.alamat = cloneDeep(action.payload.alamat);
             state.kontak = cloneDeep(action.payload.kontak);
+            state.daftarDokumen = cloneDeep(action.payload.daftarDokumen);
         },
         setIdPerusahaan: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
@@ -59,6 +65,9 @@ export const perusahaanSlice = createSlice({
         },
         setKontakPerusahaan: (state, action: PayloadAction<IKontak>) => {
             state.kontak = cloneDeep(action.payload);
+        },
+        setDaftarDokumenPerusahaan: (state, action: PayloadAction<IDaftarDokumen>) => {
+            state.daftarDokumen = cloneDeep(action.payload);
         },
     }
 });
