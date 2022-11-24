@@ -80,6 +80,7 @@ export const store = configureStore({
         // [loginApi.reducerPath]: loginApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+                                            .concat(PropinsiApiSlice.middleware)
                                             .concat(KabupatenApiSlice.middleware)
                                             .concat(KecamatanApiSlice.middleware)
                                             .concat(DesaApiSlice.middleware)
