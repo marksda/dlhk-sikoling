@@ -7,7 +7,7 @@ import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-api-slice";
 import { ISkalaUsaha } from "./skala-usaha";
 
-type IDaftarDokumen = IDokumen[];
+type IDaftarDokumen = any[];
 
 export interface IPerusahaan {
     id: string|undefined;
