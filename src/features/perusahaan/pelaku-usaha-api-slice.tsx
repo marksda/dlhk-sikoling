@@ -2,14 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
 import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
 import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
+import { IPelakuUsaha } from "./pelaku-usaha-slice";
 import { ISkalaUsaha } from "./skala-usaha-api-slice";
-
-export interface IPelakuUsaha {
-    id: string|undefined;
-    nama: string|undefined;
-    singkatan: string|undefined;
-    kategoriPelakuUsaha: IKategoriPelakuUsaha|undefined;
-};
 
 export const PelakuUsahaApiSlice = createApi({
     reducerPath: 'pelakuUsahaApi',
