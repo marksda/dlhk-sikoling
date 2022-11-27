@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
-import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
 import { IPerusahaan } from "./perusahaan-slice";
 
 type daftarPerusahaan = IPerusahaan[];
@@ -76,7 +75,7 @@ export const PerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'PerusahaanNama', id: 'LIST'}],
             }),
-            getPerusahaanByNamaAndPage: builder.query<daftarPerusahaan, IHalamanBasePageAndPageSizeAndNama>({
+            getPerusahaanByNamaAndPage: builder.query<daftarPerusahaan, {nama: string; page: number; pageSize: number}>({
                 query: ({nama, page=1, pageSize=10}) => `perusahaan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
