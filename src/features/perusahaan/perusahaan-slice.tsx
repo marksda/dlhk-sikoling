@@ -3,7 +3,7 @@ import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
 import { IKontak } from "../person/person-slice";
 import { IModelPerizinan } from "./model-perizinan-api-slice";
-import { IPelakuUsaha } from "./pelaku-usaha-api-slice";
+import { IPelakuUsaha } from "./pelaku-usaha-slice";
 import { ISkalaUsaha } from "./skala-usaha-api-slice";
 
 type IDaftarDokumen = any[];
