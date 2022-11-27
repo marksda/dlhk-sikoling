@@ -21,7 +21,7 @@ import { AuthorizationApiSlice } from "../features/security/authorization-api-sl
 import tokenReducer from "../features/security/token-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
-import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha";
+import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";

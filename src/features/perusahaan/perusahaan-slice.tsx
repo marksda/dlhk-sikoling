@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
-import { IDokumen } from "../dokumen/dokumen-slice";
 import { IKontak } from "../person/person-slice";
 import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-api-slice";
-import { ISkalaUsaha } from "./skala-usaha";
+import { ISkalaUsaha } from "./skala-usaha-api-slice";
 
 type IDaftarDokumen = any[];
 

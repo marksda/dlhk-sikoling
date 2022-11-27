@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
 import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
-import { ISkalaUsaha } from "./skala-usaha";
+import { ISkalaUsaha } from "./skala-usaha-api-slice";
 
 export interface IKategoriPelakuUsaha {
     id: string|null;

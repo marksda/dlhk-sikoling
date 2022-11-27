@@ -76,7 +76,7 @@ export const DokumenApiSlice = createApi({
                     [{type: 'DokumenNama', id: 'LIST'}],
             }),
             getDokumenByNamaAndPage: builder.query<daftarDokumen, {nama: string; page: number; pageSize: number}>({
-                query: ({nama = '', page=1, pageSize=10}) => `dokumen/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+                query: ({nama, page, pageSize}) => `dokumen/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
                     [
