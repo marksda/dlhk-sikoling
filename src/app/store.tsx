@@ -22,6 +22,8 @@ import tokenReducer from "../features/security/token-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
 import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha-api-slice";
+// import kategoriPelakuUsahaReducer from "../features/perusahaan/kategori-pelaku-usaha-slice";
+import { KategoriPelakuUsahaApiSlice } from "../features/perusahaan/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
@@ -62,7 +64,8 @@ export const store = configureStore({
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [ModelPerizinanApiSlice.reducerPath]: ModelPerizinanApiSlice.reducer,
-        [SkalaUsahaApiSlice.reducerPath]: SkalaUsahaApiSlice.reducer, 
+        [SkalaUsahaApiSlice.reducerPath]: SkalaUsahaApiSlice.reducer,      
+        [KategoriPelakuUsahaApiSlice.reducerPath]: KategoriPelakuUsahaApiSlice.reducer,   
         [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
         [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
@@ -89,6 +92,7 @@ export const store = configureStore({
                                             .concat(AuthorizationApiSlice.middleware)
                                             .concat(ModelPerizinanApiSlice.middleware)
                                             .concat(SkalaUsahaApiSlice.middleware)
+                                            .concat(KategoriPelakuUsahaApiSlice.middleware)
                                             .concat(PelakuUsahaApiSlice.middleware)
                                             .concat(PerusahaanApiSlice.middleware)
                                             .concat(KategoriDokumenApiSlice.middleware)
