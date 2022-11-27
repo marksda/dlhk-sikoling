@@ -52,7 +52,7 @@ export const DokumenApiSlice = createApi({
                     [{type: 'Dokumen', id: 'LIST'}],
             }),
             getDokumenByPage: builder.query<daftarDokumen, {page: number; pageSize: number}>({
-                query: ({page = 1, pageSize = 10}) => `dokumen/page?page=${page}&pageSize=${pageSize}`,
+                query: ({page, pageSize}) => `dokumen/page?page=${page}&pageSize=${pageSize}`,
                 providesTags: (result) => 
                     result ?
                     [
