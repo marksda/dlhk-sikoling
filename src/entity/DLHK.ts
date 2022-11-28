@@ -53,7 +53,7 @@ export class DLHK {
     public get registerPermohonan(): RegisterPermohonan {
         return this._registerPermohonan;
     }
-    
+
     public set registerPermohonan(value: RegisterPermohonan) {
         this._registerPermohonan = value;
     }
