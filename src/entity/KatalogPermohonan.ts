@@ -1,24 +1,28 @@
 import find from "lodash.find";
 import { DeskripsiPermohonan } from "./DeskripsiPermohonan";
 
+type ItemDeskripsiPermohonan = {itemId: string, deskripsiPermohonan: DeskripsiPermohonan};
 export class KatalogPermohonan {
-    private _daftarKatalogPermohonan: DeskripsiPermohonan[];
+    private _daftarKatalogPermohonan: ItemDeskripsiPermohonan[];
     
-    constructor(daftarKatalogPermohonan: DeskripsiPermohonan[]) {
-        this._daftarKatalogPermohonan = daftarKatalogPermohonan;
+    constructor() {
+        this._daftarKatalogPermohonan = new Array<ItemDeskripsiPermohonan>();
     }
 
-    public get daftarKatalogPermohonan(): DeskripsiPermohonan[] {
+    public get daftarKatalogPermohonan(): ItemDeskripsiPermohonan[] {
         return this._daftarKatalogPermohonan;
     }
 
-    public set daftarKatalogPermohonan(value: DeskripsiPermohonan[]) {
+    public set daftarKatalogPermohonan(value: ItemDeskripsiPermohonan[]) {
         this._daftarKatalogPermohonan = value;
     }
 
     public getDeskripsiPermohonan(itemId: string): DeskripsiPermohonan|undefined {
-        return find(this._daftarKatalogPermohonan , (obj) => {
-            return obj.id == itemId;
-        });
+        let item = find(this._daftarKatalogPermohonan , (obj) => { return obj.itemId == itemId; });
+        return item?.deskripsiPermohonan;
+    }
+
+    public addDeskripsiPermohonan(item: DeskripsiPermohonan): void {
+        this._daftarKatalogPermohonan.push({itemId: item.id, deskripsiPermohonan: item});
     }
 }
