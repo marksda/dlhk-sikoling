@@ -2,6 +2,7 @@ import find from "lodash.find";
 import { DeskripsiPermohonan } from "./DeskripsiPermohonan";
 
 type ItemDeskripsiPermohonan = {itemId: string, deskripsiPermohonan: DeskripsiPermohonan};
+
 export class KatalogPermohonan {
     private _daftarKatalogPermohonan: ItemDeskripsiPermohonan[];
     
