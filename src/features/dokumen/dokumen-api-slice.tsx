@@ -45,7 +45,7 @@ export const DokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'Dokumen' as const, id })
+                            ({ id }) => ({ type: 'Dokumen' as const, id: id! })
                         ),
                         { type: 'Dokumen', id: 'LIST' },
                     ]:
@@ -57,7 +57,7 @@ export const DokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'DokumenPage' as const, id })
+                            ({ id }) => ({ type: 'DokumenPage' as const, id: id! })
                         ),
                         { type: 'DokumenPage', id: 'LIST' },
                     ]:
@@ -69,7 +69,7 @@ export const DokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'DokumenNama' as const, id })
+                            ({ id }) => ({ type: 'DokumenNama' as const, id: id! })
                         ),
                         { type: 'DokumenNama', id: 'LIST' },
                     ]:
@@ -81,7 +81,7 @@ export const DokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'DokumenNamaPage' as const, id })
+                            ({ id }) => ({ type: 'DokumenNamaPage' as const, id: id! })
                         ),
                         { type: 'DokumenNamaPage', id: 'LIST' },
                     ]:

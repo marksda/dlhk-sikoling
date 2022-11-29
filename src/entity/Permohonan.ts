@@ -11,6 +11,6 @@ export class Permohonan {
         this._tanggalPermohonan = new Date();
     }
 
-
+    
 
 }

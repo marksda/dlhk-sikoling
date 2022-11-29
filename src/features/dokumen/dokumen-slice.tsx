@@ -3,15 +3,17 @@ import cloneDeep from "lodash.clonedeep";
 import { IKategoriDokumen } from "./kategori-dokumen-slice";
 
 export interface IDokumen {
-    id: string|undefined;
-    nama: string|undefined;
-    kategori: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen> | undefined;
+    id: string|null;
+    nama: string|null;
+    kategoriDokumen: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>|null;
+    detailAttributeDokumen: any|null;
 };
 
 const initialState: IDokumen = {
-    id: undefined,
-    nama: undefined,
-    kategori: undefined,
+    id: null,
+    nama: null,
+    kategoriDokumen: null,
+    detailAttributeDokumen: null
 };
 
 export const dokumenSlice = createSlice({
@@ -21,7 +23,8 @@ export const dokumenSlice = createSlice({
         setDokumen: (state, action: PayloadAction<IDokumen>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
-            state.kategori = cloneDeep(action.payload.kategori);
+            state.kategoriDokumen = cloneDeep(action.payload.kategoriDokumen);
+            state.detailAttributeDokumen = cloneDeep(action.payload.detailAttributeDokumen);
         },
         setIdDokumen: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
@@ -30,10 +33,17 @@ export const dokumenSlice = createSlice({
             state.nama = action.payload;
         },
         setKategoriDokumen: (state, action: PayloadAction<Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>>) => {
-            state.kategori = cloneDeep(action.payload);
+            state.kategoriDokumen = cloneDeep(action.payload);
+        },
+        setDetailDokumen: (state, action: PayloadAction<any>) => {
+            state.detailAttributeDokumen = cloneDeep(action.payload);
         },
     },
 });
 
-export const { setDokumen,setIdDokumen, setNamaDokumen, setKategoriDokumen } = dokumenSlice.actions;
+export const { 
+    setDokumen, setIdDokumen, setNamaDokumen, 
+    setKategoriDokumen, setDetailDokumen 
+} = dokumenSlice.actions;
+
 export default dokumenSlice.reducer;
