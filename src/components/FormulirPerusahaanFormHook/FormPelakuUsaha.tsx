@@ -2,7 +2,7 @@ import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluen
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+import { useGetKategoriPelakuUsahaBySkalaUsahaQuery } from "../../features/perusahaan/kategori-pelaku-usaha-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
@@ -15,7 +15,8 @@ export const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue,
         control: control, 
         name: ['skalaUsaha', 'pelakuUsaha']
     });
-    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(skalaUsaha);
+    
+    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha.id);
 
     useEffect(
         () => {
@@ -46,7 +47,7 @@ export const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue,
             let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
                 (item) => { return item.id == itemSelected.key; } 
             )
-            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected!});
+            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
             setValue("id", '');
         },
         [dataKategoriPelakuUsaha, pelakuUsaha]

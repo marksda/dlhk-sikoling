@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IKategoriPelakuUsaha {
-    id: string|undefined;
-    nama: string|undefined;
+    id: string|null;
+    nama: string|null;
 };
 
 const initialState: IKategoriPelakuUsaha = {
-    id: undefined,
-    nama: undefined
+    id: null,
+    nama: null
 };
 
 export const kategoriPelakuUsahaSlice = createSlice({

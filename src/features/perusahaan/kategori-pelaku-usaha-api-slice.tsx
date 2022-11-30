@@ -46,7 +46,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsaha' as const, id })
+                            ({ id }) => ({ type: 'KategoriPelakuUsaha' as const, id: id! })
                         ),
                         { type: 'KategoriPelakuUsaha', id: 'LIST' },
                     ]:
@@ -58,7 +58,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaPage' as const, id })
+                            ({ id }) => ({ type: 'KategoriPelakuUsahaPage' as const, id: id! })
                         ),
                         { type: 'KategoriPelakuUsahaPage', id: 'LIST' },
                     ]:
@@ -70,7 +70,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaNama' as const, id })
+                            ({ id }) => ({ type: 'KategoriPelakuUsahaNama' as const, id: id! })
                         ),
                         { type: 'KategoriPelakuUsahaNama', id: 'LIST' },
                     ]:
@@ -82,7 +82,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaNamaPage' as const, id })
+                            ({ id }) => ({ type: 'KategoriPelakuUsahaNamaPage' as const, id: id! })
                         ),
                         { type: 'KategoriPelakuUsahaNamaPage', id: 'LIST' },
                     ]:
@@ -94,7 +94,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaSkalaUsaha' as const, id })
+                            ({ id }) => ({ type: 'KategoriPelakuUsahaSkalaUsaha' as const, id: id! })
                         ),
                         { type: 'KategoriPelakuUsahaSkalaUsaha', id: 'LIST' },
                     ]:

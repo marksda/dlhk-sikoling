@@ -99,7 +99,7 @@ export const PerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'PerusahaanNpwp', id: 'LIST'}],
             }),
-            isEksisPeusahaan: builder.query<boolean, string>({
+            isEksisPerusahaan: builder.query<boolean, string|null>({
                 query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,
             }),
         }
@@ -109,5 +109,5 @@ export const PerusahaanApiSlice = createApi({
 export const { 
     useAddPerusahaanMutation, useUpdatePerusahaanMutation,
     useGetAllPerusahaanQuery, useGetPerusahaanByPageQuery, useGetPerusahaanByNamaAndPageQuery, 
-    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery, useIsEksisPeusahaanQuery
+    useLazyGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery, useIsEksisPerusahaanQuery
 } = PerusahaanApiSlice;

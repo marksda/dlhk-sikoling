@@ -3,17 +3,17 @@ import cloneDeep from "lodash.clonedeep";
 import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
 
 export interface IPelakuUsaha {
-    id: string|undefined;
-    nama: string|undefined;
-    singkatan: string|undefined;
-    kategoriPelakuUsaha: IKategoriPelakuUsaha|undefined;
+    id: string|null;
+    nama: string|null;
+    singkatan: string|null;
+    kategoriPelakuUsaha: IKategoriPelakuUsaha|null;
 };
 
 const initialState: IPelakuUsaha = {
-    id: undefined,
-    nama: undefined,
-    singkatan: undefined,
-    kategoriPelakuUsaha: undefined
+    id: null,
+    nama: null,
+    singkatan: null,
+    kategoriPelakuUsaha: null
 };
 
 export const pelakuUsahaSlice = createSlice({

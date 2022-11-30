@@ -47,7 +47,7 @@ export const PelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsaha' as const, id })
+                            ({ id }) => ({ type: 'PelakuUsaha' as const, id: id! })
                         ),
                         { type: 'PelakuUsaha', id: 'LIST' },
                     ]:
@@ -59,7 +59,7 @@ export const PelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaPage' as const, id })
+                            ({ id }) => ({ type: 'PelakuUsahaPage' as const, id: id! })
                         ),
                         { type: 'PelakuUsahaPage', id: 'LIST' },
                     ]:
@@ -71,7 +71,7 @@ export const PelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaNama' as const, id })
+                            ({ id }) => ({ type: 'PelakuUsahaNama' as const, id: id! })
                         ),
                         { type: 'PelakuUsahaNama', id: 'LIST' },
                     ]:
@@ -83,19 +83,19 @@ export const PelakuUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaNamaPage' as const, id })
+                            ({ id }) => ({ type: 'PelakuUsahaNamaPage' as const, id: id! })
                         ),
                         { type: 'PelakuUsahaNamaPage', id: 'LIST' },
                     ]:
                     [{type: 'PelakuUsahaNamaPage', id: 'LIST'}],
             }),
             getPelakuUsahaByKategoriPelakuUsaha: builder.query<daftarPelakuUsaha, string>({
-                query: (idKategori) => `pelaku_usaha/kategori?idKategori=${idKategori}`,
+                query: (idKategori) => `pelaku_usaha/kategori/${idKategori}`,
                 providesTags: (result) => 
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaKategoriPelakuUsaha' as const, id })
+                            ({ id }) => ({ type: 'PelakuUsahaKategoriPelakuUsaha' as const, id: id! })
                         ),
                         { type: 'PelakuUsahaKategoriPelakuUsaha', id: 'LIST' },
                     ]:

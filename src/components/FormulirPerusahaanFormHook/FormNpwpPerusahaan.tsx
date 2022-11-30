@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
 import { useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
-import { useIsEksisPeusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
+import { useIsEksisPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiMaskTextField } from "../ControlledTextField/ControlledFluentUiMaskTextField";
@@ -19,16 +19,16 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
     //local state
     const [animNpwpPerusahaan, setAnimNpwpPerusahaan] = useState<string>('open');
     const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    const [npwp, setNpwp] = useState<string|undefined>(undefined);
+    const [npwp, setNpwp] = useState<string|null>(null);
     //hook variable from react form hook state variable
     const [id, pelakuUsaha] = useWatch({
         control: control, 
         name: ['id', 'pelakuUsaha']
     }); 
     //hook variable from rtk query
-    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
+    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha.id, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
     
-    const { data: isEksisPerusahaan, isFetching: isFetchingIsEksisPerusahaan, isError: isErrorEksisPerusahaan} = useIsEksisPeusahaanQuery(npwp, {skip: npwp == undefined ? true : false});
+    const { data: isEksisPerusahaan, isFetching: isFetchingIsEksisPerusahaan, isError: isErrorEksisPerusahaan} = useIsEksisPerusahaanQuery(npwp, {skip: npwp == undefined ? true : false});
     
     //deteksi data options pelaku usaha sudah tersedia
     useEffect(
