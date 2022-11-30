@@ -6,7 +6,7 @@ import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-slice";
 import { ISkalaUsaha } from "./skala-usaha-api-slice";
 
-type IDaftarDokumen = any[];
+type IDaftarRegisterDokumen = any[];
 
 export interface IPerusahaan {
     id: string|undefined;
@@ -16,7 +16,7 @@ export interface IPerusahaan {
     pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | undefined;
     alamat: IAlamat|undefined;
     kontak: IKontak|undefined;
-    daftarDokumen: IDaftarDokumen|undefined;
+    daftarRegisterDokumen: IDaftarRegisterDokumen|undefined;
 };
 
 const initialState: IPerusahaan = {
@@ -27,7 +27,7 @@ const initialState: IPerusahaan = {
     pelakuUsaha: undefined,
     alamat: undefined,
     kontak: undefined,
-    daftarDokumen: undefined,
+    daftarRegisterDokumen: undefined,
 }
 
 export const perusahaanSlice = createSlice({
@@ -42,7 +42,7 @@ export const perusahaanSlice = createSlice({
             state.pelakuUsaha = cloneDeep(action.payload.pelakuUsaha);
             state.alamat = cloneDeep(action.payload.alamat);
             state.kontak = cloneDeep(action.payload.kontak);
-            state.daftarDokumen = cloneDeep(action.payload.daftarDokumen);
+            state.daftarRegisterDokumen = cloneDeep(action.payload.daftarRegisterDokumen);
         },
         setIdPerusahaan: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
@@ -65,8 +65,8 @@ export const perusahaanSlice = createSlice({
         setKontakPerusahaan: (state, action: PayloadAction<IKontak>) => {
             state.kontak = cloneDeep(action.payload);
         },
-        setDaftarDokumenPerusahaan: (state, action: PayloadAction<IDaftarDokumen>) => {
-            state.daftarDokumen = cloneDeep(action.payload);
+        setDaftarRegisterDokumenPerusahaan: (state, action: PayloadAction<IDaftarRegisterDokumen>) => {
+            state.daftarRegisterDokumen = cloneDeep(action.payload);
         },
     }
 });
@@ -74,7 +74,8 @@ export const perusahaanSlice = createSlice({
 export const { 
     setPerusahaan, setIdPerusahaan, setNamaPerusahaan,
     setModelPerizinanPerusahaan, setSkalaUsahaPerusahaan,
-    setPelakuUsahaPerusahaan, setAlamatPerusahaan, setKontakPerusahaan
+    setPelakuUsahaPerusahaan, setAlamatPerusahaan, 
+    setKontakPerusahaan, setDaftarRegisterDokumenPerusahaan
 } = perusahaanSlice.actions;
 
 export default perusahaanSlice.reducer;
