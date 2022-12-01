@@ -37,7 +37,7 @@ export const PerusahaanApiSlice = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{type: 'Perusahaan', id}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}],
+                invalidatesTags: (result, error, id) => [{type: 'Perusahaan', id: id!}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}],
             }),
             getAllPerusahaan: builder.query<daftarPerusahaan, void>({
                 query: () => `perusahaan`,
@@ -45,7 +45,7 @@ export const PerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'Perusahaan' as const, id })
+                            ({ id }) => ({ type: 'Perusahaan' as const, id: id! })
                         ),
                         { type: 'Perusahaan', id: 'LIST' },
                     ]:
@@ -57,7 +57,7 @@ export const PerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PerusahaanPage' as const, id })
+                            ({ id }) => ({ type: 'PerusahaanPage' as const, id: id! })
                         ),
                         { type: 'PerusahaanPage', id: 'LIST' },
                     ]:
@@ -69,7 +69,7 @@ export const PerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PerusahaanNama' as const, id })
+                            ({ id }) => ({ type: 'PerusahaanNama' as const, id: id! })
                         ),
                         { type: 'PerusahaanNama', id: 'LIST' },
                     ]:
@@ -81,7 +81,7 @@ export const PerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PerusahaanNamaPage' as const, id })
+                            ({ id }) => ({ type: 'PerusahaanNamaPage' as const, id: id! })
                         ),
                         { type: 'PerusahaanNamaPage', id: 'LIST' },
                     ]:
@@ -93,7 +93,7 @@ export const PerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'PerusahaanNpwp' as const, id })
+                            ({ id }) => ({ type: 'PerusahaanNpwp' as const, id: id! })
                         ),
                         { type: 'PerusahaanNpwp', id: 'LIST' },
                     ]:

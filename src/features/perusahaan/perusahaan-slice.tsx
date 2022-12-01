@@ -9,25 +9,25 @@ import { ISkalaUsaha } from "./skala-usaha-api-slice";
 type IDaftarRegisterDokumen = any[];
 
 export interface IPerusahaan {
-    id: string|undefined;
-    nama: string|undefined;
-    modelPerizinan: Pick<IModelPerizinan, 'id'> & Partial<IModelPerizinan> | undefined;
-    skalaUsaha: Pick<ISkalaUsaha, 'id'> & Partial<ISkalaUsaha> | undefined;
-    pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | undefined;
-    alamat: IAlamat|undefined;
-    kontak: IKontak|undefined;
-    daftarRegisterDokumen: IDaftarRegisterDokumen|undefined;
+    id: string|null;
+    nama: string|null;
+    modelPerizinan: Pick<IModelPerizinan, 'id'> & Partial<IModelPerizinan> | null;
+    skalaUsaha: Pick<ISkalaUsaha, 'id'> & Partial<ISkalaUsaha> | null;
+    pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | null;
+    alamat: IAlamat|null;
+    kontak: IKontak|null;
+    daftarRegisterDokumen: IDaftarRegisterDokumen|null;
 };
 
 const initialState: IPerusahaan = {
-    id: undefined,
-    nama: undefined,
-    modelPerizinan: undefined,
-    skalaUsaha: undefined,
-    pelakuUsaha: undefined,
-    alamat: undefined,
-    kontak: undefined,
-    daftarRegisterDokumen: undefined,
+    id: null,
+    nama: null,
+    modelPerizinan: null,
+    skalaUsaha: null,
+    pelakuUsaha: null,
+    alamat: null,
+    kontak: null,
+    daftarRegisterDokumen: null,
 }
 
 export const perusahaanSlice = createSlice({
