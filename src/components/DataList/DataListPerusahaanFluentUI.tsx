@@ -1,7 +1,10 @@
-import { DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, IDetailsHeaderProps, IRenderFunction, mergeStyles, Selection } from "@fluentui/react";
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import { DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, mergeStyles, Selection, SelectionMode } from "@fluentui/react";
+import { iteratorSymbol } from "immer/dist/internal";
+import find from "lodash.find";
+import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { IKontak } from "../../features/person/person-slice";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
+import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 
 const _columns = [
     { key: 'c1', name: 'Npwp', fieldName: 'npwp', minWidth: 130, maxWidth: 130, isResizable: true },
@@ -10,13 +13,15 @@ const _columns = [
     { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 
-export interface IListItemPerusahaan {
-    key: string|undefined;
-    npwp: string|undefined;
-    nama: string|undefined;
-    kontak: IKontak|undefined;
-    alamat: string|undefined;
-};
+// export interface IListItemPerusahaan {
+//     key: string|undefined;
+//     npwp: string|undefined;
+//     nama: string|undefined;
+//     kontak: IKontak|undefined;
+//     alamat: string|undefined;
+// };
+
+type IListItemPerusahaan = {key: string;} & Omit<IPerusahaan, "id">;
 
 const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
     if (!headerProps || !defaultRender) {
@@ -31,33 +36,49 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
             },
         },
     })
-}
+};
+
+// const _selection = new Selection({
+//     onSelectionChanged: () => {
+//         // setSelectionDetails(getSelection());
+//         console.log()
+//     }
+// });
+
+// const getSelection = ():string => {
+//     const selectionCount = _selection.getSelectedCount();
+
+//     switch (selectionCount) {
+//     case 0:
+//         return 'No items selected';
+//     case 1:
+//         return '1 item selected: ' + (_selection.getSelection()[0] as IListItemPerusahaan).nama;
+//     default:
+//         return `${selectionCount} items selected`;
+//     }
+// };
 
 export const DataListPerusahaanFluentUI: FC = (props) => {
-    const [selectionDetails, setSelectionDetails] = useState<string>('');
+    // const [selectionDetails, setSelectionDetails] = useState<string>('');
     const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
-
-    const _selection = new Selection({
-        onSelectionChanged: () => {
-            setSelectionDetails(getSelection());
-        }
-    });
-
-    const getSelection = ():string => {
-        const selectionCount = _selection.getSelectedCount();
-
-        switch (selectionCount) {
-        case 0:
-            return 'No items selected';
-        case 1:
-            return '1 item selected: ' + (_selection.getSelection()[0] as IListItemPerusahaan).nama;
-        default:
-            return `${selectionCount} items selected`;
-        }
-    };
+    const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>();
+    console.log(selectedItems);
 
     //rtk query perusahaan variable hook
     const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetAllPerusahaanQuery();
+
+    const _selection = useMemo(
+        () => new Selection(
+            {
+                onSelectionChanged: () => {
+                    setSelectedItems(_selection.getSelection());
+                    console.log(daftarPerusahaan);
+                },
+                selectionMode: SelectionMode.multiple,
+            }
+        ),
+        []
+    );
 
     //deteksi error koneksi dengan backend
     useEffect(
@@ -76,13 +97,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                 setDataPerusahaan([
                     ...daftarPerusahaan.map(
                         (t) => (
-                            {
-                                key: t.id, 
-                                npwp: t.id, 
-                                nama: `${t.pelakuUsaha?.singkatan}. ${t.nama}`,
-                                kontak:t.kontak,
-                                alamat: `${t.alamat?.keterangan} ${t.alamat!.desa!.nama}, ${t.alamat!.kecamatan!.nama}, ${t.alamat!.kabupaten!.nama}, ${t.alamat!.propinsi!.nama}`
-                            }
+                            {key: t.id}
                         )
                     )
                 ]);
