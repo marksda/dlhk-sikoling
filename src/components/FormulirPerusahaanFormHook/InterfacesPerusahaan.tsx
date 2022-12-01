@@ -31,6 +31,10 @@ export interface ISubFormPerusahaanProps {
     setValue: UseFormSetValue<IPerusahaan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 };
+export interface ISubFormDetailPerusahaanProps {
+    showModalAddPerusahaan: () => void;
+    hideModalAddModalPerusahaan: () => void;
+};
 /***************************style**********************************/
 export const stackTokens = { childrenGap: 2 };
 export const contentStyles = mergeStyleSets({

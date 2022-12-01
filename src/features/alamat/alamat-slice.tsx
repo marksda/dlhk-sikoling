@@ -13,11 +13,11 @@ export interface IAlamat {
 }
 
 const initialState: IAlamat = {
-    propinsi: {} as IPropinsi,
-    kabupaten: {} as IKabupaten,
-    kecamatan: {} as IKecamatan,
-    desa: {} as IDesa,
-    keterangan: ''
+    propinsi: null,
+    kabupaten: null,
+    kecamatan: null,
+    desa: null,
+    keterangan: null
 }
 
 //redux busines logic

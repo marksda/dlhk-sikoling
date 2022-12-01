@@ -1,10 +1,11 @@
-import { DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, mergeStyles, Selection, SelectionMode } from "@fluentui/react";
-import { iteratorSymbol } from "immer/dist/internal";
-import find from "lodash.find";
-import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
+import { useBoolean } from "@fluentui/react-hooks";
+import omit from "lodash.omit";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { IKontak } from "../../features/person/person-slice";
 import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
+import { ISubFormDetailPerusahaanProps } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 
 const _columns = [
     { key: 'c1', name: 'Npwp', fieldName: 'npwp', minWidth: 130, maxWidth: 130, isResizable: true },
@@ -21,7 +22,7 @@ const _columns = [
 //     alamat: string|undefined;
 // };
 
-type IListItemPerusahaan = {key: string;} & Omit<IPerusahaan, "id">;
+export type IListItemPerusahaan = {key: string|null;} & Omit<IPerusahaan, "id">;
 
 const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
     if (!headerProps || !defaultRender) {
@@ -58,11 +59,34 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
 //     }
 // };
 
-export const DataListPerusahaanFluentUI: FC = (props) => {
+const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
+
+export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan}) => {
     // const [selectionDetails, setSelectionDetails] = useState<string>('');
     const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>();
     console.log(selectedItems);
+    // const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
+    const _items: ICommandBarItemProps[] = [
+        {
+            key: 'add',
+            text: 'Tambah',
+            iconProps: { iconName: 'Add' },
+            onClick: showModalAddPerusahaan,
+        },
+        {
+            key: 'edit',
+            text: 'Ubah',
+            iconProps: { iconName: 'Edit' },
+            onClick: () => console.log('Share'),
+        },
+        {
+            key: 'delete',
+            text: 'Hapus',
+            iconProps: { iconName: 'Delete' },
+            onClick: () => console.log('Share'),
+        }
+    ];
 
     //rtk query perusahaan variable hook
     const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetAllPerusahaanQuery();
@@ -72,7 +96,6 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
             {
                 onSelectionChanged: () => {
                     setSelectedItems(_selection.getSelection());
-                    console.log(daftarPerusahaan);
                 },
                 selectionMode: SelectionMode.multiple,
             }
@@ -97,7 +120,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                 setDataPerusahaan([
                     ...daftarPerusahaan.map(
                         (t) => (
-                            {key: t.id}
+                            {key: t.id, ...omit(t, ['id'])}
                         )
                     )
                 ]);
@@ -108,7 +131,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
 
     const _onItemInvoked = useCallback(
         (item: IListItemPerusahaan): void => {
-            alert(`Item invoked: ${item.nama}`);
+            // alert(`Item invoked: ${item.nama}`);
         },
         []
     );
@@ -128,8 +151,12 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                             boxShadow: DefaultEffects.elevation4
                           })}
                         >
-                          {item[column!.fieldName as keyof IListItemPerusahaan]}
+                          {item.key}
                         </div>
+                    );
+                case 'c2':
+                    return (
+                        <span>{`${item.pelakuUsaha?.singkatan}. ${item.nama}`}</span>
                     );
                 case 'c3':
                     let kontak = item[column!.fieldName as keyof IListItemPerusahaan] as IKontak;
@@ -140,7 +167,7 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                                 margin: 0
                               })}
                             >
-                                {`Email: ${kontak!.email}`}<br />
+                                {`Email: ${kontak.email}`}<br />
                                 <span style={{display: 'flex'}}>
                                     <label className={mergeStyles({ 
                                             padding: '4px 0px',
@@ -158,34 +185,45 @@ export const DataListPerusahaanFluentUI: FC = (props) => {
                                         display: 'block',
                                         color: 'white'
                                         })}
-                                    >{`${kontak!.telepone}`}</label>
+                                    >{`${kontak.telepone}`}</label>
                                 </span>
-                                {`Fax: ${kontak!.fax}`}
+                                {`Fax: ${kontak.fax}`}
                             </p>
                         </div>
                     );
                 default:
-                    return(<span>{item[column!.fieldName as keyof IListItemPerusahaan]}</span>);
+                    return(<span>{`${item.alamat?.keterangan}`}</span>);
             }
         },
         []
     );
     
     return(     
-        <DetailsList
-            items={dataPerusahaan}
-            columns={_columns}
-            setKey="set"
-            layoutMode={DetailsListLayoutMode.justified}
-            selection={_selection}
-            selectionPreservedOnEmptyClick={true}
-            ariaLabelForSelectionColumn="Toggle selection"
-            ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-            checkButtonAriaLabel="select row"
-            onItemInvoked={_onItemInvoked}
-            onRenderDetailsHeader={onRenderDetailsHeader}
-            onRenderItemColumn={handleRenderItemColumn}
-        />     
+        <>
+        <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
+                <Stack.Item>
+                    <CommandBar
+                        items={_items}   
+                    />
+                </Stack.Item>
+        </Stack>
+        <Stack>
+            <DetailsList
+                items={dataPerusahaan}
+                columns={_columns}
+                setKey="set"
+                layoutMode={DetailsListLayoutMode.justified}
+                selection={_selection}
+                selectionPreservedOnEmptyClick={true}
+                ariaLabelForSelectionColumn="Toggle selection"
+                ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+                checkButtonAriaLabel="select row"
+                onItemInvoked={_onItemInvoked}
+                onRenderDetailsHeader={onRenderDetailsHeader}
+                onRenderItemColumn={handleRenderItemColumn}
+            />    
+        </Stack>
+        </> 
     );
     
 }

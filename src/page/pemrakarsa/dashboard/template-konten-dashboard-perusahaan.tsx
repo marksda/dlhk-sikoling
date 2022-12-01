@@ -14,43 +14,15 @@ import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormu
 //     height: 'calc(100vh - 148px)',
 //     marginLeft: 4,
 // };
-const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const KontenDashboardPerusahaan: FC = () => {
     const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
-    const _items: ICommandBarItemProps[] = [
-        {
-            key: 'add',
-            text: 'Tambah',
-            iconProps: { iconName: 'Add' },
-            onClick: showModalAddPerusahaan,
-        },
-        {
-            key: 'edit',
-            text: 'Ubah',
-            iconProps: { iconName: 'Edit' },
-            onClick: () => console.log('Share'),
-        },
-        {
-            key: 'delete',
-            text: 'Hapus',
-            iconProps: { iconName: 'Delete' },
-            onClick: () => console.log('Share'),
-        }
-    ];
     
     return(
-        <>
-            <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
-                <Stack.Item>
-                    <CommandBar
-                        items={_items}   
-                    />
-                </Stack.Item>
-            </Stack>
-            <Stack>
-                <DataListPerusahaanFluentUI />
-            </Stack>   
+        <>            
+            <DataListPerusahaanFluentUI 
+                showModalAddPerusahaan={showModalAddPerusahaan} 
+                hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}/>
             {
             isModalAddPerusahaanOpen &&
             <ModalFormulirAddPerusahaan 
