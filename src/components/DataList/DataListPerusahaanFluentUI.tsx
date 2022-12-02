@@ -3,7 +3,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { IKontak } from "../../features/person/person-slice";
-import { useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
+import { useDeletePerusahaanMutation, useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ISubFormDetailPerusahaanProps } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 
@@ -64,32 +64,44 @@ const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan}) => {
     // const [selectionDetails, setSelectionDetails] = useState<string>('');
     const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
-    const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>();
-    console.log(selectedItems);
-    // const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
-    const _items: ICommandBarItemProps[] = [
-        {
-            key: 'add',
-            text: 'Tambah',
-            iconProps: { iconName: 'Add' },
-            onClick: showModalAddPerusahaan,
-        },
-        {
-            key: 'edit',
-            text: 'Ubah',
-            iconProps: { iconName: 'Edit' },
-            onClick: () => console.log('Share'),
-        },
-        {
-            key: 'delete',
-            text: 'Hapus',
-            iconProps: { iconName: 'Delete' },
-            onClick: () => console.log('Share'),
-        }
-    ];
-
+    const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
+   // const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
+    
     //rtk query perusahaan variable hook
     const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetAllPerusahaanQuery();
+    const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation()
+
+    const _items: ICommandBarItemProps[] = useMemo(
+        () => ([
+            {
+                key: 'add',
+                text: 'Tambah',
+                iconProps: { iconName: 'Add' },
+                onClick: showModalAddPerusahaan,
+                disabled: selectedItems.length > 0 ? true:false,
+            },
+            {
+                key: 'edit',
+                text: 'Ubah',
+                iconProps: { iconName: 'Edit' },
+                onClick: () => console.log('Share'),
+                disabled: selectedItems.length == 1 ? false:true,
+            },
+            {
+                key: 'delete',
+                text: 'Hapus',
+                iconProps: { iconName: 'Delete' },
+                onClick: async () => {
+                    let i = 0;
+                    for(i; i< selectedItems.length; i++) {
+                        await deletePerusahaan(selectedItems[i].key as string);
+                    }                    
+                },
+                disabled: selectedItems.length > 0 ? false:true,
+            }
+        ]),
+        [selectedItems]
+    );
 
     const _selection = useMemo(
         () => new Selection(
@@ -125,6 +137,9 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                     )
                 ]);
             }            
+            else {
+                setDataPerusahaan([]);
+            }
         },
         [daftarPerusahaan, isFetchingDaftarPerusahaan]
     );

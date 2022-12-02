@@ -2,12 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 export interface IToken {
-    userId: string;
-    userName: string;
-    userEmail: string;
-    accessToken: string;
-    refreshToken: string;
-    expireOn: string;
+    userId: string|null;
+    userName: string|null;
+    userEmail: string|null;    
+    hakAkses: string|null,
+    accessToken: string|null;
+    refreshToken: string|null;
+    expireOn: string|null;
 }
 
 export interface IResponseStatusToken {
@@ -16,12 +17,13 @@ export interface IResponseStatusToken {
 }
 
 const initialState: IToken = {
-    userId: '',
-    userName: '',
-    userEmail: '',
-    accessToken: '',
-    refreshToken: '',
-    expireOn: '',
+    userId: null,
+    userName: null,
+    userEmail: null,    
+    hakAkses: null,
+    accessToken: null,
+    refreshToken: null,
+    expireOn: null,
 }
 
 export const tokenSlice = createSlice({

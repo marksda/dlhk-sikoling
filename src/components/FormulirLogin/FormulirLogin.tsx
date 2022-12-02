@@ -2,7 +2,7 @@ import {
     ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, 
     ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField 
 } from "@fluentui/react";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
 import { useGetTokenMutation } from "../../features/security/authorization-api-slice";
@@ -110,6 +110,7 @@ const variantsPassword = {
         },
     },
 };
+
 const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
     //local variable for email validation
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -215,6 +216,7 @@ const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
         </motion.div>
     );
 };
+
 const FormPassword: FC<Partial<HookFormPasswordProps>> = (props) => {
     //local variable
     // const regexpPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
