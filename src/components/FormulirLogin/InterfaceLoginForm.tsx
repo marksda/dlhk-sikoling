@@ -1,6 +1,6 @@
 import { IIconProps } from "@fluentui/react";
 
-const durationAnimFormLogin: number = 0.5;
+export const durationAnimFormLogin: number = 0.5;
 
 export interface ISlideSubFormLoginParam {  
     motionKey: string;  
@@ -10,6 +10,7 @@ export interface ISlideSubFormLoginParam {
 
 export interface ISubFormLoginProps {
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const variantsUserName = {
