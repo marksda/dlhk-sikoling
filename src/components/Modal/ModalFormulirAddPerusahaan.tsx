@@ -134,8 +134,7 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
             isBlocking={true}
             containerClassName={contentStyles.container}
             dragOptions={isDraggable ? dragOptions : undefined}
-        >
-         
+        >         
             <div className={contentStyles.header}>
             {
                 isLoading && (

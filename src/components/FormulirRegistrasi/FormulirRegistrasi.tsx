@@ -248,14 +248,17 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
     const [userName, setUserName] = useState<string>('');    
     const [errorUserName, setErrorUserName] = useState<string>('');
+    
     //react router
     const navigate = useNavigate();
+    
     //rtk query
     const { 
         data: statusUserName, 
         isLoading: isLoadingCekUserName, 
         isError: isErrorConnectionCekUserName,
     } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
+
     //animasi transisi FormEmail to next step
     useEffect(
         () => {
@@ -295,6 +298,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         }, 
         [rtkQueryEmailState, statusUserName, isLoadingCekUserName, isErrorConnectionCekUserName]
     );
+    
     //this function is used to track userName changes
     const processUserNameChange = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -306,6 +310,7 @@ const FormEmail: FC<HookFormEmailProps> = (props) => {
         },
         [],
     );
+    
     //this function is used to check of existensi of userName on back end server
     const processNextStep = useCallback(
         () => {  

@@ -2,7 +2,7 @@ import {
     ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, 
     ILabelStyles, Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, PrimaryButton, ProgressIndicator, Stack, TextField 
 } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import logo from '../../sidoarjo.svg';
 import { useGetTokenMutation } from "../../features/security/authorization-api-slice";
@@ -11,6 +11,10 @@ import { useNavigate } from "react-router-dom";
 import { HookFormEmailProps, HookFormPasswordProps } from "../../app/HookFormProps";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
+import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
+import { regexpEmail } from "../../features/config/config";
+import { ISlideSubFormLoginParam } from "./InterfaceLoginForm";
+import { FormEmail } from "./FormEmail";
 
 
 interface IStateAnimationFramer {
@@ -109,112 +113,6 @@ const variantsPassword = {
             duration
         },
     },
-};
-
-const FormEmail: FC<Partial<HookFormEmailProps>> = (props) => {
-    //local variable for email validation
-    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    //local state
-    const [userName, setUserName] = useState<string>('');    
-    const [errorUserName, setErrorUserName] = useState<string>('');
-    //rtk query
-    // const { data: statusUserName, isLoading: isLoadingCekUserName } = useCekUserNameQuery(props.userName!);
-    // //react router
-    const navigate = useNavigate();
-    // //animasi transisi FormEmail to next step
-    // useEffect(
-    //     () => {
-    //         if(statusUserName == true && props.userName!.length > 0) {
-    //             if(errorUserName.length > 0) {
-    //                 setErrorUserName('');
-    //             }
-    //             props.setIsLoading(false);                
-    //             props.setVariant((prev: IStateAnimationFramer) =>({...prev, animUserName: 'closed'}));     
-    //             setTimeout(
-    //                 () => {
-    //                     props.setVariant((prev: IStateAnimationFramer) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-    //                 },
-    //                 duration*1000
-    //             ); 
-    //         }
-    //         else {
-    //             if(userName.length > 0) {
-    //                 setErrorUserName(`Akun ${props.userName} tidak dikenali, silahkan gunakan akun lain`);
-    //             } 
-    //         }
-    //     }, 
-    //     [props.userName]
-    // );
-    //this function is used to track userName changes
-    const processUserNameChange = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            setUserName(newValue||'');
-        },
-        [],
-    );
-    //this function is used to process next step (FormPassword) with dependen on userName changes only
-    const processNextStep = useCallback(
-        () => {
-            if(regexpEmail.test(userName) == true){
-                props.setIsLoading(true);
-                props.dispatch(setUserNameAuthentication(userName));
-            }
-            else {
-                setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
-            }
-        },
-        []
-    );
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animUserName}
-            variants={variantsUserName}
-            style={props.variant.flipDisplay?{display:'block'}:{display:'none'}}
-        >
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={labelStyle}>Masuk</Label>
-            </Stack>
-            <TextField 
-                placeholder="Email" 
-                value={userName}
-                onChange={processUserNameChange}
-                onKeyUp={
-                    (event) => {
-                        if(event.key == 'Enter') {
-                            processNextStep();
-                        }
-                    }
-                }
-                iconProps={contactIcon} 
-                disabled={true && userName.length > 0}
-                underlined 
-                errorMessage={errorUserName}
-                styles={{root: {marginBottom: 8, width: 300}}}/>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Belum punya akun?</Label> 
-                <ActionButton 
-                    iconProps={addFriendIcon} 
-                    onClick={
-                        () => {
-                            navigate("/registrasi");
-                        }
-                    }
-                    styles={{root: {color: '#0067b8'}}}
-                >
-                    daftar sekarang!
-                </ActionButton>
-            </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Berikutnya" 
-                    onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    disabled={true && userName.length > 0}
-                    />
-            </Stack>
-        </motion.div>
-    );
 };
 
 const FormPassword: FC<Partial<HookFormPasswordProps>> = (props) => {
@@ -344,6 +242,8 @@ const FormPassword: FC<Partial<HookFormPasswordProps>> = (props) => {
 
 export const FormulirLogin: FC = () => {
     //* local state *   
+    //* local state *   
+    const [motionKey, setMotionKey] = useState<string>('email');
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
     const [variant, setVariant] = useState<IStateAnimationFramer>({
         animUserName: 'open',
@@ -377,12 +277,13 @@ export const FormulirLogin: FC = () => {
                     </Stack.Item>  
                 </Stack>            
                 <div style={{height: 8}}></div>
-                <FormEmail
-                    variant={variant} 
-                    setVariant={setVariant}
-                    dispatch={dispatch}
-                    setIsLoading={setIsLoading}
-                />
+                {                
+                    getSlideSubFormLogin({
+                        motionKey, 
+                        setMotionKey
+                        setIsLoading
+                    })
+                }
                 <FormPassword
                     userName={authentication.userName}
                     password={authentication.password}              
@@ -393,5 +294,30 @@ export const FormulirLogin: FC = () => {
             </div>
         </div>        
     );
+};
 
+const getSlideSubFormLogin = (
+    {motionKey, setMotionKey, setIsLoading}: ISlideSubFormLoginParam) => {
+    let konten = null;
+    switch (motionKey) {
+        case 'email':
+            konten = 
+            <FormEmail
+                setMotionKey={setMotionKey}
+                setIsLoading={setIsLoading}
+            />;
+            break; 
+        case 'skalaUsaha':
+            konten = 
+                <FormSkalaUsaha
+                    control={control}
+                    setValue={setValue}
+                    setMotionKey={setMotionKey}
+                />;   
+            break;
+        default:
+            konten = null;
+            break;
+    }
+    return konten;
 };
