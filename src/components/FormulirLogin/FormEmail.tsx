@@ -1,9 +1,12 @@
 import { ActionButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { addFriendIcon, contactIcon, ISubFormLoginProps, variantsUserName } from "./InterfaceLoginForm";
+import { regexpEmail } from "../../features/config/config";
+import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
+import { setUserNameAuthentication } from "../../features/security/authentication-slice";
+import { addFriendIcon, contactIcon, durationAnimFormLogin, ISubFormLoginProps, variantsUserName } from "./InterfaceLoginForm";
 
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
@@ -14,7 +17,7 @@ const labelStyle: ILabelStyles  = {
     }
 };
 
-export const FormEmail: FC<Partial<ISubFormLoginProps>> = ({setMotionKey}) => {
+export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) => {
     //redux global state
     const authentication = useAppSelector(state => state.authentication); 
 
@@ -22,13 +25,54 @@ export const FormEmail: FC<Partial<ISubFormLoginProps>> = ({setMotionKey}) => {
     const [animEmail, setAnimEmail] = useState<string>('open');
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<{userName: string; skip: boolean}>({userName: '', skip: true});
     const [userName, setUserName] = useState<string>(''); 
-    const [errorUserName, setErrorUserName] = useState<string>('');
+    const [errorUserName, setErrorUserName] = useState<string>('');    
+
+    //rtk query
+    const { 
+        data: statusUserName, 
+        isLoading: isLoadingCekUserName, 
+        isError: isErrorConnectionCekUserName,
+    } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
     
     //redux action creator
     const dispatch = useAppDispatch();
 
     //react router
     const navigate = useNavigate();
+
+    useEffect(
+        () => {
+            if(rtkQueryEmailState.skip === false && isLoadingCekUserName === false && 
+                isErrorConnectionCekUserName === false) { // sukses ambil data
+                // props.setIsErrorConnection(false);
+                if(statusUserName != undefined) {
+                    setIsLoading(false);
+                    if(statusUserName === false) {   //data belum terdaftar                        
+                        setAnimEmail('closed');                          
+                        dispatch(setUserNameAuthentication(rtkQueryEmailState.userName));
+
+                        let timer = setTimeout(
+                            () => {                            
+                                setMotionKey('password');
+                            },
+                            durationAnimFormLogin*1000
+                        );
+                        return () => clearTimeout(timer);
+                    }
+                    else {  //data sudah terdaftar
+                        setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                    }
+                    
+                }                    
+            }
+            else if(rtkQueryEmailState.skip === false && isLoadingCekUserName === false && 
+                isErrorConnectionCekUserName === true) {  // gagal ambil data
+                setIsLoading(false);
+                // setIsErrorConnection(true);
+            }
+        }, 
+        [rtkQueryEmailState, statusUserName, isLoadingCekUserName, isErrorConnectionCekUserName]
+    );
 
     const processUserNameChange = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -46,14 +90,14 @@ export const FormEmail: FC<Partial<ISubFormLoginProps>> = ({setMotionKey}) => {
                 }
 
                 if(userName != rtkQueryEmailState.userName) {  
-                    if(regexpEmail.test(userName) == true){      //cek validasi format penulisan email 
-                        if(rtkQueryEmailState.skip === true) {   //cek existensi userName di server back end   
+                    if(regexpEmail.test(userName) == true){      
+                        if(rtkQueryEmailState.skip === true) {   
                             setRtkQueryEmailState({userName: userName, skip: false });
                         }          
                         else {
                             setRtkQueryEmailState((prev) => ({...prev, userName: userName}));
                         }
-                        props.setIsLoading(true);
+                        setIsLoading(true);
                     }         
                     else {
                         setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);

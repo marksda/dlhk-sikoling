@@ -11,7 +11,7 @@ const initialState: IAuthentication = {
     password: '',
 };
 
-export const authorizationSlice = createSlice({
+export const authenticationSlice = createSlice({
     name: 'authentication',
     initialState,
     reducers: {
@@ -19,14 +19,14 @@ export const authorizationSlice = createSlice({
             state.userName = action.payload.userName;
             state.password = action.payload.password;
         },
-        setUserName: (state, action: PayloadAction<string>) => {
+        setUserNameAuthentication: (state, action: PayloadAction<string>) => {
             state.userName = action.payload;
         },
-        setPassword: (state, action: PayloadAction<string>) => {
+        setPasswordAuthentication: (state, action: PayloadAction<string>) => {
             state.password = action.payload;
         },
     },
 }); 
 
-export const { setAuthentication, setUserName, setPassword } = authorizationSlice.actions;
-export default authorizationSlice.reducer;
+export const { setAuthentication, setUserNameAuthentication, setPasswordAuthentication } = authenticationSlice.actions;
+export default authenticationSlice.reducer;

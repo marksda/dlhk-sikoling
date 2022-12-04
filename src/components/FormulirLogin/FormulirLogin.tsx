@@ -244,19 +244,9 @@ export const FormulirLogin: FC = () => {
     //* local state *   
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('email');
-    //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
-    const [variant, setVariant] = useState<IStateAnimationFramer>({
-        animUserName: 'open',
-        animPassword: 'closed',
-        flipDisplay: true,
-    });
     //- digunakan untuk tracking status koneksi pemrosesan di back end
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    //redux global state
-    const authentication = useAppSelector(state => state.authentication);        
-    //redux action creator
-    const dispatch = useAppDispatch();        
-
+    
     return(
         <div style={rootContainerStyle}>
             {
@@ -280,7 +270,7 @@ export const FormulirLogin: FC = () => {
                 {                
                     getSlideSubFormLogin({
                         motionKey, 
-                        setMotionKey
+                        setMotionKey,
                         setIsLoading
                     })
                 }
@@ -307,11 +297,9 @@ const getSlideSubFormLogin = (
                 setIsLoading={setIsLoading}
             />;
             break; 
-        case 'skalaUsaha':
+        case 'password':
             konten = 
-                <FormSkalaUsaha
-                    control={control}
-                    setValue={setValue}
+                <FormPassword
                     setMotionKey={setMotionKey}
                 />;   
             break;
