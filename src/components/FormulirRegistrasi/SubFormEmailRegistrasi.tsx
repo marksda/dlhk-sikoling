@@ -6,7 +6,7 @@ import { useAppDispatch } from "../../app/hooks";
 import { regexpEmail } from "../../features/config/config";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 import { setUserNameAuthentication } from "../../features/security/authentication-slice";
-import { contactIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, unlockIcon, variantsUserName } from "./InterfaceRegistrasiForm";
+import { contactIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, unlockIcon, variantUserName } from "./InterfaceRegistrasiForm";
 
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
@@ -130,7 +130,7 @@ export const SubFormEmailRegistrasi: FC<ISubFormRegistrasiProps> = ({setMotionKe
     return(
         <motion.div
             animate={animEmail}
-            variants={variantsUserName}
+            variants={variantUserName}
         >
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Buat akun</Label>                    

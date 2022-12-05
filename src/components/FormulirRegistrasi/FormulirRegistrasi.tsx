@@ -31,6 +31,7 @@ import { useCekUserNameQuery } from "../../features/security/authentication-api-
 import { useNavigate } from "react-router-dom";
 import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
 import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
+import { SubFormPasswordRegistrasi } from "./SubFormPasswordRegistrasi";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -1083,9 +1084,12 @@ const getSlideSubFormRegistrasi = (
             break; 
         case 'password':
             konten = 
-                <FormPassword
+                <SubFormPasswordRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
+                    changeHightContainer={changeHightContainer}
+                    setIsErrorConnection={setIsErrorConnection}
+                    setValue={setValue}
                 />;   
             break;
         default:

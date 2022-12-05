@@ -21,7 +21,7 @@ export interface ISubFormRegistrasiProps {
     setValue: UseFormSetValue<IPerson>;
 }
 
-export const variantsUserName = {
+export const variantUserName = {
     open: { 
         opacity: 1, 
         x: 0,      
@@ -32,6 +32,22 @@ export const variantsUserName = {
     closed: { 
         opacity: 0, 
         x: '-10%', 
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+};
+export const variantPassword = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "10%", 
         transition: {
             durationAnimFormRegistrasi
         },
