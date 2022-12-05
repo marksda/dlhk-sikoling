@@ -58,13 +58,16 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     );
 
     const handleProcessLogin = useCallback(
-        async () => {             
+        async () => {     
+            setIsLoading(true);        
             try {
                 const result = await getToken(authentication).unwrap;
                 console.log(result);
                 // dispatch(setToken(result));
                 // dispatch(setPasswordAuthentication(password)); 
+                // setIsLoading(false); 
             } catch (error) {
+                // setIsLoading(false); 
                 //error
             }          
         },
