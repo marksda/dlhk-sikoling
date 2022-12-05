@@ -31,7 +31,7 @@ const labelSandiStyle: ILabelStyles  = {
 
 interface ISubFormPasswordRegistrasiProps extends ISubFormRegistrasiProps {
     control?: Control<any>;
-}
+};
 
 export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control}) => {
     //hook variable from react form hook

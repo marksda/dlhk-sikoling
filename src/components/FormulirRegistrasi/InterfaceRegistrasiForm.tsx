@@ -73,3 +73,10 @@ export const variantPID = {
 
 export const contactIcon: IIconProps = { iconName: 'Contact' };
 export const unlockIcon: IIconProps = { iconName: 'Unlock' };
+export const backIcon: IIconProps = { 
+    iconName: 'Back',
+    style: {
+        color: 'grey',
+        fontSize: '0.8rem',
+    }
+};

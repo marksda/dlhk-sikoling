@@ -1,7 +1,7 @@
 import { 
     DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, 
     Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar,
-    MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField 
+    MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack,  
 } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -228,155 +228,6 @@ const ErrorMessage: FC<HookMessageBarProps> = (props) => (
     </MessageBar>
 );
 
-const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props) => {
-    //react-hook-form variable hook
-    const [nik, nama, jenisKelamin, kontak] = useWatch({
-        control: props.control, 
-        name: ['nik', 'nama', 'jenisKelamin', 'kontak', 'alamat']
-    });
-    //rtk query jenisKelamin variable hook
-    const { data: dataJenisKelamin = [], isFetching: isFetchingJenisKelamin } = useGetAllJenisKelaminQuery();  
-    const dataJenisKelaminOptions = dataJenisKelamin.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-    //this function is used to go back to FormPassword
-    const processBackToPreviousStep = useCallback(
-        () => {
-            props.setVariant(
-                (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPID: 'closed'})
-            );
-
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(350);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => (
-                            {
-                                ...prev, 
-                                flipDisplayUser: false, 
-                                flipDisplayPassword: true, 
-                                animPassword: 'open'
-                            }
-                        )
-                    );
-                },
-                duration*1000
-            );
-
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //this function is used to process next step (FormPersonIdentityStepTwo) with dependen on userName changes only
-    const processNextStep = useCallback(
-        () => {
-            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID: 'closed'}));
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(570);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => (
-                            {...prev, flipDisplayPID: false, flipDisplayPID2: true, animPID2: 'open'}
-                        )
-                    );
-                },
-                duration*1000
-            );
-
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animPID}
-            variants={variantsPID}
-            style={props.variant.flipDisplayPID?{display:'block'}:{display:'none'}}
-        >
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                <IconButton 
-                    iconProps={backIcon} 
-                    title="Back" 
-                    ariaLabel="Back"
-                    onClick={processBackToPreviousStep} 
-                    styles={{
-                        root: {
-                            borderStyle: 'none',
-                            borderRadius: '50%',
-                            padding: 0,
-                            marginTop: 2,
-                        }
-                    }}/>
-                <Label styles={labelUserNameStyle}>{props.userName}</Label>
-            </Stack>                
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Siapa anda?</Label>
-                <Label styles={labelSandiStyle}>Kami perlu data personal berdasar KTP untuk mengatur akun Anda.</Label>
-            </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        required
-                        label="NIK"
-                        name="nik"
-                        rules={{ required: "harus diisi sesuai dengan ktp" }}     
-                        control={props.control}
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        required
-                        label="Nama"
-                        name="nama"
-                        rules={{ required: "harus diisi sesuai dengan ktp" }}   
-                        control={props.control}
-                        disabled={nik!.length>0?false:true}
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Jenis Kelamin"
-                        placeholder="Pilih Jenis Kelamin"
-                        options={dataJenisKelaminOptions}
-                        required
-                        name="jenisKelamin"
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        control={props.control}         
-                        disabled={(nama!.length>0?false:true)||isFetchingJenisKelamin}    
-                    /> 
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        required
-                        label="Telepone"
-                        name="kontak.telepone"
-                        rules={{ required: "minimal harus diisi satu nomor telepone yang aktif" }}    
-                        control={props.control}
-                        disabled={jenisKelamin == null?true:false}
-                    /> 
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        required
-                        label="Email"
-                        name="kontak.email"
-                        rules={{ required: "Alamat email harus diisi" }}  
-                        control={props.control} 
-                        value={props.userName}
-                        disabled={true}
-                    />
-                </Stack.Item>
-            </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Lanjut" 
-                    onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    disabled={kontak?.telepone?.length == 0 ? true:false}
-                    />
-            </Stack>     
-        </motion.div>
-    );
-};
 const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props) => {
     //react-hook-form variable hook
     const [alamat] = useWatch({
@@ -948,6 +799,16 @@ const getSlideSubFormRegistrasi = (
         case 'pid':
             konten = 
                 <SubFormPersonIdentityStepOneRegistrasi
+                    setMotionKey={setMotionKey}
+                    setIsLoading={setIsLoading}
+                    changeHightContainer={changeHightContainer}
+                    setIsErrorConnection={setIsErrorConnection}
+                    setValue={setValue}
+                />;   
+            break;
+        case 'pid2':
+            konten = 
+                <SubFormPersonIdentityStepTwoRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
                     changeHightContainer={changeHightContainer}
