@@ -1,8 +1,11 @@
-import { IconButton, ILabelStyles, Label, Stack, TextField } from "@fluentui/react";
+import { ActionButton, IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
-import { backIcon, durationAnimFormLogin, ISubFormLoginProps, variantsPassword } from "./InterfaceLoginForm";
+import { FC, useCallback, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setPasswordAuthentication } from "../../features/security/authentication-slice";
+import { useGetTokenMutation } from "../../features/security/token-api-slice";
+import { setToken } from "../../features/security/token-slice";
+import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
 
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
@@ -29,11 +32,9 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     const [errorPassword, setErrorPassword] = useState<string>('');
 
     //rtk query
-    const { 
-        data: tokenData, 
-        isLoading: isLoadingToken, 
-        isError: isErrorConnectionToken,
-    } = 
+    const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();
+    //redux action creator
+    const dispatch = useAppDispatch();
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -56,36 +57,19 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
         [],
     );
 
-    const onButtonMasukClick = async () => {         
-        try {
-            const hasil: IResponseStatusToken = await getToken(
-                {
-                    userName: props.userName!, 
-                    password: props.password!
-                }
-            ).unwrap();
-            
-            if(hasil.status == 'oke') {
-                setErrorPassword('');
-                // setVariant((prev) =>({...prev, animUserName: 'closed'}));     
-                // setTimeout(
-                //     () => {
-                //         setVariant((prev) =>({...prev, flipDisplay: !prev.flipDisplay, animPassword: 'open'}));
-                //     },
-                //     duration*1000
-                // ); 
-            }
-            else if(hasil.status == 'need pid') {
-                setErrorPassword(`Akun ${props.userName} tidak terdaftar, silahkan gunakan akun yang sudah terdaftar.`)
-            }
-            else {
-                setErrorPassword(`Sandi tidak sesuai dengan akun ${props.userName}, coba gunakan sandi lain.`)
-            }
-        }   
-        catch (err) {
-            console.log(err);
-        }  
-    };
+    const handleProcessLogin = useCallback(
+        async () => {             
+            try {
+                const result = await getToken(authentication).unwrap;
+                console.log(result);
+                // dispatch(setToken(result));
+                // dispatch(setPasswordAuthentication(password)); 
+            } catch (error) {
+                //error
+            }          
+        },
+        [password]
+    );
 
     return(
         <motion.div
@@ -118,7 +102,7 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
                 onKeyUp={
                     (event) => {
                         if(event.key == 'Enter') {
-                            onButtonMasukClick();
+                            handleProcessLogin();
                         }
                     }
                 }
@@ -128,7 +112,22 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
                 revealPasswordAriaLabel="Tunjukkan sandi"
                 disabled={isLoadingGetToken}
                 errorMessage={errorPassword}
-                styles={{root: {marginBottom: 8, width: 300}}}/>
+                styles={{root: {marginBottom: 8, width: 300}}}
+            />
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
+                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Lupa password?</Label> 
+                <ActionButton iconProps={settingIcon} styles={{root: {color: '#0067b8'}}}>
+                    Reset password
+                </ActionButton>
+            </Stack>
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Masuk" 
+                    onClick={handleProcessLogin} 
+                    style={{marginTop: 24, width: 100}}
+                    disabled={isLoadingGetToken}
+                    />
+            </Stack>
         </motion.div>
     );
 }

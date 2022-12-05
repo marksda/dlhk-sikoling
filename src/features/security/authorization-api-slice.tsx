@@ -26,19 +26,9 @@ export const AuthorizationApiSlice = createApi({
                     },
                     body
                 }),
-            }),   
-            getToken: builder.mutation<IResponseStatusToken, IAuthentication>({
-                query: (authenticationData) => ({
-                    url: `user/get_token`,
-                    method: 'POST',
-                    header: {
-                        'Content-Type': 'application/json;charset=UTF-8',
-                    },
-                    body: authenticationData,
-                }),
-            }),            
+            }),        
         };
     },
 });
 
-export const { useAddRegistrasiMutation, useGetTokenMutation } = AuthorizationApiSlice;
+export const { useAddRegistrasiMutation } = AuthorizationApiSlice;

@@ -56,3 +56,4 @@ export const backIcon: IIconProps = {
         fontSize: '0.8rem',
     }
 };
+export const settingIcon: IIconProps = { iconName: 'PlayerSettings' };
