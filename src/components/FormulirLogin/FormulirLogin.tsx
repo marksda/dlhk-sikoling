@@ -80,14 +80,7 @@ export const FormulirLogin: FC = () => {
                         setMotionKey,
                         setIsLoading
                     })
-                }
-                <FormPassword
-                    userName={authentication.userName}
-                    password={authentication.password}              
-                    variant={variant} 
-                    setVariant={setVariant}
-                    dispatch={dispatch}
-                />                
+                }             
             </div>
         </div>        
     );
