@@ -1,5 +1,5 @@
 import { 
-    ActionButton, DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, 
+    DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, 
     Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar,
     MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack, TextField 
 } from "@fluentui/react";
@@ -29,6 +29,8 @@ import {
     HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
 import { useNavigate } from "react-router-dom";
+import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
+import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -112,24 +114,8 @@ const labelSandiStyle: ILabelStyles  = {
     }
 };
 const stackTokens = { childrenGap: 2 };
-const unlockIcon: IIconProps = { iconName: 'Unlock' };
 const duration: number = 0.5;
-const variantsUserName = {
-    open: { 
-        opacity: 1, 
-        x: 0,      
-        transition: {
-            duration
-        },   
-    },
-    closed: { 
-        opacity: 0, 
-        x: '-10%', 
-        transition: {
-            duration
-        },
-    },
-};
+
 const variantsPassword = {
     open: {       
         opacity: 1, 
@@ -239,172 +225,7 @@ const ErrorMessage: FC<HookMessageBarProps> = (props) => (
         {props.message}
     </MessageBar>
 );
-type RtkQueryEmail = {
-    userName: string;
-    skip: boolean
-};
-const FormEmail: FC<HookFormEmailProps> = (props) => {  
-    //local state
-    const [rtkQueryEmailState, setRtkQueryEmailState] = useState<RtkQueryEmail>({userName: '', skip: true});
-    const [userName, setUserName] = useState<string>('');    
-    const [errorUserName, setErrorUserName] = useState<string>('');
-    
-    //react router
-    const navigate = useNavigate();
-    
-    //rtk query
-    const { 
-        data: statusUserName, 
-        isLoading: isLoadingCekUserName, 
-        isError: isErrorConnectionCekUserName,
-    } = useCekUserNameQuery(rtkQueryEmailState.userName, {skip: rtkQueryEmailState.skip});
 
-    //animasi transisi FormEmail to next step
-    useEffect(
-        () => {
-            if(rtkQueryEmailState.skip === false && isLoadingCekUserName === false && 
-                isErrorConnectionCekUserName === false) { // sukses ambil data
-                props.setIsErrorConnection(false);
-                if(statusUserName != undefined) {
-                    props.setIsLoading(false);
-                    if(statusUserName === false) {   //data belum terdaftar                        
-                        props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));                          
-                        props.dispatch(setUserNameAuthentication(rtkQueryEmailState.userName));
-                        let timer = setTimeout(
-                            () => {                            
-                                props.setIsLoading(false);
-                                props.setValue("kontak.email", userName);
-                                props.dispatch(setUserNameAuthentication(userName));
-                                props.changeHightContainer(350);                
-                                props.setVariant(
-                                    (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
-                                );
-                            },
-                            duration*1000
-                        );
-                        return () => clearTimeout(timer);
-                    }
-                    else {  //data sudah terdaftar
-                        setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
-                    }
-                    
-                }                    
-            }
-            else if(rtkQueryEmailState.skip === false && isLoadingCekUserName === false && 
-                isErrorConnectionCekUserName === true) {  // gagal ambil data
-                props.setIsLoading(false);
-                props.setIsErrorConnection(true);
-            }
-        }, 
-        [rtkQueryEmailState, statusUserName, isLoadingCekUserName, isErrorConnectionCekUserName]
-    );
-    
-    //this function is used to track userName changes
-    const processUserNameChange = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            if(newValue!.length === 0 && errorUserName.length != 0) {                
-                setErrorUserName('');
-            }
-
-            setUserName(newValue||'');
-        },
-        [],
-    );
-    
-    //this function is used to check of existensi of userName on back end server
-    const processNextStep = useCallback(
-        () => {  
-            if(userName.length > 0) {   //jika input userName tidak dikosongi
-                if(errorUserName.length > 0) {  //reset error warning text
-                    setErrorUserName('');
-                }
-
-                if(userName === rtkQueryEmailState.userName) {  //data tidak mengalami perubahan
-                    props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUserName: 'closed'}));  
-                    let timer = setTimeout(
-                        () => {
-                            props.changeHightContainer(350);                
-                            props.setVariant(
-                                (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayUser: false, flipDisplayPassword: true, animPassword: 'open'})
-                            );
-                        },
-                        duration*1000
-                    );
-                    return () => clearTimeout(timer);
-                }
-                else {  //data mengalami perubahan          
-                    if(regexpEmail.test(userName) == true){      //cek validasi format penulisan email 
-                        if(rtkQueryEmailState.skip === true) {   //cek existensi userName di server back end   
-                            setRtkQueryEmailState({userName: userName, skip: false });
-                        }          
-                        else {
-                            setRtkQueryEmailState((prev) => ({...prev, userName: userName}));
-                        }
-                        props.setIsLoading(true);
-                    }         
-                    else {
-                        setErrorUserName(`Email yang anda masukkan tidak sesuai dengan standar penulisan email`);
-                    }
-                }    
-            }
-            else if(errorUserName.length === 0) {
-                setErrorUserName(`Email tidak boleh dikosongi`);
-            }        
-        },
-        [userName, rtkQueryEmailState, errorUserName]
-    );
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animUserName}
-            variants={variantsUserName}
-            style={props.variant.flipDisplayUser?{display:'block'}:{display:'none'}}
-        >   
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Buat akun</Label>                    
-            </Stack>
-            <TextField 
-                placeholder="Gunakan email yang masih aktif" 
-                value={userName}
-                onChange={processUserNameChange}
-                onKeyUp={
-                    (event) => {
-                        if(event.key == 'Enter') {
-                            processNextStep();
-                        }
-                    }
-                }
-                iconProps={contactIcon} 
-                disabled={isLoadingCekUserName}
-                underlined 
-                autoFocus
-                errorMessage={errorUserName}
-                styles={{root: {marginBottom: 8}}}/>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
-                <Label styles={{root: {fontWeight: 500, color: '#656363'}}}>Sudah punya akun?</Label> 
-                <ActionButton 
-                    iconProps={unlockIcon} 
-                    onClick={
-                        () => {
-                            navigate("/");
-                        }
-                    }
-                    styles={{root: {color: '#0067b8'}}}
-                >
-                    halaman login.
-                </ActionButton>
-            </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Berikutnya" 
-                    onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    disabled={isLoadingCekUserName}
-                    />
-            </Stack>
-        </motion.div>
-    );
-};
 const FormPassword: FC<HookFormPasswordProps> = (props) => {
     //local state
     const [password, setPassword] = useState<string>('');
@@ -1093,6 +914,7 @@ const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
 //main form
 export const FormulirRegistrasi: FC = () => {  
     //* local state *   
+    const [motionKey, setMotionKey] = useState<string>('email');
     //- digunakan untuk merubah animasi transisi setiap terjadi pergantian Form - 
     const [variant, setVariant] = useState<IStateRegistrasiAnimationFramer>({
         animUserName: 'open',
@@ -1173,6 +995,16 @@ export const FormulirRegistrasi: FC = () => {
                 </Stack.Item> 
             </Stack>
             <div style={{height: 8}}></div>
+            {
+                getSlideSubFormRegistrasi({
+                    motionKey, 
+                    setMotionKey,
+                    setIsLoading,
+                    changeHightContainer: setHeightArea,
+                    setIsErrorConnection,
+                    setValue
+                })
+            }
             <FormEmail 
                 variant={variant} 
                 setVariant={setVariant}
@@ -1233,4 +1065,32 @@ export const FormulirRegistrasi: FC = () => {
         }        
         </>
     )
+};
+
+const getSlideSubFormRegistrasi = (
+    {motionKey, setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue}: ISlideSubFormRegistrasiParam) => {
+    let konten = null;
+    switch (motionKey) {
+        case 'email':
+            konten = 
+            <SubFormEmailRegistrasi
+                setMotionKey={setMotionKey}
+                setIsLoading={setIsLoading}
+                changeHightContainer={changeHightContainer}
+                setIsErrorConnection={setIsErrorConnection}
+                setValue={setValue}
+            />;
+            break; 
+        case 'password':
+            konten = 
+                <FormPassword
+                    setMotionKey={setMotionKey}
+                    setIsLoading={setIsLoading}
+                />;   
+            break;
+        default:
+            konten = null;
+            break;
+    }
+    return konten;
 };
