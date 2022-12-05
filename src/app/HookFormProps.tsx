@@ -18,24 +18,24 @@ export interface HookFluentUiDropDownProps extends HookFormProps {
     isFetching?: boolean;
 };
 
-// export interface HookFormEmailProps {
-//     variant?: any;
-//     setVariant?: any;
-//     setValue?: any;
-//     changeHightContainer?: any;
-//     dispatch?: any;
-//     setIsLoading?: any;
-//     setIsErrorConnection?: any;
-// }
+export interface HookFormEmailProps {
+    variant?: any;
+    setVariant?: any;
+    setValue?: any;
+    changeHightContainer?: any;
+    dispatch?: any;
+    setIsLoading?: any;
+    setIsErrorConnection?: any;
+}
 
-// export interface HookFormPasswordProps {
-//     variant?: any;
-//     setVariant?: any;
-//     changeHightContainer?: any;
-//     userName?: string;
-//     password?: string;  
-//     dispatch?: any;
-// }
+export interface HookFormPasswordProps {
+    variant?: any;
+    setVariant?: any;
+    changeHightContainer?: any;
+    userName?: string;
+    password?: string;  
+    dispatch?: any;
+}
 
 export interface HookFormPersonIdentityStepOneProps {
     variant?: any;

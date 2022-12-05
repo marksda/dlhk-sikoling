@@ -47,7 +47,7 @@ export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) 
                 // props.setIsErrorConnection(false);
                 if(statusUserName != undefined) {
                     setIsLoading(false);
-                    if(statusUserName === false) {   //data belum terdaftar                        
+                    if(statusUserName === true) {   //data belum terdaftar                        
                         setAnimEmail('closed');                          
                         dispatch(setUserNameAuthentication(rtkQueryEmailState.userName));
 
@@ -60,7 +60,7 @@ export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) 
                         return () => clearTimeout(timer);
                     }
                     else {  //data sudah terdaftar
-                        setErrorUserName(`Email ${userName} sudah terdaftar, silahkan gunakan email yang belum terdaftar.`);
+                        setErrorUserName(`Email ${userName} tidak terdaftar dalam sistem sikoling.`);
                     }
                     
                 }                    

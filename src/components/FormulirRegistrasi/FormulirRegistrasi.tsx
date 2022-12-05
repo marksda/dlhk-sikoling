@@ -23,7 +23,7 @@ import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFl
 import { IPerson } from "../../features/person/person-slice"
 import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setUserName as setUserNameAuthentication, setPassword as setPasswordAUthentication} from "../../features/security/authentication-slice";
+import { setUserNameAuthentication, setPasswordAuthentication} from "../../features/security/authentication-slice";
 import { 
     HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, 
     HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
@@ -462,7 +462,7 @@ const FormPassword: FC<HookFormPasswordProps> = (props) => {
                     setErrorPassword('');
                 }
 
-                props.dispatch(setPasswordAUthentication(password));       
+                props.dispatch(setPasswordAuthentication(password));       
                 props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
 
                 let timer = setTimeout(
