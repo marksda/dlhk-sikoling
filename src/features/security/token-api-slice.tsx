@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IToken } from "./token-slice";
 import { baseIdentityProviderUrl } from "../../features/config/config";
+import { IAuthentication } from "./authentication-slice";
 
 
 export const tokenApiSlice = createApi({
@@ -10,9 +11,15 @@ export const tokenApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            getToken: builder.query<IToken, void>({
-                // grant_type, code, redirect_uri
-                query: () => `openidconnect/token`,
+            getToken: builder.query<IToken, IAuthentication>({
+                query: (authenticationData) => ({
+                    url: `user/get_token`,
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                    },
+                    body: authenticationData,
+                }),
             }),
         }
     }

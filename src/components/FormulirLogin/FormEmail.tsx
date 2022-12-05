@@ -132,7 +132,7 @@ export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) 
                     }
                 }
                 iconProps={contactIcon} 
-                disabled={false}
+                disabled={isLoadingCekUserName}
                 underlined 
                 errorMessage={errorUserName}
                 styles={{root: {marginBottom: 8, width: 300}}}/>
@@ -155,7 +155,7 @@ export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) 
                     text="Berikutnya" 
                     onClick={processNextStep} 
                     style={{marginTop: 24, width: 100}}
-                    disabled={false}
+                    disabled={isLoadingCekUserName}
                     />
             </Stack>
         </motion.div>

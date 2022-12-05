@@ -30,5 +30,29 @@ export const variantsUserName = {
     },
 };
 
+export const variantsPassword = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            durationAnimFormLogin
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "15%", 
+        transition: {
+            durationAnimFormLogin
+        },
+    },
+};
+
 export const contactIcon: IIconProps = { iconName: 'Contact' };
 export const addFriendIcon: IIconProps = { iconName: 'AddFriend' };
+export const backIcon: IIconProps = { 
+    iconName: 'Back',
+    style: {
+        color: 'grey',
+        fontSize: '0.8rem',
+    }
+};
