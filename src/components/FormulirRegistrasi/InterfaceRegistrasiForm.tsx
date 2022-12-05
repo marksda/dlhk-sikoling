@@ -1,5 +1,5 @@
 import { IIconProps } from "@fluentui/react";
-import { UseFormSetValue } from "react-hook-form";
+import { Control, UseFormSetValue } from "react-hook-form";
 import { IPerson } from "../../features/person/person-slice";
 
 export const durationAnimFormRegistrasi: number = 0.5;
@@ -11,6 +11,7 @@ export interface ISlideSubFormRegistrasiParam {
     changeHightContainer: React.Dispatch<React.SetStateAction<number>>;
     setIsErrorConnection: React.Dispatch<React.SetStateAction<boolean>>;
     setValue: UseFormSetValue<IPerson>;
+    control: Control<any>;
 };
 
 export interface ISubFormRegistrasiProps {
@@ -48,6 +49,22 @@ export const variantPassword = {
     closed: { 
         opacity: 0, 
         x: "10%", 
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+};
+export const variantPID = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "-10%", 
         transition: {
             durationAnimFormRegistrasi
         },

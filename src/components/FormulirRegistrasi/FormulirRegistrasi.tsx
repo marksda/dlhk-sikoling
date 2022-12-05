@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
 import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
 import { SubFormPasswordRegistrasi } from "./SubFormPasswordRegistrasi";
+import { SubFormPersonIdentityStepOneRegistrasi } from "./SubFormPersonIdentityStepOneRegistrasi";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -227,139 +228,6 @@ const ErrorMessage: FC<HookMessageBarProps> = (props) => (
     </MessageBar>
 );
 
-const FormPassword: FC<HookFormPasswordProps> = (props) => {
-    //local state
-    const [password, setPassword] = useState<string>('');
-    const [errorPassword, setErrorPassword] = useState<string>('');
-    //clear password jika userName yang dipakai berbeda dari sebelumnya
-    useEffect(
-        () => {
-            setPassword('');
-        },
-        [props.userName]
-    );
-    //this function is used to go back to FormEmail
-    const processBackToPreviousStep = useCallback(
-        () => {
-            props.setVariant(
-                (prev: IStateRegistrasiAnimationFramer) => ({...prev, animPassword: 'closed'})
-            );
-
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(300);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => ({
-                            ...prev, 
-                            flipDisplayPassword: false, 
-                            flipDisplayUser: true, 
-                            animUserName: 'open'
-                        })
-                    );
-                },
-                duration*1000
-            );
-
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //this function is used to track userName changes
-    const processPasswordChange = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            if(newValue!.length === 0 && errorPassword.length != 0) {                
-                setErrorPassword('');
-            }
-
-            setPassword(newValue||'');
-        },
-        [],
-    );
-    //this function is used to process next step (FormPersonIdentityStepOne) with dependen on userName changes only
-    const processNextStep = useCallback(
-        () => {
-            let test = password.length > 7 ? true:false;
-            if(test == true) {
-                if(errorPassword.length > 0) {
-                    setErrorPassword('');
-                }
-
-                props.dispatch(setPasswordAuthentication(password));       
-                props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPassword: 'closed'}));
-
-                let timer = setTimeout(
-                    () => {
-                        props.changeHightContainer(570);
-                        props.setVariant(
-                            (prev: IStateRegistrasiAnimationFramer) => (
-                                {...prev, flipDisplayPassword: false, flipDisplayPID: true, animPID: 'open'}
-                            )
-                        );
-                    },
-                    duration*1000
-                );
-                return () => clearTimeout(timer);
-            }
-            else {
-                setErrorPassword("panjang sandi minimal 8 karakter");
-            }
-        },
-        [password]
-    );
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animPassword}
-            variants={variantsPassword}
-            style={props.variant.flipDisplayPassword?{display:'block'}:{display:'none'}}
-        >
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                <IconButton 
-                    iconProps={backIcon} 
-                    title="Back" 
-                    ariaLabel="Back"
-                    onClick={processBackToPreviousStep} 
-                    styles={{
-                        root: {
-                            borderStyle: 'none',
-                            borderRadius: '50%',
-                            padding: 0,
-                            marginTop: 2,
-                        }
-                    }}/>
-                <Label styles={labelUserNameStyle}>{props.userName}</Label>
-            </Stack>                
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Buat kata sandi</Label>
-                <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan.</Label>
-            </Stack>                
-            <TextField 
-                placeholder="kata sandi"
-                value={password}
-                onChange={processPasswordChange}
-                onKeyUp={
-                    (event) => {
-                        if(event.key == 'Enter') {
-                            processNextStep();
-                        }
-                    }
-                }
-                underlined 
-                type="password"
-                disabled={false}
-                errorMessage={errorPassword}                    
-                styles={{root: {marginBottom: 8}}}/>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Lanjut" 
-                    onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    disabled={false}
-                    />
-            </Stack>
-        </motion.div>
-    );
-};
 const FormPersonIdentityStepOne: FC<HookFormPersonIdentityStepOneProps> = (props) => {
     //react-hook-form variable hook
     const [nik, nama, jenisKelamin, kontak] = useWatch({
@@ -1003,26 +871,10 @@ export const FormulirRegistrasi: FC = () => {
                     setIsLoading,
                     changeHightContainer: setHeightArea,
                     setIsErrorConnection,
-                    setValue
+                    setValue,
+                    control
                 })
             }
-            <FormEmail 
-                variant={variant} 
-                setVariant={setVariant}
-                setValue={setValue} 
-                changeHightContainer={setHeightArea}
-                dispatch={dispatch}
-                setIsLoading={setIsLoading}
-                setIsErrorConnection={setIsErrorConnection}
-            />  
-            <FormPassword   
-                userName={authentication.userName}
-                password={authentication.password}              
-                variant={variant} 
-                setVariant={setVariant}
-                changeHightContainer={setHeightArea}
-                dispatch={dispatch}
-            />   
             <FormPersonIdentityStepOne
                 userName={authentication.userName}
                 variant={variant} 
@@ -1069,7 +921,7 @@ export const FormulirRegistrasi: FC = () => {
 };
 
 const getSlideSubFormRegistrasi = (
-    {motionKey, setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue}: ISlideSubFormRegistrasiParam) => {
+    {motionKey, setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control}: ISlideSubFormRegistrasiParam) => {
     let konten = null;
     switch (motionKey) {
         case 'email':
@@ -1085,6 +937,17 @@ const getSlideSubFormRegistrasi = (
         case 'password':
             konten = 
                 <SubFormPasswordRegistrasi
+                    setMotionKey={setMotionKey}
+                    setIsLoading={setIsLoading}
+                    changeHightContainer={changeHightContainer}
+                    setIsErrorConnection={setIsErrorConnection}
+                    setValue={setValue}
+                    control={control}
+                />;   
+            break;
+        case 'pid':
+            konten = 
+                <SubFormPersonIdentityStepOneRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
                     changeHightContainer={changeHightContainer}

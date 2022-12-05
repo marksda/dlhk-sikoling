@@ -1,7 +1,9 @@
-import { IconButton, ILabelStyles, Label, Stack } from "@fluentui/react";
+import { IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
+import { useAppDispatch } from "../../app/hooks";
+import { setPasswordAuthentication } from "../../features/security/authentication-slice";
 import { backIcon } from "../FormulirLogin/InterfaceLoginForm";
 import { durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantPassword } from "./InterfaceRegistrasiForm";
 
@@ -40,6 +42,11 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
 
     // local state
     const [animPassword, setAnimPassword] = useState<string>('open');
+    const [password, setPassword] = useState<string>('');
+    const [errorPassword, setErrorPassword] = useState<string>('');
+
+    //redux action creator
+    const dispatch = useAppDispatch();
 
     //this function is used to go back to FormEmail
     const processBackToPreviousStep = useCallback(
@@ -57,6 +64,46 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
             return () => clearTimeout(timer);
         },
         []
+    );
+
+    //this function is used to track userName changes
+    const processPasswordChange = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if(newValue!.length === 0 && errorPassword.length != 0) {                
+                setErrorPassword('');
+            }
+
+            setPassword(newValue||'');
+        },
+        [],
+    );
+
+    //this function is used to process next step (FormPersonIdentityStepOne) with dependen on userName changes only
+    const processNextStep = useCallback(
+        () => {
+            let test = password.length > 7 ? true:false;
+            if(test == true) {
+                if(errorPassword.length > 0) {
+                    setErrorPassword('');
+                }
+
+                dispatch(setPasswordAuthentication(password));       
+                setAnimPassword('closed');
+
+                let timer = setTimeout(
+                    () => {
+                        changeHightContainer(570);
+                        setMotionKey('pid');
+                    },
+                    durationAnimFormRegistrasi*1000
+                );
+                return () => clearTimeout(timer);
+            }
+            else {
+                setErrorPassword("panjang sandi minimal 8 karakter");
+            }
+        },
+        [password]
     );
 
     //rendered function
@@ -85,7 +132,31 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
                 <Label styles={labelStyle}>Buat kata sandi</Label>
                 <Label styles={labelSandiStyle}>Masukkan kata sandi yang ingin digunakan.</Label>
             </Stack>
-
+            <TextField 
+                placeholder="kata sandi"
+                value={password}
+                onChange={processPasswordChange}
+                onKeyUp={
+                    (event) => {
+                        if(event.key == 'Enter') {
+                            processNextStep();
+                        }
+                    }
+                }
+                underlined 
+                type="password"
+                disabled={false}
+                errorMessage={errorPassword}                    
+                styles={{root: {marginBottom: 8}}}
+            />
+            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
+                <PrimaryButton 
+                    text="Lanjut" 
+                    onClick={processNextStep} 
+                    style={{marginTop: 24, width: 100}}
+                    disabled={false}
+                    />
+            </Stack>
         </motion.div>
     );
 }
