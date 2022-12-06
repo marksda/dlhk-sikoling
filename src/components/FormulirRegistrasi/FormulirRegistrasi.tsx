@@ -168,204 +168,6 @@ const ErrorMessage: FC<HookMessageBarProps> = (props) => (
     </MessageBar>
 );
 
-const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
-    const handlerMessageToParent = useCallback(
-        (data) => {
-            if(data.status === true) {
-
-            }
-            else {
-
-            }
-        },
-        []
-    );
-    //local state
-    const [uploadMode, setUploadMode] = useState<IUploadMode>({
-        controlled: true, 
-        startUpload: false, 
-        subUri: null,
-        handlerMessageToParent: handlerMessageToParent,
-    });
-    const [nik, setNik] = useState<string>('');
-    // const [startUpload, setStartUpload] = useState<boolean>(false);
-    const [isFileExist, setIsFileExist] = useState<boolean>(false);
-    //rtk mutation addRegistrasi variable
-    const [addRegistrasi, { data: simpleResponseAddRegister, isLoading: isLoadingAddRegistrasi }] = useAddRegistrasiMutation(); 
-    // console.log(`simpleResponseAddRegister`);
-    // console.log(simpleResponseAddRegister);
-    //react router
-    const navigate = useNavigate();
-    //this is used to monitoring sukses or not when saving data personal identification to backend server
-    useEffect(
-        () => {
-            if(simpleResponseAddRegister) {
-                if(simpleResponseAddRegister.status === "sukses") {
-                    setUploadMode((p) => ({...p, startUpload: true, subUri: `/files/nosec/personal_identification/${nik}`}));
-                }
-                else {
-                    props.setIsLoading(false);
-                    props.setIsErrorConnection(true);
-                }                
-            }
-        },
-        [simpleResponseAddRegister, nik]
-    );        
-    //this is used as feedback information to parent that if upload file has finished then start upload file personal identification
-    useEffect(
-        () => {
-            if(uploadMode.startUpload === false && uploadMode.subUri === '') {
-                props.setIsLoading(false);
-                // props.setValue();
-                navigate("/notif_registrasi");
-            }
-            else if(uploadMode.startUpload === false && uploadMode.subUri === 'gagal') {
-                props.setIsLoading(false);
-                props.setIsErrorConnection(true);
-            }
-        }        
-        ,
-        [uploadMode]
-    );
-    //this function is used to go back to FormPersonIdentityStepTwo
-    const processBackToPreviousStep = useCallback(
-        () => {
-            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animUploadKTP: 'closed'}));
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(570);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => (
-                            {...prev, flipDisplayUploadKTP: false, flipDisplayPID2: true, animPID2: 'open'}
-                        )
-                    );
-                },
-                duration*1000
-            );
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //this function is used to save data to backend server
-    const save: SubmitHandler<IPerson> = useCallback(
-        async(data) => {
-            try {
-                props.setIsLoading(true);  
-                setNik(data.nik!);       
-                await addRegistrasi({auth: props.authentication, person: data}).unwrap();
-                // setUploadStatus(true);
-                // props.setIsLoading(false);                
-            } catch (error) {
-                props.setIsLoading(false);
-                props.setIsErrorConnection(true);
-            }
-    
-            // handleSubmit(
-            //     async (d) => {
-            //         await addRegistrasi({
-            //             auth: loginAuthentication,
-            //             person: d
-            //         });
-            //     },            
-            //     (err) => {                
-            //       console.log(err);
-            //     }
-            // )();
-    
-            // var canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;        
-            // var img: HTMLImageElement = document.createElement("img") as HTMLImageElement;
-            // var reader = new FileReader();             
-            // reader.onload = () => {             
-            //     img.src = reader.result as string;
-            //     // canvas.height = img.naturalHeight;
-            //     // canvas.width = img.naturalWidth;
-            // };        
-            // reader.readAsDataURL(file!);
-    
-            
-    
-            // let canvas: HTMLCanvasElement = document.getElementById("canvasOutput") as HTMLCanvasElement;
-            // let context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
-            // let src = cv.imread("tesgbr");
-            // let dst = new cv.Mat();
-            // let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
-            // let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
-            // You can try more different parameters
-            // cv.inRange(src, low, high, dst);
-            // cv.imshow(canvas, dst);        
-            // src.delete(); dst.delete(); low.delete(); high.delete();        
-    
-            // const worker = createWorker({
-            //     logger: m => console.log(m)
-            // });
-                
-            // (async () => {
-            // await worker.load();
-            // await worker.loadLanguage('eng');
-            // await worker.initialize('eng');
-            // const { data: { text } } = await worker.recognize(canvas);
-            // console.log(text);
-            // await worker.terminate();
-            // })();
-        },
-        [props.authentication]
-    );    
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animUploadKTP}
-            variants={variantsUploadKTP}
-            style={props.variant.flipDisplayUploadKTP?{display:'block'}:{display:'none'}}
-        >
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                <IconButton 
-                    iconProps={backIcon} 
-                    title="Back" 
-                    ariaLabel="Back"
-                    onClick={processBackToPreviousStep} 
-                    styles={{
-                        root: {
-                            borderStyle: 'none',
-                            borderRadius: '50%',
-                            padding: 0,
-                            marginTop: 2,
-                        }
-                    }}/>
-                <Label styles={labelUserNameStyle}>{props.userName}</Label>
-            </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Upload KTP</Label>
-                <Label styles={labelSandiStyle}>Silahkan upload KTP anda.</Label>
-            </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
-                <Stack.Item align="center">
-                    <UploadFilesFluentUi 
-                        label='Upload File Hasil Scan KTP'
-                        maxSize={350}
-                        jenisFile='image'
-                        showPreview={true}
-                        showListFile={false}
-                        luasArea={{panjang: 310, lebar: 193}}
-                        showButtonUpload={false}
-                        showProgressBar={false}
-                        id="tesgbr"
-                        setIsFileExist={setIsFileExist}
-                        uploadMode={uploadMode}           
-                    />
-                </Stack.Item>
-            </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Simpan" 
-                    onClick={props.handleSubmit(save)}
-                    style={{marginTop: 24, width: 100}}
-                    disabled={!isFileExist}
-                    />
-            </Stack>
-        </motion.div>
-    );
-};
-//main form
 export const FormulirRegistrasi: FC = () => {  
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('email');
@@ -457,7 +259,8 @@ export const FormulirRegistrasi: FC = () => {
                     changeHightContainer: setHeightArea,
                     setIsErrorConnection,
                     setValue,
-                    control
+                    control,
+                    handleSubmit
                 })
             }
             <FormUploadKTP 
@@ -491,7 +294,7 @@ export const FormulirRegistrasi: FC = () => {
 };
 
 const getSlideSubFormRegistrasi = (
-    {motionKey, setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control}: ISlideSubFormRegistrasiParam) => {
+    {motionKey, setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control, handleSubmit}: ISlideSubFormRegistrasiParam) => {
     let konten = null;
     switch (motionKey) {
         case 'email':
@@ -523,6 +326,7 @@ const getSlideSubFormRegistrasi = (
                     changeHightContainer={changeHightContainer}
                     setIsErrorConnection={setIsErrorConnection}
                     setValue={setValue}
+                    control={control}
                 />;   
             break;
         case 'pid2':
@@ -533,16 +337,19 @@ const getSlideSubFormRegistrasi = (
                     changeHightContainer={changeHightContainer}
                     setIsErrorConnection={setIsErrorConnection}
                     setValue={setValue}
+                    control={control}
                 />;   
             break;
         case 'pid3':
             konten = 
-                <SubFormUloadKtpRegistrasi
+                <SubFormPersonIdentityStepOneRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
                     changeHightContainer={changeHightContainer}
                     setIsErrorConnection={setIsErrorConnection}
                     setValue={setValue}
+                    control={control}
+                    handleSubmit={handleSubmit}
                 />;   
             break;
         default:
