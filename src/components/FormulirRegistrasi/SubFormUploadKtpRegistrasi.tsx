@@ -89,12 +89,13 @@ export const SubFormUploadRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMot
     const save: SubmitHandler<IPerson> = useCallback(
         async(data) => {
             try {
-                setIsLoading(true);  
-                setNik(data.nik!);       
+                // console.log(data);
+                // setIsLoading(true);  
+                // setNik(data.nik!);       
                 await addRegistrasi({auth: authentication, person: data}).unwrap();              
             } catch (error) {
-                setIsLoading(false);
-                setIsErrorConnection(true);
+                // setIsLoading(false);
+                // setIsErrorConnection(true);
             }
     
             // handleSubmit(
