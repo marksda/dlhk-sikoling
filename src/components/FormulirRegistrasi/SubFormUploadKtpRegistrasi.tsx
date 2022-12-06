@@ -35,7 +35,7 @@ const subLabelStyle: ILabelStyles  = {
     }
 };
 
-export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control, handleSubmit}) => {
+export const SubFormUploadRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control, handleSubmit}) => {
     //redux variable
     const authentication = useAppSelector(state => state.authentication);  
 

@@ -1,27 +1,21 @@
 import { 
-    DefaultEffects, DefaultPalette, IconButton, IIconProps, ILabelStyles, 
+    DefaultEffects, DefaultPalette, ILabelStyles, 
     Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, Label, MessageBar,
-    MessageBarButton, MessageBarType, PrimaryButton, ProgressIndicator, Stack,  
+    MessageBarButton, MessageBarType, ProgressIndicator, Stack,  
 } from "@fluentui/react";
-import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi, regexpEmail } from "../../features/config/config";
-import { useAddRegistrasiMutation } from "../../features/security/authorization-api-slice";
+import { FC, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import logo from '../../sidoarjo.svg';
-import { IPerson } from "../../features/person/person-slice"
-import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import { IPerson } from "../../features/person/person-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { 
-    HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, 
-    HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
-import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
-import { useNavigate } from "react-router-dom";
+import {  HookMessageBarProps } from "../../app/HookFormProps";
 import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
 import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
 import { SubFormPasswordRegistrasi } from "./SubFormPasswordRegistrasi";
 import { SubFormPersonIdentityStepOneRegistrasi } from "./SubFormPersonIdentityStepOneRegistrasi";
 import { SubFormPersonIdentityStepTwoRegistrasi } from "./SubFormPersonIdentityStepTwoRegistrasi";
+import { SubFormUploadRegistrasi } from "./SubFormUploadKtpRegistrasi";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -77,13 +71,6 @@ const labelSikolingStyles: IStackItemStyles = {
       fontWeight: 600
     },
 };
-const labelStyle: ILabelStyles  = {
-    root: {
-       fontWeight: 600,
-       color: '#1b1b1b',
-       fontSize: '1.5rem', 
-    }
-};
 const labelWarningStyle: ILabelStyles  = {
     root: {
     //    fontWeight: 400,
@@ -91,45 +78,8 @@ const labelWarningStyle: ILabelStyles  = {
     //    fontSize: '0.95rem', 
     }
 };
-const labelUserNameStyle: ILabelStyles  = {
-    root: {
-       fontWeight: 400,
-       fontSize: '1rem', 
-    }
-};
-const labelSandiStyle: ILabelStyles  = {
-    root: {
-       fontWeight: 400,
-       color: '#383838',
-       fontSize: '1rem', 
-    }
-};
-const stackTokens = { childrenGap: 2 };
 const duration: number = 0.5;
 
-const variantsUploadKTP = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const backIcon: IIconProps = { 
-    iconName: 'Back',
-    style: {
-        color: 'grey',
-        fontSize: '0.8rem',
-    }
-};
 const progressStyle: IProgressIndicatorStyles ={
     root: {
         width: 464,
@@ -193,9 +143,8 @@ export const FormulirRegistrasi: FC = () => {
     //-digunakan untuk mendeteksi state condition FormEmail apa kondisi awal atau balik
     // const [stateConditionFormEmail, setStateConditionFormEmail] = useState<string>('awal');
     //redux global state
-    const authentication = useAppSelector(state => state.authentication);        
-    //redux action creator
-    const dispatch = useAppDispatch();
+    const authentication = useAppSelector(state => state.authentication);      
+    
     //react-hook-form
     const { control, handleSubmit, setValue } = useForm<IPerson>({
         mode: 'onSubmit',
@@ -263,20 +212,9 @@ export const FormulirRegistrasi: FC = () => {
                     handleSubmit
                 })
             }
-            <FormUploadKTP 
-                userName={authentication.userName}
-                variant={variant} 
-                setVariant={setVariant}
-                setValue={setValue}
-                handleSubmit={handleSubmit}
-                authentication={authentication}
-                setIsLoading={setIsLoading}
-                changeHightContainer={setHeightArea}
-                setIsErrorConnection={setIsErrorConnection}
-            />
         </div>
         {
-            !variant.flipDisplayUploadKTP &&
+            !(motionKey == 'pid3') &&
             (
                 <div style={containerInformationStyles}>
                     <Stack tokens={containerStackTokens}>
@@ -342,7 +280,7 @@ const getSlideSubFormRegistrasi = (
             break;
         case 'pid3':
             konten = 
-                <SubFormPersonIdentityStepOneRegistrasi
+                <SubFormUploadRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
                     changeHightContainer={changeHightContainer}
