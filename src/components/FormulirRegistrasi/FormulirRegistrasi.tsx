@@ -7,23 +7,11 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi, regexpEmail } from "../../features/config/config";
-import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
-import { IDesa, resetDesa } from "../../features/desa/desa-slice";
-import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
-import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
-import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
-import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
-import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
-import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
-import { IPropinsi } from "../../features/propinsi/propinsi-slice";
 import { useAddRegistrasiMutation } from "../../features/security/authorization-api-slice";
 import logo from '../../sidoarjo.svg';
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { IPerson } from "../../features/person/person-slice"
 import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setUserNameAuthentication, setPasswordAuthentication} from "../../features/security/authentication-slice";
 import { 
     HookFormEmailProps, HookFormPasswordProps, HookFormPersonIdentityStepOneProps, 
     HookFormPersonIdentityStepTwoProps, HookFormUploadKTP, HookMessageBarProps } from "../../app/HookFormProps";
@@ -119,54 +107,6 @@ const labelSandiStyle: ILabelStyles  = {
 const stackTokens = { childrenGap: 2 };
 const duration: number = 0.5;
 
-const variantsPassword = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const variantsPID = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "-10%", 
-        transition: {
-            duration
-        },
-    },
-};
-const variantsPID2 = {
-    open: {       
-        opacity: 1, 
-        x: 0,
-        transition: {
-            duration
-        },
-    },
-    closed: { 
-        opacity: 0, 
-        x: "10%", 
-        transition: {
-            duration
-        },
-    },
-};
 const variantsUploadKTP = {
     open: {       
         opacity: 1, 
@@ -183,7 +123,6 @@ const variantsUploadKTP = {
         },
     },
 };
-const contactIcon: IIconProps = { iconName: 'Contact' };
 const backIcon: IIconProps = { 
     iconName: 'Back',
     style: {
@@ -229,212 +168,6 @@ const ErrorMessage: FC<HookMessageBarProps> = (props) => (
     </MessageBar>
 );
 
-const FormPersonIdentityStepTwo: FC<HookFormPersonIdentityStepTwoProps> = (props) => {
-    //react-hook-form variable hook
-    const [alamat] = useWatch({
-        control: props.control, 
-        name: ['alamat']
-    });
-    //rtk query propinsi variable hook
-    const [propinsi, setPropinsi] = useState<IPropinsi>(defaultPropinsi); 
-    const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi } = useGetAllPropinsiQuery();
-    const dataPropinsiOptions = dataPropinsi.map((t) => {
-        return {key: t.id as string, text: t.nama as string}; 
-    });
-    //rtk query kabupaten variable hook
-    const [kabupaten, setKabupaten] = useState<IKabupaten>(defaultKabupaten);
-    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(propinsi.id!);
-    const dataKabupatenOptions = dataKabupaten.map((t) => {
-        return {key: t.id as string, text: t.nama as string}; 
-    });
-    //rtk query kecamatan variable hook
-    const [kecamatan, setKecamatan] = useState<IKecamatan>(defaultKecamatan);
-    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(kabupaten.id!);
-    const dataKecamatanOptions = dataKecamatan.map((t) => {
-        return {key: t.id as string, text: t.nama as string}; 
-    });
-    //rtk query desa variable hook
-    const [desa, setDesa] = useState<IDesa>(defaultDesa);
-    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id!);
-    const dataDesaOptions = dataDesa.map((t) => {
-        return {key: t.id as string, text: t.nama as string}; 
-    });    
-    //this function is used reset propinsi
-    const resetPropinsi = useCallback(
-        (item: IPropinsi) => {          
-            setDesa({id: '', nama: ''});
-            setKecamatan({id: '', nama: ''});
-            setKabupaten({id: '', nama: ''});
-            setPropinsi(item);
-            props.setValue("alamat.kabupaten", null);
-            props.setValue("alamat.kecamatan", null);
-            props.setValue("alamat.desa", null);
-        },
-        [propinsi]
-    );
-    //this function is used reset kabupaten
-    const resetKabupaten = (item: IKabupaten) => {               
-        setKabupaten(item); 
-        setKecamatan({id: '', nama: ''});
-        props.setValue("alamat.kecamatan", null);
-        props.setValue("alamat.desa", null)
-    }
-    //this function is used reset kecamatan
-    const resetKecamatan = useCallback(
-        (item: IKabupaten) => {               
-            setKecamatan(item); 
-            setDesa({id: '', nama: ''});
-            props.setValue("alamat.desa", null);
-        },
-        [kecamatan]
-    );
-    //this function is used to go back to FormPersonIdentityStepOne
-    const processBackToPreviousStep = useCallback(
-        () => {
-            props.setVariant(
-                (prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID2: 'closed'})
-            );
-
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(570);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) =>({...prev, flipDisplayPID2: false, flipDisplayPID: true, animPID: 'open'})
-                    );
-                },
-                duration*1000
-            );
-
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //this function is used to process next step (FormUploadKTP) with depend on userName changes only
-    const processNextStep = useCallback(
-        () => {
-            props.setVariant((prev: IStateRegistrasiAnimationFramer) =>({...prev, animPID2: 'closed'}));
-
-            let timer = setTimeout(
-                () => {
-                    props.changeHightContainer(430);
-                    props.setVariant(
-                        (prev: IStateRegistrasiAnimationFramer) => ({...prev, flipDisplayPID2: false, flipDisplayUploadKTP: true, animUploadKTP: 'open'})
-                    );
-                },
-                duration*1000
-            );
-
-            return () => clearTimeout(timer);
-        },
-        []
-    );
-    //rendered function
-    return(
-        <motion.div
-            animate={props.variant.animPID2}
-            variants={variantsPID2}
-            style={props.variant.flipDisplayPID2?{display:'block'}:{display:'none'}}
-        >
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, alignItems: 'center'}}}>                    
-                <IconButton 
-                    iconProps={backIcon} 
-                    title="Back" 
-                    ariaLabel="Back"
-                    onClick={processBackToPreviousStep} 
-                    styles={{
-                        root: {
-                            borderStyle: 'none',
-                            borderRadius: '50%',
-                            padding: 0,
-                            marginTop: 2,
-                        }
-                    }}/>
-                <Label styles={labelUserNameStyle}>{props.userName}</Label>
-            </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Alamat tinggal anda?</Label>
-                <Label styles={labelSandiStyle}>Kami perlu data alamat tinggal anda berdasar KTP.</Label>
-            </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
-                <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Propinsi"
-                        placeholder="Pilih Propinsi sesuai dengan ktp"
-                        name={"alamat.propinsi"}
-                        isFetching={isFetchingDataPropinsi}
-                        options={dataPropinsiOptions}
-                        onChangeItem={resetPropinsi}
-                        required={true}
-                        rules={{ required: "harus diisi sesuai dengan ktp" }}
-                        defaultItemSelected={defaultPropinsi}
-                        control={props.control}
-                    />   
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Kabupaten / Kota"
-                        placeholder="Pilih Kabupaten sesuai dengan ktp"
-                        isFetching={isFetchingDataKabupaten||isFetchingDataPropinsi}
-                        options={dataKabupatenOptions}
-                        onChangeItem={resetKabupaten}
-                        required={true}
-                        name={`alamat.kabupaten`}
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultKabupaten}   
-                        control={props.control}               
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Kecamatan"
-                        placeholder="Pilih Kecamatan sesuai dengan ktp"
-                        isFetching={isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
-                        options={dataKecamatanOptions}
-                        onChangeItem={resetKecamatan}
-                        required={true}
-                        name={`alamat.kecamatan`}
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultKecamatan}     
-                        control={props.control}           
-                    />  
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Desa"
-                        placeholder="Pilih Desa sesuai dengan ktp"
-                        isFetching={isFetchingDataDesa||isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
-                        options={dataDesaOptions}
-                        onChangeItem={resetDesa}
-                        required={true}
-                        name={`alamat.desa`}
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultDesa}  
-                        control={props.control}                
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        label="Detail Alamat"
-                        placeholder="Isi detail alamat seperti nama jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
-                        name={`alamat.keterangan`}
-                        rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        control={props.control}
-                        required 
-                        multiline 
-                        resizable={false} /> 
-                </Stack.Item>
-            </Stack>
-            <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
-                <PrimaryButton 
-                    text="Lanjut" 
-                    onClick={processNextStep} 
-                    style={{marginTop: 24, width: 100}}
-                    disabled={alamat!.keterangan!.length > 0 ? false:true}
-                    />
-            </Stack>
-        </motion.div>
-    );
-};
 const FormUploadKTP: FC<HookFormUploadKTP> = (props) => {
     const handlerMessageToParent = useCallback(
         (data) => {
@@ -727,14 +460,6 @@ export const FormulirRegistrasi: FC = () => {
                     control
                 })
             }
-            <FormPersonIdentityStepTwo
-                userName={authentication.userName}
-                variant={variant} 
-                setVariant={setVariant}
-                setValue={setValue}
-                changeHightContainer={setHeightArea}
-                control={control}
-            />
             <FormUploadKTP 
                 userName={authentication.userName}
                 variant={variant} 
@@ -803,6 +528,16 @@ const getSlideSubFormRegistrasi = (
         case 'pid2':
             konten = 
                 <SubFormPersonIdentityStepTwoRegistrasi
+                    setMotionKey={setMotionKey}
+                    setIsLoading={setIsLoading}
+                    changeHightContainer={changeHightContainer}
+                    setIsErrorConnection={setIsErrorConnection}
+                    setValue={setValue}
+                />;   
+            break;
+        case 'pid3':
+            konten = 
+                <SubFormUloadKtpRegistrasi
                     setMotionKey={setMotionKey}
                     setIsLoading={setIsLoading}
                     changeHightContainer={changeHightContainer}
