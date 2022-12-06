@@ -50,7 +50,7 @@ export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPIDRegistrasiPro
         () => dataJenisKelamin.map((t) => { 
             return {key: t.id as string, text: t.nama as string}; 
         }),
-        []
+        [dataJenisKelamin]
     );
 
     //this function is used to go back to FormPassword

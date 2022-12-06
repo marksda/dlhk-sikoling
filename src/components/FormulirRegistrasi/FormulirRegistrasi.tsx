@@ -33,6 +33,7 @@ import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
 import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
 import { SubFormPasswordRegistrasi } from "./SubFormPasswordRegistrasi";
 import { SubFormPersonIdentityStepOneRegistrasi } from "./SubFormPersonIdentityStepOneRegistrasi";
+import { SubFormPersonIdentityStepTwoRegistrasi } from "./SubFormPersonIdentityStepTwoRegistrasi";
 // import {createWorker}  from "tesseract.js";
 // import cv from "@techstark/opencv-js";
 
@@ -726,13 +727,6 @@ export const FormulirRegistrasi: FC = () => {
                     control
                 })
             }
-            <FormPersonIdentityStepOne
-                userName={authentication.userName}
-                variant={variant} 
-                setVariant={setVariant}
-                changeHightContainer={setHeightArea}
-                control={control}
-            />
             <FormPersonIdentityStepTwo
                 userName={authentication.userName}
                 variant={variant} 

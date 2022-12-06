@@ -70,6 +70,22 @@ export const variantPID = {
         },
     },
 };
+export const variantPID2 = {
+    open: {       
+        opacity: 1, 
+        x: 0,
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+    closed: { 
+        opacity: 0, 
+        x: "10%", 
+        transition: {
+            durationAnimFormRegistrasi
+        },
+    },
+};
 
 export const contactIcon: IIconProps = { iconName: 'Contact' };
 export const unlockIcon: IIconProps = { iconName: 'Unlock' };
