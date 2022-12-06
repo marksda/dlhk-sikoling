@@ -243,6 +243,7 @@ const getSlideSubFormRegistrasi = (
                 changeHightContainer={changeHightContainer}
                 setIsErrorConnection={setIsErrorConnection}
                 setValue={setValue}
+                control={control}
             />;
             break; 
         case 'password':

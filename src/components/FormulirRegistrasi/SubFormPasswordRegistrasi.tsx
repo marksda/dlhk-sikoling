@@ -2,7 +2,7 @@ import { IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from
 import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setPasswordAuthentication } from "../../features/security/authentication-slice";
 import { backIcon } from "../FormulirLogin/InterfaceLoginForm";
 import { durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantPassword } from "./InterfaceRegistrasiForm";
@@ -40,9 +40,12 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
         name: ['kontak']
     });
 
+    //hook redux variable
+    const authentication = useAppSelector(state => state.authentication);
+
     // local state
     const [animPassword, setAnimPassword] = useState<string>('open');
-    const [password, setPassword] = useState<string>('');
+    const [password, setPassword] = useState<string>(authentication.password);
     const [errorPassword, setErrorPassword] = useState<string>('');
 
     //redux action creator

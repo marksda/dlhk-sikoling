@@ -1,6 +1,7 @@
 import { ActionButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
+import { Control, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
 import { regexpEmail } from "../../features/config/config";
@@ -17,11 +18,20 @@ const labelStyle: ILabelStyles  = {
     }
 };
 
-export const SubFormEmailRegistrasi: FC<ISubFormRegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue}) => {
+interface ISubFormEmailRegistrasiProps extends ISubFormRegistrasiProps {
+    control?: Control<any>;
+};
+
+export const SubFormEmailRegistrasi: FC<ISubFormEmailRegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control}) => {
+    const [kontak] = useWatch({
+        control: control, 
+        name: ['kontak']
+    });
+    
     //local state
     const [rtkQueryEmailState, setRtkQueryEmailState] = useState<{userName: string; skip: boolean}>({userName: '', skip: true});
     const [animEmail, setAnimEmail] = useState<string>('open');
-    const [userName, setUserName] = useState<string>('');
+    const [userName, setUserName] = useState<string>(kontak.email);
     const [errorUserName, setErrorUserName] = useState<string>('');
 
     //redux action creator
