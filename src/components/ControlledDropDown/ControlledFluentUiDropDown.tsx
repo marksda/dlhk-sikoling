@@ -19,6 +19,7 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                             }
                         }
                         onBlur={onBlur}
+                        defaultSelectedKey={props.defaultItemSelected}
                         errorMessage={error && error?.message}
                     />
                 )}

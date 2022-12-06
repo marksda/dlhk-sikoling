@@ -2,15 +2,10 @@ import { IconButton, ILabelStyles, Label, PrimaryButton, Stack } from "@fluentui
 import { motion } from "framer-motion";
 import { FC, useCallback, useMemo, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
-import { IDesa, resetDesa } from "../../features/desa/desa-slice";
 import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
-import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
 import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
-import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
 import { useGetAllPropinsiQuery } from "../../features/propinsi/propinsi-api-slice";
-import { IPropinsi } from "../../features/propinsi/propinsi-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantPID2 } from "./InterfaceRegistrasiForm";
@@ -50,16 +45,12 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
 
     // local state
     const [animPid2, setAnimPid2] = useState<string>('open');    
-    const [propinsi, setPropinsi] = useState<IPropinsi>(defaultPropinsi); 
-    const [kabupaten, setKabupaten] = useState<IKabupaten>(defaultKabupaten);
-    const [kecamatan, setKecamatan] = useState<IKecamatan>(defaultKecamatan);
-    const [desa, setDesa] = useState<IDesa>(defaultDesa);
 
     //rtk query propinsi variable hook
     const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi } = useGetAllPropinsiQuery();    
-    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(propinsi.id!);
-    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(kabupaten.id!);    
-    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(kecamatan.id!);
+    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi.id);
+    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan } = useGetKecamatanByKabupatenQuery(alamat.kabupaten.id);    
+    const { data: dataDesa = [], isFetching: isFetchingDataDesa } = useGetDesaByKecamatanQuery(alamat.kecamatan.id);
 
     
     const dataPropinsiOptions = useMemo(
@@ -90,39 +81,38 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
         [dataDesa]
     );
 
-    //this function is used reset propinsi
-    const resetPropinsi = useCallback(
-        (item: IPropinsi) => {          
-            setDesa({id: '', nama: ''});
-            setKecamatan({id: '', nama: ''});
-            setKabupaten({id: '', nama: ''});
-            setPropinsi(item);
-            setValue("alamat.kabupaten", null);
-            setValue("alamat.kecamatan", null);
-            setValue("alamat.desa", null);
-        },
-        [propinsi]
-    );
-
-    //this function is used reset kabupaten
-    const resetKabupaten = useCallback(
-        (item: IKabupaten) => {               
-            setKabupaten(item); 
-            setKecamatan({id: '', nama: ''});
-            setValue("alamat.kecamatan", null);
-            setValue("alamat.desa", null)
+    const handleChangePropinsi = useCallback(
+        (item) => {
+            setValue("alamat.propinsi", {id: item.key, nama: item.text});
+            setValue("alamat.kabupaten", {id: '', nama: ''});
+            setValue("alamat.kecamatan", {id: '', nama: ''});
+            setValue("alamat.desa", {id: '', nama: ''});
         },
         []
     );
 
-    //this function is used reset kecamatan
-    const resetKecamatan = useCallback(
-        (item: IKabupaten) => {               
-            setKecamatan(item); 
-            setDesa({id: '', nama: ''});
-            setValue("alamat.desa", null);
+    const handleChangeKabupaten = useCallback(
+        (item) => {
+            setValue("alamat.kabupaten", {id: item.key, nama: item.text});
+            setValue("alamat.kecamatan", {id: '', nama: ''});
+            setValue("alamat.desa", {id: '', nama: ''})
         },
-        [kecamatan]
+        []
+    );
+
+    const handleChangeKecamatan = useCallback(
+        (item) => {               
+            setValue("alamat.kecamatan", {id: item.key, nama: item.text});
+            setValue("alamat.desa", {id: '', nama: ''});
+        },
+        []
+    );
+
+    const handleChangeDesa = useCallback(
+        (item) => {               
+            setValue("alamat.desa", {id: item.key, nama: item.text});
+        },
+        []
     );
 
     //this function is used to go back to FormPersonIdentityStepOne
@@ -194,10 +184,10 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
                         name={"alamat.propinsi"}
                         isFetching={isFetchingDataPropinsi}
                         options={dataPropinsiOptions}
-                        onChangeItem={resetPropinsi}
+                        onChangeItem={handleChangePropinsi}
                         required={true}
                         rules={{ required: "harus diisi sesuai dengan ktp" }}
-                        defaultItemSelected={defaultPropinsi}
+                        defaultItemSelected={alamat.propinsi.id}
                         control={control}
                     />   
                 </Stack.Item>
@@ -207,12 +197,13 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
                         placeholder="Pilih Kabupaten sesuai dengan ktp"
                         isFetching={isFetchingDataKabupaten||isFetchingDataPropinsi}
                         options={dataKabupatenOptions}
-                        onChangeItem={resetKabupaten}
+                        onChangeItem={handleChangeKabupaten}
                         required={true}
-                        name={`alamat.kabupaten`}
+                        name={"alamat.kabupaten"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultKabupaten}   
-                        control={control}               
+                        defaultItemSelected={alamat.kabupaten.id}   
+                        control={control}    
+                        disabled={alamat.propinsi.id == '' ? true : false}      
                     />
                 </Stack.Item>
                 <Stack.Item>
@@ -221,12 +212,13 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
                         placeholder="Pilih Kecamatan sesuai dengan ktp"
                         isFetching={isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
                         options={dataKecamatanOptions}
-                        onChangeItem={resetKecamatan}
+                        onChangeItem={handleChangeKecamatan}
                         required={true}
-                        name={`alamat.kecamatan`}
+                        name={"alamat.kecamatan"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultKecamatan}     
-                        control={control}           
+                        defaultItemSelected={alamat.kecamatan.id}     
+                        control={control}                           
+                        disabled={alamat.kabupaten.id == '' ? true : false}             
                     />  
                 </Stack.Item>
                 <Stack.Item>
@@ -235,12 +227,13 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
                         placeholder="Pilih Desa sesuai dengan ktp"
                         isFetching={isFetchingDataDesa||isFetchingDataKecamatan||isFetchingDataKabupaten||isFetchingDataPropinsi}
                         options={dataDesaOptions}
-                        onChangeItem={resetDesa}
+                        onChangeItem={handleChangeDesa}
                         required={true}
-                        name={`alamat.desa`}
+                        name={"alamat.desa"}
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        defaultItemSelected={defaultDesa}  
-                        control={control}                
+                        defaultItemSelected={alamat.desa.id}  
+                        control={control}      
+                        disabled={alamat.kecamatan.id == '' ? true : false}           
                     />
                 </Stack.Item>
                 <Stack.Item>
@@ -252,7 +245,9 @@ export const SubFormPersonIdentityStepTwoRegistrasi: FC<ISubFormPID2RegistrasiPr
                         control={control}
                         required 
                         multiline 
-                        resizable={false} /> 
+                        resizable={false} 
+                        disabled={alamat.desa.id == '' ? true : false}
+                    /> 
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>

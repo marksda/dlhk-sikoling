@@ -33,7 +33,7 @@ interface ISubFormPIDRegistrasiProps extends ISubFormRegistrasiProps {
     control?: Control<any>;
 };
 
-export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPIDRegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control}) => {
+export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPIDRegistrasiProps> = ({setMotionKey, changeHightContainer, setValue, control}) => {
     //react-hook-form variable hook
     const [nik, nama, jenisKelamin, kontak] = useWatch({
         control: control, 
@@ -51,6 +51,13 @@ export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPIDRegistrasiPro
             return {key: t.id as string, text: t.nama as string}; 
         }),
         [dataJenisKelamin]
+    );
+
+    const handleChangeItem = useCallback(
+        (item) => {
+            setValue("jenisKelamin", {id: item.key, nama: item.text});
+        },
+        []
     );
 
     //this function is used to go back to FormPassword
@@ -141,7 +148,9 @@ export const SubFormPersonIdentityStepOneRegistrasi: FC<ISubFormPIDRegistrasiPro
                         required
                         name="jenisKelamin"
                         rules={{ required: "harus diisi sesuai dengan ktp" }} 
-                        control={control}         
+                        control={control}  
+                        onChangeItem={handleChangeItem}
+                        defaultItemSelected={jenisKelamin != null ? jenisKelamin.id:''}
                         disabled={(nama!.length>0?false:true)||isFetchingJenisKelamin}    
                     /> 
                 </Stack.Item>

@@ -5,10 +5,9 @@ import {
 } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import logo from '../../sidoarjo.svg';
 import { IPerson } from "../../features/person/person-slice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import {  HookMessageBarProps } from "../../app/HookFormProps";
 import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";
 import { SubFormEmailRegistrasi } from "./SubFormEmailRegistrasi";
@@ -78,7 +77,6 @@ const labelWarningStyle: ILabelStyles  = {
     //    fontSize: '0.95rem', 
     }
 };
-const duration: number = 0.5;
 
 const progressStyle: IProgressIndicatorStyles ={
     root: {
@@ -153,10 +151,10 @@ export const FormulirRegistrasi: FC = () => {
             nama: '',
             jenisKelamin: null,
             alamat: {
-                propinsi: defaultPropinsi,
-                kabupaten: defaultKabupaten,
-                kecamatan: defaultKecamatan,
-                desa: defaultDesa,
+                propinsi: {id: '', nama: ''},
+                kabupaten: {id: '', nama: ''},
+                kecamatan: {id: '', nama: ''},
+                desa: {id: '', nama: ''},
                 keterangan: '',
             },
             kontak: {
