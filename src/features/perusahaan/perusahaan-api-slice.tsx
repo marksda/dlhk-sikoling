@@ -110,9 +110,6 @@ export const PerusahaanApiSlice = createApi({
             getPerusahaanByIdPerson: builder.query<daftarPerusahaan, string>({
                 query: (idPerson) => ({
                     url: `perusahaan/person/${idPerson}`,
-                    // responseHandler: (response) => {
-                    //     return response.json();
-                    // },
                 }),                
                 providesTags: (result) => 
                     result ?

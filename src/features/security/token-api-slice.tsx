@@ -21,6 +21,16 @@ export const TokenApiSlice = createApi({
                     body: credentialData,
                 }),
             }), 
+            getRefreshToken: builder.mutation<IResponseStatusToken, string>({
+                query: (refreshToken) => ({
+                    url: `user/refresh_token`,
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'text/plain;charset=UTF-8',
+                    },
+                    body: refreshToken,
+                }),
+            }), 
         }
     }
 });
