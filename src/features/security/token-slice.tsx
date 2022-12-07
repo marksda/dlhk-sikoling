@@ -16,7 +16,9 @@ export interface IResponseStatusToken {
     token: IToken;
 }
 
-const initialState: IToken = {
+const initialState: IToken = localStorage.getItem('token') != null ?
+JSON.parse(localStorage.getItem('token') as string) :
+{
     userId: null,
     userName: null,
     userEmail: null,    
@@ -37,6 +39,7 @@ export const tokenSlice = createSlice({
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
             state.expireOn = action.payload.expireOn;
+            state.hakAkses = action.payload.hakAkses;
         },
         setUserId: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
@@ -53,9 +56,18 @@ export const tokenSlice = createSlice({
         setRefreshToken: (state, action: PayloadAction<string>) => {
             state.refreshToken = action.payload;
         },
+        resetToken: (state, action: PayloadAction<void>) => {
+            state.userId = null;
+            state.userName = null;
+            state.userEmail = null;
+            state.accessToken = null;
+            state.refreshToken = null;
+            state.expireOn = null;
+            state.hakAkses = null;
+        },
     },
 });
 
-export const { setToken, setUserId, setUserNama, setUserEmail, setAccessToken, setRefreshToken } = tokenSlice.actions;
+export const { setToken, setUserId, setUserNama, setUserEmail, setAccessToken, setRefreshToken, resetToken } = tokenSlice.actions;
 
 export default tokenSlice.reducer;

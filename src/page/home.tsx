@@ -20,11 +20,11 @@ export const Home: FC = () => {
     const token = useAppSelector((state) => state.token);
     //react redux
     const dispatch = useAppDispatch();
-    // //react router
+    //react router
     const navigate = useNavigate();
 
     useEffect(
-        () => {
+        () => {            
             if(token.hakAkses == null) {
                 let tokenString = localStorage.getItem('token');
                 if(tokenString != null){
@@ -33,7 +33,7 @@ export const Home: FC = () => {
             }
             else {
                 switch (token.hakAkses) {
-                    case 'pemrakarsa':
+                    case 'Umum':
                         navigate("/pemrakarsa");
                         break;   
                     case 'admin':

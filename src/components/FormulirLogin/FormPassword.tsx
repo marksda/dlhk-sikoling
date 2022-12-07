@@ -1,6 +1,7 @@
 import { ActionButton, IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setPasswordAuthentication } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
@@ -32,9 +33,42 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     const [errorPassword, setErrorPassword] = useState<string>('');
 
     //rtk query
-    const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();
+    const [getToken, { data: dataToken, isLoading: isLoadingGetToken}] = useGetTokenMutation();
+
     //redux action creator
     const dispatch = useAppDispatch();
+
+    //react router
+    const navigate = useNavigate();
+
+    useEffect(
+        () => {
+            if(authentication.password != '') {
+                getToken(authentication);
+            }
+        },
+        [authentication]
+    );
+
+    useEffect(
+        () => {
+            if(dataToken != undefined && dataToken.status == 'oke') {
+                localStorage.setItem('token', JSON.stringify(dataToken.token));
+                dispatch(setToken(dataToken.token));
+                switch (dataToken.token.hakAkses) {
+                    case 'Umum':
+                        navigate("/pemrakarsa");
+                        break;   
+                    case 'admin':
+                        navigate("/admin");
+                        break;                
+                    default:
+                        break;
+                }
+            }
+        },
+        [dataToken]
+    );
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -58,18 +92,14 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     );
 
     const handleProcessLogin = useCallback(
-        async () => {     
-            setIsLoading(true);        
-            try {
-                const result = await getToken(authentication).unwrap;
-                console.log(result);
-                // dispatch(setToken(result));
-                // dispatch(setPasswordAuthentication(password)); 
-                // setIsLoading(false); 
-            } catch (error) {
-                // setIsLoading(false); 
-                //error
-            }          
+        () => {     
+            // setIsLoading(true);  
+            dispatch(setPasswordAuthentication(password));  
+            // try {
+            //     await getToken(authentication).unwrap;
+            // } catch (error) {
+                
+            // }          
         },
         [password]
     );

@@ -1,5 +1,5 @@
 import { INavLinkGroup } from "@fluentui/react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
@@ -10,6 +10,8 @@ import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
 import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
 import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAppSelector } from "../app/hooks";
+import { useNavigate } from "react-router-dom";
 
 const navLinkGroups: INavLinkGroup[] = [
   {
@@ -78,6 +80,20 @@ const getContentPage = (idContentPage: string) => {
 
 export const PemrakarsaPage: FC = () => {
     const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);
+    const token = useAppSelector((state) => state.token);
+    console.log(token);
+
+    //react router
+    const navigate = useNavigate();
+
+    useEffect(
+      () => {            
+          if(token.hakAkses == null) {
+            navigate("/");          
+          }
+      },
+      [token]
+  );
 
     return (        
         <AppLayoutFluentUI>

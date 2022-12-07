@@ -19,6 +19,7 @@ import { AuthenticationApiSlice } from "../features/security/authentication-api-
 import authorizationReducer from "../features/security/authorization-slice";
 import { AuthorizationApiSlice } from "../features/security/authorization-api-slice";
 import tokenReducer from "../features/security/token-slice";
+import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
 import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha-api-slice";
@@ -63,6 +64,7 @@ export const store = configureStore({
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
+        [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
         [ModelPerizinanApiSlice.reducerPath]: ModelPerizinanApiSlice.reducer,
         [SkalaUsahaApiSlice.reducerPath]: SkalaUsahaApiSlice.reducer,      
         [KategoriPelakuUsahaApiSlice.reducerPath]: KategoriPelakuUsahaApiSlice.reducer,   
@@ -90,6 +92,7 @@ export const store = configureStore({
                                             .concat(PersonApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(AuthorizationApiSlice.middleware)
+                                            .concat(TokenApiSlice.middleware)
                                             .concat(ModelPerizinanApiSlice.middleware)
                                             .concat(SkalaUsahaApiSlice.middleware)
                                             .concat(KategoriPelakuUsahaApiSlice.middleware)

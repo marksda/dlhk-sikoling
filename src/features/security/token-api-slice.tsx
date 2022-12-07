@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IResponseStatusToken, IToken } from "./token-slice";
-import { baseIdentityProviderUrl } from "../../features/config/config";
+import { baseIdentityProviderUrl, baseRestAPIUrl } from "../../features/config/config";
 import { IAuthentication } from "./authentication-slice";
 
 
-export const tokenApiSlice = createApi({
+export const TokenApiSlice = createApi({
     reducerPath: 'tokenApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseIdentityProviderUrl,
+        baseUrl: baseRestAPIUrl,
     }),
     endpoints(builder) {
         return {
@@ -25,4 +25,4 @@ export const tokenApiSlice = createApi({
     }
 });
 
-export const { useGetTokenMutation } = tokenApiSlice;
+export const { useGetTokenMutation } = TokenApiSlice;
