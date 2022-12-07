@@ -72,8 +72,8 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
 
     
     //rtk query perusahaan variable hook
-    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetPerusahaanByIdPersonQuery(token.userId as string);
-    const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation()
+    const { data: daftarPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarPerusahaan, isError } = useGetPerusahaanByIdPersonQuery(token.userId as string);
+    const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation();
 
     const _items: ICommandBarItemProps[] = useMemo(
         () => ([
@@ -120,13 +120,26 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     );
 
     //deteksi error koneksi dengan backend
+    // useEffect(
+    //     () => {
+    //         if(isError == true) {
+    //             // alert('Koneksi ke server mengalami gangguan');
+    //         }                
+    //     },
+    //     [isError]
+    // );
+
+    //refetch token
     useEffect(
         () => {
-            if(isError == true) {
-                // alert('Koneksi ke server mengalami gangguan');
-            }                
+            if(errorFetchDataPerusahaan != undefined) {
+                console.log(errorFetchDataPerusahaan);
+                // if(errorFetchDataPerusahaan.data.message == 'Expired JWT') {
+
+                // }
+            }
         },
-        [isError]
+        [errorFetchDataPerusahaan]
     );
 
     //deteksi data perusahaan sudah tersedia
@@ -140,9 +153,6 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                         )
                     )
                 ]);
-            }            
-            else {
-                setDataPerusahaan([]);
             }
         },
         [daftarPerusahaan, isFetchingDaftarPerusahaan]

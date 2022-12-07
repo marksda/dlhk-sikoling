@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "../../app/store";
 import { baseRestAPIUrl } from "../config/config";
 import { IPerusahaan } from "./perusahaan-slice";
 
@@ -8,6 +9,13 @@ export const PerusahaanApiSlice = createApi({
     reducerPath: 'perusahaanApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseRestAPIUrl,
+        prepareHeaders: (headers, { getState }) => {
+            const accessToken = (getState() as RootState).token.accessToken;
+            if(accessToken != null){
+                headers.set("authorization", `Bearer ${accessToken}`);
+            }            
+            return headers;
+        }
     }),
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
@@ -100,7 +108,12 @@ export const PerusahaanApiSlice = createApi({
                     [{type: 'PerusahaanNpwp', id: 'LIST'}],
             }),
             getPerusahaanByIdPerson: builder.query<daftarPerusahaan, string>({
-                query: (idPerson) => `perusahaan/person/${idPerson}`,
+                query: (idPerson) => ({
+                    url: `perusahaan/person/${idPerson}`,
+                    // responseHandler: (response) => {
+                    //     return response.json();
+                    // },
+                }),                
                 providesTags: (result) => 
                     result ?
                     [
@@ -109,7 +122,7 @@ export const PerusahaanApiSlice = createApi({
                         ),
                         { type: 'PerusahaanByIdPerson', id: 'LIST' },
                     ]:
-                    [{type: 'PerusahaanByIdPerson', id: 'LIST'}],
+                    [{type: 'PerusahaanByIdPerson', id: 'LIST'}],                
             }),
             isEksisPerusahaan: builder.query<boolean, string|null>({
                 query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IResponseStatusToken, IToken } from "./token-slice";
-import { baseIdentityProviderUrl, baseRestAPIUrl } from "../../features/config/config";
+import { IResponseStatusToken } from "./token-slice";
+import { baseRestAPIUrl } from "../../features/config/config";
 import { ICredential } from "./authentication-slice";
 
 
@@ -12,13 +12,13 @@ export const TokenApiSlice = createApi({
     endpoints(builder) {
         return {
             getToken: builder.mutation<IResponseStatusToken, ICredential>({
-                query: (authenticationData) => ({
+                query: (credentialData) => ({
                     url: `user/get_token`,
                     method: 'POST',
                     header: {
                         'Content-Type': 'application/json;charset=UTF-8',
                     },
-                    body: authenticationData,
+                    body: credentialData,
                 }),
             }), 
         }

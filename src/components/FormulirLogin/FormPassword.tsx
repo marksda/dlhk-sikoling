@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setPasswordCredential } from "../../features/security/authentication-slice";
+import { resetCredential, setPasswordCredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
 import { setToken } from "../../features/security/token-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
@@ -52,8 +52,10 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
 
     useEffect(
         () => {
+            setIsLoading(false); 
             if(dataToken != undefined && dataToken.status == 'oke') {
                 localStorage.setItem('token', JSON.stringify(dataToken.token));
+                dispatch(resetCredential());
                 dispatch(setToken(dataToken.token));
                 switch (dataToken.token.hakAkses) {
                     case 'Umum':
@@ -93,13 +95,8 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
 
     const handleProcessLogin = useCallback(
         () => {     
-            // setIsLoading(true);  
+            setIsLoading(true);  
             dispatch(setPasswordCredential(password));  
-            // try {
-            //     await getToken(authentication).unwrap;
-            // } catch (error) {
-                
-            // }          
         },
         [password]
     );

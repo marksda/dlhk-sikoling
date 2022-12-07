@@ -62,7 +62,6 @@ export const TopBarLayoutFluentUI: FC = () => {
         () => {
             hidePopup();
             localStorage.removeItem('token');
-            dispatch(resetCredential());
             dispatch(resetToken());
         },
         []
