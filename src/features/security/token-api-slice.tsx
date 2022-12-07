@@ -35,4 +35,4 @@ export const TokenApiSlice = createApi({
     }
 });
 
-export const { useGetTokenMutation } = TokenApiSlice;
+export const { useGetTokenMutation, useGetRefreshTokenMutation } = TokenApiSlice;
