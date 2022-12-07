@@ -11,7 +11,7 @@ export const PerusahaanApiSlice = createApi({
     }),
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
-    tagTypes:['Perusahaan', 'PerusahaanPage', 'PerusahaanNama', 'PerusahaanNamaPage', 'PerusahaanNpwp'],
+    tagTypes:['Perusahaan', 'PerusahaanPage', 'PerusahaanNama', 'PerusahaanNamaPage', 'PerusahaanNpwp', 'PerusahaanByIdPerson'],
     endpoints(builder) {
         return {
             addPerusahaan: builder.mutation<IPerusahaan, Partial<IPerusahaan>>({
@@ -20,7 +20,7 @@ export const PerusahaanApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'Perusahaan', id: 'LIST'}, {type: 'PerusahaanPage', id: 'LIST'}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}],
+                invalidatesTags: [{type: 'Perusahaan', id: 'LIST'}, {type: 'PerusahaanPage', id: 'LIST'}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}, {type: 'PerusahaanByIdPerson', id: 'LIST'}],
             }),
             updatePerusahaan: builder.mutation<void, {id: string; perusahaan: IPerusahaan;}>({
                 query: ({id, perusahaan}) => ({
@@ -28,7 +28,7 @@ export const PerusahaanApiSlice = createApi({
                     method: 'PUT',
                     body: perusahaan,
                 }),
-                invalidatesTags: (result, error, { id }) => [{type: 'Perusahaan', id}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}],
+                invalidatesTags: (result, error, { id }) => [{type: 'Perusahaan', id}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}, {type: 'PerusahaanByIdPerson', id: 'LIST'}],
             }),
             deletePerusahaan: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
@@ -37,7 +37,7 @@ export const PerusahaanApiSlice = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{type: 'Perusahaan', id: id!}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: 'LIST'}, {type: 'PerusahaanNamaPage', id: 'LIST'}, {type: 'PerusahaanNpwp', id: 'LIST'}],
+                invalidatesTags: (result, error, id) => [{type: 'Perusahaan', id: id!}, {type: 'PerusahaanPage', id}, {type: 'PerusahaanNama', id: id!}, {type: 'PerusahaanNamaPage', id: id!}, {type: 'PerusahaanNpwp', id: id!}, {type: 'PerusahaanByIdPerson', id: id!}],
             }),
             getAllPerusahaan: builder.query<daftarPerusahaan, void>({
                 query: () => `perusahaan`,
@@ -99,6 +99,18 @@ export const PerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'PerusahaanNpwp', id: 'LIST'}],
             }),
+            getPerusahaanByIdPerson: builder.query<daftarPerusahaan, string>({
+                query: (idPerson) => `perusahaan/person/${idPerson}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'PerusahaanByIdPerson' as const, id: id! })
+                        ),
+                        { type: 'PerusahaanByIdPerson', id: 'LIST' },
+                    ]:
+                    [{type: 'PerusahaanByIdPerson', id: 'LIST'}],
+            }),
             isEksisPerusahaan: builder.query<boolean, string|null>({
                 query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,
             }),
@@ -111,5 +123,5 @@ export const {
     useDeletePerusahaanMutation, useGetAllPerusahaanQuery, 
     useGetPerusahaanByPageQuery, useGetPerusahaanByNamaQuery, 
     useGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery,
-    useIsEksisPerusahaanQuery
+    useIsEksisPerusahaanQuery, useGetPerusahaanByIdPersonQuery
 } = PerusahaanApiSlice;

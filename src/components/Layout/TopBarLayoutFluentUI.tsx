@@ -2,6 +2,7 @@ import { DefaultButton, FocusTrapZone, FontIcon, getTheme, IconButton, IIconProp
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback } from "react";
 import { useAppDispatch } from "../../app/hooks";
+import { resetCredential } from "../../features/security/authentication-slice";
 import { resetToken } from "../../features/security/token-slice";
 
 const theme = getTheme();
@@ -61,6 +62,7 @@ export const TopBarLayoutFluentUI: FC = () => {
         () => {
             hidePopup();
             localStorage.removeItem('token');
+            dispatch(resetCredential());
             dispatch(resetToken());
         },
         []
@@ -68,45 +70,43 @@ export const TopBarLayoutFluentUI: FC = () => {
 
     return (
         <>
-        <Stack horizontal styles={RootStackStyles}>
-            <Stack.Item grow align="center" styles={labelTopBarStyles}>
-                Sikoling  
-            </Stack.Item>
-            <Stack.Item align="center" >
-                <TooltipHost
-                    content="Login Account"
-                    id={tooltipId}
-                    calloutProps={calloutProps}
-                    styles={hostStyles}
-                    setAriaDescribedBy={false}
-                >
-                    <IconButton iconProps={userIcon} aria-label="Emoji" className={classNames.white} onClick={showPopup}/>
-                </TooltipHost>
-            </Stack.Item>            
-        </Stack>
-        {isPopupVisible && (
+            <Stack horizontal styles={RootStackStyles}>
+                <Stack.Item grow align="center" styles={labelTopBarStyles}>
+                    Sikoling  
+                </Stack.Item>
+                <Stack.Item align="center" >
+                    <TooltipHost
+                        content="Detail pengguna"
+                        id={tooltipId}
+                        calloutProps={calloutProps}
+                        styles={hostStyles}
+                        setAriaDescribedBy={false}
+                    >
+                        <IconButton iconProps={userIcon} aria-label="Emoji" className={classNames.white} onClick={showPopup}/>
+                    </TooltipHost>
+                </Stack.Item>            
+            </Stack>
+            {isPopupVisible && 
             <Layer>
-              <Popup
-                className={popupStyles.root}
-                role="dialog"
-                aria-modal="true"
-                onDismiss={hidePopup}
-                enableAriaHiddenSiblings={true}
-              >
-                <Overlay onClick={hidePopup} />
-                <FocusTrapZone>
-                  <div role="document" className={popupStyles.content}>
-                    <h2>Example Popup</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                      dolore magna aliqua.
-                    </p>
-                    <DefaultButton onClick={handleLogOut}>Log out</DefaultButton>
-                  </div>
-                </FocusTrapZone>
-              </Popup>
+                <Popup
+                    className={popupStyles.root}
+                    role="dialog"
+                    aria-modal="true"
+                    onDismiss={hidePopup}
+                    enableAriaHiddenSiblings={true}
+                >
+                    <Overlay onClick={hidePopup} />
+                    <div role="document" className={popupStyles.content}>
+                        <h2>Example Popup</h2>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua.
+                        </p>
+                        <DefaultButton onClick={handleLogOut}>Log out</DefaultButton>
+                    </div>
+                </Popup>
             </Layer>
-          )}
+            }
           </>
     );
 };

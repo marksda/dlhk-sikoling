@@ -2,8 +2,9 @@ import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn
 import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useAppSelector } from "../../app/hooks";
 import { IKontak } from "../../features/person/person-slice";
-import { useDeletePerusahaanMutation, useGetAllPerusahaanQuery } from "../../features/perusahaan/perusahaan-api-slice";
+import { useDeletePerusahaanMutation, useGetAllPerusahaanQuery, useGetPerusahaanByIdPersonQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { ISubFormDetailPerusahaanProps } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 
@@ -62,13 +63,16 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan}) => {
-    // const [selectionDetails, setSelectionDetails] = useState<string>('');
+    //redux global state
+    const token = useAppSelector(state => state.token);
+
+    // local state
     const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
-   // const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
+
     
     //rtk query perusahaan variable hook
-    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetAllPerusahaanQuery();
+    const { data: daftarPerusahaan = [], isFetching: isFetchingDaftarPerusahaan, isError } = useGetPerusahaanByIdPersonQuery(token.userId as string);
     const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation()
 
     const _items: ICommandBarItemProps[] = useMemo(

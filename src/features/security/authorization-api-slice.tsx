@@ -2,11 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../../features/config/config";
 import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
-import { IAuthentication } from "./authentication-slice";
+import { ICredential } from "./authentication-slice";
 import { IResponseStatusToken } from "./token-slice";
 
 export interface PostRegistrasi {
-    auth: IAuthentication;
+    auth: ICredential;
     person: IPerson;
 };
 

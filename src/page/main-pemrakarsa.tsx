@@ -81,8 +81,6 @@ const getContentPage = (idContentPage: string) => {
 export const PemrakarsaPage: FC = () => {
     const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);
     const token = useAppSelector((state) => state.token);
-    console.log(token);
-
     //react router
     const navigate = useNavigate();
 

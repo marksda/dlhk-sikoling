@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { regexpEmail } from "../../features/config/config";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
-import { setUserNameAuthentication } from "../../features/security/authentication-slice";
+import { setUserNameCredential } from "../../features/security/authentication-slice";
 import { addFriendIcon, contactIcon, durationAnimFormLogin, ISubFormLoginProps, variantsUserName } from "./InterfaceLoginForm";
 
 const stackTokens = { childrenGap: 2 };
@@ -19,7 +19,7 @@ const labelStyle: ILabelStyles  = {
 
 export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) => {
     //redux global state
-    const authentication = useAppSelector(state => state.authentication); 
+    const credential = useAppSelector(state => state.credential); 
 
     //local state
     const [animEmail, setAnimEmail] = useState<string>('open');
@@ -49,7 +49,7 @@ export const FormEmail: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) 
                     setIsLoading(false);
                     if(statusUserName === true) {   //data belum terdaftar                        
                         setAnimEmail('closed');                          
-                        dispatch(setUserNameAuthentication(rtkQueryEmailState.userName));
+                        dispatch(setUserNameCredential(rtkQueryEmailState.userName));
 
                         let timer = setTimeout(
                             () => {                            

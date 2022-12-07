@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
 import { regexpEmail } from "../../features/config/config";
 import { useCekUserNameQuery } from "../../features/security/authentication-api-slice";
-import { setUserNameAuthentication } from "../../features/security/authentication-slice";
+import { setUserNameCredential } from "../../features/security/authentication-slice";
 import { contactIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, unlockIcon, variantUserName } from "./InterfaceRegistrasiForm";
 
 const stackTokens = { childrenGap: 2 };
@@ -57,7 +57,7 @@ export const SubFormEmailRegistrasi: FC<ISubFormEmailRegistrasiProps> = ({setMot
                     setIsLoading(false);
                     if(statusUserName === false) {   //data belum terdaftar                        
                         setAnimEmail('closed');                          
-                        dispatch(setUserNameAuthentication(rtkQueryEmailState.userName));                        
+                        dispatch(setUserNameCredential(rtkQueryEmailState.userName));                        
                         setValue("kontak.email", userName);
                         let timer = setTimeout(
                             () => {                            

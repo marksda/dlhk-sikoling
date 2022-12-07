@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setPasswordAuthentication } from "../../features/security/authentication-slice";
+import { setPasswordCredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
 import { setToken } from "../../features/security/token-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
@@ -25,7 +25,7 @@ const labelUserNameStyle: ILabelStyles  = {
 
 export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) => {
     //redux global state
-    const authentication = useAppSelector(state => state.authentication);
+    const credential = useAppSelector(state => state.credential);
     
     //local state
     const [animPassword, setAnimPassword] = useState<string>('open');
@@ -43,11 +43,11 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
 
     useEffect(
         () => {
-            if(authentication.password != '') {
-                getToken(authentication);
+            if(credential.password != '') {
+                getToken(credential);
             }
         },
-        [authentication]
+        [credential]
     );
 
     useEffect(
@@ -94,7 +94,7 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     const handleProcessLogin = useCallback(
         () => {     
             // setIsLoading(true);  
-            dispatch(setPasswordAuthentication(password));  
+            dispatch(setPasswordCredential(password));  
             // try {
             //     await getToken(authentication).unwrap;
             // } catch (error) {
@@ -123,7 +123,7 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
                             marginTop: 2,
                         }
                     }}/>
-                <Label styles={labelUserNameStyle}>{authentication.userName}</Label>
+                <Label styles={labelUserNameStyle}>{credential.userName}</Label>
             </Stack>                
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 300, alignItems: 'center'}}}>
                 <Label styles={labelStyle}>Masukkan sandi</Label>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setPasswordAuthentication } from "../../features/security/authentication-slice";
+import { setPasswordCredential } from "../../features/security/authentication-slice";
 import { backIcon } from "../FormulirLogin/InterfaceLoginForm";
 import { durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantPassword } from "./InterfaceRegistrasiForm";
 
@@ -90,7 +90,7 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
                     setErrorPassword('');
                 }
 
-                dispatch(setPasswordAuthentication(password));       
+                dispatch(setPasswordCredential(password));       
                 setAnimPassword('closed');
 
                 let timer = setTimeout(

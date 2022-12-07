@@ -58,7 +58,7 @@ export const store = configureStore({
         penanggungJawab: penanggungJawabReducer,
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
-        authentication: authenticationReducer,
+        credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
         [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,

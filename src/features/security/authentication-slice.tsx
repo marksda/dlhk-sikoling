@@ -1,32 +1,36 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
-export interface IAuthentication {
+export interface ICredential {
     userName: string;
     password: string;
 };
 
-const initialState: IAuthentication = {
+const initialState: ICredential = {
     userName: '',
     password: '',
 };
 
 export const authenticationSlice = createSlice({
-    name: 'authentication',
+    name: 'credential',
     initialState,
     reducers: {
-        setAuthentication: (state, action: PayloadAction<IAuthentication>) => {
+        setCredential: (state, action: PayloadAction<ICredential>) => {
             state.userName = action.payload.userName;
             state.password = action.payload.password;
         },
-        setUserNameAuthentication: (state, action: PayloadAction<string>) => {
+        setUserNameCredential: (state, action: PayloadAction<string>) => {
             state.userName = action.payload;
         },
-        setPasswordAuthentication: (state, action: PayloadAction<string>) => {
+        setPasswordCredential: (state, action: PayloadAction<string>) => {
             state.password = action.payload;
+        },
+        resetCredential: (state, action: PayloadAction<void>) => {
+            state.userName = '';
+            state.password = '';
         },
     },
 }); 
 
-export const { setAuthentication, setUserNameAuthentication, setPasswordAuthentication } = authenticationSlice.actions;
+export const { setCredential, setUserNameCredential, setPasswordCredential, resetCredential } = authenticationSlice.actions;
 export default authenticationSlice.reducer;
