@@ -1,22 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../../app/store";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerusahaan } from "./perusahaan-slice";
 
 type daftarPerusahaan = IPerusahaan[];
 
 export const PerusahaanApiSlice = createApi({
     reducerPath: 'perusahaanApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-        prepareHeaders: (headers, { getState }) => {
-            const accessToken = (getState() as RootState).token.accessToken;
-            if(accessToken != null){
-                headers.set("authorization", `Bearer ${accessToken}`);
-            }            
-            return headers;
-        }
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
     tagTypes:['Perusahaan', 'PerusahaanPage', 'PerusahaanNama', 'PerusahaanNamaPage', 'PerusahaanNpwp', 'PerusahaanByIdPerson'],
