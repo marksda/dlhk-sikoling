@@ -2,7 +2,8 @@ import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn
 import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IKontak } from "../../features/person/person-slice";
 import { useDeletePerusahaanMutation, useGetAllPerusahaanQuery, useGetPerusahaanByIdPersonQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
@@ -69,11 +70,16 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     // local state
     const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
-
     
     //rtk query perusahaan variable hook
     const { data: daftarPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarPerusahaan, isError } = useGetPerusahaanByIdPersonQuery(token.userId as string);
     const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation();
+
+    // //react router
+    // const navigate = useNavigate();
+
+    // //redux action creator
+    // const dispatch = useAppDispatch();
 
     const _items: ICommandBarItemProps[] = useMemo(
         () => ([
@@ -130,17 +136,14 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     // );
 
     //refetch token
-    useEffect(
-        () => {
-            if(errorFetchDataPerusahaan != undefined) {
-                console.log(errorFetchDataPerusahaan);
-                // if(errorFetchDataPerusahaan.data.message == 'Expired JWT') {
-
-                // }
-            }
-        },
-        [errorFetchDataPerusahaan]
-    );
+    // useEffect(
+    //     () => {
+    //         if(errorFetchDataPerusahaan != undefined) {
+    //             localStorage.removeItem('token');
+    //         }
+    //     },
+    //     [errorFetchDataPerusahaan]
+    // );
 
     //deteksi data perusahaan sudah tersedia
     useEffect(

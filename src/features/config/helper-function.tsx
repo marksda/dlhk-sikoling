@@ -2,7 +2,7 @@ import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@re
 import { Mutex } from "async-mutex";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { RootState } from "../../app/store";
-import { IResponseStatusToken, setToken } from "../security/token-slice";
+import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
 import { baseRestAPIUrl } from "./config";
 
 
@@ -19,34 +19,6 @@ const baseQuery = fetchBaseQuery({
     },
 
 });
-
-const axiosBaseQuery =
-  (
-    { baseUrl }: { baseUrl: string|FetchArgs } = { baseUrl: '' }
-  ): BaseQueryFn<
-    {
-      url: string
-      method: AxiosRequestConfig['method']
-      data?: AxiosRequestConfig['data']
-      params?: AxiosRequestConfig['params']
-    },
-    unknown,
-    unknown
-  > =>
-  async ({ url, method, data, params }) => {
-    try {
-      const result = await axios({ url: baseUrl + url, method, data, params })
-      return { data: result.data }
-    } catch (axiosError) {
-      let err = axiosError as AxiosError
-      return {
-        error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
-        },
-      }
-    }
-  }
 
 
 export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
@@ -77,6 +49,8 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                 }
                 catch (axiosError) {
                     let err = axiosError as AxiosError;
+                    localStorage.removeItem('token');
+                    api.dispatch(resetToken());
                     result = {
                         error: {                            
                             status: err.response?.status as number,
