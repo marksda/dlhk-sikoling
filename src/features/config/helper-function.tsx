@@ -1,5 +1,6 @@
 import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { RootState } from "../../app/store";
 import { IResponseStatusToken, setToken } from "../security/token-slice";
 import { baseRestAPIUrl } from "./config";
@@ -15,8 +16,38 @@ const baseQuery = fetchBaseQuery({
             headers.set("authorization", `Bearer ${accessToken}`);
         }            
         return headers;
-    }
+    },
+
 });
+
+const axiosBaseQuery =
+  (
+    { baseUrl }: { baseUrl: string|FetchArgs } = { baseUrl: '' }
+  ): BaseQueryFn<
+    {
+      url: string
+      method: AxiosRequestConfig['method']
+      data?: AxiosRequestConfig['data']
+      params?: AxiosRequestConfig['params']
+    },
+    unknown,
+    unknown
+  > =>
+  async ({ url, method, data, params }) => {
+    try {
+      const result = await axios({ url: baseUrl + url, method, data, params })
+      return { data: result.data }
+    } catch (axiosError) {
+      let err = axiosError as AxiosError
+      return {
+        error: {
+          status: err.response?.status,
+          data: err.response?.data || err.message,
+        },
+      }
+    }
+  }
+
 
 export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
     await mutex.waitForUnlock();
@@ -27,14 +58,31 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
             try {
-                const refreshResult = await baseQuery('user/refresh_token', api, extraOptions);
-                if (refreshResult.error && refreshResult.error.status === 400) {
-                    result = refreshResult;
-                }
-                else {
-                    let responseStatusToken = refreshResult.data as IResponseStatusToken;
-                    api.dispatch(setToken(responseStatusToken.token));
+                let x = args as FetchArgs;
+                const refreshToken = (api.getState() as RootState).token.refreshToken;
+                try {
+                    const refreshResult = await axios.post(
+                        `${baseRestAPIUrl}user/refresh_token`, 
+                        refreshToken,
+                        {
+                            headers: {
+                                'Content-Type': 'text/plain',
+                            }
+                        });
+                    let hasil = refreshResult.data as IResponseStatusToken;
+                    localStorage.removeItem('token');
+                    localStorage.setItem('token', JSON.stringify(hasil.token));
+                    api.dispatch(setToken(hasil.token));
                     result = await baseQuery(args, api, extraOptions);
+                }
+                catch (axiosError) {
+                    let err = axiosError as AxiosError;
+                    result = {
+                        error: {                            
+                            status: err.response?.status as number,
+                            data: err.response?.data || err.message,
+                        },
+                    }
                 }
             } finally {
                 release();
