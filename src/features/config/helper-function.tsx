@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError } from "axios";
 import { RootState } from "../../app/store";
 import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
 import { baseRestAPIUrl } from "./config";
