@@ -27,7 +27,7 @@ import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha-api-slice
 import { KategoriPelakuUsahaApiSlice } from "../features/perusahaan/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
-import { PerusahaanApiSlice } from "../features/perusahaan/perusahaan-api-slice";
+import { RegisterPerusahaanApiSlice } from "../features/perusahaan/register-perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
 import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-api-slice";
 import dokumenReducer from "../features/dokumen/dokumen-slice";
@@ -71,7 +71,7 @@ export const store = configureStore({
         [KategoriPelakuUsahaApiSlice.reducerPath]: KategoriPelakuUsahaApiSlice.reducer,   
         [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
-        [PerusahaanApiSlice.reducerPath]: PerusahaanApiSlice.reducer,
+        [RegisterPerusahaanApiSlice.reducerPath]: RegisterPerusahaanApiSlice.reducer,
         kategoriDokumen: kategoriDokumenReducer,
         [KategoriDokumenApiSlice.reducerPath]: KategoriDokumenApiSlice.reducer,
         dokumen: dokumenReducer,
@@ -99,7 +99,7 @@ export const store = configureStore({
                                             .concat(SkalaUsahaApiSlice.middleware)
                                             .concat(KategoriPelakuUsahaApiSlice.middleware)
                                             .concat(PelakuUsahaApiSlice.middleware)
-                                            .concat(PerusahaanApiSlice.middleware)
+                                            .concat(RegisterPerusahaanApiSlice.middleware)
                                             .concat(KategoriDokumenApiSlice.middleware)
                                             .concat(DokumenApiSlice.middleware)
                                             .concat(KbliApiSlice.middleware)
