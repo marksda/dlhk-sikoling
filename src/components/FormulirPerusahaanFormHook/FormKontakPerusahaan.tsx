@@ -13,6 +13,7 @@ interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
     setError: UseFormSetError<IPerusahaan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
 export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError, setIsLoading}) => {
     //hook variable from react form hook
     const [kontak] = useWatch({
@@ -156,4 +157,5 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
             </Stack>
         </motion.div>
     );
+    
 };
