@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { SubmitHandler, UseFormSetError, useWatch } from "react-hook-form";
 import { regexpEmail, regexpNomorTelepone } from "../../features/config/config";
-import { useAddPerusahaanMutation } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
+import { useAddRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
@@ -23,7 +23,7 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
     const [animKontakPerusahaan, setAnimKontakPerusahaan] = useState<string>('open');
 
     //rtk query mutation addPerusahaan variable
-    const [addPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddPerusahaanMutation();
+    const [addRegisterPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddRegisterPerusahaanMutation();
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -73,7 +73,7 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
 
                 if(isValid == true) {
                     setIsLoading(true);   
-                    await addPerusahaan(data).unwrap();
+                    await addRegisterPerusahaan(data).unwrap();
                     setIsLoading(false);
                     setAnimKontakPerusahaan('closed');
                     let timer = setTimeout(

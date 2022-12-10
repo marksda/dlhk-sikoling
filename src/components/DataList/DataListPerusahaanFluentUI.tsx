@@ -1,12 +1,11 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
-import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import { IKontak } from "../../features/person/person-slice";
-import { useDeletePerusahaanMutation, useGetAllPerusahaanQuery, useGetPerusahaanByIdPersonQuery } from "../../features/perusahaan/perusahaan-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
+import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdPersonQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { ISubFormDetailPerusahaanProps } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 
 const _columns = [
@@ -16,15 +15,7 @@ const _columns = [
     { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 
-// export interface IListItemPerusahaan {
-//     key: string|undefined;
-//     npwp: string|undefined;
-//     nama: string|undefined;
-//     kontak: IKontak|undefined;
-//     alamat: string|undefined;
-// };
-
-export type IListItemPerusahaan = {key: string|null;} & Omit<IPerusahaan, "id">;
+export type IListItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
 
 const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
     if (!headerProps || !defaultRender) {
@@ -68,12 +59,12 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     const token = useAppSelector(state => state.token);
 
     // local state
-    const [dataPerusahaan, setDataPerusahaan] = useState<IListItemPerusahaan[]>([]);
+    const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
     
     //rtk query perusahaan variable hook
-    const { data: daftarPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarPerusahaan, isError } = useGetPerusahaanByIdPersonQuery(token.userId as string);
-    const [deletePerusahaan, { isLoading: isDeleting }] = useDeletePerusahaanMutation();
+    const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdPersonQuery(token.userId as string);
+    const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
 
     // //react router
     // const navigate = useNavigate();
@@ -148,28 +139,28 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     //deteksi data perusahaan sudah tersedia
     useEffect(
         () => {
-            if(isFetchingDaftarPerusahaan == false && daftarPerusahaan.length > 0){
+            if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
                 setDataPerusahaan([
-                    ...daftarPerusahaan.map(
+                    ...daftarRegisterPerusahaan.map(
                         (t) => (
-                            {key: t.id, ...omit(t, ['id'])}
+                            {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
                         )
                     )
                 ]);
             }
         },
-        [daftarPerusahaan, isFetchingDaftarPerusahaan]
+        [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
     );
 
     const _onItemInvoked = useCallback(
-        (item: IListItemPerusahaan): void => {
+        (item: IListItemRegisterPerusahaan): void => {
             // alert(`Item invoked: ${item.nama}`);
         },
         []
     );
 
     const handleRenderItemColumn = useCallback(
-        (item: IListItemPerusahaan, index: number|undefined, column: IColumn|undefined) => {
+        (item: IListItemRegisterPerusahaan, index: number|undefined, column: IColumn|undefined) => {
             // const fieldContent = item[column!.fieldName as keyof IListItemPerusahaan] as string;
             switch (column!.key) {
                 case 'c1':
@@ -188,10 +179,10 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                     );
                 case 'c2':
                     return (
-                        <span>{`${item.pelakuUsaha?.singkatan}. ${item.nama}`}</span>
+                        <span>{`${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.pelakuUsaha?.nama}`}</span>
                     );
                 case 'c3':
-                    let kontak = item[column!.fieldName as keyof IListItemPerusahaan] as IKontak;
+                    let kontak = item.perusahaan?.kontak;
                     return (
                         <div>
                             <p
@@ -199,7 +190,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                 margin: 0
                               })}
                             >
-                                {`Email: ${kontak.email}`}<br />
+                                {`Email: ${kontak?.email}`}<br />
                                 <span style={{display: 'flex'}}>
                                     <label className={mergeStyles({ 
                                             padding: '4px 0px',
@@ -217,14 +208,14 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                         display: 'block',
                                         color: 'white'
                                         })}
-                                    >{`${kontak.telepone}`}</label>
+                                    >{`${kontak!.telepone}`}</label>
                                 </span>
-                                {`Fax: ${kontak.fax}`}
+                                {`Fax: ${kontak!.fax}`}
                             </p>
                         </div>
                     );
                 default:
-                    return(<span>{`${item.alamat?.keterangan}`}</span>);
+                    return(<span>{`${item.perusahaan?.alamat?.keterangan}`}</span>);
             }
         },
         []
