@@ -1,10 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useAppSelector } from "../../../app/hooks";
-import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdPersonQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
-import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
-import { ISubFormDetailPerusahaanProps } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
+import { FC, useCallback, useMemo, useState } from "react";
+import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
 const _columns = [
     { key: 'c1', name: 'Npwp', fieldName: 'npwp', minWidth: 130, maxWidth: 130, isResizable: true },
@@ -52,7 +49,7 @@ const _columns = [
 
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
-export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan}) => {
+export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan, dataPerusahaan, deletePerusahaan}) => {
     // //redux global state
     // const token = useAppSelector(state => state.token);
 

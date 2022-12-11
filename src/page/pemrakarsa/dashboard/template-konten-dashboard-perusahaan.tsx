@@ -1,4 +1,5 @@
 import { useBoolean } from "@fluentui/react-hooks";
+import omit from "lodash.omit";
 import { FC, useEffect, useState } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
@@ -50,6 +51,8 @@ export const KontenDashboardPerusahaan: FC = () => {
             <DataListPerusahaanFluentUI 
                 showModalAddPerusahaan={showModalAddPerusahaan} 
                 hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
+                dataPerusahaan={dataPerusahaan}
+                deletePerusahaan={deletePerusahaan}
             />
             {
             isModalAddPerusahaanOpen &&
