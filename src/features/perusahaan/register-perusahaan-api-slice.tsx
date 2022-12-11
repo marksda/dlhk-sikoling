@@ -121,7 +121,7 @@ export const RegisterPerusahaanApiSlice = createApi({
             }),
             getRegisterPerusahaanByIdLinkKepemilikan: builder.query<daftarRegisterPerusahaan, string>({
                 query: (idLinkKepemilikan) => ({
-                    url: `register_perusahaan/link_kepemilikan/${idLinkKepemilikan}`,
+                    url: `register_perusahaan/kepemilikan/${idLinkKepemilikan}`,
                 }),
                 providesTags: (result) => 
                     result ?

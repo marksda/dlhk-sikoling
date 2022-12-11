@@ -1,5 +1,4 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
-import omit from "lodash.omit";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
@@ -9,63 +8,11 @@ const _columns = [
     { key: 'c3', name: 'Kontak', fieldName: 'kontak', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
-
-// export type IListItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
-
-// const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
-//     if (!headerProps || !defaultRender) {
-//         return null;
-//     }
-//     return defaultRender({
-//         ...headerProps,
-//         styles: {
-//             root: {                
-//                 // paddingTop: 0,                
-//                 // borderTop : '1px solid rgb(237, 235, 233)',
-//             },
-//         },
-//     })
-// };
-
-// const _selection = new Selection({
-//     onSelectionChanged: () => {
-//         // setSelectionDetails(getSelection());
-//         console.log()
-//     }
-// });
-
-// const getSelection = ():string => {
-//     const selectionCount = _selection.getSelectedCount();
-
-//     switch (selectionCount) {
-//     case 0:
-//         return 'No items selected';
-//     case 1:
-//         return '1 item selected: ' + (_selection.getSelection()[0] as IListItemPerusahaan).nama;
-//     default:
-//         return `${selectionCount} items selected`;
-//     }
-// };
-
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan, dataPerusahaan, deletePerusahaan}) => {
-    // //redux global state
-    // const token = useAppSelector(state => state.token);
-
     // local state
-    // const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
-    
-    //rtk query perusahaan variable hook
-    // const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdPersonQuery(token.userId as string);
-    // const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
-
-    // //react router
-    // const navigate = useNavigate();
-
-    // //redux action creator
-    // const dispatch = useAppDispatch();
 
     const _items: ICommandBarItemProps[] = useMemo(
         () => ([
