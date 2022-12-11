@@ -1,11 +1,11 @@
 import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
-import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { useDeleteLinkKepemilikanRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
 
 // const containerDivStyles: React.CSSProperties = {    
 //     boxShadow: DefaultEffects.elevation4, 
@@ -28,7 +28,7 @@ export const KontenDashboardPerusahaan: FC = () => {
     
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
-    const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
+    const [deleteLinkPersonPerusahaan, { isLoading: isDeleting }] = useDeleteLinkKepemilikanRegisterPerusahaanMutation();
 
     useEffect(
         () => {
@@ -45,6 +45,15 @@ export const KontenDashboardPerusahaan: FC = () => {
         [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
     );
 
+    const handleDeletePerusahaan = useCallback(
+        (idPerusahaan) => {
+            deleteLinkPersonPerusahaan({
+                idPerusahaan: idPerusahaan, 
+                idPerson: token.userId as string
+            });
+        },
+        [token]
+    );
     
     return(
         <>            
@@ -52,7 +61,7 @@ export const KontenDashboardPerusahaan: FC = () => {
                 showModalAddPerusahaan={showModalAddPerusahaan} 
                 hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
                 dataPerusahaan={dataPerusahaan}
-                deletePerusahaan={deletePerusahaan}
+                deletePerusahaan={handleDeletePerusahaan}
             />
             {
             isModalAddPerusahaanOpen &&

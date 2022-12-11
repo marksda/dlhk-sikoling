@@ -34,13 +34,28 @@ export const RegisterPerusahaanApiSlice = createApi({
                 },
             }),
             deleteRegisterPerusahaan: builder.mutation<{ success: boolean; id: string }, string>({
-                query(id) {
+                query(idPerusahaan) {
                   return {
-                    url: `register_perusahaan/${id}`,
+                    url: `register_perusahaan/${idPerusahaan}`,
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{type: 'RegisterPerusahaan', id: id!}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: id!}, {type: 'RegisterPerusahaanNamaPage', id: id!}, {type: 'RegisterPerusahaanNpwp', id: id!}, {type: 'RegisterPerusahaanByIdPerson', id: id!}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id!}],
+                invalidatesTags: (result, error, idPerusahaan) => {
+                    let id = result?.id;
+                    return [{type: 'RegisterPerusahaan', id: id}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: id}, {type: 'RegisterPerusahaanNamaPage', id: id}, {type: 'RegisterPerusahaanNpwp', id: id}, {type: 'RegisterPerusahaanByIdPerson', id: id}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]
+                },
+            }),
+            deleteLinkKepemilikanRegisterPerusahaan: builder.mutation<{ success: boolean; id: string }, {idPerusahaan: string, idPerson: string}>({
+                query(idPersonPerusahaan) {
+                  return {
+                    url: `register_perusahaan`,
+                    method: 'DELETE',
+                    body: idPersonPerusahaan,
+                  }
+                },
+                invalidatesTags: (result, error, {idPerusahaan}) => {
+                    let id = result?.id;
+                    return [{type: 'RegisterPerusahaan', id: id}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: id}, {type: 'RegisterPerusahaanNamaPage', id: id}, {type: 'RegisterPerusahaanNpwp', id: id}, {type: 'RegisterPerusahaanByIdPerson', id: id!}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
             }),
             getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, void>({
                 query: () => 'register_perusahaan',
@@ -151,5 +166,5 @@ export const {
     useGetRegisterPerusahaanByPageQuery, useGetRegisterPerusahaanByNamaQuery, 
     useGetRegisterPerusahaanByNamaAndPageQuery, useGetRegisterPerusahaanByNpwpQuery,
     useIsEksisRegisterPerusahaanQuery, useGetRegisterPerusahaanByIdKreatorQuery,
-    useGetRegisterPerusahaanByIdLinkKepemilikanQuery,
+    useGetRegisterPerusahaanByIdLinkKepemilikanQuery, useDeleteLinkKepemilikanRegisterPerusahaanMutation,
 } = RegisterPerusahaanApiSlice;
