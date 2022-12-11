@@ -15,6 +15,7 @@ interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
 };
 
 export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError, setIsLoading}) => {
+    
     //hook variable from react form hook
     const [kontak] = useWatch({
         control: control, 
@@ -76,14 +77,14 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                     setIsLoading(true);   
                     await addRegisterPerusahaan(data).unwrap();
                     setIsLoading(false);
-                    setAnimKontakPerusahaan('closed');
-                    let timer = setTimeout(
-                        () => {
-                            setMotionKey('dokumenOssPerusahaan');
-                        },
-                        duration*1000
-                    );
-                    return () => clearTimeout(timer);
+                    // setAnimKontakPerusahaan('closed');
+                    // let timer = setTimeout(
+                    //     () => {
+                    //         setMotionKey('dokumenOssPerusahaan');
+                    //     },
+                    //     duration*1000
+                    // );
+                    // return () => clearTimeout(timer);
                 }         
             } catch (error) {
                 setIsLoading(false);
@@ -157,5 +158,5 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
             </Stack>
         </motion.div>
     );
-    
+
 };

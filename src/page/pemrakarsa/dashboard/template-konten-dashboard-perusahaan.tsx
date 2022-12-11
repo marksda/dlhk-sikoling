@@ -1,7 +1,10 @@
 import { useBoolean } from "@fluentui/react-hooks";
-import { FC } from "react";
-import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUI";
+import { FC, useEffect, useState } from "react";
+import { useAppSelector } from "../../../app/hooks";
+import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
+import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
+import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
 
 // const containerDivStyles: React.CSSProperties = {    
 //     boxShadow: DefaultEffects.elevation4, 
@@ -15,13 +18,39 @@ import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormu
 // };
 
 export const KontenDashboardPerusahaan: FC = () => {
+    //redux global state
+    const token = useAppSelector(state => state.token);
+
+    //local state
     const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
+    const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
+    
+    //rtk query perusahaan variable hook
+    const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
+    const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
+
+    useEffect(
+        () => {
+            if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
+                setDataPerusahaan([
+                    ...daftarRegisterPerusahaan.map(
+                        (t) => (
+                            {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
+                        )
+                    )
+                ]);
+            }
+        },
+        [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
+    );
+
     
     return(
         <>            
             <DataListPerusahaanFluentUI 
                 showModalAddPerusahaan={showModalAddPerusahaan} 
-                hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}/>
+                hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
+            />
             {
             isModalAddPerusahaanOpen &&
             <ModalFormulirAddPerusahaan 

@@ -1,12 +1,10 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
-import { IKontak } from "../../features/person/person-slice";
-import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdPersonQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
-import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
-import { ISubFormDetailPerusahaanProps } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
+import { useAppSelector } from "../../../app/hooks";
+import { useDeleteRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdPersonQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
+import { ISubFormDetailPerusahaanProps } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 
 const _columns = [
     { key: 'c1', name: 'Npwp', fieldName: 'npwp', minWidth: 130, maxWidth: 130, isResizable: true },
@@ -15,22 +13,22 @@ const _columns = [
     { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 
-export type IListItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
+// export type IListItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
 
-const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
-    if (!headerProps || !defaultRender) {
-        return null;
-    }
-    return defaultRender({
-        ...headerProps,
-        styles: {
-            root: {                
-                // paddingTop: 0,                
-                // borderTop : '1px solid rgb(237, 235, 233)',
-            },
-        },
-    })
-};
+// const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?: IRenderFunction<IDetailsHeaderProps>) => {
+//     if (!headerProps || !defaultRender) {
+//         return null;
+//     }
+//     return defaultRender({
+//         ...headerProps,
+//         styles: {
+//             root: {                
+//                 // paddingTop: 0,                
+//                 // borderTop : '1px solid rgb(237, 235, 233)',
+//             },
+//         },
+//     })
+// };
 
 // const _selection = new Selection({
 //     onSelectionChanged: () => {
@@ -55,16 +53,16 @@ const onRenderDetailsHeader = (headerProps?:IDetailsHeaderProps, defaultRender?:
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan}) => {
-    //redux global state
-    const token = useAppSelector(state => state.token);
+    // //redux global state
+    // const token = useAppSelector(state => state.token);
 
     // local state
-    const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
+    // const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
     
     //rtk query perusahaan variable hook
-    const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdPersonQuery(token.userId as string);
-    const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
+    // const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdPersonQuery(token.userId as string);
+    // const [deletePerusahaan, { isLoading: isDeleting }] = useDeleteRegisterPerusahaanMutation();
 
     // //react router
     // const navigate = useNavigate();
@@ -116,41 +114,20 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
         []
     );
 
-    //deteksi error koneksi dengan backend
     // useEffect(
     //     () => {
-    //         if(isError == true) {
-    //             // alert('Koneksi ke server mengalami gangguan');
-    //         }                
-    //     },
-    //     [isError]
-    // );
-
-    //refetch token
-    // useEffect(
-    //     () => {
-    //         if(errorFetchDataPerusahaan != undefined) {
-    //             localStorage.removeItem('token');
+    //         if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
+    //             setDataPerusahaan([
+    //                 ...daftarRegisterPerusahaan.map(
+    //                     (t) => (
+    //                         {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
+    //                     )
+    //                 )
+    //             ]);
     //         }
     //     },
-    //     [errorFetchDataPerusahaan]
+    //     [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
     // );
-
-    //deteksi data perusahaan sudah tersedia
-    useEffect(
-        () => {
-            if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
-                setDataPerusahaan([
-                    ...daftarRegisterPerusahaan.map(
-                        (t) => (
-                            {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
-                        )
-                    )
-                ]);
-            }
-        },
-        [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
-    );
 
     const _onItemInvoked = useCallback(
         (item: IListItemRegisterPerusahaan): void => {
@@ -242,7 +219,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                 ariaLabelForSelectAllCheckbox="Toggle selection for all items"
                 checkButtonAriaLabel="select row"
                 onItemInvoked={_onItemInvoked}
-                onRenderDetailsHeader={onRenderDetailsHeader}
+                // onRenderDetailsHeader={onRenderDetailsHeader}
                 onRenderItemColumn={handleRenderItemColumn}
             />    
         </Stack>
