@@ -29,10 +29,10 @@ export const KontenDashboardPerusahaan: FC = () => {
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
     const [deleteLinkPersonPerusahaan, { isLoading: isDeleting }] = useDeleteLinkKepemilikanRegisterPerusahaanMutation();
-
+    
     useEffect(
         () => {
-            if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
+            if(daftarRegisterPerusahaan.length > 0){
                 setDataPerusahaan([
                     ...daftarRegisterPerusahaan.map(
                         (t) => (
@@ -41,8 +41,11 @@ export const KontenDashboardPerusahaan: FC = () => {
                     )
                 ]);
             }
+            else {
+                setDataPerusahaan([]);
+            }
         },
-        [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
+        [daftarRegisterPerusahaan]
     );
 
     const handleDeletePerusahaan = useCallback(

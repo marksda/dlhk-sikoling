@@ -7,7 +7,7 @@ import { IRegisterPerusahaan } from "./register-perusahaan-slice";
 type daftarRegisterPerusahaan = IRegisterPerusahaan[];
 
 export const RegisterPerusahaanApiSlice = createApi({
-    reducerPath: 'perusahaanApi',
+    reducerPath: 'registerPerusahaanApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
@@ -46,11 +46,10 @@ export const RegisterPerusahaanApiSlice = createApi({
                 },
             }),
             deleteLinkKepemilikanRegisterPerusahaan: builder.mutation<{ success: boolean; id: string }, {idPerusahaan: string, idPerson: string}>({
-                query(idPersonPerusahaan) {
+                query({idPerusahaan, idPerson}) {
                   return {
-                    url: `register_perusahaan`,
-                    method: 'DELETE',
-                    body: idPersonPerusahaan,
+                    url: `register_perusahaan/kepemilikan/${idPerusahaan}/${idPerson}`,
+                    method: 'DELETE'
                   }
                 },
                 invalidatesTags: (result, error, {idPerusahaan}) => {

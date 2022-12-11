@@ -11,6 +11,7 @@ const _columns = [
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan, dataPerusahaan, deletePerusahaan}) => {
+    console.log(dataPerusahaan);
     // local state
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
 

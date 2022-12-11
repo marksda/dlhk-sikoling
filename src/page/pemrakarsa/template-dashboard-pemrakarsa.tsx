@@ -26,7 +26,6 @@ export const KontenDashboardPemrakarsa: FC = () => {
     //this is used to handling event breadcrumb onClick
     const _onBreadcrumbItemClicked = useCallback(
         (ev?: React.MouseEvent<HTMLElement>, item?: IBreadcrumbItem) => {
-            console.log(item);
             setItemBreadcrumb([{text: 'Dashboard', key: item!.key, onClick: _onBreadcrumbItemClicked}]);
             setKontenSelected(item!.key);
         },
