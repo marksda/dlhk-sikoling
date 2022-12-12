@@ -77,15 +77,16 @@ const conversationTileStyle: React.CSSProperties = {
 };
 
 interface IKontenDashboardDefaultProps {
-    setKontenSelected?: any;
+    setParentPage: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const KontenDashboardDefault: FC<IKontenDashboardDefaultProps> = (props) => {
+export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPage}) => {
 
     const handleOnClickCardItem = useCallback(
         (e?: React.SyntheticEvent<HTMLElement>) => {
-            // props.setKontenSelected(e!.currentTarget.ariaLabel!);
-            props.setKontenSelected(e!.currentTarget.attributes[2].value);
+            if(e != undefined) {
+                setParentPage(e.currentTarget.attributes[2].value);
+            }
         },
         []
     );
