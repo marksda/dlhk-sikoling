@@ -1,6 +1,6 @@
 import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
@@ -18,31 +18,32 @@ import { useDeleteLinkKepemilikanRegisterPerusahaanMutation, useGetRegisterPerus
 //     marginLeft: 4,
 // };
 
+type daftarItemRegisterPerusahaan = IListItemRegisterPerusahaan[];
+
 export const KontenDashboardPerusahaan: FC = () => {
     //redux global state
     const token = useAppSelector(state => state.token);
 
     //local state
     const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
-    const [dataPerusahaan, setDataPerusahaan] = useState<IListItemRegisterPerusahaan[]>([]);
     
     //rtk query perusahaan variable hook
-    const { data: daftarRegisterPerusahaan = [], error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
+    const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
     const [deleteLinkPersonPerusahaan, { isLoading: isDeleting }] = useDeleteLinkKepemilikanRegisterPerusahaanMutation();
-    
-    useEffect(
+
+    const dataPerusahaan: daftarItemRegisterPerusahaan = useMemo(
         () => {
-            if(daftarRegisterPerusahaan.length > 0){
-                setDataPerusahaan([
+            if(daftarRegisterPerusahaan != undefined) {
+                return [
                     ...daftarRegisterPerusahaan.map(
                         (t) => (
                             {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
                         )
                     )
-                ]);
+                ];
             }
             else {
-                setDataPerusahaan([]);
+                return [];
             }
         },
         [daftarRegisterPerusahaan]
@@ -60,20 +61,18 @@ export const KontenDashboardPerusahaan: FC = () => {
     
     return(
         <>            
-            <DataListPerusahaanFluentUI 
-                showModalAddPerusahaan={showModalAddPerusahaan} 
-                hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
-                dataPerusahaan={dataPerusahaan}
-                deletePerusahaan={handleDeletePerusahaan}
-            />
-            {
-            isModalAddPerusahaanOpen &&
-            <ModalFormulirAddPerusahaan 
-                isModalOpen={isModalAddPerusahaanOpen}
-                hideModal={hideModalAddModalPerusahaan}
-                isDraggable={true}
-            />  
-            }                   
+        <DataListPerusahaanFluentUI 
+            showModalAddPerusahaan={showModalAddPerusahaan} 
+            hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
+            isDataLoading={isFetchingDaftarRegisterPerusahaan}
+            dataPerusahaan={dataPerusahaan}
+            deletePerusahaan={handleDeletePerusahaan}
+        />            
+        <ModalFormulirAddPerusahaan 
+            isModalOpen={isModalAddPerusahaanOpen}
+            hideModal={hideModalAddModalPerusahaan}
+            isDraggable={true}
+        />                 
         </>
         
     );

@@ -8,7 +8,6 @@ import { KontenDashboardPerusahaan } from "./dashboard/dashboard-perusahaan";
 export const KontenDashboardPemrakarsa: FC = () => {
     //local state    
     const [selectedPage, getSelectedPage] = useState<string>('default');
-    console.log(selectedPage);
 
     const konten = useMemo(
         () => {

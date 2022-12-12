@@ -79,21 +79,27 @@ const getContentPage = (idContentPage: string) => {
 };
 
 export const PemrakarsaPage: FC = () => {
+
     const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);
+    //react redux hook variable
     const token = useAppSelector((state) => state.token);
-    //react router
+    //react router hook variable
     const navigate = useNavigate();
 
     useEffect(
       () => {            
-          if(token.hakAkses == null) {
-            navigate("/");          
-          }
+        if(token.hakAkses == null) {
+          navigate("/");          
+        }
       },
       [token]
-  );
+    );
 
-    return (        
+    if(token.hakAkses == null) {
+      return null;
+    }
+    else {
+      return (        
         <AppLayoutFluentUI>
             <TopBarLayoutFluentUI />
             <MainLayoutFluentUI>
@@ -119,6 +125,8 @@ export const PemrakarsaPage: FC = () => {
                 </PageLayoutFluentUI>
             </MainLayoutFluentUI>
         </AppLayoutFluentUI>
-    );
+      );
+    } 
+       
 };
 

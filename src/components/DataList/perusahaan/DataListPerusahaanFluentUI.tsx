@@ -1,5 +1,5 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IDetailsHeaderProps, IObjectWithKey, IRenderFunction, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
 const _columns = [
@@ -10,8 +10,7 @@ const _columns = [
 ];
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
-export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, hideModalAddModalPerusahaan, dataPerusahaan, deletePerusahaan}) => {
-    // console.log(dataPerusahaan);
+export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, isDataLoading, dataPerusahaan, deletePerusahaan}) => {
     // local state
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
 
@@ -61,17 +60,9 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
 
     // useEffect(
     //     () => {
-    //         if(isFetchingDaftarRegisterPerusahaan == false && daftarRegisterPerusahaan.length > 0){
-    //             setDataPerusahaan([
-    //                 ...daftarRegisterPerusahaan.map(
-    //                     (t) => (
-    //                         {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
-    //                     )
-    //                 )
-    //             ]);
-    //         }
+    //         console.log(dataPerusahaan);
     //     },
-    //     [daftarRegisterPerusahaan, isFetchingDaftarRegisterPerusahaan]
+    //     [dataPerusahaan]
     // );
 
     const _onItemInvoked = useCallback(
@@ -146,11 +137,11 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
     return(     
         <>
         <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
-                <Stack.Item>
-                    <CommandBar
-                        items={_items}   
-                    />
-                </Stack.Item>
+            <Stack.Item>
+                <CommandBar
+                    items={_items}   
+                />
+            </Stack.Item>
         </Stack>
         <Stack>
             <DetailsList
@@ -170,5 +161,6 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
         </Stack>
         </> 
     );
+    
     
 }

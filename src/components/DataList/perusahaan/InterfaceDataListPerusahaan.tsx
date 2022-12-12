@@ -3,7 +3,8 @@ import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perus
 export type IListItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
 export interface ISubFormDetailPerusahaanProps {
     showModalAddPerusahaan: () => void;
-    hideModalAddModalPerusahaan: () => void;
+    hideModalAddModalPerusahaan?: () => void;
+    isDataLoading: boolean;
     dataPerusahaan: IListItemRegisterPerusahaan[];
-    deletePerusahaan: any;
+    deletePerusahaan: any;    
 };
