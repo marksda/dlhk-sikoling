@@ -1,13 +1,14 @@
 import { Breadcrumb,  Stack } from "@fluentui/react";
 import React, { FC, useMemo, useState } from "react";
 import { DashboardDefault } from "./dashboard/default";
-import { KontenDashboardPerusahaan } from "./dashboard/template-konten-dashboard-perusahaan";
+import { KontenDashboardPerusahaan } from "./dashboard/dashboard-perusahaan";
 
 
 
 export const KontenDashboardPemrakarsa: FC = () => {
     //local state    
     const [selectedPage, getSelectedPage] = useState<string>('default');
+    console.log(selectedPage);
 
     const konten = useMemo(
         () => {
@@ -16,7 +17,9 @@ export const KontenDashboardPemrakarsa: FC = () => {
         [selectedPage]
     );
 
-    return(konten);
+    return(
+        <div style={{margin: '0px 16px'}}>{konten}</div>
+        );
 };
 
 const getKontentDashboard = (item: string, setParentPage: React.Dispatch<React.SetStateAction<string>>) => {
