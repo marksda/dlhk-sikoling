@@ -1,30 +1,53 @@
 import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { contentStyles, duration, ISubFormPerusahaanProps, labelStyle, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
+
+type daftarOptionModelPerizinan = IDropdownOption<any>[];
+
 export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
+    // local state
     const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    //hook variable from react form hook state variable
     const [modelPerizinan] = useWatch({
         control: control, 
         name: ['modelPerizinan']
     });
     //rtk query modelperizinan variable hook
-    const { data: dataModelPerizinan = [], isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();    
+    const { data: daftarModelPerizinan, isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();    
+
+    console.log(modelPerizinan);
     
-    useEffect(
+    // useEffect(
+    //     () => {
+    //         if(isFetchingModelPerizinan == false) {
+    //             let tmpOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
+    //             // setOptions(tmpOptions);
+    //         }
+    //     },
+    //     [isFetchingModelPerizinan, dataModelPerizinan]
+    // );
+
+    const options: daftarOptionModelPerizinan = useMemo(
         () => {
-            if(isFetchingModelPerizinan == false) {
-                let tmpOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
+            if(daftarModelPerizinan != undefined) {
+                return [
+                    ...daftarModelPerizinan.map(
+                        (t) => ({
+                            key: t.id,
+                            text: `${t.nama} (${t.singkatan})`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingModelPerizinan, dataModelPerizinan]
+        [daftarModelPerizinan]
     );
 
     const processNextStep = useCallback(
@@ -42,14 +65,17 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
     );
 
     const handleSetModelPerizinan = useCallback(
-        (itemSelected) => {
-            
-            let itemModelPerizinanSelected = dataModelPerizinan.find(
-                (item) => { return item.id == itemSelected.key; } 
-            );
-            setValue("modelPerizinan", itemModelPerizinanSelected!);
+        (item) => {
+            let myArrayText = item.text.split(" ", 2);
+            let itemSelected = {
+                id: item.key,
+                nama: myArrayText[0],
+                singkatan: myArrayText[1].slice(1, myArrayText[1].length-2)
+
+            }
+            setValue("modelPerizinan", itemSelected);
         },
-        [dataModelPerizinan]
+        []
     )
 
     return (
