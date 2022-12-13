@@ -3,7 +3,7 @@ import { baseRestAPIUrl } from "../config/config";
 import { IKategoriDokumen } from "../dokumen/kategori-dokumen-slice";
 import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
 
-type daftarKategoriPelakuUsaha = IKategoriPelakuUsaha[];
+export type daftarKategoriPelakuUsaha = IKategoriPelakuUsaha[];
 
 export const KategoriPelakuUsahaApiSlice = createApi({
     reducerPath: 'kategoriPelakuUsahaApi',

@@ -10,27 +10,16 @@ import { contentStyles, duration, ISubFormPerusahaanProps, labelStyle, stackToke
 type daftarOptionModelPerizinan = IDropdownOption<any>[];
 
 export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
-    // local state
-    const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');
+    //react-form-hook variable
     const [modelPerizinan] = useWatch({
         control: control, 
         name: ['modelPerizinan']
     });
+    // local state
+    const [animModelPerizinan, setAnimModelPerizinan] = useState<string>('open');    
     //rtk query modelperizinan variable hook
     const { data: daftarModelPerizinan, isFetching: isFetchingModelPerizinan } = useGetAllModelPerizinanQuery();    
-
-    console.log(modelPerizinan);
     
-    // useEffect(
-    //     () => {
-    //         if(isFetchingModelPerizinan == false) {
-    //             let tmpOptions = dataModelPerizinan.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-    //             // setOptions(tmpOptions);
-    //         }
-    //     },
-    //     [isFetchingModelPerizinan, dataModelPerizinan]
-    // );
-
     const options: daftarOptionModelPerizinan = useMemo(
         () => {
             if(daftarModelPerizinan != undefined) {
@@ -66,11 +55,11 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
 
     const handleSetModelPerizinan = useCallback(
         (item) => {
-            let myArrayText = item.text.split(" ", 2);
+            let myArrayText = item.text.split(" (", 2);
             let itemSelected = {
                 id: item.key,
                 nama: myArrayText[0],
-                singkatan: myArrayText[1].slice(1, myArrayText[1].length-2)
+                singkatan: myArrayText[1].slice(0, myArrayText[1].length-1)
 
             }
             setValue("modelPerizinan", itemSelected);

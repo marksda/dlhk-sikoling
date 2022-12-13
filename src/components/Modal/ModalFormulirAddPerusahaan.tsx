@@ -100,7 +100,10 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                 id: '',
                 nama: '',
                 singkatan:'',
-                kategoriPelakuUsaha: null
+                kategoriPelakuUsaha: {
+                    id: '',
+                    nama: ''
+                }
             },
             alamat: {
                 propinsi: null,

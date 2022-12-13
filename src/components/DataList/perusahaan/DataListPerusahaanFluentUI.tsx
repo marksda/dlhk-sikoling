@@ -58,13 +58,6 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
         []
     );
 
-    useEffect(
-        () => {
-            console.log(dataPerusahaan);
-        },
-        [dataPerusahaan]
-    );
-
     const _onItemInvoked = useCallback(
         (item: IListItemRegisterPerusahaan): void => {
             // alert(`Item invoked: ${item.nama}`);

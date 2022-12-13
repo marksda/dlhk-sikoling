@@ -1,31 +1,43 @@
 import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
+type daftarOptionSkalaUsaha = IDropdownOption<any>[];
+
 export const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    //rtk query modelperizinan variable hook
-    const { data: dataSkalaUsaha = [], isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
-    //hook variable from form hook
+    //react-form-hook variable 
     const [modelPerizinan, skalaUsaha] = useWatch({
         control: control, 
         name: ['modelPerizinan', 'skalaUsaha']
     });
+    //local state
+    const [animSkalaUsaha, setAnimSkalaUsaha] = useState<string>('open');
+    // const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
+    //rtk query modelperizinan variable hook
+    const { data: daftarSkalaUsaha, isFetching: isFetchingSkalaUsaha } = useGetAllSkalaUsahaQuery();
 
-    useEffect(
+    const options: daftarOptionSkalaUsaha = useMemo(
         () => {
-            if(isFetchingSkalaUsaha == false) {
-                let tmpOptions = dataSkalaUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
+            if(daftarSkalaUsaha != undefined) {
+                return [
+                    ...daftarSkalaUsaha.map(
+                        (t) => ({
+                            key: t.id,
+                            text: `${t.nama} (${t.singkatan})`
+                        })
+                    )
+                ]
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingSkalaUsaha, dataSkalaUsaha]
-    );
+        [daftarSkalaUsaha]
+    ); 
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -42,13 +54,17 @@ export const FormSkalaUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, 
     );
 
     const handleSetSkalaUsaha = useCallback(
-        (itemSelected) => {
-            let itemSkalaUsahaSelected = dataSkalaUsaha.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
-            setValue("skalaUsaha", itemSkalaUsahaSelected || undefined);
+        (item) => {
+            let myArrayText = item.text.split(" (", 2);
+            let itemSelected = {
+                id: item.key,
+                nama: myArrayText[0],
+                singkatan: myArrayText[1].slice(0, myArrayText[1].length-1)
+
+            }
+            setValue("skalaUsaha", itemSelected);
         },
-        [dataSkalaUsaha]
+        []
     );
 
     const processNextStep = useCallback(

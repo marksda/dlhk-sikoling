@@ -1,31 +1,41 @@
 import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useGetKategoriPelakuUsahaBySkalaUsahaQuery } from "../../features/perusahaan/kategori-pelaku-usaha-api-slice";
+import { daftarKategoriPelakuUsaha, useGetKategoriPelakuUsahaBySkalaUsahaQuery } from "../../features/perusahaan/kategori-pelaku-usaha-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
+type daftarOptionKategoriPelakuUsaha = IDropdownOption<any>[];
+
 export const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    //local state
-    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open'); 
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
     //hook variable from react form hook state variable   
     const [skalaUsaha, pelakuUsaha] = useWatch({
         control: control, 
         name: ['skalaUsaha', 'pelakuUsaha']
     });
+    //local state
+    const [animKategoriPelakuUsaha, setAnimKategoriPelakuUsaha] = useState<string>('open');     
     
-    const { data: dataKategoriPelakuUsaha = [], isFetching: isFetchingKategoriPelakuUsaha } = useGetKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha.id);
-
-    useEffect(
+    const { data: daftarKategoriPelakuUsaha, isFetching: isFetchingKategoriPelakuUsaha } = useGetKategoriPelakuUsahaBySkalaUsahaQuery(skalaUsaha.id);
+    
+    const options: daftarOptionKategoriPelakuUsaha = useMemo(
         () => {
-            if(isFetchingKategoriPelakuUsaha == false) {
-                let tmpOptions = dataKategoriPelakuUsaha.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setOptions(tmpOptions);
+            if(daftarKategoriPelakuUsaha != undefined) {
+                return [
+                    ...daftarKategoriPelakuUsaha.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: `${t.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingKategoriPelakuUsaha, dataKategoriPelakuUsaha]
+        [daftarKategoriPelakuUsaha]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -43,14 +53,21 @@ export const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue,
     );
 
     const handleSetJenisPelakuUsaha = useCallback(
-        (itemSelected) => {
-            let itemKategoriPelakuUsahaSelected = dataKategoriPelakuUsaha.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
-            setValue("pelakuUsaha", {id: '', nama: '', singkatan: '', kategoriPelakuUsaha: itemKategoriPelakuUsahaSelected});
+        (item) => {
+            let itemSelected = {
+                id: item.key,
+                nama: item.text
+            };
+
+            setValue("pelakuUsaha", {
+                id: '', 
+                nama: '', 
+                singkatan: '', 
+                kategoriPelakuUsaha: itemSelected
+            });
             setValue("id", '');
         },
-        [dataKategoriPelakuUsaha, pelakuUsaha]
+        []
     );
 
     const processNextStep = useCallback(
