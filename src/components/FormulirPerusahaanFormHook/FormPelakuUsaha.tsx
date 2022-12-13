@@ -65,6 +65,7 @@ export const FormPelakuUsaha: FC<ISubFormPerusahaanProps> = ({control, setValue,
                 singkatan: '', 
                 kategoriPelakuUsaha: itemSelected
             });
+            
             setValue("id", '');
         },
         []

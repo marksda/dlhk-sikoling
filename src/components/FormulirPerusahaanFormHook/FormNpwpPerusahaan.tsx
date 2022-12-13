@@ -1,6 +1,6 @@
 import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
 import { useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
@@ -15,67 +15,88 @@ interface ISubFormNpwpPerusahaanProps extends ISubFormPerusahaanProps {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+type daftarOptionPelakuUsaha = IDropdownOption<any>[];
+
 export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, setValue, setMotionKey, handleSubmit, setError, setIsLoading}) => {    
-    //local state
-    const [animNpwpPerusahaan, setAnimNpwpPerusahaan] = useState<string>('open');
-    const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
-    const [npwp, setNpwp] = useState<string|null>(null);
-    //hook variable from react form hook state variable
+    //react-form-hook variable 
     const [id, pelakuUsaha] = useWatch({
         control: control, 
         name: ['id', 'pelakuUsaha']
     }); 
+    //local state
+    const [animNpwpPerusahaan, setAnimNpwpPerusahaan] = useState<string>('open');
+    // const [options, setOptions] = useState<IDropdownOption<any>[]>([]);
+    const [npwp, setNpwp] = useState<string|null>(null);
+    
     //hook variable from rtk query
-    const { data: dataPelakuUsaha = [], isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha.id, {skip: pelakuUsaha.kategoriPelakuUsaha == null ? true : false});
+    const { data: daftarPelakuUsaha, isFetching: isFetchingPelakuUsaha } = useGetPelakuUsahaByKategoriPelakuUsahaQuery(pelakuUsaha.kategoriPelakuUsaha.id, {skip: pelakuUsaha.kategoriPelakuUsaha.id == '' ? true : false});
     
     const { data: isEksisPerusahaan, isFetching: isFetchingIsEksisPerusahaan, isError: isErrorEksisPerusahaan} = useIsEksisRegisterPerusahaanQuery(npwp, {skip: npwp == undefined ? true : false});
+
+    const options: daftarOptionPelakuUsaha = useMemo(
+        () => {
+            if(daftarPelakuUsaha != undefined) {                
+                return [
+                    ...daftarPelakuUsaha.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: `${t.nama} (${t.singkatan})`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarPelakuUsaha]
+    );
     
     //deteksi data options pelaku usaha sudah tersedia
     useEffect(
         () => {
-            if(isFetchingPelakuUsaha == false) {
-                let tmpOptions = dataPelakuUsaha.map((t) => { return {key: t.id as string, text: `${t.nama} (${t.singkatan})` as string}; });
-                setOptions(tmpOptions);
-                if(pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') {
-                    let tmpFirstPelakuUsaha = dataPelakuUsaha[0];
-                    setValue("pelakuUsaha", {...pelakuUsaha, id: tmpFirstPelakuUsaha!.id, nama: tmpFirstPelakuUsaha!.nama, singkatan: tmpFirstPelakuUsaha!.singkatan});
+            if(daftarPelakuUsaha != undefined) {
+                if(pelakuUsaha.kategoriPelakuUsaha.id == '0101' || pelakuUsaha.kategoriPelakuUsaha.id == '0201') {
+                    let tmpFirstPelakuUsaha = daftarPelakuUsaha![0];
+                    setValue(
+                        "pelakuUsaha",
+                        {
+                            ...pelakuUsaha, 
+                            id: tmpFirstPelakuUsaha!.id, 
+                            nama: tmpFirstPelakuUsaha!.nama, 
+                            singkatan: tmpFirstPelakuUsaha!.singkatan
+                        }
+                    );
+                }
+            } 
+        },
+        [daftarPelakuUsaha]
+    );
+
+    //deteksi apakah npwp sudah terdaftar disistem apa belum
+    useEffect(
+        () => {   
+            if(isEksisPerusahaan != undefined) {
+                setIsLoading(false);
+                if(isEksisPerusahaan == true) {
+                    setError("id", {
+                        type: "manual",
+                        message: `Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`
+                    });
+                }
+                else {
+                    setAnimNpwpPerusahaan('closed');
+                    let timer = setTimeout(
+                        () => {
+                            setMotionKey('identitasPerusahaan');
+                        },
+                        duration*1000
+                    );
+                    return () => clearTimeout(timer);
                 }
             }
         },
-        [isFetchingPelakuUsaha]
-    );
-    //deteksi apakah npwp sudah terdaftar disistem apa belum
-    useEffect(
-        () => {            
-            setIsLoading(false);
-            if(isEksisPerusahaan == true) {
-                setError("id", {
-                    type: "manual",
-                    message: `Perusahaan dengnan npwp: ${npwp} sudah terdaftar dalam sistem`
-                });
-            }
-            else if(isEksisPerusahaan == false) {
-                setAnimNpwpPerusahaan('closed');
-                let timer = setTimeout(
-                    () => {
-                        setMotionKey('identitasPerusahaan');
-                    },
-                    duration*1000
-                );
-                return () => clearTimeout(timer);
-            }
-        },
-        [isFetchingIsEksisPerusahaan, isEksisPerusahaan]
-    );
-    //deteksi error koneksi remote API
-    useEffect(
-        () => {
-            if(isErrorEksisPerusahaan == true) {
-                setIsLoading(false);
-                console.log(isErrorEksisPerusahaan);
-            }            
-        },
-        [isErrorEksisPerusahaan]
+        [isEksisPerusahaan]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -93,13 +114,18 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
     );
 
     const handleSetPelakuUsaha = useCallback(
-        (itemSelected) => {
-            let itemPelakuUsahaSelected = dataPelakuUsaha.find(
-                (item) => { return item.id == itemSelected.key; } 
-            );
-            setValue("pelakuUsaha", {...pelakuUsaha, id: itemPelakuUsahaSelected!.id, nama: itemPelakuUsahaSelected!.nama, singkatan: itemPelakuUsahaSelected!.singkatan});
+        (item) => {
+            let myArrayText = item.text.split(" (", 2);
+            let itemSelected = {
+                ...pelakuUsaha,
+                id: item.key,
+                nama: myArrayText[0],
+                singkatan: myArrayText[1].slice(0, myArrayText[1].length-1)
+            };
+
+            setValue("pelakuUsaha", itemSelected);
         },
-        [dataPelakuUsaha, pelakuUsaha]
+        [pelakuUsaha]
     );
 
     const save = useCallback(
@@ -145,7 +171,7 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
             <Stack tokens={stackTokens}>                
                 <Stack.Item>
                     <ControlledFluentUiDropDown
-                        label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha != null ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
+                        label={`Jenis ${pelakuUsaha.kategoriPelakuUsaha.id != '' ? pelakuUsaha.kategoriPelakuUsaha.nama:null}`}
                         placeholder="Silahkan pilih "
                         options={options}
                         required
@@ -153,7 +179,7 @@ export const FormNpwpPerusahaan: FC<ISubFormNpwpPerusahaanProps> = ({control, se
                         rules={{ required: "harus diisi" }} 
                         control={control}
                         onChangeItem={handleSetPelakuUsaha}
-                        selectedKey={pelakuUsaha.id != null ? pelakuUsaha.id : undefined}
+                        selectedKey={pelakuUsaha.id != '' ? pelakuUsaha.id : undefined}
                         disabled={
                             (pelakuUsaha.kategoriPelakuUsaha.id ==  '0101' || pelakuUsaha.kategoriPelakuUsaha.id ==  '0201') ? true:false
                         }

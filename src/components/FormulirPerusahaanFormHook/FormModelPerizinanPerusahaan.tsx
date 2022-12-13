@@ -61,7 +61,8 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
                 nama: myArrayText[0],
                 singkatan: myArrayText[1].slice(0, myArrayText[1].length-1)
 
-            }
+            };
+            
             setValue("modelPerizinan", itemSelected);
         },
         []
