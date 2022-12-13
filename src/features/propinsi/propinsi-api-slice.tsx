@@ -4,6 +4,8 @@ import { baseRestAPIUrl, defaultHalaman as halaman } from "../../features/config
 
 // const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 
+type daftarPropinsi = IPropinsi[];
+
 export const PropinsiApiSlice = createApi({
     reducerPath: 'propinsiApi',
     baseQuery: fetchBaseQuery({
@@ -15,16 +17,16 @@ export const PropinsiApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            getAllPropinsi: builder.query<IPropinsi[], void>({
+            getAllPropinsi: builder.query<daftarPropinsi, void>({
                 query: () => `propinsi`,
             }),
-            getPropinsiByPage: builder.query<IPropinsi[], number|void>({
+            getPropinsiByPage: builder.query<daftarPropinsi, number|void>({
                 query: (page = 1, pageSize = 10) => `propinsi/page?page=${page}&pageSize=${pageSize}`,
             }),
-            getPropinsiByNama: builder.query<IPropinsi[], string|void>({
+            getPropinsiByNama: builder.query<daftarPropinsi, string|void>({
                 query: (nama = 'jawa timur') => `propinsi/nama?nama=${nama}`,
             }),
-            getPropinsiByNamaAndPage: builder.query<IPropinsi[], string|void>({
+            getPropinsiByNamaAndPage: builder.query<daftarPropinsi, string|void>({
                 query: (nama = 'jawa timur', page=halaman.page, pageSize=halaman.pageSize) => `propinsi/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
         }

@@ -1,6 +1,6 @@
 import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useGetDesaByKecamatanQuery } from "../../features/desa/desa-api-slice";
 import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
@@ -10,66 +10,98 @@ import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFlue
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
+
+type daftarOptions = IDropdownOption<any>[];
+
 export const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {
-    //hook variable from react form hook
+    //react-form hook variable
     const [alamat] = useWatch({
         control: control, 
         name: ['alamat']
     });
     //local state
     const [animAlamatPerusahaan, setAnimAlamatPerusahaan] = useState<string>('open');
-    const [propinsiOptions, setPropinsiOptions] = useState<IDropdownOption<any>[]>([]);
-    const [kabupatenOptions, setKabupatenOptions] = useState<IDropdownOption<any>[]>([]); 
-    const [kecamatanOptions, setKecamatanOptions] = useState<IDropdownOption<any>[]>([]);   
-    const [desaOptions, setDesaOptions] = useState<IDropdownOption<any>[]>([]);
     //hook variable rtk query
-    const { data: dataPropinsi = [], isFetching: isFetchingDataPropinsi, isError: isErrorPropinsi } = useGetAllPropinsiQuery();
-    const { data: dataKabupaten = [], isFetching: isFetchingDataKabupaten, isError: isErrorKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi != null ? alamat.propinsi.id : null, {skip: alamat.propinsi == null ? true : false});
-    const { data: dataKecamatan = [], isFetching: isFetchingDataKecamatan, isError: isErrorKecamatan } = useGetKecamatanByKabupatenQuery(alamat.kabupaten != null ? alamat.kabupaten.id : null, {skip: alamat.kabupaten == null ? true : false});
-    const { data: dataDesa = [], isFetching: isFetchingDataDesa, isError: isErrorDesa } = useGetDesaByKecamatanQuery(alamat.kecamatan != null ? alamat.kecamatan.id : null, {skip: alamat.kecamatan == null ? true : false});
+    const { data: daftarPropinsi, isFetching: isFetchingDataPropinsi, isError: isErrorPropinsi } = useGetAllPropinsiQuery();
+    const { data: daftarKabupaten, isFetching: isFetchingDataKabupaten, isError: isErrorKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi != null ? alamat.propinsi.id : null, {skip: alamat.propinsi == null ? true : false});
+    const { data: daftarKecamatan, isFetching: isFetchingDataKecamatan, isError: isErrorKecamatan } = useGetKecamatanByKabupatenQuery(alamat.kabupaten != null ? alamat.kabupaten.id : null, {skip: alamat.kabupaten == null ? true : false});
+    const { data: daftarDesa, isFetching: isFetchingDataDesa, isError: isErrorDesa } = useGetDesaByKecamatanQuery(alamat.kecamatan != null ? alamat.kecamatan.id : null, {skip: alamat.kecamatan == null ? true : false});
 
-    //deteksi data options propinsi sudah tersedia
-    useEffect(
+    
+    const propinsiOptions: daftarOptions = useMemo(
         () => {
-            if(isFetchingDataPropinsi == false) {
-                let tmpOptions = dataPropinsi.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setPropinsiOptions(tmpOptions);
+            if(daftarPropinsi != undefined) {
+                return [
+                    ...daftarPropinsi.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: t.nama!
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingDataPropinsi]
+        [daftarPropinsi]
     );
-
-    //deteksi data options kabupaten sudah tersedia
-    useEffect(
+    
+    const kabupatenOptions: daftarOptions = useMemo(
         () => {
-            if(isFetchingDataKabupaten == false) {
-                let tmpOptions = dataKabupaten.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setKabupatenOptions(tmpOptions);
+            if(daftarKabupaten != undefined) {
+                return [
+                    ...daftarKabupaten.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: t.nama!
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingDataKabupaten]
+        [daftarKabupaten]
     );
-
-    //deteksi data options kecamatan sudah tersedia
-    useEffect(
+    
+    const kecamatanOptions: daftarOptions = useMemo(
         () => {
-            if(isFetchingDataKecamatan == false) {
-                let tmpOptions = dataKecamatan.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setKecamatanOptions(tmpOptions);
+            if(daftarKecamatan != undefined) {
+                return [
+                    ...daftarKecamatan.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: t.nama!
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingDataKecamatan]
+        [daftarKecamatan]
     );
-
-    //deteksi data options desa sudah tersedia
-    useEffect(
+    
+    const desaOptions: daftarOptions = useMemo(
         () => {
-            if(isFetchingDataDesa == false) {
-                let tmpOptions = dataDesa.map((t) => { return {key: t.id as string, text: t.nama as string}; });
-                setDesaOptions(tmpOptions);
+            if(daftarDesa != undefined) {
+                return [
+                    ...daftarDesa.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: t.nama!
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
             }
         },
-        [isFetchingDataDesa]
+        [daftarDesa]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -87,61 +119,69 @@ export const FormAlamatPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setV
     );
 
     const handleChangePropinsi = useCallback(
-        (itemSelected) => {
-            let itemPropinsiSelected = dataPropinsi.find(
-                (item) => { return item.id == itemSelected.key; } 
-            );  
+        (item) => {
+            let itemSelected = {
+                id: item.key,
+                nama: item.text
+            };
+
             setValue("alamat", {
                 ...alamat, 
-                propinsi: {id: itemPropinsiSelected!.id, nama: itemPropinsiSelected!.nama},
+                propinsi: itemSelected,
                 kabupaten: null,
                 kecamatan: null,
                 desa: null,
             });
         },
-        [dataPropinsi, alamat]
+        [alamat]
     );
 
     const handleChangeKabupaten = useCallback(
-        (itemSelected) => {
-            let itemKabupatenSelected = dataKabupaten.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
+        (item) => {
+            let itemSelected = {
+                id: item.key,
+                nama: item.text
+            };
+
             setValue("alamat", {
                 ...alamat, 
-                kabupaten: {id: itemKabupatenSelected!.id, nama: itemKabupatenSelected!.nama},
+                kabupaten: itemSelected,
                 kecamatan: null,
                 desa: null
             });
         },
-        [dataKabupaten, alamat]
+        [alamat]
     );
 
     const handleChangeKecamatan = useCallback(
-        (itemSelected) => {
-            let itemKecamatanSelected = dataKecamatan.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
+        (item) => {
+            let itemSelected = {
+                id: item.key,
+                nama: item.text
+            };
+
             setValue("alamat", {
                 ...alamat, 
-                kecamatan: {id: itemKecamatanSelected!.id, nama: itemKecamatanSelected!.nama},
+                kecamatan: itemSelected,
                 desa: null
             });
         },
-        [dataKecamatan, alamat]
+        [alamat]
     );
 
     const handleChangeDesa = useCallback(
-        (itemSelected) => {
-            let itemDesaSelected = dataDesa.find(
-                (item) => { return item.id == itemSelected.key; } 
-            )
+        (item) => {
+            let itemSelected = {
+                id: item.key,
+                nama: item.text
+            };
+            
             setValue("alamat", {
                 ...alamat, 
-                desa: {id: itemDesaSelected!.id, nama: itemDesaSelected!.nama}
+                desa: itemSelected
             });
         },
-        [dataDesa, alamat]
+        [alamat]
     );
 
     const processNextStep = useCallback(
