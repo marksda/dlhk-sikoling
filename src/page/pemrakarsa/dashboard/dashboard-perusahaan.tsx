@@ -1,6 +1,6 @@
 import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
