@@ -9,15 +9,15 @@ export const KontenDashboardPemrakarsa: FC = () => {
     //local state    
     const [selectedPage, getSelectedPage] = useState<string>('default');
 
-    const konten = useMemo(
-        () => {
-            return getKontentDashboard(selectedPage, getSelectedPage);
-        },
-        [selectedPage]
-    );
+    // const konten = useMemo(
+    //     () => {
+    //         return getKontentDashboard(selectedPage, getSelectedPage);
+    //     },
+    //     [selectedPage]
+    // );
 
     return(
-        <div style={{margin: '0px 16px'}}>{konten}</div>
+        <div style={{margin: '0px 16px'}}>{getKontentDashboard(selectedPage, getSelectedPage)}</div>
         );
 };
 

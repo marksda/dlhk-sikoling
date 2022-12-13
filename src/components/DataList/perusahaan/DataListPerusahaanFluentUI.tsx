@@ -58,12 +58,12 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
         []
     );
 
-    // useEffect(
-    //     () => {
-    //         console.log(dataPerusahaan);
-    //     },
-    //     [dataPerusahaan]
-    // );
+    useEffect(
+        () => {
+            console.log(dataPerusahaan);
+        },
+        [dataPerusahaan]
+    );
 
     const _onItemInvoked = useCallback(
         (item: IListItemRegisterPerusahaan): void => {
@@ -155,7 +155,6 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                 ariaLabelForSelectAllCheckbox="Toggle selection for all items"
                 checkButtonAriaLabel="select row"
                 onItemInvoked={_onItemInvoked}
-                // onRenderDetailsHeader={onRenderDetailsHeader}
                 onRenderItemColumn={handleRenderItemColumn}
             />    
         </Stack>
