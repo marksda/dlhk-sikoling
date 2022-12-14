@@ -24,29 +24,29 @@ export const Home: FC = () => {
     //react router
     const navigate = useNavigate();
 
-    if(token.hakAkses == null) {
-        return (
-            <Stack tokens={containerStackTokens} >
-                <Header />
-                <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
-                    <FormulirLogin />
-                </Stack>             
-            </Stack>
-        )
-    }
-    else {
-        switch (token.hakAkses) {
-            case 'Umum':
-                navigate("/pemrakarsa");
-                break;   
-            case 'admin':
-                navigate("/admin");
-                break;                
-            default:
-                break;
-        }
-        return null;
-    }
+    // if(token.hakAkses == null) {
+    //     // return (
+    //     //     <Stack tokens={containerStackTokens} >
+    //     //         <Header />
+    //     //         <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
+    //     //             <FormulirLogin />
+    //     //         </Stack>             
+    //     //     </Stack>
+    //     // )
+    // }
+    // else {
+    //     switch (token.hakAkses) {
+    //         case 'Umum':
+    //             navigate("/pemrakarsa");
+    //             break;   
+    //         case 'admin':
+    //             navigate("/admin");
+    //             break;                
+    //         default:
+    //             break;
+    //     }
+    //     // return null;
+    // }
 
     // useEffect(
     //     () => {            
@@ -72,4 +72,16 @@ export const Home: FC = () => {
     //     [token]
     // );
 
+    return (
+        {
+            token.hakAkses == null &&
+            <Stack tokens={containerStackTokens} >
+                <Header />
+                <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
+                    <FormulirLogin />
+                </Stack>             
+            </Stack>
+        }
+        
+    );
 }
