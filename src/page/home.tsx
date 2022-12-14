@@ -26,24 +26,24 @@ export const Home: FC = () => {
 
     // if(token.hakAkses == null) {
     //     // return (
-    //     //     <Stack tokens={containerStackTokens} >
-    //     //         <Header />
-    //     //         <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
-    //     //             <FormulirLogin />
-    //     //         </Stack>             
-    //     //     </Stack>
+            // <Stack tokens={containerStackTokens} >
+            //     <Header />
+            //     <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
+            //         <FormulirLogin />
+            //     </Stack>             
+            // </Stack>
     //     // )
     // }
     // else {
     //     switch (token.hakAkses) {
-    //         case 'Umum':
-    //             navigate("/pemrakarsa");
-    //             break;   
-    //         case 'admin':
-    //             navigate("/admin");
-    //             break;                
-    //         default:
-    //             break;
+            // case 'Umum':
+            //     navigate("/pemrakarsa");
+            //     break;   
+            // case 'admin':
+            //     navigate("/admin");
+            //     break;                
+            // default:
+            //     break;
     //     }
     //     // return null;
     // }
@@ -80,8 +80,7 @@ export const Home: FC = () => {
                 <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
                     <FormulirLogin />
                 </Stack>             
-            </Stack>
+            </Stack> 
         }
-        
     );
 }
