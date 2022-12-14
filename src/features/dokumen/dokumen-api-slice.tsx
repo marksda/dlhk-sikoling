@@ -1,14 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../config/helper-function";
 import { IDokumen } from "./dokumen-slice";
 
 type daftarDokumen = IDokumen[];
 
 export const DokumenApiSlice = createApi({
     reducerPath: 'dokumenApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
     tagTypes:['Dokumen', 'DokumenPage', 'DokumenNama', 'DokumenNamaPage'],

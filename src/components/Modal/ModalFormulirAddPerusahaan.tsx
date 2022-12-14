@@ -116,7 +116,8 @@ export const ModalFormulirAddPerusahaan: FC<IModalFormulirPerusahaanProps> = ({i
                 telepone: '',
                 fax: '',
                 email: '',
-            }
+            },
+            daftarRegisterDokumen: null,
         }
     });
     
