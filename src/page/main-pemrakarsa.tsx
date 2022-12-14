@@ -71,7 +71,6 @@ export const PemrakarsaPage = () => {
       if(token.hakAkses == null) {
         navigate("/");          
       }
-      console.log('aku');
     },
     [token]
   );
