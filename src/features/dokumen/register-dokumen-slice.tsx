@@ -6,7 +6,7 @@ import { IDokumen } from "./dokumen-slice";
 
 export interface IRegisterDokumen {
     dokumen: Pick<IDokumen, 'id'> & Partial<IDokumen>|null;
-    perusahaan: Pick<IPerusahaan, 'id'> & Partial<IPerusahaan>|null;
+    perusahaan: Pick<IPerusahaan, 'id'> & Omit<IPerusahaan, 'id'>|null;
     lokasiFile: string|null;
     tanggalRegistrasi: string|null;
     uploader: Pick<IPerson, 'nik'>& Partial<IPerson>|null;
@@ -34,7 +34,7 @@ export const registerDokumenSlice = createSlice({
         setDokumenRegisterDokumen: (state, action: PayloadAction<Pick<IDokumen, 'id'> & Partial<IDokumen>>) => {
             state.dokumen = cloneDeep(action.payload);
         },
-        setPerusahaanRegisterDokumen: (state, action: PayloadAction<Pick<IPerusahaan, 'id'> & Partial<IPerusahaan>>) => {
+        setPerusahaanRegisterDokumen: (state, action: PayloadAction<Pick<IPerusahaan, 'id'> & Omit<IPerusahaan, 'id'>>) => {
             state.perusahaan = cloneDeep(action.payload);
         },
         setLokasiFileRegisterDokumen: (state, action: PayloadAction<string>) => {

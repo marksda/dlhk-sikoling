@@ -6,9 +6,7 @@ import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-pe
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { contentStyles, duration, ISubFormPerusahaanProps, labelStyle, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
-
 type daftarOptionModelPerizinan = IDropdownOption<any>[];
-
 export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({control, setValue, setMotionKey}) => {  
     //react-form-hook variable
     const [modelPerizinan] = useWatch({
@@ -38,7 +36,6 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
         },
         [daftarModelPerizinan]
     );
-    console.log(options);
 
     const processNextStep = useCallback(
         () => {
@@ -61,7 +58,6 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
                 id: item.key,
                 nama: myArrayText[0],
                 singkatan: myArrayText[1].slice(0, myArrayText[1].length-1)
-
             };
             
             setValue("modelPerizinan", itemSelected);
