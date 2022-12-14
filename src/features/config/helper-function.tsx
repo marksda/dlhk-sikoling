@@ -2,9 +2,9 @@ import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@re
 import { Mutex } from "async-mutex";
 import axios, { AxiosError } from "axios";
 import { RootState } from "../../app/store";
+import { resetCredential } from "../security/authentication-slice";
 import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
 import { baseRestAPIUrl } from "./config";
-
 
 const mutex = new Mutex();
 
@@ -68,4 +68,31 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
     }
 
     return result;
+};
+
+export const baseQueryForToken: BaseQueryFn<string|FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
+
+    let result = await baseQuery(args, api, extraOptions); 
+    let hasil = result.data as IResponseStatusToken;
+    if(hasil.status == 'oke') {        
+        localStorage.removeItem('token');
+        localStorage.setItem('token', JSON.stringify(hasil.token));
+        api.dispatch(setToken(hasil.token));
+        api.dispatch(resetCredential());
+    }
+    
+    return result;
+};
+
+export const isFetchBaseQueryError = (error: unknown): error is FetchBaseQueryError => {
+    return typeof error === "object" && error != null && "status" in error;
+};
+
+export const isErrorWithMessage= (error: unknown): error is {message: string} => {
+    return (
+        typeof error === "object" &&
+        error != null &&
+        "message" in error &&
+        typeof (error as any).message === "string"
+      );
 };

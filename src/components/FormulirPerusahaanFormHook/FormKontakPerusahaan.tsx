@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { SubmitHandler, UseFormSetError, useWatch } from "react-hook-form";
 import { regexpEmail, regexpNomorTelepone } from "../../features/config/config";
+import { isErrorWithMessage, isFetchBaseQueryError } from "../../features/config/helper-function";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { useAddRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
@@ -16,7 +17,7 @@ interface IFormKontakPerusahaanProps extends ISubFormPerusahaanProps {
 
 export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, setMotionKey, handleSubmit, setError, setIsLoading}) => {
     
-    //hook variable from react form hook
+    //react-form-hook variable
     const [kontak] = useWatch({
         control: control, 
         name: ['kontak']
@@ -25,7 +26,8 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
     const [animKontakPerusahaan, setAnimKontakPerusahaan] = useState<string>('open');
 
     //rtk query mutation addPerusahaan variable
-    const [addRegisterPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddRegisterPerusahaanMutation();
+    const [addRegisterPerusahaan] = useAddRegisterPerusahaanMutation();
+    // const [addRegisterPerusahaan, { data: simpleResponseAddRegister, isLoading: isLoadingAddPerusahaan }] = useAddRegisterPerusahaanMutation();
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -43,52 +45,60 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
 
     const successfulCallBack: SubmitHandler<IPerusahaan> = useCallback(
         async(data) => {
-            try {   
-                let isValid = true;
-                if(regexpEmail.test(data!.kontak!.email!) == false) {
-                    isValid = false;
-                    setError("kontak.email", {
-                        type: "manual",
-                        message: `penulisan email tidak sesuai dengan format`
-                    });
-                }
-
-                if(regexpNomorTelepone.test(data!.kontak!.telepone!) == false) {
-                    isValid = false;
-                    setError("kontak.telepone", {
-                        type: "manual",
-                        message: `penulisan nomor telepone tidak sesuai dengan format`
-                    });
-                } 
-
-                if(data!.kontak!.fax! != '') {
-                    if(data!.kontak!.fax! != '-') {
-                        if(regexpNomorTelepone.test(data!.kontak!.fax!) == false) {
-                            isValid = false;
-                            setError("kontak.fax", {
-                                type: "manual",
-                                message: `penulisan fax tidak sesuai dengan format`
-                            });
-                        } 
-                    }
-                }
-
-                if(isValid == true) {
-                    setIsLoading(true);   
-                    await addRegisterPerusahaan(data).unwrap();
-                    setIsLoading(false);
-                    // setAnimKontakPerusahaan('closed');
-                    // let timer = setTimeout(
-                    //     () => {
-                    //         setMotionKey('dokumenOssPerusahaan');
-                    //     },
-                    //     duration*1000
-                    // );
-                    // return () => clearTimeout(timer);
-                }         
-            } catch (error) {
-                setIsLoading(false);
+            let isValid = true;
+            if(regexpEmail.test(data!.kontak!.email!) == false) {
+                isValid = false;
+                setError("kontak.email", {
+                    type: "manual",
+                    message: `penulisan email tidak sesuai dengan format`
+                });
             }
+
+            if(regexpNomorTelepone.test(data!.kontak!.telepone!) == false) {
+                isValid = false;
+                setError("kontak.telepone", {
+                    type: "manual",
+                    message: `penulisan nomor telepone tidak sesuai dengan format`
+                });
+            } 
+
+            if(data!.kontak!.fax! != '') {
+                if(data!.kontak!.fax! != '-') {
+                    if(regexpNomorTelepone.test(data!.kontak!.fax!) == false) {
+                        isValid = false;
+                        setError("kontak.fax", {
+                            type: "manual",
+                            message: `penulisan fax tidak sesuai dengan format`
+                        });
+                    } 
+                }
+            }
+
+            if(isValid == true) {
+                setIsLoading(true);   
+                try{
+                    await addRegisterPerusahaan(data).unwrap();
+                    
+                } catch (error) {
+                    // if (isFetchBaseQueryError(error)) {
+                    //     if ("message" in error.data) {
+                    //     //   setErrorMessage(error.data.message);
+                    //     }
+                    // } else if (isErrorWithMessage(error)) {
+                    //     // setErrorMessage(error.message);
+                    // }
+                } finally {
+                    setIsLoading(false);
+                }
+                // setAnimKontakPerusahaan('closed');
+                // let timer = setTimeout(
+                //     () => {
+                //         setMotionKey('dokumenOssPerusahaan');
+                //     },
+                //     duration*1000
+                // );
+                // return () => clearTimeout(timer);
+            } 
         },
         []
     );  

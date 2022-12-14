@@ -85,7 +85,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                     );
                 case 'c2':
                     return (
-                        <span>{`${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.pelakuUsaha?.nama}`}</span>
+                        <span>{`${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}`}</span>
                     );
                 case 'c3':
                     let kontak = item.perusahaan?.kontak;

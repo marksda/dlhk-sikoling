@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { resetCredential, setPasswordCredential } from "../../features/security/authentication-slice";
+import { ICredential, resetCredential, setPasswordCredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
 import { setToken } from "../../features/security/token-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
@@ -33,44 +33,47 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     const [errorPassword, setErrorPassword] = useState<string>('');
 
     //rtk query
-    const [getToken, { data: dataToken, isLoading: isLoadingGetToken}] = useGetTokenMutation();
+    const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();
+    // const [getToken, { data: dataToken, isLoading: isLoadingGetToken}] = useGetTokenMutation();
+
+    // console.log(dataToken, isLoadingGetToken);
 
     //redux action creator
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
     //react router
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    useEffect(
-        () => {
-            if(credential.password != '') {
-                getToken(credential);
-            }
-        },
-        [credential]
-    );
+    // useEffect(
+    //     () => {
+    //         if(credential.password != '') {
+    //             getToken(credential);
+    //         }
+    //     },
+    //     [credential]
+    // );
 
-    useEffect(
-        () => {
-            setIsLoading(false); 
-            if(dataToken != undefined && dataToken.status == 'oke') {
-                localStorage.setItem('token', JSON.stringify(dataToken.token));
-                dispatch(resetCredential());
-                dispatch(setToken(dataToken.token));
-                switch (dataToken.token.hakAkses) {
-                    case 'Umum':
-                        navigate("/pemrakarsa");
-                        break;   
-                    case 'admin':
-                        navigate("/admin");
-                        break;                
-                    default:
-                        break;
-                }
-            }
-        },
-        [dataToken]
-    );
+    // useEffect(
+    //     () => {
+    //         setIsLoading(false); 
+    //         if(dataToken != undefined && dataToken.status == 'oke') {
+    //             localStorage.setItem('token', JSON.stringify(dataToken.token));
+    //             dispatch(resetCredential());
+    //             dispatch(setToken(dataToken.token));
+    //             switch (dataToken.token.hakAkses) {
+    //                 case 'Umum':
+    //                     navigate("/pemrakarsa");
+    //                     break;   
+    //                 case 'admin':
+    //                     navigate("/admin");
+    //                     break;                
+    //                 default:
+    //                     break;
+    //             }
+    //         }
+    //     },
+    //     [dataToken]
+    // );
 
     const processBackToPreviousStep = useCallback(
         () => {
@@ -94,11 +97,31 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     );
 
     const handleProcessLogin = useCallback(
-        () => {     
+        async () => {     
             setIsLoading(true);  
-            dispatch(setPasswordCredential(password));  
+            // dispatch(setPasswordCredential(password));  
+            let item: ICredential = {
+                userName: credential.userName,
+                password: password
+            };
+
+            try {
+                await getToken(item);                
+            } catch (error) {
+                // if (isFetchBaseQueryError(error)) {
+                //     if ("message" in error.data) {
+                //       setErrorMessage(error.data.message);
+                //     }
+                // } else if (isErrorWithMessage(error)) {
+                //     setErrorMessage(error.message);
+                // }
+            }
+            finally {
+                setIsLoading(false);  
+            }
+            
         },
-        [password]
+        [password, credential]
     );
 
     return(

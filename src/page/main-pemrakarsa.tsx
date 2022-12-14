@@ -96,6 +96,7 @@ export const PemrakarsaPage: FC = () => {
     );
 
     if(token.hakAkses == null) {
+      navigate("/");
       return null;
     }
     else {

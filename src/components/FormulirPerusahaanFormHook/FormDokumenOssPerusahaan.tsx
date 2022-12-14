@@ -76,19 +76,6 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
                         control={control}
                     />
                 </Stack.Item>
-                <Stack.Item>
-                <ControlledFluentUiDropDown
-                        label="Propinsi"
-                        placeholder="Pilih propinsi"
-                        options={propinsiOptions}
-                        required
-                        name="alamat.propinsi"
-                        rules={{ required: "harus diisi" }} 
-                        onChangeItem={handleChangePropinsi}
-                        control={control}
-                        selectedKey={alamat.propinsi != null ? alamat.propinsi.id : null}
-                    /> 
-                </Stack.Item>
             </Stack>
         </motion.div>
     );
