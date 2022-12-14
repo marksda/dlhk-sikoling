@@ -1,12 +1,9 @@
 import { Dropdown, IconButton, IDropdownOption, Label, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
