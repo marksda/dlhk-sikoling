@@ -58,76 +58,76 @@ const navLinkGroups: INavLinkGroup[] = [
   },
 ];
 
-const getContentPage = (idContentPage: string) => {
-    let konten = null;
-    switch (idContentPage) {
-        case 'dsb':
-            konten =             
-              <KontenDashboardPemrakarsa />;
-            break; 
-        case 'pmh':
-            konten = <KontenPermohonanPemrakarsa />;   
-            break;
-        case 'plp':
-            konten = <KontenPelaporanPemrakarsa />;   
-            break;
-        default:
-            konten = <KontenDashboardPemrakarsa />;
-            break;
+export const PemrakarsaPage = () => {
+  //react redux hook variable
+  const token = useAppSelector((state) => state.token); 
+  //react local state
+  const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);  
+  //react router hook variable
+  const navigate = useNavigate();
+
+  useEffect(
+    () => {            
+      if(token.hakAkses == null) {
+        navigate("/");          
+      }
+      console.log('aku');
+    },
+    [token]
+  );
+  
+  return (       
+    <>
+    {
+      token.hakAkses != null ? ( 
+      <AppLayoutFluentUI>
+          <TopBarLayoutFluentUI />
+          <MainLayoutFluentUI>
+              <SideBarLayoutFluentUI>
+                <LeftMenuFluentUI 
+                  menus={navLinkGroups}
+                  setIdContentPage={setIdContentPage}
+                />
+              </SideBarLayoutFluentUI>
+              <PageLayoutFluentUI>
+                <AnimatePresence>
+                  <motion.div
+                    key={idContentPage}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {
+                      getContentPage(idContentPage)
+                    }
+                  </motion.div>
+                </AnimatePresence>
+              </PageLayoutFluentUI>
+          </MainLayoutFluentUI>
+      </AppLayoutFluentUI>
+      ) : null
     }
-    return konten;
-};
-
-export const PemrakarsaPage: FC = () => {
-
-    const [idContentPage, setIdContentPage] = useState<string>(navLinkGroups[0].links[0].key!);
-    //react redux hook variable
-    const token = useAppSelector((state) => state.token);
-    //react router hook variable
-    const navigate = useNavigate();
-
-    useEffect(
-      () => {            
-        if(token.hakAkses == null) {
-          navigate("/");          
-        }
-      },
-      [token]
-    );
-
-    if(token.hakAkses == null) {
-      navigate("/");
-      return null;
-    }
-    else {
-      return (        
-        <AppLayoutFluentUI>
-            <TopBarLayoutFluentUI />
-            <MainLayoutFluentUI>
-                <SideBarLayoutFluentUI>
-                  <LeftMenuFluentUI 
-                    menus={navLinkGroups}
-                    setIdContentPage={setIdContentPage}
-                  />
-                </SideBarLayoutFluentUI>
-                <PageLayoutFluentUI>
-                  <AnimatePresence>
-                    <motion.div
-                      key={idContentPage}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      {
-                        getContentPage(idContentPage)
-                      }
-                    </motion.div>
-                  </AnimatePresence>
-                </PageLayoutFluentUI>
-            </MainLayoutFluentUI>
-        </AppLayoutFluentUI>
-      );
-    } 
+    </>
+  );
        
 };
 
+const getContentPage = (idContentPage: string) => {
+  let konten = null;
+  switch (idContentPage) {
+      case 'dsb':
+          konten =             
+            <KontenDashboardPemrakarsa />;
+          break; 
+      case 'pmh':
+          konten = <KontenPermohonanPemrakarsa />;   
+          break;
+      case 'plp':
+          konten = <KontenPelaporanPemrakarsa />;   
+          break;
+      default:
+          konten = <KontenDashboardPemrakarsa />;
+          break;
+  }
+  return konten;
+};
