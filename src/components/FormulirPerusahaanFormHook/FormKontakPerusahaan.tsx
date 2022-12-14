@@ -77,7 +77,14 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                 setIsLoading(true);   
                 try{
                     await addRegisterPerusahaan(data).unwrap();
-                    
+                    setAnimKontakPerusahaan('closed');
+                    let timer = setTimeout(
+                        () => {
+                            setMotionKey('dokumenOssPerusahaan');
+                        },
+                        duration*1000
+                    );
+                    return () => clearTimeout(timer);                    
                 } catch (error) {
                     // if (isFetchBaseQueryError(error)) {
                     //     if ("message" in error.data) {
@@ -89,14 +96,6 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
                 } finally {
                     setIsLoading(false);
                 }
-                // setAnimKontakPerusahaan('closed');
-                // let timer = setTimeout(
-                //     () => {
-                //         setMotionKey('dokumenOssPerusahaan');
-                //     },
-                //     duration*1000
-                // );
-                // return () => clearTimeout(timer);
             } 
         },
         []

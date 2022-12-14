@@ -38,6 +38,7 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
         },
         [daftarModelPerizinan]
     );
+    console.log(options);
 
     const processNextStep = useCallback(
         () => {

@@ -104,7 +104,7 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Dokumen OSS Perusahaan</Label>
-                <Label styles={subLabelStyle}>Isi dan Upload file dokumen OSS sebagai bukti sudah memiliki.</Label>
+                <Label styles={subLabelStyle}>Kami membutuhkan bukti kepemilikan dokumen OSS.</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
@@ -113,6 +113,7 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
                         placeholder="Pilih jenis dokumen"
                         options={options}
                         defaultSelectedKey='010301'
+                        disabled={true}
                     />
                 </Stack.Item>
                 <Stack.Item>
