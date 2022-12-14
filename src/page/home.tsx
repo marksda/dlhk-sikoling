@@ -1,5 +1,5 @@
 import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
 // import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -38,12 +38,17 @@ export const Home = () => {
     );
         
     return (
-        <Stack tokens={containerStackTokens} >
-            <Header />
-            <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
-                <FormulirLogin />
-            </Stack>             
-        </Stack>
+        <>
+        {
+            token.hakAkses == null ? (
+            <Stack tokens={containerStackTokens} >
+                <Header />
+                <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
+                    <FormulirLogin />
+                </Stack>             
+            </Stack>): null
+        }
+        </>
     );
     
 }
