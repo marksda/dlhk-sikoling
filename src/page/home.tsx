@@ -1,5 +1,5 @@
 import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
-import { FC, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
 // import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -46,7 +46,7 @@ export const Home = () => {
                 <Stack horizontal reversed tokens={containerBodyStackTokens} styles={stackBodyStyles}>
                     <FormulirLogin />
                 </Stack>             
-            </Stack>): null
+            </Stack>) : null
         }
         </>
     );

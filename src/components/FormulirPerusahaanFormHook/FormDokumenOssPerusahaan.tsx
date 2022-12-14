@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
