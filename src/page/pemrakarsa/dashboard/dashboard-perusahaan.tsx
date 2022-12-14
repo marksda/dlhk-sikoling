@@ -23,10 +23,8 @@ type daftarItemRegisterPerusahaan = IListItemRegisterPerusahaan[];
 export const KontenDashboardPerusahaan: FC = () => {
     //redux global state
     const token = useAppSelector(state => state.token);
-
     //local state
-    const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);
-    
+    const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);    
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
     const [deleteLinkPersonPerusahaan, { isLoading: isDeleting }] = useDeleteLinkKepemilikanRegisterPerusahaanMutation();
