@@ -1,11 +1,9 @@
 import { ActionButton, IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ICredential, resetCredential, setPasswordCredential } from "../../features/security/authentication-slice";
+import { FC, useCallback, useState } from "react";
+import { useAppSelector } from "../../app/hooks";
+import { ICredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
-import { setToken } from "../../features/security/token-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
 
 const stackTokens = { childrenGap: 2 };

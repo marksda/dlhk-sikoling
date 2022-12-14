@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { SubmitHandler, UseFormSetError, useWatch } from "react-hook-form";
 import { regexpEmail, regexpNomorTelepone } from "../../features/config/config";
-import { isErrorWithMessage, isFetchBaseQueryError } from "../../features/config/helper-function";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { useAddRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
