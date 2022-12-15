@@ -21,7 +21,6 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
     const options: daftarOptionModelPerizinan = useMemo(
         () => {
             if(daftarModelPerizinan != undefined) {
-                console.log(daftarModelPerizinan);
                 return [
                     ...daftarModelPerizinan.map(
                         (t) => ({

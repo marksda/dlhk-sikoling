@@ -22,13 +22,13 @@ export const RegisterPerusahaanApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'RegisterPerusahaan', id: 'LIST'}, {type: 'RegisterPerusahaanPage', id: 'LIST'}, {type: 'RegisterPerusahaanNama', id: 'LIST'}, {type: 'RegisterPerusahaanNamaPage', id: 'LIST'}, {type: 'RegisterPerusahaanNpwp', id: 'LIST'}, {type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST'}],
             }),
-            updateRegisterPerusahaan: builder.mutation<void, Partial<IRegisterPerusahaan>>({
-                query: (registerperusahaan) => ({
+            updateRegisterPerusahaan: builder.mutation<void, Partial<IPerusahaan>>({
+                query: (perusahaan) => ({
                     url: 'register_perusahaan',
                     method: 'PUT',
-                    body: registerperusahaan,
+                    body: perusahaan,
                 }),
-                invalidatesTags: (result, error, {perusahaan}) => {
+                invalidatesTags: (result, error, perusahaan) => {
                     let id = perusahaan?.id as string;
                     return [{type: 'RegisterPerusahaan', id}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: 'LIST'}, {type: 'RegisterPerusahaanNamaPage', id: 'LIST'}, {type: 'RegisterPerusahaanNpwp', id: 'LIST'}, {type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST'}];
                 },

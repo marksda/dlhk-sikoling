@@ -1,10 +1,14 @@
-import { Dropdown, IconButton, IDropdownOption, Label, Stack } from "@fluentui/react";
+import { DayOfWeek, Dropdown, IconButton, IDropdownOption, Label, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
+import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
+import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
+import { IDokumen } from "../../features/dokumen/dokumen-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+import { useUpdateRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 
 interface IFormDokumenOssPerusahaanProps extends ISubFormPerusahaanProps {
@@ -13,6 +17,7 @@ interface IFormDokumenOssPerusahaanProps extends ISubFormPerusahaanProps {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 type daftarOptionMasterDokumen = IDropdownOption<any>[];
+
 export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({control, setMotionKey, setIsLoading, setError}) => {
     //react-form-hook perusahaan
     const [id, nama, pelakuUsaha, daftarRegisterDokumen] = useWatch({
@@ -21,13 +26,29 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
     });
     //local state
     const [animDokumenOssPerusahaan, setAnimDokumenOssPerusahaan] = useState<string>('open');     
-    // const [itemRegisterDokumenOSS, setItemRegisterDokumenOSS] = useState<IRegisterDokumen|null>(null);
+    const [dokumenOss, setDokumenOSS] = useState<IDokumen>(
+        daftarRegisterDokumen != null ? 
+        find(daftarRegisterDokumen, (item) => (item.id == '010301')) as IDokumen :
+        {
+            id: null,
+            nama: null,
+            kategoriDokumen: null,
+            detailAttributeDokumen: null
+        }
+    );
+    console.log(dokumenOss);
     //rtk query modelperizinan variable hook
     const { data: daftarMasterDokumen, isFetching: isFetchingMasterDokumen } = useGetAllDokumenQuery();    
+    const [updateRegisterPerusahaan] = useUpdateRegisterPerusahaanMutation();
     
     const options: daftarOptionMasterDokumen = useMemo(
-        () => {
-            if(daftarMasterDokumen != undefined) {                
+        () => {            
+            if(daftarMasterDokumen != undefined) { 
+                if(dokumenOss.id == null) {
+                    let tmp = find(daftarMasterDokumen, (item) => (item.id == '010301')) as IDokumen;
+                    setDokumenOSS({...tmp});
+                }
+
                 return [
                     ...daftarMasterDokumen.map(
                         (t) => ({
@@ -43,22 +64,26 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
         },
         [daftarMasterDokumen]
     );
-
-    // const itemRegisterDokumenOSS: IRegisterDokumen|null = useMemo(
-    //     () => {
-    //         let item = null;
-    //         item = find(daftarRegisterDokumen, (i) => {i.dokumen.kategoriDokumen.id == '010301'});
-    //         if(item != null) {
-
-    //         }
-    //         return item;
-    //     },
-    //     [daftarMasterDokumen]
-    // );
-
-    // const itemRegisterDokumenOss: IRegisterDokumen =
     
-
+    const handleOnChangeNib = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            if (newValue != '') {
+                if(dokumenOss.detailAttributeDokumen == null) {
+                    dokumenOss.detailAttributeDokumen ={
+                        nib: newValue
+                    }
+                }
+                else {
+                    setDokumenOSS((prev) => ({
+                        ...prev, 
+                        detailAttributeDokumennib: {...prev.detailAttributeDokumen, nib: newValue}
+                    }));
+                }                
+            }
+        },
+        [],
+    );
+    
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimDokumenOssPerusahaan('closed');            
@@ -114,13 +139,29 @@ export const FormDokumenOssPerusahaan: FC<IFormDokumenOssPerusahaanProps> = ({co
                     />
                 </Stack.Item>
                 <Stack.Item>
-                    <ControlledFluentUiTextField
+                    <TextField
                         label="NIB"
-                        name="kontak.email"
-                        rules={{ required: "email perusahaan harus diisi" }} 
+                        name="nib"
                         required
+                        defaultValue={dokumenOss.detailAttributeDokumen != null ? dokumenOss.detailAttributeDokumen.nib : ''}
+                        onChange={handleOnChangeNib}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDatePicker
+                        name='tanggalTerbit'
+                        isRequired
+                        label="Tanggal Penerbitan Dokumen OSS"
+                        firstDayOfWeek={DayOfWeek.Sunday}
+                        placeholder='Pilih tanggal penerbitan OSS'
+                        ariaLabel="Pilih tanggal penerbitan"
+                        strings={DayPickerIndonesiaStrings}
+                        formatDate={onFormatDate}
                         control={control}
                     />
+                </Stack.Item>
+                <Stack.Item>
+                    
                 </Stack.Item>
             </Stack>
         </motion.div>
