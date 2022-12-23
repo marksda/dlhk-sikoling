@@ -45,16 +45,16 @@ export const RegisterPerusahaanApiSlice = createApi({
                     return [{type: 'RegisterPerusahaan', id: id}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: id}, {type: 'RegisterPerusahaanNamaPage', id: id}, {type: 'RegisterPerusahaanNpwp', id: id}, {type: 'RegisterPerusahaanByIdPerson', id: id}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]
                 },
             }),
-            deleteLinkKepemilikanRegisterPerusahaan: builder.mutation<{ success: boolean; id: string }, {idPerusahaan: string, idPerson: string}>({
-                query({idPerusahaan, idPerson}) {
+            deleteLinkKepemilikanRegisterPerusahaan: builder.mutation<{ success: boolean; id: string }, string>({
+                query(idRegisterPerusahaan) {
                   return {
-                    url: `register_perusahaan/kepemilikan/${idPerusahaan}/${idPerson}`,
+                    url: `register_perusahaan/kepemilikan/${idRegisterPerusahaan}`,
                     method: 'DELETE'
                   }
                 },
-                invalidatesTags: (result, error, {idPerusahaan}) => {
-                    let id = result?.id;
-                    return [{type: 'RegisterPerusahaan', id: id}, {type: 'RegisterPerusahaanPage', id}, {type: 'RegisterPerusahaanNama', id: id}, {type: 'RegisterPerusahaanNamaPage', id: id}, {type: 'RegisterPerusahaanNpwp', id: id}, {type: 'RegisterPerusahaanByIdPerson', id: id!}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
+                invalidatesTags: (result, error, id) => {
+                    // let id = result?.id;
+                    return [{type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
             }),
             getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, void>({
                 query: () => 'register_perusahaan',
@@ -62,7 +62,7 @@ export const RegisterPerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaan' as const, id: perusahaan?.id! })
+                            ({ id }) => ({ type: 'RegisterPerusahaan' as const, id: id as string })
                         ),
                         { type: 'RegisterPerusahaan', id: 'LIST' },
                     ]:
@@ -141,7 +141,7 @@ export const RegisterPerusahaanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanByIdLinkKepemilikan' as const, id: perusahaan?.id! })
+                            ({id}) => ({ type: 'RegisterPerusahaanByIdLinkKepemilikan' as const, id: id as string })
                         ),
                         { type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST' },
                     ]:

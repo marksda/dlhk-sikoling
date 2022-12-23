@@ -80,7 +80,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                             boxShadow: DefaultEffects.elevation4
                           })}
                         >
-                          {item.key}
+                          {item.perusahaan?.id}
                         </div>
                     );
                 case 'c2':

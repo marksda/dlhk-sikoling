@@ -35,7 +35,7 @@ export const KontenDashboardPerusahaan: FC = () => {
                 return [
                     ...daftarRegisterPerusahaan.map(
                         (t) => (
-                            {key: t.perusahaan?.id as string, ...omit(t, ['id'])}
+                            {key: t.id as string, ...omit(t, ['id'])}
                         )
                     )
                 ];
@@ -48,11 +48,8 @@ export const KontenDashboardPerusahaan: FC = () => {
     );
 
     const handleDeletePerusahaan = useCallback(
-        (idPerusahaan) => {
-            deleteLinkPersonPerusahaan({
-                idPerusahaan: idPerusahaan, 
-                idPerson: token.userId as string
-            });
+        (idRegisterPerusahaan) => {
+            deleteLinkPersonPerusahaan(idRegisterPerusahaan);
         },
         [token]
     );
