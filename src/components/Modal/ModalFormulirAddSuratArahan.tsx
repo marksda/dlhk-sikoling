@@ -83,7 +83,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             tanggalSurat: '',
             perihalSurat: '',
             uraianKegiatan: '',
-            kategoriSuratArahan: null
+            // kategoriSuratArahan: null
         }
     });
 

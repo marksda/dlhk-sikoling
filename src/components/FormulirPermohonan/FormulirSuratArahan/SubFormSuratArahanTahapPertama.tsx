@@ -31,17 +31,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Jenis Surat Arahan"
-                        placeholder="Pilih jenis surat arahan"
-                        options={options}
-                        required
-                        name="modelPerizinan"
-                        rules={{ required: "harus diisi" }} 
-                        control={control}
-                        onChangeItem={handleSetModelPerizinan}
-                        selectedKey={modelPerizinan.id != '' ? modelPerizinan.id : undefined}
-                    /> 
+                    
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
