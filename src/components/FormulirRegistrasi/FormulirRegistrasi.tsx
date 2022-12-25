@@ -141,7 +141,7 @@ export const FormulirRegistrasi: FC = () => {
     //-digunakan untuk mendeteksi state condition FormEmail apa kondisi awal atau balik
     // const [stateConditionFormEmail, setStateConditionFormEmail] = useState<string>('awal');
     //redux global state
-    const authentication = useAppSelector(state => state.authentication);      
+    // const authentication = useAppSelector(state => state.authentication);      
     
     //react-hook-form
     const { control, handleSubmit, setValue } = useForm<IPerson>({

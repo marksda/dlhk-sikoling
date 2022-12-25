@@ -38,6 +38,7 @@ import { KbliApiSlice } from "../features/dokumen/kbli-api-slice";
 import registerKbliReducer from "../features/dokumen/register-kbli-slice";
 import { RegisterKbliApiSlice } from "../features/dokumen/register-kbli-api-slice";
 import registerPerusahaanReducer from "../features/perusahaan/register-perusahaan-slice";
+import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
@@ -82,6 +83,7 @@ export const store = configureStore({
         registerKbli: registerKbliReducer,
         [RegisterKbliApiSlice.reducerPath]: RegisterKbliApiSlice.reducer,
         registerPerusahaan: registerPerusahaanReducer,
+        [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
@@ -103,7 +105,8 @@ export const store = configureStore({
                                             .concat(KategoriDokumenApiSlice.middleware)
                                             .concat(DokumenApiSlice.middleware)
                                             .concat(KbliApiSlice.middleware)
-                                            .concat(RegisterKbliApiSlice.middleware),
+                                            .concat(RegisterKbliApiSlice.middleware)
+                                            .concat(KategoriPermohonanApiSlice.middleware),
 });
 
 // Aliasing variable in typescript

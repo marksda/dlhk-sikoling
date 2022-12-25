@@ -1,8 +1,11 @@
 import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { ISuratArahan } from "../../features/dokumen/surat-arahan/surat-arahan-api-slice";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
-import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirSuratArahan/interfaceSuratArahan";
+import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfaceSuratArahan";
+import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -49,7 +52,7 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const progressStyle: IProgressIndicatorStyles ={
+const progressStyle: IProgressIndicatorStyles = {
     root: {
         flex: '1 1 auto',
         width: '100%'
@@ -67,15 +70,27 @@ const progressStyle: IProgressIndicatorStyles ={
 
 export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = ({isModalOpen, hideModal, isDraggable}) => {  
     //* local state *   
-    const [motionKey, setMotionKey] = useState<string>('modelPerizinan');    
-    // const [isErrorConnection, setIsErrorConnection] = useState<boolean>(false);
+    const [motionKey, setMotionKey] = useState<string>('tahapPertama'); 
     const [isLoading, setIsLoading] = useState<boolean>(false); 
+
     const titleId = useId('Formulir Surat Arahan');
+    //react hook form variable
+    const { control, handleSubmit, setValue, reset, setError } = useForm<ISuratArahan>({
+        mode: 'onSubmit',
+        defaultValues: {
+            id: '',
+            noSurat: '',
+            tanggalSurat: '',
+            perihalSurat: '',
+            uraianKegiatan: '',
+            kategoriSuratArahan: null
+        }
+    });
 
     const handleCloseModal = useCallback(
         () => {
-            // reset();
-            setMotionKey('modelPerizinan');
+            reset();
+            setMotionKey('tahapPertama');
             hideModal();
         },
         []
@@ -111,7 +126,40 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     />
                 </div>                  
             </div>
+            {                
+                getSlideSubFormSuratArahan({
+                    motionKey, 
+                    setMotionKey,
+                    control, 
+                    setValue,
+                    reset,
+                    handleSubmit,
+                    setError,
+                    setIsLoading
+                })
+            }    
         </Modal>
     );
-
 };
+
+const getSlideSubFormSuratArahan = (
+    {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormSuratArahanParam) => {
+    let konten = null;
+    switch (motionKey) {
+        case 'tahapPertama':
+            konten = 
+                <SubFormSuratArahanTahapPertama
+                    control={control}
+                    setValue={setValue}
+                    setIsLoading={setIsLoading}
+                    setError={setError}
+                    setMotionKey={setMotionKey}
+                />;
+            break; 
+        default:
+            konten = null;
+            break;
+    }
+    return konten;
+};
+
