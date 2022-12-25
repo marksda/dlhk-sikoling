@@ -9,6 +9,7 @@ import { IStatusTahapPemberkasan } from "./status-tahap-pemberkasan";
 export interface IRegisterPermohonan {
     id: string|null;
     kategoriPermohonan: IKategoriPermohonan|null;
+    tanggalRegistrasi: string|null,
     perusahaan: IPerusahaan|null;
     detailPermohonan: any|null;    
     kreator: any|null;
