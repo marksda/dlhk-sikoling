@@ -1,5 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
+import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
+import { ISuratArahan } from "../../../features/dokumen/surat-arahan/surat-arahan-api-slice";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
 const _columns = [
@@ -7,6 +9,7 @@ const _columns = [
     { key: 'c2', name: 'Nama', fieldName: 'nama', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c3', name: 'Kontak', fieldName: 'kontak', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c4', name: 'Alamat', fieldName: 'alamat', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'c5', name: 'Dokumen', fieldName: 'dokumen', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
@@ -27,7 +30,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                 key: 'edit',
                 text: 'Ubah',
                 iconProps: { iconName: 'Edit' },
-                onClick: () => console.log('Share'),
+                onClick: showModalAddPerusahaan,
                 disabled: selectedItems.length == 1 ? false:true,
             },
             {
@@ -119,6 +122,30 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                 {`Fax: ${kontak!.fax}`}
                             </p>
                         </div>
+                    );
+                case 'c4':
+                    return (
+                        <span>{`${item.perusahaan?.alamat?.keterangan}`}</span>
+                    );
+                case 'c5':
+                    return(
+                        <>
+                        {
+                            item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen) => {
+                                let dokumen = null;
+                                if(dataRegisterDokumen.dokumen?.id == '010401') {
+                                    dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
+                                }
+                                return (
+                                    <>
+                                        <span>Nama: {dokumen?.nama}</span><br />
+                                        <span>Nomor: {dokumen?.noSurat}</span><br />
+                                        <span>perihal: {dokumen?.perihalSurat}</span>
+                                    </>                                    
+                                );
+                            })
+                        }
+                        </>
                     );
                 default:
                     return(<span>{`${item.perusahaan?.alamat?.keterangan}`}</span>);

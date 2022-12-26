@@ -72,14 +72,14 @@ export const FormModelPerizinanPerusahaan: FC<ISubFormPerusahaanProps> = ({contr
             className={contentStyles.body} 
         >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Status OSS-RBA?</Label>
-                <Label styles={subLabelStyle}>Status OSS-RBA perusahaan menentukan isian tahab berikutnya.</Label>
+                <Label styles={labelStyle}>Status OSS usaha</Label>
+                <Label styles={subLabelStyle}>Kami ingin mengetahui apakah usaha anda sudah terdaftar dalam OSS atau belum terdaftar dalam OSS.</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
-                        label="Status OSS-RBA"
-                        placeholder="Pilih status OSS-RBA"
+                        label="Status OSS"
+                        placeholder="Pilih status OSS"
                         options={options}
                         required
                         name="modelPerizinan"

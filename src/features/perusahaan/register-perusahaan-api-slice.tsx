@@ -10,7 +10,6 @@ export const RegisterPerusahaanApiSlice = createApi({
     reducerPath: 'registerPerusahaanApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
     tagTypes: ['RegisterPerusahaan', 'RegisterPerusahaanPage', 'RegisterPerusahaanNama', 'RegisterPerusahaanNamaPage', 'RegisterPerusahaanNpwp', 'RegisterPerusahaanByIdPerson', 'RegisterPerusahaanByIdLinkKepemilikan'],
     endpoints(builder) {
         return {
