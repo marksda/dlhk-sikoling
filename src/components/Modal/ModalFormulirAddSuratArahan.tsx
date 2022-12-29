@@ -2,7 +2,7 @@ import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles,
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ISuratArahan } from "../../features/dokumen/surat-arahan/surat-arahan-api-slice";
+import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfaceSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";

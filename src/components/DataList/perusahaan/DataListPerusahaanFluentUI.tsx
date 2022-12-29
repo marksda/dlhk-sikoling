@@ -1,7 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
-import { ISuratArahan } from "../../../features/dokumen/surat-arahan/surat-arahan-api-slice";
+import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
 const _columns = [
@@ -179,7 +179,6 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
             />    
         </Stack>
         </> 
-    );
-    
+    );    
     
 }

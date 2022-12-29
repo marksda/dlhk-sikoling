@@ -1,6 +1,6 @@
 import { ContextualMenu, IDragOptions, IIconProps, ILabelStyles, mergeStyleSets } from "@fluentui/react";
 import { Control, UseFormHandleSubmit, UseFormReset, UseFormSetError, UseFormSetValue } from "react-hook-form";
-import { ISuratArahan } from "../../../features/dokumen/surat-arahan/surat-arahan-api-slice";
+import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 
 
 export const durationAnimFormSuratArahan: number = 0.5;

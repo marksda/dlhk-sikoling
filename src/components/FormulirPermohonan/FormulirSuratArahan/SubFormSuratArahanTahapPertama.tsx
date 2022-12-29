@@ -2,7 +2,7 @@ import { Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useState } from "react";
 import { UseFormSetError } from "react-hook-form";
-import { ISuratArahan } from "../../../features/dokumen/surat-arahan/surat-arahan-api-slice";
+import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { contentStyles, ISubFormSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfaceSuratArahan";
 
