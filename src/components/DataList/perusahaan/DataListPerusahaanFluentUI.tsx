@@ -1,5 +1,6 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
+import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
@@ -135,14 +136,24 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                 let dokumen = null;
                                 if(dataRegisterDokumen.dokumen?.id == '010401') {
                                     dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
+                                    return (
+                                        <>
+                                            <span>Nama: {dokumen?.nama}</span><br />
+                                            <span>Nomor: {dokumen?.noSurat}</span><br />
+                                            <span>perihal: {dokumen?.perihalSurat}</span>
+                                        </>                                    
+                                    );
                                 }
-                                return (
-                                    <>
-                                        <span>Nama: {dokumen?.nama}</span><br />
-                                        <span>Nomor: {dokumen?.noSurat}</span><br />
-                                        <span>perihal: {dokumen?.perihalSurat}</span>
-                                    </>                                    
-                                );
+                                else if(dataRegisterDokumen.dokumen?.id == '010101') {
+                                    dokumen = dataRegisterDokumen.dokumen as IAktaPendirian;
+                                    return (
+                                        <>
+                                            <span>Nama: {dokumen?.nama}</span><br />
+                                            <span>Nomor: {dokumen?.nomor}</span><br />
+                                            <span>notaris: {dokumen?.namaNotaris}</span>
+                                        </>                                    
+                                    );
+                                }
                             })
                         }
                         </>
