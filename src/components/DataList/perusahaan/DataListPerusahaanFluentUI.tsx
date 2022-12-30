@@ -1,6 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
+import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
@@ -138,10 +139,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
                                     return (
                                         <>
-                                            <span>Nama: {dokumen?.nama}</span><br />
+                                            <span>- {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
                                             <span>perihal: {dokumen?.perihalSurat}</span><br />
-                                            <span>perihal: {dokumen?.uraianKegiatan}</span><br />
+                                        </>                                    
+                                    );
+                                }
+                                else if(dataRegisterDokumen.dokumen?.id == '010402') {
+                                    dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
+                                    return (
+                                        <>
+                                            <span>- {dokumen?.nama}</span><br />
+                                            <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
                                         </>                                    
                                     );
                                 }
@@ -149,7 +158,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as IAktaPendirian;
                                     return (
                                         <>
-                                            <span>Nama: {dokumen?.nama}</span><br />
+                                            <span>- {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>notaris: {dokumen?.namaNotaris}</span><br />
                                         </>                                    
