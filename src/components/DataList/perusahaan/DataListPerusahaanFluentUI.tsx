@@ -140,7 +140,8 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                         <>
                                             <span>Nama: {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span>
+                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <span>perihal: {dokumen?.uraianKegiatan}</span><br />
                                         </>                                    
                                     );
                                 }
@@ -150,7 +151,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                         <>
                                             <span>Nama: {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.nomor}</span><br />
-                                            <span>notaris: {dokumen?.namaNotaris}</span>
+                                            <span>notaris: {dokumen?.namaNotaris}</span><br />
                                         </>                                    
                                     );
                                 }
