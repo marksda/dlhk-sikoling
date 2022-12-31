@@ -10,7 +10,7 @@ export const RegisterPerusahaanApiSlice = createApi({
     reducerPath: 'registerPerusahaanApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    tagTypes: ['RegisterPerusahaan', 'RegisterPerusahaanPage', 'RegisterPerusahaanNama', 'RegisterPerusahaanNamaPage', 'RegisterPerusahaanNpwp', 'RegisterPerusahaanByIdPerson', 'RegisterPerusahaanByIdLinkKepemilikan'],
+    tagTypes: ['RegisterPerusahaan', 'RegisterPerusahaanPage', 'RegisterPerusahaanNama', 'RegisterPerusahaanNamaPage', 'RegisterPerusahaanNpwp', 'RegisterPerusahaanByIdPerson', 'RegisterPerusahaanByIdLinkKepemilikan', 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan'],
     endpoints(builder) {
         return {
             addRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, Partial<IPerusahaan>>({
@@ -132,6 +132,20 @@ export const RegisterPerusahaanApiSlice = createApi({
             isEksisRegisterPerusahaan: builder.query<boolean, string|null>({
                 query: (idRegisterPerusahaan) => `register_perusahaan/is_eksis?id=${idRegisterPerusahaan}`,
             }),
+            getRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikan: builder.query<daftarRegisterPerusahaan, string>({
+                query: (idLinkKepemilikan) => ({
+                    url: `register_perusahaan/kepemilikan/tanpa_dokumen/${idLinkKepemilikan}`,
+                }),
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({id}) => ({ type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan' as const, id: id as string })
+                        ),
+                        { type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan', id: 'LIST'}],                
+            }),
             getRegisterPerusahaanByIdLinkKepemilikan: builder.query<daftarRegisterPerusahaan, string>({
                 query: (idLinkKepemilikan) => ({
                     url: `register_perusahaan/kepemilikan/${idLinkKepemilikan}`,
@@ -165,4 +179,5 @@ export const {
     useGetRegisterPerusahaanByNamaAndPageQuery, useGetRegisterPerusahaanByNpwpQuery,
     useIsEksisRegisterPerusahaanQuery, useGetRegisterPerusahaanByIdKreatorQuery,
     useGetRegisterPerusahaanByIdLinkKepemilikanQuery, useDeleteLinkKepemilikanRegisterPerusahaanMutation,
+    useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery,
 } = RegisterPerusahaanApiSlice;

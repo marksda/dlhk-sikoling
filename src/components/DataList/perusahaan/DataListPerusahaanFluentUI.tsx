@@ -3,6 +3,8 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
+import { IRekomendasiDPLH } from "../../../features/dokumen/rekomendasi-dplh-api-slice";
+import { IRekomendasiUKLUPL } from "../../../features/dokumen/rekomendasi-ukl-upl-api-slice";
 import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { IListItemRegisterPerusahaan, ISubFormDetailPerusahaanProps } from "./InterfaceDataListPerusahaan";
 
@@ -161,6 +163,26 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                             <span>- {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>notaris: {dokumen?.namaNotaris}</span><br />
+                                        </>                                    
+                                    );
+                                }
+                                else if(dataRegisterDokumen.dokumen?.id == '010404') {
+                                    dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
+                                    return (
+                                        <>
+                                            <span>- {dokumen?.nama}</span><br />
+                                            <span>Nomor: {dokumen?.noSurat}</span><br />
+                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                        </>                                    
+                                    );
+                                }
+                                else if(dataRegisterDokumen.dokumen?.id == '010406') {
+                                    dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
+                                    return (
+                                        <>
+                                            <span>- {dokumen?.nama}</span><br />
+                                            <span>Nomor: {dokumen?.noSurat}</span><br />
+                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
                                         </>                                    
                                     );
                                 }
