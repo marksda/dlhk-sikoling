@@ -93,7 +93,11 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                     );
                 case 'c2':
                     return (
-                        <span>{`${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}`}</span>
+                        <span>{
+                            item.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}` :
+                            `${item.perusahaan?.nama}`
+                        }</span>
                     );
                 case 'c3':
                     let kontak = item.perusahaan?.kontak;
@@ -135,6 +139,7 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                 case 'c5':
                     return(
                         <>
+                        <span>Jumlah Dokumen : {item.perusahaan?.daftarRegisterDokumen?.length}</span><br />                     
                         {
                             item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen) => {
                                 let dokumen = null;

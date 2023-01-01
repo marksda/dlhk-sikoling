@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface IRegisterKbli {
     idNib: string|null;
     idKbli: string|null;
-    nama: string|null;
+    nama: string|null;    
 };
 
 const initialState: IRegisterKbli = {
