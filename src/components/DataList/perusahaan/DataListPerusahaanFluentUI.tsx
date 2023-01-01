@@ -1,6 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
+import { IDokumenOss } from "../../../features/dokumen/dokumen-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { IRekomendasiDPLH } from "../../../features/dokumen/rekomendasi-dplh-api-slice";
@@ -183,6 +184,16 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                             <span>- {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
                                             <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                        </>                                    
+                                    );
+                                }
+                                else if(dataRegisterDokumen.dokumen?.id == '010301') {
+                                    dokumen = dataRegisterDokumen.dokumen as IDokumenOss;
+                                    return (
+                                        <>
+                                            <span>- {dokumen?.nama}</span><br />
+                                            <span>Nomor: {dokumen?.nomor}</span><br />
+                                            <span>perihal: {dokumen?.tanggal}</span><br />
                                         </>                                    
                                     );
                                 }

@@ -1,24 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IDokumen } from "./dokumen-slice";
-import { IKategoriDokumen } from "./kategori-dokumen-slice";
-import { IKbli } from "./kbli-slice";
+import { IRegisterKbli } from "./register-kbli-slice";
 
-type daftarKbli = IKbli[];
+type daftarRegisterKbli = IRegisterKbli[];
 
-export interface IDokumenOss extends IDokumen {
-    nib: string|undefined;
-    tanggalPenerbitan: string|undefined;
-    daftarKbli: daftarKbli|undefined;
+export interface IDokumenOss {
+    id: string|null;
+    nama: string|null;
+    nomor: string|null;
+    tanggal: string|null;
+    daftarKbli: daftarRegisterKbli|null;
 };
 
 const initialState: IDokumenOss = {
-    id: undefined,
-    nama: undefined,
-    kategori: undefined,
-    nib: undefined,
-    tanggalPenerbitan: undefined,
-    daftarKbli: undefined,
+    id: null,
+    nama: null,
+    nomor: null,
+    tanggal: null,
+    daftarKbli: null,
 };
 
 export const dokumenOssSlice = createSlice({
@@ -28,7 +27,9 @@ export const dokumenOssSlice = createSlice({
         setDokumenOss: (state, action: PayloadAction<IDokumenOss>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
-            state.kategori = cloneDeep(action.payload.kategori);
+            state.nomor = action.payload.nomor;
+            state.tanggal = action.payload.tanggal;
+            state.daftarKbli = cloneDeep(action.payload.daftarKbli);
         },
         setIdDokumenOss: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
@@ -36,16 +37,13 @@ export const dokumenOssSlice = createSlice({
         setNamaDokumenOss: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
-        setKategoriDokumenOss: (state, action: PayloadAction<Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>>) => {
-            state.kategori = cloneDeep(action.payload);
+        setNomorDokumenOss: (state, action: PayloadAction<string>) => {
+            state.nomor = action.payload;
         },
-        setNibDokumenOss: (state, action: PayloadAction<string>) => {
-            state.nib = action.payload;
-        },
-        setTanggalPenerbitanDokumenOss: (state, action: PayloadAction<string>) => {
-            state.tanggalPenerbitan = action.payload;
-        },
-        setDaftarKbliDokumenOss: (state, action: PayloadAction<daftarKbli>) => {
+        setTanggalDokumenOss: (state, action: PayloadAction<string>) => {
+            state.tanggal = action.payload;
+        },        
+        setDaftarKbliDokumenOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
             state.daftarKbli = cloneDeep(action.payload);
         },
     }
@@ -53,8 +51,7 @@ export const dokumenOssSlice = createSlice({
 
 export const { 
     setDokumenOss, setIdDokumenOss,
-    setNamaDokumenOss, setKategoriDokumenOss,
-    setNibDokumenOss, setTanggalPenerbitanDokumenOss, 
-    setDaftarKbliDokumenOss
+    setNamaDokumenOss, setNomorDokumenOss,
+    setTanggalDokumenOss, setDaftarKbliDokumenOss
 } = dokumenOssSlice.actions;
 export default dokumenOssSlice.reducer;

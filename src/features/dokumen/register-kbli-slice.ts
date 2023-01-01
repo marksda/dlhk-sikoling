@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IRegisterKbli {
-    nib: string|undefined;
-    kode: string|undefined;
+    idNib: string|null;
+    idKbli: string|null;
+    nama: string|null;
 };
 
 const initialState: IRegisterKbli = {
-    nib: undefined,
-    kode: undefined,
+    idNib: null,
+    idKbli: null,
+    nama: null
 };
 
 export const registerKbliSlice = createSlice({
@@ -15,17 +17,21 @@ export const registerKbliSlice = createSlice({
     initialState,
     reducers: {
         setRegisterKbli: (state, action: PayloadAction<IRegisterKbli>) => {
-            state.kode = action.payload.kode;
-            state.nib = action.payload.nib;
+            state.idNib = action.payload.idNib;
+            state.idKbli = action.payload.idKbli;
+            state.nama = action.payload.nama;
         },
         setNibRegisterKbli: (state, action: PayloadAction<string>) => {
-            state.nib = action.payload;
+            state.idNib = action.payload;
         },
         setKodeRegisterKbli: (state, action: PayloadAction<string>) => {
-            state.kode = action.payload;
+            state.idKbli = action.payload;
+        },
+        setNamaRegisterKbli: (state, action: PayloadAction<string>) => {
+            state.nama = action.payload;
         },
     }
 });
 
-export const { setRegisterKbli,  setNibRegisterKbli, setKodeRegisterKbli} = registerKbliSlice.actions;
+export const { setRegisterKbli,  setNibRegisterKbli, setKodeRegisterKbli, setNamaRegisterKbli} = registerKbliSlice.actions;
 export default registerKbliSlice.reducer;
