@@ -1,8 +1,11 @@
-import React, { FC, useCallback, useMemo, useState } from "react";
-import {CommandBar, ICommandBarItemProps, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
-import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUi";
+import { FC, useMemo } from "react";
+import {CommandBar, IStackStyles, Stack } from "@fluentui/react";
+import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUi";
 import { ModalFormulirAddSuratArahan } from "../../components/Modal/ModalFormulirAddSuratArahan";
 import { useBoolean } from "@fluentui/react-hooks";
+import { useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import omit from "lodash.omit";
+import { IListItemRegisterPermohonan } from "../../components/DataList/permohonan/InterfaceDataListPermohonan";
 
 const kontenStyles: IStackStyles = {
     root: {
@@ -10,6 +13,8 @@ const kontenStyles: IStackStyles = {
         background: 'white'
     },
 };
+
+type daftarItemRegisterPermohonan = IListItemRegisterPermohonan[];
 
 // const _items: ICommandBarItemProps[] = [
 //     {
@@ -51,6 +56,8 @@ const kontenStyles: IStackStyles = {
 export const KontenPermohonanPemrakarsa: FC = () => {
     // local state
     const [isModalAddSuratArahanOpen, { setTrue: showModalAddSuratArahan, setFalse: hideModalAddModalSuratArahan }] = useBoolean(false);
+    //rtk query permohonan variable hook
+    const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetAllRegisterPermohonanQuery();
 
 
     const _items = useMemo(
@@ -92,6 +99,24 @@ export const KontenPermohonanPemrakarsa: FC = () => {
             }]
         },
         []
+    );
+
+    const dataRegisterPermohonan: daftarItemRegisterPermohonan = useMemo(
+        () => {
+            if(daftarRegisterPermohonan != undefined) {
+                return [
+                    ...daftarRegisterPermohonan.map(
+                        (t) => (
+                            {key: t.id as string, ...omit(t, ['id'])}
+                        )
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarRegisterPermohonan]
     );
        
     return (
