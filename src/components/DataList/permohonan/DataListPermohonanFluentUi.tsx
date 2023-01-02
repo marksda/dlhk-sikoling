@@ -1,4 +1,4 @@
-import { DetailsList } from "@fluentui/react";
+import { DetailsList, IStackTokens } from "@fluentui/react";
 import { FC } from "react";
 
 const _columns = [    
@@ -8,6 +8,8 @@ const _columns = [
     { key: 'c4', name: 'Dokumen Pendukung', fieldName: 'kontak', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c4', name: 'Status Permohonan', fieldName: 'status', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
+
+const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPermohonanFluentUI: FC = () => {
     return (
