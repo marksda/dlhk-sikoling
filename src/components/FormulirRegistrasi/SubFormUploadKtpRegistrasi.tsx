@@ -37,7 +37,7 @@ const subLabelStyle: ILabelStyles  = {
 
 export const SubFormUploadRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMotionKey, setIsLoading, changeHightContainer, setIsErrorConnection, setValue, control, handleSubmit}) => {
     //redux variable
-    const authentication = useAppSelector(state => state.authentication);  
+    const credential = useAppSelector(state => state.credential);  
 
     //react-hook-form variable hook
     const [kontak] = useWatch({
@@ -89,10 +89,10 @@ export const SubFormUploadRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMot
     const save: SubmitHandler<IPerson> = useCallback(
         async(data) => {
             try {
-                // console.log(data);
+                console.log(data);
                 // setIsLoading(true);  
                 // setNik(data.nik!);       
-                await addRegistrasi({auth: authentication, person: data}).unwrap();              
+                await addRegistrasi({credential: credential, person: data}).unwrap();              
             } catch (error) {
                 // setIsLoading(false);
                 // setIsErrorConnection(true);
@@ -146,7 +146,7 @@ export const SubFormUploadRegistrasi: FC<ISubFormPID3RegistrasiProps> = ({setMot
             // await worker.terminate();
             // })();
         },
-        [authentication]
+        [credential]
     ); 
 
     return(

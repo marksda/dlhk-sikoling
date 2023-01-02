@@ -3,10 +3,9 @@ import { baseRestAPIUrl } from "../../features/config/config";
 import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
 import { ICredential } from "./authentication-slice";
-import { IResponseStatusToken } from "./token-slice";
 
 export interface PostRegistrasi {
-    auth: ICredential;
+    credential: ICredential;
     person: IPerson;
 };
 
