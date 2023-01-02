@@ -118,6 +118,8 @@ export const KontenPermohonanPemrakarsa: FC = () => {
         },
         [daftarRegisterPermohonan]
     );
+
+    console.log(dataRegisterPermohonan);
        
     return (
         <>
@@ -128,7 +130,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 />
             </Stack.Item>
             <Stack.Item>
-                <DataListPermohonanFluentUI />
+                <DataListPermohonanFluentUI dataPermohonan={dataRegisterPermohonan}/>
             </Stack.Item>
         </Stack>
         <ModalFormulirAddSuratArahan
