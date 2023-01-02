@@ -41,7 +41,7 @@ export const SubFormPasswordRegistrasi: FC<ISubFormPasswordRegistrasiProps> = ({
     });
 
     //hook redux variable
-    const authentication = useAppSelector(state => state.authentication);
+    const authentication = useAppSelector(state => state.credential);
 
     // local state
     const [animPassword, setAnimPassword] = useState<string>('open');
