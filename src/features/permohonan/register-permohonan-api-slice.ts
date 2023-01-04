@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
-import { IStatusTahapPemberkasan } from "./status-tahap-pemberkasan";
+import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan";
 import { IStatusWali } from "./status-wali-api-slice";
 
 export interface IRegisterPermohonan {
@@ -12,7 +12,7 @@ export interface IRegisterPermohonan {
     registerPerusahaan: IRegisterPerusahaan|null;
     pengurusPermohonan: any|null;
     statusWali: IStatusWali|null;
-    statusTahapPemberkasan: IStatusTahapPemberkasan|null;
+    posisiTahapPemberkasan: IPosisiTahapPemberkasan|null;
     daftarDokumenSyarat: any[]|null;
     daftarDokumenHasil: any[]|null;
 };

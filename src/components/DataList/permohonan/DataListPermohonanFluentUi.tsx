@@ -38,7 +38,7 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                 case 'c5':
                     return (
                         <span>
-                            {item.statusTahapPemberkasan?.keterangan}
+                            {item.posisiTahapPemberkasan?.keterangan}
                         </span>
                     ); 
                 default:
