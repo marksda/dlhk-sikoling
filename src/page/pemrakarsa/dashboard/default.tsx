@@ -1,5 +1,6 @@
 import { DocumentCard, DocumentCardPreview, DocumentCardStatus, DocumentCardTitle, DocumentCardType, getTheme, IDocumentCardPreviewProps, IStackTokens, Stack } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
+import { DataListFlowLogFluentUI } from "../../../components/DataList/log/DataListFlowLogFluentUi";
 import { ListDetailMessage } from "./template-list-message";
 
 const theme = getTheme();
@@ -155,7 +156,9 @@ export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPag
                 </Stack>
             </Stack.Item>
             <Stack.Item>
-                <ListDetailMessage />
+                <DataListFlowLogFluentUI
+                
+                />
             </Stack.Item>
         </Stack>
     );
