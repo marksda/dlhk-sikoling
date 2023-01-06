@@ -5,8 +5,8 @@ import { IListItemFlowLog, ISubFormDetailFlowLogProps } from "./InterfaceDataLis
 
 const _columns = [    
     { key: 'c1', name: 'Tanggal', fieldName: 'tanggal', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'c2', name: 'Kategori', fieldName: 'pemrakarsa', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'c3', name: 'Tahap', fieldName: 'tahap', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'c2', name: 'Kategori log', fieldName: 'pemrakarsa', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'c3', name: 'Posisi berkas', fieldName: 'tahap', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c4', name: 'Keterangan', fieldName: 'keterangan', minWidth: 100, maxWidth: 200, isResizable: true }
 ];
 
@@ -41,7 +41,7 @@ export const DataListFlowLogFluentUI: FC<ISubFormDetailFlowLogProps> = ({dataFlo
                 case 'c4':
                     return (
                         <span>
-                            {item.posisiTahapPemberkasan?.keterangan}
+                            {item.keterangan}
                         </span>
                     ); 
                 default:
