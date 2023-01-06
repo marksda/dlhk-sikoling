@@ -84,6 +84,7 @@ interface IKontenDashboardDefaultProps {
     setParentPage: React.Dispatch<React.SetStateAction<string>>
 }
 
+// type daftarItemFlowLog = IListItemFlowLog[];
 type daftarItemFlowLog = IListItemFlowLog[];
 
 export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPage}) => {

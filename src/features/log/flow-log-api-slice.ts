@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IPosisiTahapPemberkasan } from "../permohonan/posisi-tahap-pemberkasan-api-slice";
+import { IRegisterPermohonan } from "../permohonan/register-permohonan-api-slice";
 import { IAuthorization } from "../security/authorization-slice";
 import { IKategoriFlowLog } from "./kategori-flow-log-api-slice";
 
@@ -13,7 +14,11 @@ export interface IFlowLog {
     pengakses: IAuthorization|null;
 };
 
-type daftarFlowLog = IFlowLog[];
+export interface IFlowLogPermohonan extends IFlowLog {
+    registerPermohonan: IRegisterPermohonan|null;
+};
+
+type daftarFlowLog = any[];
 
 export const FlowLogApiSlice = createApi({
     reducerPath: 'flowLogApi',
