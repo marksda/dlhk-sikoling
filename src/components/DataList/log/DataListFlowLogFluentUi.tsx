@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens } from "@fluentui/react";
+import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, SelectionMode } from "@fluentui/react";
 import { FC, useCallback } from "react";
 import { IListItemFlowLog, ISubFormDetailFlowLogProps } from "./InterfaceDataListFlowLog";
 // import { IListItemRegisterPermohonan, ISubFormDetailPermohonanProps } from "./InterfaceDataListPermohonan";
@@ -77,6 +77,7 @@ export const DataListFlowLogFluentUI: FC<ISubFormDetailFlowLogProps> = ({dataFlo
             setKey="set"
             layoutMode={DetailsListLayoutMode.justified}
             onRenderItemColumn={handleRenderItemColumn}
+            selectionMode={SelectionMode.none}
         />
     );
 };
