@@ -1,6 +1,10 @@
 import { DocumentCard, DocumentCardPreview, DocumentCardStatus, DocumentCardTitle, DocumentCardType, getTheme, IDocumentCardPreviewProps, IStackTokens, Stack } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import omit from "lodash.omit";
+import { FC, useCallback, useMemo, useState } from "react";
+import { useAppSelector } from "../../../app/hooks";
 import { DataListFlowLogFluentUI } from "../../../components/DataList/log/DataListFlowLogFluentUi";
+import { IListItemFlowLog } from "../../../components/DataList/log/InterfaceDataListFlowLog";
+import { useGetAllFlowLogQuery } from "../../../features/log/flow-log-api-slice";
 import { ListDetailMessage } from "./template-list-message";
 
 const theme = getTheme();
@@ -81,7 +85,31 @@ interface IKontenDashboardDefaultProps {
     setParentPage: React.Dispatch<React.SetStateAction<string>>
 }
 
+type daftarItemFlowLog = IListItemFlowLog[];
+
 export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPage}) => {
+    //redux global state
+    const token = useAppSelector(state => state.token);
+    //rtk query perusahaan variable hook
+    const { data: daftarFlowLog, error: errorFetchDataFlowLog,  isFetching: isFetchingDataFlowLog, isError } = useGetAllFlowLogQuery();
+    
+    const dataFlowLog: daftarItemFlowLog = useMemo(
+        () => {
+            if(daftarFlowLog != undefined) {
+                return [
+                    ...daftarFlowLog.map(
+                        (t) => (
+                            {key: t.id as string, ...omit(t, ['id'])}
+                        )
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarFlowLog]
+    );
 
     const handleOnClickCardItem = useCallback(
         (e?: React.SyntheticEvent<HTMLElement>) => {
@@ -157,7 +185,7 @@ export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPag
             </Stack.Item>
             <Stack.Item>
                 <DataListFlowLogFluentUI
-                
+                    dataFlowLog={dataFlowLog}
                 />
             </Stack.Item>
         </Stack>

@@ -7,8 +7,7 @@ const _columns = [
     { key: 'c1', name: 'Tanggal', fieldName: 'tanggal', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c2', name: 'Kategori', fieldName: 'pemrakarsa', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c3', name: 'Tahap', fieldName: 'tahap', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'c4', name: 'Keterangan', fieldName: 'keterangan', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'c5', name: 'Status Permohonan', fieldName: 'status', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'c4', name: 'Keterangan', fieldName: 'keterangan', minWidth: 100, maxWidth: 200, isResizable: true }
 ];
 
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
@@ -46,7 +45,7 @@ export const DataListFlowLogFluentUI: FC<ISubFormDetailFlowLogProps> = ({dataFlo
                         </span>
                     ); 
                 default:
-                    return(<span>{item.}</span>);
+                    return(<span>{item.posisiTahapPemberkasan?.keterangan}</span>);
             }
         },
         []
