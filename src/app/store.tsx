@@ -40,6 +40,7 @@ import { RegisterKbliApiSlice } from "../features/dokumen/register-kbli-api-slic
 import registerPerusahaanReducer from "../features/perusahaan/register-perusahaan-slice";
 import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
+import { FlowLogApiSlice } from "../features/log/flow-log-api-slice";
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
@@ -86,6 +87,7 @@ export const store = configureStore({
         registerPerusahaan: registerPerusahaanReducer,
         [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
+        [FlowLogApiSlice.reducerPath]: FlowLogApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
@@ -109,6 +111,7 @@ export const store = configureStore({
                                             .concat(KbliApiSlice.middleware)
                                             .concat(RegisterKbliApiSlice.middleware)
                                             .concat(RegisterPermohonanApiSlice.middleware)
+                                            .concat(FlowLogApiSlice.middleware)
                                             .concat(KategoriPermohonanApiSlice.middleware),
 });
 

@@ -1,7 +1,6 @@
 import { INavLinkGroup } from "@fluentui/react";
 import { useEffect, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
-import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./pemrakarsa/template-permohonan-pemrakarsa";
 import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
@@ -12,6 +11,7 @@ import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppSelector } from "../app/hooks";
 import { useNavigate } from "react-router-dom";
+import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 
 const navLinkGroups: INavLinkGroup[] = [
   {
