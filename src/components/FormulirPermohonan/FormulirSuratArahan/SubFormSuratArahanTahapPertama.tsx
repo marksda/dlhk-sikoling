@@ -1,17 +1,19 @@
 import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useMemo, useState } from "react";
+import find from "lodash.find";
+import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError } from "react-hook-form";
 import { useAppSelector } from "../../../app/hooks";
 import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
+import { IRegisterPermohonan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
-import { IListItemRegisterPerusahaan } from "../../DataList/perusahaan/InterfaceDataListPerusahaan";
-import { contentStyles, ISubFormSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfaceSuratArahan";
+import { contentStyles, ISubFormSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
 
 interface ISubFormTahapPertamaSuratArahanProps extends ISubFormSuratArahanProps {
-    setError: UseFormSetError<ISuratArahan>;
+    setError: UseFormSetError<IRegisterPermohonan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
@@ -29,7 +31,9 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                     ...daftarRegisterPerusahaan.map(
                         (t) => ({
                             key: t.id!,
-                            text: `${t.perusahaan?.pelakuUsaha?.singkatan}. ${t.perusahaan?.nama}`
+                            text: t.perusahaan?.pelakuUsaha != undefined ?
+                             `${t.perusahaan?.pelakuUsaha?.singkatan}. ${t.perusahaan?.nama}` : 
+                             `${t.perusahaan?.nama}`
                         })
                     )
                 ];
@@ -40,6 +44,15 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
         },
         [daftarRegisterPerusahaan]
     );
+
+    const handleSetRegisterPerusahaan = useCallback(
+        (item) => {
+            let itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
+            console.log(itemSelected);          
+            setValue("registerPerusahaan", itemSelected);
+        },
+        []
+    )
 
     return (
         <motion.div 
@@ -61,6 +74,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                         name="perusahaan"
                         rules={{ required: "harus diisi" }} 
                         control={control}
+                        onChangeItem={handleSetRegisterPerusahaan}
                     />     
                 </Stack.Item>
             </Stack>

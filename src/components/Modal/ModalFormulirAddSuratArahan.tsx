@@ -2,10 +2,10 @@ import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles,
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
-import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfaceSuratArahan";
+import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
+import { IRegisterPermohonan } from "../../features/permohonan/register-permohonan-api-slice";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -75,15 +75,18 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
-    const { control, handleSubmit, setValue, reset, setError } = useForm<ISuratArahan>({
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonan>({
         mode: 'onSubmit',
         defaultValues: {
-            id: '',
-            noSurat: '',
-            tanggalSurat: '',
-            perihalSurat: '',
-            uraianKegiatan: '',
-            // kategoriSuratArahan: null
+            id: null,
+            registerPerusahaan: null,
+            kategoriPermohonan: null,
+            tanggalRegistrasi: null,
+            pengurusPermohonan: null,
+            statusWali: null,
+            posisiTahapPemberkasan: null,
+            daftarDokumenSyarat: [],
+            daftarDokumenHasil: []
         }
     });
 
@@ -143,7 +146,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 };
 
 const getSlideSubFormSuratArahan = (
-    {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormSuratArahanParam) => {
+    {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormPermohomanSuratArahanParam) => {
     let konten = null;
     switch (motionKey) {
         case 'tahapPertama':

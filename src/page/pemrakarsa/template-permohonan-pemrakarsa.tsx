@@ -55,7 +55,8 @@ type daftarItemRegisterPermohonan = IListItemRegisterPermohonan[];
 // ];
 export const KontenPermohonanPemrakarsa: FC = () => {
     // local state
-    const [isModalAddSuratArahanOpen, { setTrue: showModalAddSuratArahan, setFalse: hideModalAddModalSuratArahan }] = useBoolean(false);
+    const [isModalAddPermohonanSuratArahanOpen, { setTrue: showModalAddPermohonanSuratArahan, setFalse: hideModalAddPermohonanSuratArahan }] = useBoolean(false);
+    const [isModalAddPermohonanSPPLOpen, { setTrue: showModalAddPermohonanSPPL, setFalse: hideModalAddPermohonanSPPL }] = useBoolean(false);
     //rtk query permohonan variable hook
     const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetAllRegisterPermohonanQuery();
 
@@ -72,12 +73,13 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                             key: 'suratArahan',
                             text: 'Surat arahan',
                             iconProps: {iconName: 'issueTracking'},
-                            onClick: showModalAddSuratArahan
+                            onClick: showModalAddPermohonanSuratArahan
                         },
                         {
                             key: 'dokumenSPPL',
                             text: 'Dokumen SPPL',
                             iconProps: {iconName: 'issueTracking'},
+                            onClick: showModalAddPermohonanSPPL
                         },
                         {
                             key: 'dokumenUKLUPL',
@@ -134,8 +136,8 @@ export const KontenPermohonanPemrakarsa: FC = () => {
             </Stack.Item>
         </Stack>
         <ModalFormulirAddSuratArahan
-            isModalOpen={isModalAddSuratArahanOpen}
-            hideModal={hideModalAddModalSuratArahan}
+            isModalOpen={isModalAddPermohonanSuratArahanOpen}
+            hideModal={hideModalAddPermohonanSuratArahan}
             isDraggable={true}
         />
         </>
