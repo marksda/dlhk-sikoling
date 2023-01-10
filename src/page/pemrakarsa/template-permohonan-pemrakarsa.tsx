@@ -120,8 +120,6 @@ export const KontenPermohonanPemrakarsa: FC = () => {
         },
         [daftarRegisterPermohonan]
     );
-
-    console.log(dataRegisterPermohonan);
        
     return (
         <>

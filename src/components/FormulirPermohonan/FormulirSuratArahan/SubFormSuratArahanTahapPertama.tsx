@@ -2,7 +2,7 @@ import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
-import { UseFormSetError } from "react-hook-form";
+import { UseFormSetError, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../../app/hooks";
 import { IRegisterPermohonan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
@@ -15,7 +15,13 @@ interface ISubFormTahapPertamaSuratArahanProps extends ISubFormSuratArahanProps 
     setError: UseFormSetError<IRegisterPermohonan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
 export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
+    //react-form hook variable
+    const [registerPerusahaan] = useWatch({
+        control: control, 
+        name: ['registerPerusahaan']
+    });
     //redux variable state
     const token = useAppSelector(state => state.token);
     // local state
@@ -50,7 +56,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
             console.log(itemSelected);          
             setValue("registerPerusahaan", itemSelected);
         },
-        []
+        [daftarRegisterPerusahaan]
     )
 
     return (
@@ -60,8 +66,8 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
             className={contentStyles.body} 
         >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Jenis Surat Arahan?</Label>
-                <Label styles={subLabelStyle}>Pilih baru jika belum memiliki dokumen lingkungan dan pilih perubahan jika ingin mengubah dokumen lingkungan yang sudah ada.</Label>
+                <Label styles={labelStyle}>Jenis permohonan</Label>
+                <Label styles={subLabelStyle}>Pilih baru untuk pengajuan dokumen lingkungan baru, atau pilih perubahan untuk pengajuan perubahan dokumen lingkungan</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
@@ -76,9 +82,23 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                         onChangeItem={handleSetRegisterPerusahaan}
                     />     
                 </Stack.Item>
+                <Stack.Item>
+                    <ControlledFluentUiDropDown
+                        label="Jenis permohonan"
+                        placeholder="Pilih jenis"
+                        options={perusahaanOptions}
+                        required
+                        name="perusahaan"
+                        rules={{ required: "harus diisi" }} 
+                        control={control}
+                        onChangeItem={handleSetRegisterPerusahaan}
+                        disabled={registerPerusahaan == null ? true : false}
+                    />     
+                </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
+                    style={{marginTop: 24, width: 100}}
                     text="Lanjut" 
                 />
             </Stack>   

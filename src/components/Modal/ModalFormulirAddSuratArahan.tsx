@@ -120,7 +120,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     alignItems: 'center',
                     padding: '8px 12px 14px 24px'}}
                 >
-                    <span id={titleId}>Formulir Surat Arahan</span>
+                    <span id={titleId}>Formulir Permohonan Surat Arahan</span>
                     <IconButton
                         styles={iconButtonStyles}
                         iconProps={cancelIcon}
