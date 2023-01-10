@@ -4,7 +4,6 @@ import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError } from "react-hook-form";
 import { useAppSelector } from "../../../app/hooks";
-import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
 import { IRegisterPermohonan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
