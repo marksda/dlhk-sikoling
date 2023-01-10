@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
+import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api-slice";
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
 import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan-api-slice";
 import { IStatusWali } from "./status-wali-api-slice";
@@ -16,6 +17,10 @@ export interface IRegisterPermohonan {
     daftarDokumenSyarat: any[]|null;
     daftarDokumenHasil: any[]|null;
 };
+
+export interface IRegisterPermohonanSuratArahan extends IRegisterPermohonan {
+    jenisPermohonanSuratArahan: IJenisPermohonanSuratArahan|null;
+}
 
 type daftarRegisterPermohonan = IRegisterPermohonan[];
 

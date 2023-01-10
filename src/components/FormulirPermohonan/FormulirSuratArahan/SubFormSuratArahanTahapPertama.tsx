@@ -4,23 +4,24 @@ import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../../app/hooks";
-import { IRegisterPermohonan } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
+import { IRegisterPermohonan, IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
-import { contentStyles, ISubFormSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
+import { contentStyles, durationAnimFormSuratArahan, ISubFormPermohonanSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
 
-interface ISubFormTahapPertamaSuratArahanProps extends ISubFormSuratArahanProps {
-    setError: UseFormSetError<IRegisterPermohonan>;
+interface ISubFormTahapPertamaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
+    setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
     //react-form hook variable
-    const [registerPerusahaan] = useWatch({
+    const [registerPerusahaan, jenisPermohonanSuratArahan] = useWatch({
         control: control, 
-        name: ['registerPerusahaan']
+        name: ['registerPerusahaan', 'jenisPermohonanSuratArahan']
     });
     //redux variable state
     const token = useAppSelector(state => state.token);
@@ -28,6 +29,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
     const [animTahapPertama, setAnimTahapPertama] = useState<string>('open');
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
+    const { data: daftarJenisPermohonanSuratarahan, error: errorFetchDataJenisPermohonanSuratArahan,  isFetching: isFetchingDaftarJenisPermohonanSuratarahan, isError: isErrorJenisPermohonanSuratarahan } = useGetAllJenisPermohonanSuratArahanQuery();
 
     const perusahaanOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -50,14 +52,55 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
         [daftarRegisterPerusahaan]
     );
 
+    const jenisPermohonanSuratArahanOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(daftarJenisPermohonanSuratarahan != undefined) {
+                return [
+                    ...daftarJenisPermohonanSuratarahan.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: `${t.keterangan}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarJenisPermohonanSuratarahan]
+    );
+
     const handleSetRegisterPerusahaan = useCallback(
         (item) => {
             let itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
-            console.log(itemSelected);          
             setValue("registerPerusahaan", itemSelected);
         },
         [daftarRegisterPerusahaan]
-    )
+    );
+
+    const handleSetJenisPermohonanSuratArahan = useCallback(
+        (item) => {
+            let itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
+            console.log(itemSelected);          
+            setValue("jenisPermohonanSuratArahan", itemSelected);
+        },
+        [daftarJenisPermohonanSuratarahan]
+    );
+
+    const processNextStep = useCallback(
+        () => {
+            setAnimTahapPertama('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('tahapKedua');
+                },
+                durationAnimFormSuratArahan*1000
+            );
+            return () => clearTimeout(timer);
+        },
+        []
+    );
 
     return (
         <motion.div 
@@ -86,12 +129,12 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                     <ControlledFluentUiDropDown
                         label="Jenis permohonan"
                         placeholder="Pilih jenis"
-                        options={perusahaanOptions}
+                        options={jenisPermohonanSuratArahanOptions}
                         required
-                        name="perusahaan"
+                        name="jenisPermohonan"
                         rules={{ required: "harus diisi" }} 
                         control={control}
-                        onChangeItem={handleSetRegisterPerusahaan}
+                        onChangeItem={handleSetJenisPermohonanSuratArahan}
                         disabled={registerPerusahaan == null ? true : false}
                     />     
                 </Stack.Item>
@@ -100,6 +143,8 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                 <PrimaryButton 
                     style={{marginTop: 24, width: 100}}
                     text="Lanjut" 
+                    onClick={processNextStep} 
+                    disabled={jenisPermohonanSuratArahan == null ? true : false}
                 />
             </Stack>   
         </motion.div>

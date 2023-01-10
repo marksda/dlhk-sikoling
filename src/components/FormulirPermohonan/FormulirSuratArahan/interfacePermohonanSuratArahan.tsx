@@ -1,7 +1,7 @@
 import { ContextualMenu, IDragOptions, IIconProps, ILabelStyles, mergeStyleSets } from "@fluentui/react";
 import { Control, UseFormHandleSubmit, UseFormReset, UseFormSetError, UseFormSetValue } from "react-hook-form";
 import { ISuratArahan } from "../../../features/dokumen/surat-arahan-api-slice";
-import { IRegisterPermohonan } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonan, IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 
 
 export const durationAnimFormSuratArahan: number = 0.5;
@@ -19,16 +19,16 @@ export interface IModalFormulirSuratArahanProps {
 export interface ISlideSubFormPermohomanSuratArahanParam {  
     motionKey: string;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
-    control: Control<IRegisterPermohonan, Object>;
-    setValue: UseFormSetValue<IRegisterPermohonan>;
-    reset: UseFormReset<IRegisterPermohonan>;
-    handleSubmit: UseFormHandleSubmit<IRegisterPermohonan>;
-    setError: UseFormSetError<IRegisterPermohonan>;
+    control: Control<IRegisterPermohonanSuratArahan, Object>;
+    setValue: UseFormSetValue<IRegisterPermohonanSuratArahan>;
+    reset: UseFormReset<IRegisterPermohonanSuratArahan>;
+    handleSubmit: UseFormHandleSubmit<IRegisterPermohonanSuratArahan>;
+    setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
-export interface ISubFormSuratArahanProps {
+export interface ISubFormPermohonanSuratArahanProps {
     control?: Control<any>;
-    setValue: UseFormSetValue<IRegisterPermohonan>;
+    setValue: UseFormSetValue<IRegisterPermohonanSuratArahan>;
     setMotionKey: React.Dispatch<React.SetStateAction<string>>;
 }
 export const stackTokens = { childrenGap: 2 };

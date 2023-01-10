@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
-import { IRegisterPermohonan } from "../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -75,7 +75,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
-    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonan>({
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
         mode: 'onSubmit',
         defaultValues: {
             id: null,
@@ -86,7 +86,8 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             statusWali: null,
             posisiTahapPemberkasan: null,
             daftarDokumenSyarat: [],
-            daftarDokumenHasil: []
+            daftarDokumenHasil: [],
+            jenisPermohonanSuratArahan: null
         }
     });
 
@@ -150,6 +151,16 @@ const getSlideSubFormSuratArahan = (
     let konten = null;
     switch (motionKey) {
         case 'tahapPertama':
+            konten = 
+                <SubFormSuratArahanTahapPertama
+                    control={control}
+                    setValue={setValue}
+                    setIsLoading={setIsLoading}
+                    setError={setError}
+                    setMotionKey={setMotionKey}
+                />;
+            break; 
+        case 'tahapKedua':
             konten = 
                 <SubFormSuratArahanTahapPertama
                     control={control}
