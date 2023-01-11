@@ -6,6 +6,7 @@ import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan"
 import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
 import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
+import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -162,7 +163,7 @@ const getSlideSubFormSuratArahan = (
             break; 
         case 'tahapKedua':
             konten = 
-                <SubFormSuratArahanTahapPertama
+                <SubFormSuratArahanTahapKedua
                     control={control}
                     setValue={setValue}
                     setIsLoading={setIsLoading}

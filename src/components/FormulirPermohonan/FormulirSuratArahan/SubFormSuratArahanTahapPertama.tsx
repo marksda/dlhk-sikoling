@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../../app/hooks";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { IRegisterPermohonan, IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
@@ -82,7 +82,6 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
     const handleSetJenisPermohonanSuratArahan = useCallback(
         (item) => {
             let itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
-            console.log(itemSelected);          
             setValue("jenisPermohonanSuratArahan", itemSelected);
         },
         [daftarJenisPermohonanSuratarahan]
@@ -123,6 +122,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                         rules={{ required: "harus diisi" }} 
                         control={control}
                         onChangeItem={handleSetRegisterPerusahaan}
+                        selectedKey={registerPerusahaan != null ? registerPerusahaan.id : undefined}
                     />     
                 </Stack.Item>
                 <Stack.Item>
@@ -136,6 +136,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                         control={control}
                         onChangeItem={handleSetJenisPermohonanSuratArahan}
                         disabled={registerPerusahaan == null ? true : false}
+                        selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
                     />     
                 </Stack.Item>
             </Stack>
@@ -146,7 +147,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
                     onClick={processNextStep} 
                     disabled={jenisPermohonanSuratArahan == null ? true : false}
                 />
-            </Stack>   
+            </Stack> 
         </motion.div>
     );
 };
