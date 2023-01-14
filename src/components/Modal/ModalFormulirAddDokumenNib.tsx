@@ -2,13 +2,13 @@ import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
+import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DayPickerIndonesiaStrings } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 
 interface IModalFormulirDokumenNibProps {
@@ -171,6 +171,21 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
             hideModal();
         },
         []
+    );    
+
+    const handleHapusKbli = useCallback(
+        (kode) => {
+            setDaftarKbliSelected((prev) => {
+                let tmp = remove(prev, (itemDelete) => (itemDelete.kode == kode));
+                setValue("daftarKbli", tmp.map(
+                    (item) => {
+                        return omit(item, ['key']);
+                    }) 
+                );
+                return tmp;
+            });
+        },
+        []
     );
 
     return (
@@ -236,6 +251,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                     <Stack.Item>
                         <DataListKbliFluentUI 
                             daftarKbli={daftarKbliSelected}
+                            handleHapus={handleHapusKbli}
                         />
                     </Stack.Item>
                     <Stack.Item align="end">

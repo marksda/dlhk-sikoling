@@ -1,4 +1,4 @@
-import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
+import { BaseButton, Button, CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, IComboBox, IComboBoxOption, ICommandBarItemProps, IconButton, IIconProps, IObjectWithKey, IStackTokens, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IKbli } from "../../features/dokumen/kbli-slice";
 
@@ -17,7 +17,9 @@ const contentStyles = mergeStyleSets({
     }
 });
 
-export const DataListKbliFluentUI: FC<{daftarKbli: Partial<IKbli>[]}> = ({daftarKbli}) => {
+const deleteIcon: IIconProps = { iconName: 'Delete' };
+
+export const DataListKbliFluentUI: FC<{daftarKbli: Partial<IKbli>[], handleHapus: any}> = ({daftarKbli, handleHapus}) => {
     
     const handleRenderItemColumn = useCallback(
         (item: Partial<IKbli>, index: number|undefined, column: IColumn|undefined) => {
@@ -30,11 +32,20 @@ export const DataListKbliFluentUI: FC<{daftarKbli: Partial<IKbli>[]}> = ({daftar
                     );
                 default:
                     return (
-                        <div>
-                            delete
-                        </div>
+                        <IconButton 
+                            iconProps={deleteIcon} 
+                            onClick={() => handleClickHapusKbli(item.kode)}
+                        />
+        
                     );
             }
+        },
+        []
+    );
+
+    const handleClickHapusKbli = useCallback(
+        (kode) => {
+            handleHapus(kode);
         },
         []
     );
