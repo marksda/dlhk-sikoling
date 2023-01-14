@@ -16,43 +16,6 @@ const kontenStyles: IStackStyles = {
 
 type daftarItemRegisterPermohonan = IListItemRegisterPermohonan[];
 
-// const _items: ICommandBarItemProps[] = [
-//     {
-//         key: 'buatPengajuanItem',
-//         text: 'Buat pengajuan',
-//         iconProps: {iconName: 'add'},
-//         subMenuProps: {
-//             items: [
-//                 {
-//                     key: 'suratArahan',
-//                     text: 'Surat arahan',
-//                     iconProps: {iconName: 'issueTracking'},
-//                     onClick: () => alert('asu')
-//                 },
-//                 {
-//                     key: 'dokumenSPPL',
-//                     text: 'Dokumen SPPL',
-//                     iconProps: {iconName: 'issueTracking'},
-//                 },
-//                 {
-//                     key: 'dokumenUKLUPL',
-//                     text: 'Dokumen UKL-UPL',
-//                     iconProps: {iconName: 'issueTracking'},
-//                 },
-//                 {
-//                     key: 'pertekBMAL',
-//                     text: 'Pertek BMAL',
-//                     iconProps: {iconName: 'issueTracking'},
-//                 },
-//                 {
-//                     key: 'pertekLimbah B3',
-//                     text: 'Pertek Limbah B3',
-//                     iconProps: {iconName: 'issueTracking'},
-//                 },
-//             ]
-//         },
-//     }
-// ];
 export const KontenPermohonanPemrakarsa: FC = () => {
     // local state
     const [isModalAddPermohonanSuratArahanOpen, { setTrue: showModalAddPermohonanSuratArahan, setFalse: hideModalAddPermohonanSuratArahan }] = useBoolean(false);

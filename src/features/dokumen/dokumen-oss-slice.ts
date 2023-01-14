@@ -1,26 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
+import { IDokumen } from "./dokumen-slice";
 import { IRegisterKbli } from "./register-kbli-slice";
 
 type daftarRegisterKbli = IRegisterKbli[];
 
-export interface IDokumenOss {
-    id: string|null;
-    nama: string|null;
+export interface IDokumenNibOss extends IDokumen {
     nomor: string|null;
     tanggal: string|null;
     daftarKbli: daftarRegisterKbli|null;
 };
 
-const initialState: IDokumenOss = {
+const initialState: IDokumenNibOss = {
     id: null,
     nama: null,
+    kategoriDokumen: null,
     nomor: null,
     tanggal: null,
     daftarKbli: null,
 };
 
-export const dokumenOssSlice = createSlice({
+export const IDokumenNibOss = createSlice({
     name: 'dokumenOss',
     initialState,
     reducers: {
@@ -53,5 +53,5 @@ export const {
     setDokumenOss, setIdDokumenOss,
     setNamaDokumenOss, setNomorDokumenOss,
     setTanggalDokumenOss, setDaftarKbliDokumenOss
-} = dokumenOssSlice.actions;
-export default dokumenOssSlice.reducer;
+} = IDokumenNibOss.actions;
+export default IDokumenNibOss.reducer;

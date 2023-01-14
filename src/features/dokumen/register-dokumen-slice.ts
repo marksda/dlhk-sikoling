@@ -2,17 +2,19 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../person/person-slice";
 import { IPerusahaan } from "../perusahaan/perusahaan-slice";
-import { IDokumen } from "./dokumen-slice";
+import { IDokumen, IDokumenNibOss } from "./dokumen-slice";
 
 export interface IRegisterDokumen {
-    dokumen: Pick<IDokumen, 'id'> & Partial<IDokumen>|null;
-    perusahaan: Pick<IPerusahaan, 'id'> & Omit<IPerusahaan, 'id'>|null;
+    id: string|null;
+    dokumen: (Pick<IDokumenNibOss, 'id'> & Partial<IDokumenNibOss>)|null;
+    perusahaan: (Pick<IPerusahaan, 'id'> & Omit<IPerusahaan, 'id'>)|null;
     lokasiFile: string|null;
     tanggalRegistrasi: string|null;
-    uploader: Pick<IPerson, 'nik'>& Partial<IPerson>|null;
+    uploader: (Pick<IPerson, 'nik'>& Partial<IPerson>)|null;
 };
 
 const initialState: IRegisterDokumen = {
+    id: null,
     dokumen: null,
     perusahaan: null,
     lokasiFile: null,

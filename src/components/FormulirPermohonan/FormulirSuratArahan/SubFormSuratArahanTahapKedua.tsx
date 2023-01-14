@@ -27,8 +27,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     // local state
     const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
     const [isModalAddDokumenNibOpen, { setTrue: showModalAddDokumenNib, setFalse: hideModalAddDokumenNib }] = useBoolean(false);
-    console.log(isModalAddDokumenNibOpen);
-
+    
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimTahapKedua('closed');            
@@ -87,7 +86,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                         <Stack horizontal tokens={sectionStackTokens}>
                             <Stack.Item grow align="center">
                                 <ControlledFluentUiDropDown
-                                    label="Dokumen imb"
+                                    label="Dokumen imb atau pbg"
                                     options={[]}
                                     placeholder="Pilih dokumen"
                                     required
@@ -147,7 +146,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 <Label styles={labelStyle}>
                     Permohonan - ({jenisPermohonanSuratArahan.keterangan})
                 </Label>
-                <Label styles={subLabelStyle}>Kami memerlukan dokumen persyaratan berformat pdf. Pilihan dokumen akan muncul apabila sudah diupload, jika ingin mengupdate atau menambahkan dokumen silakan tekan tombol File</Label>
+                <Label styles={subLabelStyle}>Kami memerlukan dokumen persyaratan berformat pdf. Pilihan dokumen akan muncul jika sudah pernah upload, jika tidak muncul silakan tekan tombol File untuk menambahkan dokumen terlebih dahulu</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 {jenisPermohonanSuratArahan.id == '1' ? getPermohonanSrtArahanBaru() : getPermohonanSrtArahanPerubahan()}
