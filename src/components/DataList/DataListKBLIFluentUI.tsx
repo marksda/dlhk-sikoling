@@ -204,13 +204,6 @@ export const DataListPerusahaanFluentUI = () => {
     
     return(     
         <>
-        <Stack horizontal tokens={containerLoginStackTokens} style={{borderBottom : '1px solid rgb(237, 235, 233)'}}>
-            <Stack.Item>
-                <CommandBar
-                    items={_items}   
-                />
-            </Stack.Item>
-        </Stack>
         <Stack>
             <DetailsList
                 items={dataPerusahaan}
