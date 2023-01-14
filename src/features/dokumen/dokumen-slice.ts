@@ -9,12 +9,6 @@ export interface IDokumen {
     kategoriDokumen: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>|null;
 };
 
-export interface IDokumenNibOss extends IDokumen {
-    nomor: string|null;
-    tanggal: string|null;
-    daftarKbli: (Pick<IKbli, 'kode'> & Partial<IKbli>)[]|null;
-}
-
 const initialState: IDokumen = {
     id: null,
     nama: null,

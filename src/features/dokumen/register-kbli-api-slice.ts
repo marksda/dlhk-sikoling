@@ -45,7 +45,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbli' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbli' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbli', id: 'LIST' },
                     ]:
@@ -57,7 +57,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbli' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbli' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbli', id: 'LIST' },
                     ]:
@@ -69,7 +69,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliNama' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliNama' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliNama', id: 'LIST' },
                     ]:
@@ -81,7 +81,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliNamaPage' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliNamaPage' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliNamaPage', id: 'LIST' },
                     ]:
@@ -93,7 +93,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliKode' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliKode' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliKode', id: 'LIST' },
                     ]:
@@ -105,7 +105,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliKodePage' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliKodePage' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliKodePage', id: 'LIST' },
                     ]:
@@ -117,7 +117,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliNib' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliNib' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliNib', id: 'LIST' },
                     ]:
@@ -129,7 +129,7 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ nib, kode }) => ({ type: 'RegisterKbliNibPage' as const, id: `${nib}-${kode}` })
+                            ({ idNib, idKbli }) => ({ type: 'RegisterKbliNibPage' as const, id: `${idNib}-${idKbli}` })
                         ),
                         { type: 'RegisterKbliNibPage', id: 'LIST' },
                     ]:

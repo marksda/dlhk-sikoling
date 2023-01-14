@@ -24,34 +24,34 @@ export const IDokumenNibOss = createSlice({
     name: 'dokumenOss',
     initialState,
     reducers: {
-        setDokumenOss: (state, action: PayloadAction<IDokumenOss>) => {
+        setDokumenNibOss: (state, action: PayloadAction<IDokumenNibOss>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
             state.nomor = action.payload.nomor;
             state.tanggal = action.payload.tanggal;
             state.daftarKbli = cloneDeep(action.payload.daftarKbli);
         },
-        setIdDokumenOss: (state, action: PayloadAction<string>) => {
+        setIdDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
         },
-        setNamaDokumenOss: (state, action: PayloadAction<string>) => {
+        setNamaDokumeNibOss: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
-        setNomorDokumenOss: (state, action: PayloadAction<string>) => {
+        setNomorDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.nomor = action.payload;
         },
-        setTanggalDokumenOss: (state, action: PayloadAction<string>) => {
+        setTanggalDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.tanggal = action.payload;
         },        
-        setDaftarKbliDokumenOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
+        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
             state.daftarKbli = cloneDeep(action.payload);
         },
     }
 });
 
 export const { 
-    setDokumenOss, setIdDokumenOss,
-    setNamaDokumenOss, setNomorDokumenOss,
-    setTanggalDokumenOss, setDaftarKbliDokumenOss
+    setDokumenNibOss, setIdDokumenNibOss,
+    setNamaDokumeNibOss, setNomorDokumenNibOss,
+    setTanggalDokumenNibOss, setDaftarKbliDokumenNibOss
 } = IDokumenNibOss.actions;
 export default IDokumenNibOss.reducer;
