@@ -1,7 +1,9 @@
 import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { DayPickerIndonesiaStrings } from "../../features/config/config";
+import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 
@@ -91,19 +93,15 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     
 
     //react hook form variable
-    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterDokumen>({
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IDokumenNibOss>({
         mode: 'onSubmit',
         defaultValues: {
             id: null,
-            registerPerusahaan: null,
-            kategoriPermohonan: null,
-            tanggalRegistrasi: null,
-            pengurusPermohonan: null,
-            statusWali: null,
-            posisiTahapPemberkasan: null,
-            daftarDokumenSyarat: [],
-            daftarDokumenHasil: [],
-            jenisPermohonanSuratArahan: null
+            nama: null,
+            kategoriDokumen: null,
+            nomor: null,
+            tanggal: null,
+            daftarKbli: null
         }
     });
 
