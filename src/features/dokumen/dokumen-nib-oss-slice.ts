@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IDokumen } from "./dokumen-slice";
+import { IKbli } from "./kbli-slice";
 import { IRegisterKbli } from "./register-kbli-slice";
 
-type daftarRegisterKbli = IRegisterKbli[];
+type daftarKbli = Partial<IKbli>[];
 
 export interface IDokumenNibOss extends IDokumen {
     nomor: string|null;
     tanggal: string|null;
-    daftarKbli: daftarRegisterKbli|null;
+    daftarKbli: daftarKbli|null;
 };
 
 const initialState: IDokumenNibOss = {

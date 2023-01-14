@@ -1,208 +1,44 @@
-import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
+import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { IKbli } from "../../features/dokumen/kbli-slice";
 
 const _columns = [
-    { key: 'c1', name: 'Kode', fieldName: 'npwp', minWidth: 130, maxWidth: 130, isResizable: true },
-    { key: 'c2', name: 'Keterangan', fieldName: 'nama', minWidth: 100, maxWidth: 200, isResizable: true }
+    { key: 'c1', name: 'Kode', fieldName: 'kode', minWidth: 45, maxWidth: 45, isResizable: false },
+    { key: 'c2', name: 'Keterangan', fieldName: 'nama', minWidth: 250, maxWidth: 300, isResizable: false },
+    { key: 'c3', name: 'Hapus', fieldName: 'ubah', minWidth: 45, maxWidth: 45, isResizable: false }
 ];
 
-export const DataListPerusahaanFluentUI = () => {
-    // local state
-    // const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
-    const [daftarKbli, setDaftarKbli] = useState<IKbli[]>([]);
+const contentStyles = mergeStyleSets({
+    wrapText: {
+        textOverflow: 'clip',
+        wordWrap: 'break-word',
+        display: 'inline-block',
+        whiteSpace: 'normal',
+    }
+});
 
-    // const _items: ICommandBarItemProps[] = useMemo(
-    //     () => ([
-    //         {
-    //             key: 'add',
-    //             text: 'Tambah',
-    //             iconProps: { iconName: 'Add' },
-    //             onClick: showModalAddPerusahaan,
-    //             disabled: selectedItems.length > 0 ? true:false,
-    //         },
-    //         {
-    //             key: 'edit',
-    //             text: 'Ubah',
-    //             iconProps: { iconName: 'Edit' },
-    //             onClick: showModalAddPerusahaan,
-    //             disabled: selectedItems.length == 1 ? false:true,
-    //         },
-    //         {
-    //             key: 'delete',
-    //             text: 'Hapus',
-    //             iconProps: { iconName: 'Delete' },
-    //             onClick: async () => {
-    //                 let i = 0;
-    //                 for(i; i< selectedItems.length; i++) {
-    //                     await deletePerusahaan(selectedItems[i].key as string);
-    //                 }                    
-    //             },
-    //             disabled: selectedItems.length > 0 ? false:true,
-    //         }
-    //     ]),
-    //     [selectedItems]
-    // );
-
-    // const _selection = useMemo(
-    //     () => new Selection(
-    //         {
-    //             onSelectionChanged: () => {
-    //                 setSelectedItems(_selection.getSelection());
-    //             },
-    //             selectionMode: SelectionMode.multiple,
-    //         }
-    //     ),
-    //     []
-    // );
-
-    // const _onItemInvoked = useCallback(
-    //     (item: IListItemRegisterPerusahaan): void => {
-    //         // alert(`Item invoked: ${item.nama}`);
-    //     },
-    //     []
-    // );
-
-    // const handleRenderItemColumn = useCallback(
-    //     (item: IListItemRegisterPerusahaan, index: number|undefined, column: IColumn|undefined) => {
-    //         // const fieldContent = item[column!.fieldName as keyof IListItemPerusahaan] as string;
-    //         switch (column!.key) {
-    //             case 'c1':
-    //                 return (
-    //                     <div
-    //                       data-selection-disabled={true}
-    //                       className={mergeStyles({ 
-    //                         backgroundColor: 'yellow', 
-    //                         borderRadius: 3,
-    //                         padding: 4,
-    //                         boxShadow: DefaultEffects.elevation4
-    //                       })}
-    //                     >
-    //                       {item.perusahaan?.id}
-    //                     </div>
-    //                 );
-    //             case 'c2':
-    //                 return (
-    //                     <span>{
-    //                         item.perusahaan?.pelakuUsaha !== undefined ?
-    //                         `${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}` :
-    //                         `${item.perusahaan?.nama}`
-    //                     }</span>
-    //                 );
-    //             case 'c3':
-    //                 let kontak = item.perusahaan?.kontak;
-    //                 return (
-    //                     <div>
-    //                         <p
-    //                           className={mergeStyles({ 
-    //                             margin: 0
-    //                           })}
-    //                         >
-    //                             {`Email: ${kontak?.email}`}<br />
-    //                             <span style={{display: 'flex'}}>
-    //                                 <label className={mergeStyles({ 
-    //                                         padding: '4px 0px',
-    //                                         display: 'block'
-    //                                       })}
-    //                                 >
-    //                                     Telp: 
-    //                                 </label>
-    //                                 <label className={mergeStyles({ 
-    //                                     borderRadius: 3,
-    //                                     marginLeft: 4,
-    //                                     padding: 4,
-    //                                     backgroundColor: 'green',
-    //                                     boxShadow: DefaultEffects.elevation4,
-    //                                     display: 'block',
-    //                                     color: 'white'
-    //                                     })}
-    //                                 >{`${kontak!.telepone}`}</label>
-    //                             </span>
-    //                             {`Fax: ${kontak!.fax}`}
-    //                         </p>
-    //                     </div>
-    //                 );
-    //             case 'c4':
-    //                 return (
-    //                     <span>{`${item.perusahaan?.alamat?.keterangan}`}</span>
-    //                 );
-    //             case 'c5':
-    //                 return(
-    //                     <>
-    //                     <span>Jumlah Dokumen : {item.perusahaan?.daftarRegisterDokumen?.length}</span><br />                     
-    //                     {
-    //                         item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen) => {
-    //                             let dokumen = null;
-    //                             if(dataRegisterDokumen.dokumen?.id == '010401') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor: {dokumen?.noSurat}</span><br />
-    //                                         <span>perihal: {dokumen?.perihalSurat}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                             else if(dataRegisterDokumen.dokumen?.id == '010402') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                             else if(dataRegisterDokumen.dokumen?.id == '010101') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as IAktaPendirian;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor: {dokumen?.nomor}</span><br />
-    //                                         <span>notaris: {dokumen?.namaNotaris}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                             else if(dataRegisterDokumen.dokumen?.id == '010404') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor: {dokumen?.noSurat}</span><br />
-    //                                         <span>perihal: {dokumen?.perihalSurat}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                             else if(dataRegisterDokumen.dokumen?.id == '010406') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor: {dokumen?.noSurat}</span><br />
-    //                                         <span>perihal: {dokumen?.perihalSurat}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                             else if(dataRegisterDokumen.dokumen?.id == '010301') {
-    //                                 dokumen = dataRegisterDokumen.dokumen as IDokumenOss;
-    //                                 return (
-    //                                     <>
-    //                                         <span>- {dokumen?.nama}</span><br />
-    //                                         <span>Nomor: {dokumen?.nomor}</span><br />
-    //                                         <span>perihal: {dokumen?.tanggal}</span><br />
-    //                                     </>                                    
-    //                                 );
-    //                             }
-    //                         })
-    //                     }
-    //                     </>
-    //                 );
-    //             default:
-    //                 return(<span>{`${item.perusahaan?.alamat?.keterangan}`}</span>);
-    //         }
-    //     },
-    //     []
-    // );
+export const DataListKbliFluentUI: FC<{daftarKbli: Partial<IKbli>[]}> = ({daftarKbli}) => {
     
+    const handleRenderItemColumn = useCallback(
+        (item: Partial<IKbli>, index: number|undefined, column: IColumn|undefined) => {
+            switch (column!.key) {
+                case 'c1':
+                    return (item.kode);
+                case 'c2':
+                    return (
+                        <p className={contentStyles.wrapText}>{item.nama}</p>
+                    );
+                default:
+                    return (
+                        <div>
+                            delete
+                        </div>
+                    );
+            }
+        },
+        []
+    );
+
     return(     
         <>
         <Stack>
@@ -211,6 +47,9 @@ export const DataListPerusahaanFluentUI = () => {
                 columns={_columns}
                 setKey="set"
                 layoutMode={DetailsListLayoutMode.justified}
+                selectionMode={SelectionMode.none}
+                compact={false}
+                onRenderItemColumn={handleRenderItemColumn}
             />    
         </Stack>
         </> 

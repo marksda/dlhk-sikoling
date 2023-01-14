@@ -1,11 +1,15 @@
 import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
+import cloneDeep from "lodash.clonedeep";
+import omit from "lodash.omit";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DayPickerIndonesiaStrings } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
+import { IKbli } from "../../features/dokumen/kbli-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
+import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 
 interface IModalFormulirDokumenNibProps {
     isModalOpen: boolean;
@@ -90,8 +94,9 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     const [kodeKbli, setKodeKbli] = useState<string>('01');
     const titleId = useId('Formulir Dokumen nib');
     const comboBoxKbliRef = useRef<IComboBox>(null);
+    const [daftarKbliSelected, setDaftarKbliSelected] = useState<({key: string} & Partial<IKbli>)[]>([]);
     
-
+    // console.log(daftarKbliSelected);
     //react hook form variable
     const { control, handleSubmit, setValue, reset, setError } = useForm<IDokumenNibOss>({
         mode: 'onSubmit',
@@ -139,7 +144,22 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
 
     const kbliItemClick = useCallback(
         (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {
-            console.log(option, index);
+            let hasilSplit = option?.text.split(' - ');
+            let kbli: {key: string} & Partial<IKbli> = {
+                key: hasilSplit![0],
+                kode: hasilSplit![0],
+                nama: hasilSplit![1],                
+            };
+            setDaftarKbliSelected((prev) => {
+                let tmp = cloneDeep(prev);
+                tmp.push(kbli);
+                setValue("daftarKbli", tmp.map(
+                    (item) => {
+                        return omit(item, ['key']);
+                    }) 
+                );
+                return tmp;
+            });
         },
         [],
     );    
@@ -186,7 +206,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
             <div className={contentStyles.body}>
                 <Stack tokens={stackTokens} >
                     <Stack horizontal tokens={stackHorTokens}>
-                        <Stack.Item grow>
+                        <Stack.Item>
                             <TextField label="Nib" />
                         </Stack.Item>
                         <Stack.Item grow>
@@ -211,6 +231,11 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                             options={kbliOptions}
                             onInputValueChange={inputKbliChange}
                             onItemClick={kbliItemClick}
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <DataListKbliFluentUI 
+                            daftarKbli={daftarKbliSelected}
                         />
                     </Stack.Item>
                     <Stack.Item align="end">
