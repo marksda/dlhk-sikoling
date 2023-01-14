@@ -1,6 +1,9 @@
-import { ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator, Stack } from "@fluentui/react";
+import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { DayPickerIndonesiaStrings } from "../../features/config/config";
+import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
+import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 
 interface IModalFormulirDokumenNibProps {
     isModalOpen: boolean;
@@ -14,7 +17,7 @@ const contentStyles = mergeStyleSets({
         display: 'flex',
         flexFlow: 'column nowrap',
         alignItems: 'stretch',
-        minWidth: 400
+        width: 500
     },
     header: [
         // eslint-disable-next-line deprecation/deprecation
@@ -76,10 +79,72 @@ const dragOptions: IDragOptions = {
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const stackTokens = { childrenGap: 2 };
+const stackHorTokens = { childrenGap: 8 };
+
 
 export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({isModalOpen, hideModal, isDraggable}) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
+    const [kodeKbli, setKodeKbli] = useState<string>('01');
     const titleId = useId('Formulir Dokumen nib');
+    const comboBoxKbliRef = useRef<IComboBox>(null);
+    
+
+    //react hook form variable
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterDokumen>({
+        mode: 'onSubmit',
+        defaultValues: {
+            id: null,
+            registerPerusahaan: null,
+            kategoriPermohonan: null,
+            tanggalRegistrasi: null,
+            pengurusPermohonan: null,
+            statusWali: null,
+            posisiTahapPemberkasan: null,
+            daftarDokumenSyarat: [],
+            daftarDokumenHasil: [],
+            jenisPermohonanSuratArahan: null
+        }
+    });
+
+    //rtk query perusahaan variable hook
+    const { data: daftarKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
+
+    const kbliOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(daftarKbli != undefined) {
+                return [
+                    ...daftarKbli.map(
+                        (t) => ({
+                            key: t.kode!,
+                            text: `${t.kode} - ${t.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarKbli]
+    );
+
+    const inputKbliChange = useCallback(
+        (newValue: string) => {
+            setKodeKbli(newValue||'');
+            if(newValue.length > 1) {
+                comboBoxKbliRef.current?.focus(true);
+            }
+        },
+        [comboBoxKbliRef],
+    );
+
+    const kbliItemClick = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {
+            console.log(option, index);
+        },
+        [],
+    );    
 
     const handleCloseModal = useCallback(
         () => {
@@ -120,12 +185,44 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                     />
                 </div>                  
             </div>     
-            <Stack horizontal tokens={stackTokens} 
-                styles={{root: { width: 400, alignItems: 'center'}}}>
-                <Stack.Item>
-                    
-                </Stack.Item>
-            </Stack>       
+            <div className={contentStyles.body}>
+                <Stack tokens={stackTokens} >
+                    <Stack horizontal tokens={stackHorTokens}>
+                        <Stack.Item grow>
+                            <TextField label="Nib" />
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            <DatePicker
+                                label="Tanggal pengesahan"
+                                firstDayOfWeek={firstDayOfWeek}
+                                placeholder="Select a date..."
+                                ariaLabel="Select a date"
+                                // DatePicker uses English strings by default. For localized apps, you must override this prop.
+                                strings={DayPickerIndonesiaStrings}
+                            />
+                        </Stack.Item>
+                    </Stack>                    
+                    <Stack.Item>
+                        <ComboBox 
+                            componentRef={comboBoxKbliRef}
+                            label="KBLI 2020"
+                            placeholder="Ketik kode kbli untuk pencarian dan pemilihan"
+                            dropdownMaxWidth={450}
+                            allowFreeform={true}
+                            autoComplete="on"
+                            options={kbliOptions}
+                            onInputValueChange={inputKbliChange}
+                            onItemClick={kbliItemClick}
+                        />
+                    </Stack.Item>
+                    <Stack.Item align="end">
+                        <PrimaryButton 
+                            style={{marginTop: 24, width: 100}}
+                            text="Upload" 
+                        />
+                    </Stack.Item>  
+                </Stack> 
+            </div>               
         </Modal>
     );
 };
