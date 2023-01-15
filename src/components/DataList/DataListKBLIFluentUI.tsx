@@ -59,7 +59,7 @@ export const DataListKbliFluentUI: FC<{daftarKbli: Partial<IKbli>[], handleHapus
                 setKey="set"
                 layoutMode={DetailsListLayoutMode.justified}
                 selectionMode={SelectionMode.none}
-                compact={false}
+                compact={true}
                 onRenderItemColumn={handleRenderItemColumn}
             />    
         </Stack>

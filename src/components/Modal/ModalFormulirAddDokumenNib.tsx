@@ -1,11 +1,12 @@
 import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
+import find from "lodash.find";
 import omit from "lodash.omit";
 import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { DayPickerIndonesiaStrings } from "../../features/config/config";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
@@ -96,13 +97,12 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     const comboBoxKbliRef = useRef<IComboBox>(null);
     const [daftarKbliSelected, setDaftarKbliSelected] = useState<({key: string} & Partial<IKbli>)[]>([]);
     
-    // console.log(daftarKbliSelected);
     //react hook form variable
     const { control, handleSubmit, setValue, reset, setError } = useForm<IDokumenNibOss>({
         mode: 'onSubmit',
         defaultValues: {
-            id: null,
-            nama: null,
+            id: '010301',
+            nama: 'NIB - OSS',
             kategoriDokumen: null,
             nomor: null,
             tanggal: null,
@@ -132,6 +132,16 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
         [daftarKbli]
     );
 
+    const onChangeNib = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+          if (!newValue || newValue.length <= 5) {
+            // setSecondTextFieldValue(newValue || '');
+            setValue('nomor', newValue || '');
+          }
+        },
+        [],
+      );
+
     const inputKbliChange = useCallback(
         (newValue: string) => {
             setKodeKbli(newValue||'');
@@ -152,13 +162,17 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
             };
             setDaftarKbliSelected((prev) => {
                 let tmp = cloneDeep(prev);
-                tmp.push(kbli);
-                setValue("daftarKbli", tmp.map(
-                    (item) => {
-                        return omit(item, ['key']);
-                    }) 
-                );
-                return tmp;
+                let findObj = find(tmp, (i) => { return i.kode === kbli.kode});
+                if(findObj == undefined) {
+                    tmp.push(kbli);
+                    setValue("daftarKbli", tmp.map(
+                        (item) => {
+                            return omit(item, ['key']);
+                        }) 
+                    );
+                    
+                }
+                return tmp;                
             });
         },
         [],
@@ -175,18 +189,23 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
 
     const handleHapusKbli = useCallback(
         (kode) => {
-            setDaftarKbliSelected((prev) => {
-                let tmp = remove(prev, (itemDelete) => (itemDelete.kode == kode));
-                setValue("daftarKbli", tmp.map(
-                    (item) => {
-                        return omit(item, ['key']);
-                    }) 
-                );
-                return tmp;
-            });
+            setDaftarKbliSelected(
+                (prev) => {
+                    let tmp = cloneDeep(prev);
+                    remove(tmp, (i) => { return i.kode === kode});
+                    setValue("daftarKbli", tmp.map(
+                        (item) => {
+                            return omit(item, ['key']);
+                        }) 
+                    );
+                    return tmp;
+                }
+            );
         },
         []
     );
+
+    const onSubmit: SubmitHandler<IDokumenNibOss> = data => console.log(data);
 
     return (
         <Modal
@@ -222,7 +241,12 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                 <Stack tokens={stackTokens} >
                     <Stack horizontal tokens={stackHorTokens}>
                         <Stack.Item>
-                            <TextField label="Nib" />
+                            <TextField 
+                                label="Nib"
+                                required
+                                type="number"
+                                onChange={onChangeNib}
+                            />
                         </Stack.Item>
                         <Stack.Item grow>
                             <DatePicker
@@ -230,8 +254,8 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                                 firstDayOfWeek={firstDayOfWeek}
                                 placeholder="Select a date..."
                                 ariaLabel="Select a date"
-                                // DatePicker uses English strings by default. For localized apps, you must override this prop.
                                 strings={DayPickerIndonesiaStrings}
+                                formatDate={onFormatDate}
                             />
                         </Stack.Item>
                     </Stack>                    
@@ -258,6 +282,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                         <PrimaryButton 
                             style={{marginTop: 24, width: 100}}
                             text="Upload" 
+                            onClick={handleSubmit(onSubmit)}
                         />
                     </Stack.Item>  
                 </Stack> 
