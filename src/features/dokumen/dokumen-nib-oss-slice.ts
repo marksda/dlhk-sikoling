@@ -4,12 +4,12 @@ import { IDokumen } from "./dokumen-slice";
 import { IKbli } from "./kbli-slice";
 import { IRegisterKbli } from "./register-kbli-slice";
 
-type daftarKbli = Partial<IKbli>[];
+type daftarRegisterKbli = Partial<IRegisterKbli>[];
 
 export interface IDokumenNibOss extends IDokumen {
     nomor: string|null;
     tanggal: string|null;
-    daftarKbli: daftarKbli|null;
+    daftarKbli: daftarRegisterKbli|null;
 };
 
 const initialState: IDokumenNibOss = {
@@ -44,7 +44,7 @@ export const IDokumenNibOss = createSlice({
         setTanggalDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.tanggal = action.payload;
         },        
-        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
+        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarKbli>) => {
             state.daftarKbli = cloneDeep(action.payload);
         },
     }

@@ -1,15 +1,19 @@
-import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
+import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
 import find from "lodash.find";
 import omit from "lodash.omit";
 import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { useAppSelector } from "../../app/hooks";
+import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
+import { useAddRegisterDokumenMutation } from "../../features/dokumen/register-dokumen-api-slice";
+import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
+import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 
 interface IModalFormulirDokumenNibProps {
@@ -88,8 +92,8 @@ const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const stackTokens = { childrenGap: 2 };
 const stackHorTokens = { childrenGap: 8 };
 
-
 export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({isModalOpen, hideModal, isDraggable}) => {
+    const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [kodeKbli, setKodeKbli] = useState<string>('01');
@@ -106,18 +110,25 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
             kategoriDokumen: null,
             nomor: null,
             tanggal: null,
-            daftarKbli: null
+            daftarKbli: []
         }
     });
 
+    const [nomor, tanggal, daftarKbli] = useWatch({
+        control: control, 
+        name: ['nomor', 'tanggal', 'daftarKbli']
+    });
+
     //rtk query perusahaan variable hook
-    const { data: daftarKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
+    const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
+    //rtk query mutation addPerusahaan variable
+    const [addRegisterDokumen] = useAddRegisterDokumenMutation();
 
     const kbliOptions: IDropdownOption<any>[] = useMemo(
         () => {
-            if(daftarKbli != undefined) {
+            if(listKbli != undefined) {
                 return [
-                    ...daftarKbli.map(
+                    ...listKbli.map(
                         (t) => ({
                             key: t.kode!,
                             text: `${t.kode} - ${t.nama}`
@@ -129,18 +140,18 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                 return [];
             }
         },
-        [daftarKbli]
+        [listKbli]
     );
 
     const onChangeNib = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-          if (!newValue || newValue.length <= 5) {
+          if (!newValue || newValue.length == 13) {
             // setSecondTextFieldValue(newValue || '');
             setValue('nomor', newValue || '');
           }
         },
         [],
-      );
+    );
 
     const inputKbliChange = useCallback(
         (newValue: string) => {
@@ -160,22 +171,34 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                 kode: hasilSplit![0],
                 nama: hasilSplit![1],                
             };
+            
+            let registerKbli: IRegisterKbli = {
+                idNib: nomor,
+                idKbli: hasilSplit![0],
+                nama: hasilSplit![1]
+            };
+
+            let tmpDaftarRegisterKbli = cloneDeep(daftarKbli);
+            
+
+            // setValue("daftarKbli", tmp.map(
+            //     (item) => {
+            //         return omit(item, ['key']);
+            //     }) 
+            // );
+
             setDaftarKbliSelected((prev) => {
                 let tmp = cloneDeep(prev);
                 let findObj = find(tmp, (i) => { return i.kode === kbli.kode});
+                tmpDaftarRegisterKbli?.push(registerKbli);
                 if(findObj == undefined) {
                     tmp.push(kbli);
-                    setValue("daftarKbli", tmp.map(
-                        (item) => {
-                            return omit(item, ['key']);
-                        }) 
-                    );
-                    
+                    setValue("daftarKbli", tmpDaftarRegisterKbli);                    
                 }
                 return tmp;                
             });
         },
-        [],
+        [nomor, daftarKbli],
     );    
 
     const handleCloseModal = useCallback(
@@ -205,7 +228,30 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
         []
     );
 
-    const onSubmit: SubmitHandler<IDokumenNibOss> = data => console.log(data);
+    const handleSelectedDate = useCallback(
+        (date) => {
+            setValue('tanggal', onFormatDateUtc(date));
+        },
+        []
+    );
+
+    const simpanDokumen = useCallback(
+        handleSubmit(
+            async (data) => {                
+                console.log(data);
+                try {
+                    let regDok: Partial<IRegisterDokumen> = {
+                        dokumen: data,
+                        perusahaan: registerPerusahaan.perusahaan,
+                    }
+                    await addRegisterDokumen(regDok).unwrap();
+                } catch (error) {
+                    
+                }
+            }
+        ),
+        [registerPerusahaan]
+    );
 
     return (
         <Modal
@@ -241,10 +287,10 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                 <Stack tokens={stackTokens} >
                     <Stack horizontal tokens={stackHorTokens}>
                         <Stack.Item>
-                            <TextField 
+                            <MaskedTextField 
                                 label="Nib"
                                 required
-                                type="number"
+                                mask="9999999999999"
                                 onChange={onChangeNib}
                             />
                         </Stack.Item>
@@ -256,6 +302,8 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                                 ariaLabel="Select a date"
                                 strings={DayPickerIndonesiaStrings}
                                 formatDate={onFormatDate}
+                                onSelectDate={handleSelectedDate}
+                                disabled={nomor != null ? (nomor!.length == 13 ? false: true):true}
                             />
                         </Stack.Item>
                     </Stack>                    
@@ -263,13 +311,15 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                         <ComboBox 
                             componentRef={comboBoxKbliRef}
                             label="KBLI 2020"
-                            placeholder="Ketik kode kbli untuk pencarian dan pemilihan"
+                            placeholder="Ketik kode kbli untuk pencarian"
+                            selectedKey={null}
                             dropdownMaxWidth={450}
                             allowFreeform={true}
                             autoComplete="on"
                             options={kbliOptions}
                             onInputValueChange={inputKbliChange}
                             onItemClick={kbliItemClick}
+                            disabled={tanggal == null ? true:false}
                         />
                     </Stack.Item>
                     <Stack.Item>
@@ -282,7 +332,8 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                         <PrimaryButton 
                             style={{marginTop: 24, width: 100}}
                             text="Upload" 
-                            onClick={handleSubmit(onSubmit)}
+                            onClick={simpanDokumen}
+                            disabled={daftarKbli?.length == 0 ? true:false}
                         />
                     </Stack.Item>  
                 </Stack> 

@@ -33,6 +33,7 @@ import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-ap
 import dokumenReducer from "../features/dokumen/dokumen-slice";
 import { DokumenApiSlice } from "../features/dokumen/dokumen-api-slice";
 import registerDokumenReducer from "../features/dokumen/register-dokumen-slice";
+import { RegisterDokumenApiSlice } from "../features/dokumen/register-dokumen-api-slice";
 import kbliReducer from "../features/dokumen/kbli-slice";
 import { KbliApiSlice } from "../features/dokumen/kbli-api-slice";
 import registerKbliReducer from "../features/dokumen/register-kbli-slice";
@@ -81,6 +82,7 @@ export const store = configureStore({
         dokumen: dokumenReducer,
         [DokumenApiSlice.reducerPath]: DokumenApiSlice.reducer,
         dokumenRegister: registerDokumenReducer,
+        [RegisterDokumenApiSlice.reducerPath]: RegisterDokumenApiSlice.reducer,
         kbli: kbliReducer,
         [KbliApiSlice.reducerPath]: KbliApiSlice.reducer,
         registerKbli: registerKbliReducer,
@@ -110,6 +112,7 @@ export const store = configureStore({
                                             .concat(RegisterPerusahaanApiSlice.middleware)
                                             .concat(KategoriDokumenApiSlice.middleware)
                                             .concat(DokumenApiSlice.middleware)
+                                            .concat(RegisterDokumenApiSlice.middleware)
                                             .concat(KbliApiSlice.middleware)
                                             .concat(RegisterKbliApiSlice.middleware)
                                             .concat(RegisterPermohonanApiSlice.middleware)

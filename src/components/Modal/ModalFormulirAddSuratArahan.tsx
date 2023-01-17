@@ -7,6 +7,8 @@ import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSura
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
 import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
 import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
+import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../app/hooks";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -72,7 +74,8 @@ const progressStyle: IProgressIndicatorStyles = {
 export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = ({isModalOpen, hideModal, isDraggable}) => {  
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('tahapPertama'); 
-    const [isLoading, setIsLoading] = useState<boolean>(false); 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    
 
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable

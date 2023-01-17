@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../person/person-slice";
 import { IPerusahaan } from "../perusahaan/perusahaan-slice";
-import { IDokumen, IDokumenNibOss } from "./dokumen-slice";
+import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
+import { IDokumen } from "./dokumen-slice";
 
 export interface IRegisterDokumen {
     id: string|null;

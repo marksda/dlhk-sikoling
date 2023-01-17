@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
 import { IDokumen } from "./dokumen-slice";
 
 type daftarDokumen = IDokumen[];
@@ -12,7 +13,7 @@ export const DokumenApiSlice = createApi({
     tagTypes:['Dokumen', 'DokumenPage', 'DokumenNama', 'DokumenNamaPage'],
     endpoints(builder) {
         return {
-            addDokumen: builder.mutation<IDokumen, Partial<IDokumen>>({
+            addDokumen: builder.mutation<IDokumen, Partial<IDokumen>|Partial<IDokumenNibOss>>({
                 query: (body) => ({
                     url: 'dokumen',
                     method: 'POST',

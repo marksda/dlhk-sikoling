@@ -1,14 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
+import { baseQueryWithReauth } from "../config/helper-function";
 import { IRegisterDokumen } from "./register-dokumen-slice";
 
 type daftarRegisterDokumen = IRegisterDokumen[];
 
 export const RegisterDokumenApiSlice = createApi({
     reducerPath: 'registerDokumenApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,
     tagTypes:['RegisterDokumen', 'RegisterDokumenPage', 'RegisterDokumenNama', 'RegisterDokumenNamaPage', 'RegisterDokumenIdDokumen', 'RegisterDokumenIdDokumenPage', 'RegisterDokumenPerusahaan', 'RegisterDokumenPerusahaanPage', 'RegisterDokumenIdPerusahaan', 'RegisterDokumenIdPerusahaanPage'],

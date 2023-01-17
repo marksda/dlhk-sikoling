@@ -44,6 +44,9 @@ export const DayPickerIndonesiaStrings: IDatePickerStrings = {
 export const onFormatDate = (date?: Date) => {
     return !date ? '' : addZeroDigitInFront(date.getDate()) + '/' + addZeroDigitInFront(date.getMonth() + 1) + '/' + date.getFullYear();
 };
+export const onFormatDateUtc = (date?: Date) => {
+    return !date ? '' : date.getFullYear() + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + addZeroDigitInFront(date.getDate());
+};
 const addZeroDigitInFront = (bilangan: number) => {
     if(bilangan < 10) {
         return `0${bilangan}`;
