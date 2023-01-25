@@ -146,7 +146,6 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     const onChangeNib = useCallback(
         (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
           if (!newValue || newValue.length == 13) {
-            // setSecondTextFieldValue(newValue || '');
             setValue('nomor', newValue || '');
           }
         },
@@ -238,7 +237,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     const simpanDokumen = useCallback(
         handleSubmit(
             async (data) => {                
-                console.log(data);
+                // console.log(data);
                 try {
                     let regDok: Partial<IRegisterDokumen> = {
                         dokumen: data,
@@ -246,7 +245,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                     }
                     await addRegisterDokumen(regDok).unwrap();
                 } catch (error) {
-                    
+                    //terjadi kegagalan
                 }
             }
         ),
@@ -303,7 +302,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                                 strings={DayPickerIndonesiaStrings}
                                 formatDate={onFormatDate}
                                 onSelectDate={handleSelectedDate}
-                                disabled={nomor != null ? (nomor!.length == 13 ? false: true):true}
+                                disabled={nomor?.length != null ? false : true}
                             />
                         </Stack.Item>
                     </Stack>                    

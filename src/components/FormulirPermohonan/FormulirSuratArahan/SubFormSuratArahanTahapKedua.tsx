@@ -146,7 +146,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 <Label styles={labelStyle}>
                     Permohonan - ({jenisPermohonanSuratArahan.keterangan})
                 </Label>
-                <Label styles={subLabelStyle}>Kami memerlukan dokumen persyaratan berformat pdf. Pilihan dokumen akan muncul jika sudah pernah upload, jika tidak muncul silakan tekan tombol File untuk menambahkan dokumen terlebih dahulu</Label>
+                <Label styles={subLabelStyle}>Kami memerlukan dokumen persyaratan berformat pdf. Pilihan dokumen akan muncul apabila dokumen pernah diupload, jika tidak muncul silahkan tekan tombol File untuk menambahkan dokumen terlebih dahulu.</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 {jenisPermohonanSuratArahan.id == '1' ? getPermohonanSrtArahanBaru() : getPermohonanSrtArahanPerubahan()}
