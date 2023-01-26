@@ -244,6 +244,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                         perusahaan: registerPerusahaan.perusahaan,
                     }
                     await addRegisterDokumen(regDok).unwrap();
+                    //upload file dok
                 } catch (error) {
                     //terjadi kegagalan
                 }
