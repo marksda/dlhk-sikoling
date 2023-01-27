@@ -15,6 +15,7 @@ import { useAddRegisterDokumenMutation } from "../../features/dokumen/register-d
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
+import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 
 interface IModalFormulirDokumenNibProps {
     isModalOpen: boolean;
@@ -91,6 +92,11 @@ const dragOptions: IDragOptions = {
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const stackTokens = { childrenGap: 2 };
 const stackHorTokens = { childrenGap: 8 };
+const containerStyle: IContainerUploadStyle = {
+    width: 300, 
+    height: 100, 
+    backgroundColor: '#ECECEC',
+};
 
 export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({isModalOpen, hideModal, isDraggable}) => {
     const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
@@ -326,6 +332,19 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                         <DataListKbliFluentUI 
                             daftarKbli={daftarKbliSelected}
                             handleHapus={handleHapusKbli}
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <UploadFilesFluentUi 
+                            label='Upload File Hasil Scan KTP'
+                            showPreview={false}
+                            showListFile={false}
+                            uploadMode={{
+                                controlled: false,
+                                startUpload: false,
+                                subUri: null
+                            }}
+                            containerStyle={containerStyle}
                         />
                     </Stack.Item>
                     <Stack.Item align="end">
