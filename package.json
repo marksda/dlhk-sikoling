@@ -12,6 +12,7 @@
     "@fluentui/react": "^8.93.0",
     "@fluentui/react-hooks": "^8.6.10",
     "@fluentui/react-icons-mdl2": "^1.3.11",
+    "@hookform/resolvers": "^2.9.10",
     "@reduxjs/toolkit": "^1.8.4",
     "@techstark/opencv-js": "*",
     "async-mutex": "^0.4.0",
@@ -27,7 +28,8 @@
     "react-hook-form": "^7.33.0",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.4.1",
-    "tesseract.js": "^3.0.2"
+    "tesseract.js": "^3.0.2",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",

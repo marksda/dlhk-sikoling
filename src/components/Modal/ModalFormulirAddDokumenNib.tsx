@@ -6,6 +6,7 @@ import omit from "lodash.omit";
 import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { object, z, array } from "zod";
 import { useAppSelector } from "../../app/hooks";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
@@ -22,7 +23,10 @@ interface IModalFormulirDokumenNibProps {
     hideModal: () => void;
     isDraggable: boolean;
 };
-
+const imageUploadSchema = object({
+    image: z.instanceof(File),
+    images: array(z.instanceof(File))
+});
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
     container: {
