@@ -13,6 +13,15 @@ export const RegisterDokumenApiSlice = createApi({
     tagTypes:['RegisterDokumen', 'RegisterDokumenPage', 'RegisterDokumenNama', 'RegisterDokumenNamaPage', 'RegisterDokumenIdDokumen', 'RegisterDokumenIdDokumenPage', 'RegisterDokumenPerusahaan', 'RegisterDokumenPerusahaanPage', 'RegisterDokumenIdPerusahaan', 'RegisterDokumenIdPerusahaanPage'],
     endpoints(builder) {
         return {
+            uploadFileDokumen: builder.mutation<{}, FormData>({
+                query(data) {
+                  return {
+                    url: 'upload',
+                    method: 'POST',
+                    body: data,
+                  };
+                },
+            }),
             addRegisterDokumen: builder.mutation<IRegisterDokumen, Partial<IRegisterDokumen>>({
                 query: (body) => ({
                     url: 'register_dokumen',
@@ -163,7 +172,7 @@ export const RegisterDokumenApiSlice = createApi({
 });
 
 export const {
-    useAddRegisterDokumenMutation, useUpdateRegisterDokumenMutation,
+    useUploadFileDokumenMutation, useAddRegisterDokumenMutation, useUpdateRegisterDokumenMutation,
     useDeleteRegisterDokumenMutation, useGetAllRegisterDokumenQuery,
     useGetRegisterDokumenByPageQuery, useGetRegisterDokumenByPerusahaanQuery,
     useGetRegisterDokumenByPerusahaanAndPageQuery, useGetRegisterDokumenByIdPerusahaanQuery,

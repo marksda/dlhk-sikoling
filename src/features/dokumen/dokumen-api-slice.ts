@@ -13,6 +13,7 @@ export const DokumenApiSlice = createApi({
     tagTypes:['Dokumen', 'DokumenPage', 'DokumenNama', 'DokumenNamaPage'],
     endpoints(builder) {
         return {
+            
             addDokumen: builder.mutation<IDokumen, Partial<IDokumen>|Partial<IDokumenNibOss>>({
                 query: (body) => ({
                     url: 'dokumen',
