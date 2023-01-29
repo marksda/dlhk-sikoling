@@ -6,13 +6,13 @@ import omit from "lodash.omit";
 import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { object, z, array } from "zod";
+import { object, z, array, TypeOf } from "zod";
 import { useAppSelector } from "../../app/hooks";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
-import { useAddRegisterDokumenMutation } from "../../features/dokumen/register-dokumen-api-slice";
+import { useAddRegisterDokumenMutation, useUploadFileDokumenMutation } from "../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
@@ -23,10 +23,13 @@ interface IModalFormulirDokumenNibProps {
     hideModal: () => void;
     isDraggable: boolean;
 };
-const imageUploadSchema = object({
-    image: z.instanceof(File),
-    images: array(z.instanceof(File))
+
+const dokumenUploadSchema = object({
+    dokumen: z.instanceof(File),
+    dokumens: array(z.instanceof(File))
 });
+type IDokumenUpload = TypeOf<typeof dokumenUploadSchema>;
+
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
     container: {
@@ -133,6 +136,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
     const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
     //rtk query mutation addPerusahaan variable
     const [addRegisterDokumen] = useAddRegisterDokumenMutation();
+    const [uploadFileDokumen] = useUploadFileDokumenMutation();
 
     const kbliOptions: IDropdownOption<any>[] = useMemo(
         () => {
