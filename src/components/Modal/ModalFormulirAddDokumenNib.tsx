@@ -278,6 +278,9 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                     }
                     await addRegisterDokumen(regDok).unwrap();
                     //upload file dok
+                    // const formData = new FormData();
+                    // formData.append('image', values.image);
+                    // uploadFileDokumen(formData);
                 } catch (error) {
                     //terjadi kegagalan
                 }

@@ -112,7 +112,7 @@ export const FileUpload: FC<IFileUploadProps> = ({ limit, multiple, name, mime, 
             {fileList.length > 0 || singleFile.length > 0 ? (
                 <Stack styles={stackItemStyles}>
                     <Stack>
-                        <Label>File Berikut akan diupload</Label>
+                        <Label>File di bawah ini akan diupload</Label>
                     </Stack>
                 {
                     (multiple == true ? fileList:singleFile).map((item, index)=> {
