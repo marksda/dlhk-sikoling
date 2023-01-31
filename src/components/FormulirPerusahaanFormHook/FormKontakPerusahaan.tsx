@@ -158,7 +158,7 @@ export const FormKontakPerusahaan: FC<IFormKontakPerusahaanProps> = ({control, s
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>
                 <PrimaryButton 
-                    text="Lanjut" 
+                    text="Simpan" 
                     style={{marginTop: 24, width: 100}}
                     onClick={handleSubmit(successfulCallBack)}
                     disabled={kontak.telepone == '' ? true:false}

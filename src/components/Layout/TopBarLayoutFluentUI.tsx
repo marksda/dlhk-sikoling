@@ -75,7 +75,7 @@ export const TopBarLayoutFluentUI: FC = () => {
                 </Stack.Item>
                 <Stack.Item align="center" >
                     <TooltipHost
-                        content="Detail pengguna"
+                        content="Log out"
                         id={tooltipId}
                         calloutProps={calloutProps}
                         styles={hostStyles}
@@ -96,12 +96,11 @@ export const TopBarLayoutFluentUI: FC = () => {
                 >
                     <Overlay onClick={hidePopup} />
                     <div role="document" className={popupStyles.content}>
-                        <h2>Example Popup</h2>
+                        <h2>Log out</h2>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                            dolore magna aliqua.
+                            Silahkan Klik tombol keluar jika anda yakin untuk mengakhiri pengaksesan aplikasi sikoling.
                         </p>
-                        <DefaultButton onClick={handleLogOut}>Log out</DefaultButton>
+                        <DefaultButton onClick={handleLogOut}>Keluar</DefaultButton>
                     </div>
                 </Popup>
             </Layer>

@@ -86,7 +86,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                         <Stack horizontal tokens={sectionStackTokens}>
                             <Stack.Item grow align="center">
                                 <ControlledFluentUiDropDown
-                                    label="Dokumen imb atau pbg"
+                                    label="Dokumen KKPR/PKKPR/P2R"
                                     options={[]}
                                     placeholder="Pilih dokumen"
                                     required
@@ -101,15 +101,65 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                         </Stack>
                     </Stack.Item>
                     <Stack.Item>
-                        <ControlledFluentUiTextField
-                            label="File surat arahan"
-                            placeholder="Isi detail alamat seperti: jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
-                            control={control}
-                            name="alamat.keterangan"
-                            rules={{ required: "harus diisi" }}  
-                            required multiline autoAdjustHeight
-                        /> 
+                        <Stack horizontal tokens={sectionStackTokens}>
+                            <Stack.Item grow align="center">
+                                <ControlledFluentUiDropDown
+                                    label="Dokumen imb/pbg"
+                                    options={[]}
+                                    placeholder="Pilih dokumen"
+                                    required
+                                    name="jenisPermohonan"
+                                    rules={{ required: "harus diisi" }} 
+                                    control={control}
+                                />     
+                            </Stack.Item>
+                            <Stack.Item align="end">                            
+                                <DefaultButton text="File"/>
+                            </Stack.Item>
+                        </Stack>
                     </Stack.Item>
+                    <Stack.Item>
+                        <Stack horizontal tokens={sectionStackTokens}>
+                            <Stack.Item grow align="center">
+                                <ControlledFluentUiDropDown
+                                    label="Dokumen Izin Usaha/Izin Operasional"
+                                    options={[]}
+                                    placeholder="Pilih dokumen"
+                                    required
+                                    name="jenisPermohonan"
+                                    rules={{ required: "harus diisi" }} 
+                                    control={control}
+                                />     
+                            </Stack.Item>
+                            <Stack.Item align="end">                            
+                                <DefaultButton text="File"/>
+                            </Stack.Item>
+                        </Stack>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <Stack horizontal tokens={sectionStackTokens}>
+                            <Stack.Item grow align="center">
+                                <ControlledFluentUiDropDown
+                                    label="Dokumen Surat Arahan"
+                                    options={[]}
+                                    placeholder="Pilih dokumen"
+                                    required
+                                    name="jenisPermohonan"
+                                    rules={{ required: "harus diisi" }} 
+                                    control={control}
+                                />     
+                            </Stack.Item>
+                            <Stack.Item align="end">                            
+                                <DefaultButton text="File"/>
+                            </Stack.Item>
+                        </Stack>
+                    </Stack.Item>
+                    <Stack.Item align="end">
+                        <PrimaryButton 
+                            style={{marginTop: 16, width: 100}}
+                            text="Simpan" 
+                        />
+                    </Stack.Item>  
                 </>
             );
         },

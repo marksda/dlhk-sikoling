@@ -1,12 +1,13 @@
-import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
+import { ComboBox, ContextualMenu, DatePicker, DayOfWeek, DefaultPalette, FontSizes, FontWeights, getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, IProgressIndicatorStyles, IStackItemStyles, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack, TextField } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
 import find from "lodash.find";
 import omit from "lodash.omit";
 import remove from "lodash.remove";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { object, z, array, TypeOf } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppSelector } from "../../app/hooks";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
@@ -16,6 +17,7 @@ import { useAddRegisterDokumenMutation, useUploadFileDokumenMutation } from "../
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
+import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 
 interface IModalFormulirDokumenNibProps {
@@ -64,6 +66,12 @@ const contentStyles = mergeStyleSets({
     },
     
 });
+const stackItemStyles: IStackItemStyles = {
+    root: {
+        border: `1px solid ${DefaultPalette.orangeLighter}`,
+        padding: 4,
+    },
+};
 const iconButtonStyles = {
     root: {
       color: theme.palette.neutralPrimary,
@@ -97,7 +105,7 @@ const dragOptions: IDragOptions = {
     dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
-const stackTokens = { childrenGap: 2 };
+const stackTokens = { childrenGap: 4 };
 const stackHorTokens = { childrenGap: 8 };
 const containerStyle: IContainerUploadStyle = {
     width: 300, 
@@ -131,6 +139,17 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
         control: control, 
         name: ['nomor', 'tanggal', 'daftarKbli']
     });
+
+    const methods = useForm<IDokumenUpload>({
+        resolver: zodResolver(dokumenUploadSchema),
+    });
+
+    const [dokumen, dokumens] = useWatch({
+        control: methods.control, 
+        name: ['dokumen', 'dokumens']
+    });
+
+    console.log(dokumen);
 
     //rtk query perusahaan variable hook
     const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
@@ -321,7 +340,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                             />
                         </Stack.Item>
                     </Stack>                    
-                    <Stack.Item>
+                    <Stack.Item styles={stackItemStyles}>
                         <ComboBox 
                             componentRef={comboBoxKbliRef}
                             label="KBLI 2020"
@@ -335,32 +354,27 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                             onItemClick={kbliItemClick}
                             disabled={tanggal == null ? true:false}
                         />
-                    </Stack.Item>
-                    <Stack.Item>
                         <DataListKbliFluentUI 
                             daftarKbli={daftarKbliSelected}
                             handleHapus={handleHapusKbli}
                         />
                     </Stack.Item>
                     <Stack.Item>
-                        <UploadFilesFluentUi 
-                            label='Upload File Hasil Scan KTP'
-                            showPreview={false}
-                            showListFile={false}
-                            uploadMode={{
-                                controlled: false,
-                                startUpload: false,
-                                subUri: null
-                            }}
-                            containerStyle={containerStyle}
-                        />
+                        <FormProvider {...methods}>
+                            <FileUpload 
+                                limit={1} 
+                                multiple={false} 
+                                name='dokumen' 
+                                mime='application/pdf' 
+                                disabled={daftarKbliSelected.length > 0 ? false:true}/>
+                        </FormProvider>  
                     </Stack.Item>
                     <Stack.Item align="end">
                         <PrimaryButton 
-                            style={{marginTop: 24, width: 100}}
-                            text="Upload" 
+                            style={{marginTop: 16, width: 100}}
+                            text="Simpan" 
                             onClick={simpanDokumen}
-                            disabled={daftarKbli?.length == 0 ? true:false}
+                            disabled={dokumen == undefined ? true:false}
                         />
                     </Stack.Item>  
                 </Stack> 

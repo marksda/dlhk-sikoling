@@ -86,21 +86,21 @@ export const KontenPermohonanPemrakarsa: FC = () => {
        
     return (
         <>
-        <Stack styles={kontenStyles}>
-            <Stack.Item>
-                <CommandBar
-                    items={_items}
-                />
-            </Stack.Item>
-            <Stack.Item>
-                <DataListPermohonanFluentUI dataPermohonan={dataRegisterPermohonan}/>
-            </Stack.Item>
-        </Stack>
-        <ModalFormulirAddSuratArahan
-            isModalOpen={isModalAddPermohonanSuratArahanOpen}
-            hideModal={hideModalAddPermohonanSuratArahan}
-            isDraggable={true}
-        />
+            <Stack styles={kontenStyles}>
+                <Stack.Item>
+                    <CommandBar
+                        items={_items}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <DataListPermohonanFluentUI dataPermohonan={dataRegisterPermohonan}/>
+                </Stack.Item>
+            </Stack>
+            <ModalFormulirAddSuratArahan
+                isModalOpen={isModalAddPermohonanSuratArahanOpen}
+                hideModal={hideModalAddPermohonanSuratArahan}
+                isDraggable={true}
+            />
         </>
     );
 }

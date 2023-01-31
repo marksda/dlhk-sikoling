@@ -24,7 +24,7 @@ export const Home = () => {
                 case 'Umum':
                     navigate("/pemrakarsa");
                     break;
-                case 'admin':
+                case 'Administrator':
                     navigate("/admin");
                     break;
                 default:
