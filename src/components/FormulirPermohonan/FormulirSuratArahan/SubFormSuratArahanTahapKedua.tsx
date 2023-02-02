@@ -1,5 +1,6 @@
-import { DefaultButton, IconButton, IDropdownOption, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
+import { DefaultButton, Dropdown, IconButton, IDropdownOption, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean } from "@fluentui/react-hooks";
+import { CommentSolidIcon } from "@fluentui/react-icons-mdl2";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -65,14 +66,24 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
         () => {
             var dt:IDropdownOption<any>[] = []
             if(daftarDok != undefined) {
+                    // daftarDok.map(
+                    //     (t) => {
+                    //         if(t.dokumen?.id == '010301'){
+                    //             dt.push({
+                    //                 key: t.id as string,
+                    //                 text: `(${t.dokumen!.nama}) - tanggal : ${t.dokumen.tanggal != undefined ? t.dokumen.tanggal : '-'}`
+                    //             });
+                    //         }                            
+                    //     }
+                    // );   
                     daftarDok.map(
                         (t) => {
-                            if(t.dokumen?.id == '010301'){
+                            // if(t.dokumen?.id == '010301'){
                                 dt.push({
                                     key: t.id as string,
                                     text: `(${t.dokumen!.nama}) - tanggal : ${t.dokumen.tanggal != undefined ? t.dokumen.tanggal : '-'}`
                                 });
-                            }                            
+                            // }                            
                         }
                     );   
             }
@@ -83,7 +94,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     );
 
     const handleSetRegisterDokNib = useCallback(
-        (item) => {
+        (_e, item) => {
             // console.log(item);
             // console.log(daftarDokumenSyarat);
             var itemSelected = find(daftarDok, (i) => i.id == item.key) as IRegisterDokumen;
@@ -111,11 +122,11 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
 
     const simpanPermohonanSrtArahan = useCallback(
         handleSubmit(
-            async (data) => {                
-                console.log(data);                
+            async (data) => {
+                console.log(data);
             }
         ),
-        [registerPerusahaan]
+        []
     );
 
     const getPermohonanSrtArahanBaru = useCallback(
@@ -125,14 +136,12 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                     <Stack.Item>
                         <Stack horizontal tokens={sectionStackTokens}>
                             <Stack.Item grow align="center">
-                                <ControlledFluentUiDropDown
+                                <Dropdown
                                     label="Dokumen nib oss rba"
                                     options={dokNibOptions}
                                     placeholder="Pilih dokumen"
-                                    name="sokumenSyarat"
-                                    control={control}                                    
-                                    onChangeItem={handleSetRegisterDokNib}
-                                />     
+                                    onChange={handleSetRegisterDokNib}
+                                />
                             </Stack.Item>
                             <Stack.Item align="end">                            
                                 <DefaultButton text="File" onClick={showModalAddDokumenNib}/>
@@ -147,6 +156,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     options={[]}
                                     placeholder="Pilih dokumen"
                                     name="jenisPermohonan"
+                                    rules={{ required: false }}
                                     control={control}
                                 />     
                             </Stack.Item>
