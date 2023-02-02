@@ -1,8 +1,11 @@
-import { DefaultButton, IconButton, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
+import { DefaultButton, IconButton, IDropdownOption, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean } from "@fluentui/react-hooks";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
-import { UseFormSetError, useWatch } from "react-hook-form";
+import find from "lodash.find";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
+import { useGetRegisterDokumenByIdPerusahaanQuery, useGetRegisterDokumenByPerusahaanQuery } from "../../../features/dokumen/register-dokumen-api-slice";
+import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../../ControlledTextField/ControlledFluentUiTextField";
@@ -14,19 +17,83 @@ import { contentStyles, durationAnimFormSuratArahan, ISubFormPermohonanSuratArah
 interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
     setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    handleSubmit: UseFormHandleSubmit<IRegisterPermohonanSuratArahan>;
 };
 
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };
 
-export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
+export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control, handleSubmit}) => {
     //react-form hook variable
-    const [registerPerusahaan, jenisPermohonanSuratArahan] = useWatch({
+    const [registerPerusahaan, jenisPermohonanSuratArahan, daftarDokumenSyarat] = useWatch({
         control: control, 
-        name: ['registerPerusahaan','jenisPermohonanSuratArahan']
+        name: ['registerPerusahaan','jenisPermohonanSuratArahan', 'daftarDokumenSyarat']
     });
+
     // local state
     const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
     const [isModalAddDokumenNibOpen, { setTrue: showModalAddDokumenNib, setFalse: hideModalAddDokumenNib }] = useBoolean(false);
+    const [isModalAddDokumenImbOpen, { setTrue: showModalAddDokumenImb, setFalse: hideModalAddDokumenImb }] = useBoolean(false);
+    // const [dokOptions, setDokOptions] = useState<IDropdownOption<any>[]>([]);
+    //rtk query perusahaan variable hook
+    const { data: daftarDok, error: errorFetchDataDok,  isFetching: isFetchingDaftarDok, isError } = useGetRegisterDokumenByIdPerusahaanQuery(registerPerusahaan.id as string);
+
+    // console.log(daftarDokumenSyarat);
+
+    // useEffect(
+    //     () => {
+    //         console.log(daftarDok);
+    //         if(daftarDok != undefined) {
+    //             setDokOptions(
+    //                 [
+    //                     ...daftarDok.map(
+    //                         (t) => ({
+    //                             key: t.dokumen!.id!,
+    //                             text: `${t.dokumen!.nama}`
+    //                         })
+    //                     )
+    //                 ]
+    //             );
+    //             }
+    //             else {
+    //                 setDokOptions([]);
+    //             }
+    //     },
+    //     [daftarDok]
+    // );
+
+    const dokNibOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            var dt:IDropdownOption<any>[] = []
+            if(daftarDok != undefined) {
+                    daftarDok.map(
+                        (t) => {
+                            if(t.dokumen?.id == '010301'){
+                                dt.push({
+                                    key: t.id as string,
+                                    text: `(${t.dokumen!.nama}) - tanggal : ${t.dokumen.tanggal != undefined ? t.dokumen.tanggal : '-'}`
+                                });
+                            }                            
+                        }
+                    );   
+            }
+            
+            return dt;
+        },
+        [daftarDok]
+    );
+
+    const handleSetRegisterDokNib = useCallback(
+        (item) => {
+            // console.log(item);
+            // console.log(daftarDokumenSyarat);
+            var itemSelected = find(daftarDok, (i) => i.id == item.key) as IRegisterDokumen;
+            var tmpData = [...daftarDokumenSyarat];
+            tmpData.push(itemSelected);
+            // dispatch(setRegisterPerusahaan(itemSelected));            
+            setValue("daftarDokumenSyarat", tmpData);
+        },
+        [daftarDok, daftarDokumenSyarat]
+    );
     
     const processBackToPreviousStep = useCallback(
         () => {
@@ -42,6 +109,15 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
         []
     );
 
+    const simpanPermohonanSrtArahan = useCallback(
+        handleSubmit(
+            async (data) => {                
+                console.log(data);                
+            }
+        ),
+        [registerPerusahaan]
+    );
+
     const getPermohonanSrtArahanBaru = useCallback(
         () => {
             return (
@@ -51,12 +127,11 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                             <Stack.Item grow align="center">
                                 <ControlledFluentUiDropDown
                                     label="Dokumen nib oss rba"
-                                    options={[]}
+                                    options={dokNibOptions}
                                     placeholder="Pilih dokumen"
-                                    required
-                                    name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
-                                    control={control}
+                                    name="sokumenSyarat"
+                                    control={control}                                    
+                                    onChangeItem={handleSetRegisterDokNib}
                                 />     
                             </Stack.Item>
                             <Stack.Item align="end">                            
@@ -71,9 +146,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     label="Dokumen izin lokasi oss rba"
                                     options={[]}
                                     placeholder="Pilih dokumen"
-                                    required
                                     name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
                                     control={control}
                                 />     
                             </Stack.Item>
@@ -89,9 +162,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     label="Dokumen KKPR/PKKPR/P2R"
                                     options={[]}
                                     placeholder="Pilih dokumen"
-                                    required
                                     name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
                                     control={control}
                                 />     
                             </Stack.Item>
@@ -107,9 +178,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     label="Dokumen imb/pbg"
                                     options={[]}
                                     placeholder="Pilih dokumen"
-                                    required
                                     name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
                                     control={control}
                                 />     
                             </Stack.Item>
@@ -125,9 +194,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     label="Dokumen Izin Usaha/Izin Operasional"
                                     options={[]}
                                     placeholder="Pilih dokumen"
-                                    required
                                     name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
                                     control={control}
                                 />     
                             </Stack.Item>
@@ -143,9 +210,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                     label="Dokumen Surat Arahan"
                                     options={[]}
                                     placeholder="Pilih dokumen"
-                                    required
                                     name="jenisPermohonan"
-                                    rules={{ required: "harus diisi" }} 
                                     control={control}
                                 />     
                             </Stack.Item>
@@ -158,12 +223,13 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                         <PrimaryButton 
                             style={{marginTop: 16, width: 100}}
                             text="Simpan" 
+                            onClick={simpanPermohonanSrtArahan}
                         />
                     </Stack.Item>  
                 </>
             );
         },
-        []
+        [dokNibOptions]
     );
 
     return (
@@ -201,17 +267,26 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 {jenisPermohonanSuratArahan.id == '1' ? getPermohonanSrtArahanBaru() : getPermohonanSrtArahanPerubahan()}
             </Stack>
-            <ModalFormulirAddDokumenNib
-                isModalOpen={isModalAddDokumenNibOpen}
-                hideModal={hideModalAddDokumenNib}
-                isDraggable={true}
-            />  
+            {
+                isModalAddDokumenNibOpen == true ? 
+                <ModalFormulirAddDokumenNib
+                    isModalOpen={isModalAddDokumenNibOpen}
+                    hideModal={hideModalAddDokumenNib}
+                    isDraggable={true}
+                /> : null  
+            } 
+            {
+                isModalAddDokumenImbOpen == true ? 
+                <ModalFormulirAddDokumenNib
+                    isModalOpen={isModalAddDokumenImbOpen}
+                    hideModal={hideModalAddDokumenImb}
+                    isDraggable={true}
+                /> : null  
+            }              
         </motion.div>
     );
     
 };
-
-
 
 const getPermohonanSrtArahanPerubahan = () => {
     return 'perubahan';

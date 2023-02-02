@@ -13,12 +13,12 @@ export const RegisterDokumenApiSlice = createApi({
     tagTypes:['RegisterDokumen', 'RegisterDokumenPage', 'RegisterDokumenNama', 'RegisterDokumenNamaPage', 'RegisterDokumenIdDokumen', 'RegisterDokumenIdDokumenPage', 'RegisterDokumenPerusahaan', 'RegisterDokumenPerusahaanPage', 'RegisterDokumenIdPerusahaan', 'RegisterDokumenIdPerusahaanPage'],
     endpoints(builder) {
         return {
-            uploadFileDokumen: builder.mutation<{}, FormData>({
-                query(data) {
+            uploadFileDokumenWithSecurity: builder.mutation<{}, {idRegisterDokumen: string; npwpPerusahaan: string; formData: FormData;}>({
+                query({idRegisterDokumen, npwpPerusahaan, formData}) {
                   return {
-                    url: 'upload',
+                    url: `files/sec/dok/${npwpPerusahaan}/${idRegisterDokumen}`,
                     method: 'POST',
-                    body: data,
+                    body: formData,
                   };
                 },
             }),
@@ -172,8 +172,8 @@ export const RegisterDokumenApiSlice = createApi({
 });
 
 export const {
-    useUploadFileDokumenMutation, useAddRegisterDokumenMutation, useUpdateRegisterDokumenMutation,
-    useDeleteRegisterDokumenMutation, useGetAllRegisterDokumenQuery,
+    useUploadFileDokumenWithSecurityMutation, useAddRegisterDokumenMutation, 
+    useUpdateRegisterDokumenMutation, useDeleteRegisterDokumenMutation, useGetAllRegisterDokumenQuery,
     useGetRegisterDokumenByPageQuery, useGetRegisterDokumenByPerusahaanQuery,
     useGetRegisterDokumenByPerusahaanAndPageQuery, useGetRegisterDokumenByIdPerusahaanQuery,
     useGetRegisterDokumenByIdPerusahaanAndPageQuery, useGetRegisterDokumenByDokumenQuery,

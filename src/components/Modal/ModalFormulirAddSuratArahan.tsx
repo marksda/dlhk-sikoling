@@ -84,7 +84,10 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
         defaultValues: {
             id: null,
             registerPerusahaan: null,
-            kategoriPermohonan: null,
+            kategoriPermohonan: {
+                id: '01',
+                nama: ''
+            },
             tanggalRegistrasi: null,
             pengurusPermohonan: null,
             statusWali: null,
@@ -169,6 +172,7 @@ const getSlideSubFormSuratArahan = (
                 <SubFormSuratArahanTahapKedua
                     control={control}
                     setValue={setValue}
+                    handleSubmit={handleSubmit}
                     setIsLoading={setIsLoading}
                     setError={setError}
                     setMotionKey={setMotionKey}

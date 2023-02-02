@@ -13,12 +13,13 @@ import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
-import { useAddRegisterDokumenMutation, useUploadFileDokumenMutation } from "../../features/dokumen/register-dokumen-api-slice";
+import { useAddRegisterDokumenMutation, useUploadFileDokumenWithSecurityMutation } from "../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+import path from "node:path/win32";
 
 interface IModalFormulirDokumenNibProps {
     isModalOpen: boolean;
@@ -149,13 +150,13 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
         name: ['dokumen', 'dokumens']
     });
 
-    console.log(dokumen);
+    // console.log(dokumen);
 
     //rtk query perusahaan variable hook
     const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
     //rtk query mutation addPerusahaan variable
-    const [addRegisterDokumen] = useAddRegisterDokumenMutation();
-    const [uploadFileDokumen] = useUploadFileDokumenMutation();
+    const [addRegisterDokumen, ] = useAddRegisterDokumenMutation();
+    const [uploadFileDokumen] = useUploadFileDokumenWithSecurityMutation();
 
     const kbliOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -275,18 +276,28 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                     let regDok: Partial<IRegisterDokumen> = {
                         dokumen: data,
                         perusahaan: registerPerusahaan.perusahaan,
-                    }
-                    await addRegisterDokumen(regDok).unwrap();
-                    //upload file dok
-                    // const formData = new FormData();
-                    // formData.append('image', values.image);
-                    // uploadFileDokumen(formData);
+                    };
+
+                    await addRegisterDokumen(regDok).unwrap().then(
+                        async (payload) => {
+                            var formData = new FormData();
+                            formData.append('file', dokumen);
+                            await uploadFileDokumen({
+                                idRegisterDokumen: payload.id as string,
+                                npwpPerusahaan: payload.perusahaan!.id as string,
+                                formData: formData
+                            });
+                            hideModal();
+                        }
+                    );
                 } catch (error) {
                     //terjadi kegagalan
+                } finally {
+                    setDaftarKbliSelected([]);
                 }
             }
         ),
-        [registerPerusahaan]
+        [registerPerusahaan, dokumen]
     );
 
     return (
