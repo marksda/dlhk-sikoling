@@ -13,7 +13,7 @@ export interface IRegisterPermohonan {
     registerPerusahaan: IRegisterPerusahaan|null;
     pengurusPermohonan: any|null;
     statusWali: IStatusWali|null;
-    posisiTahapPemberkasan: IPosisiTahapPemberkasan|null;
+    statusTahapPemberkasan: IPosisiTahapPemberkasan|null;
     daftarDokumenSyarat: any[]|null;
     daftarDokumenHasil: any[]|null;
 };

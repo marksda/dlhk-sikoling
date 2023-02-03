@@ -91,7 +91,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             tanggalRegistrasi: null,
             pengurusPermohonan: null,
             statusWali: null,
-            posisiTahapPemberkasan: null,
+            statusTahapPemberkasan: null,
             daftarDokumenSyarat: [],
             daftarDokumenHasil: [],
             jenisPermohonanSuratArahan: null

@@ -7,7 +7,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
 import { useGetRegisterDokumenByIdPerusahaanQuery, useGetRegisterDokumenByPerusahaanQuery } from "../../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
-import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanSuratArahan, useAddRegisterPermohonanMutation } from "../../../features/permohonan/register-permohonan-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
@@ -37,6 +37,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     // const [dokOptions, setDokOptions] = useState<IDropdownOption<any>[]>([]);
     //rtk query perusahaan variable hook
     const { data: daftarDok, error: errorFetchDataDok,  isFetching: isFetchingDaftarDok, isError } = useGetRegisterDokumenByIdPerusahaanQuery(registerPerusahaan.id as string);
+    const [addPermohonan ] = useAddRegisterPermohonanMutation();
 
     // console.log(daftarDokumenSyarat);
 
@@ -124,6 +125,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
         handleSubmit(
             async (data) => {
                 console.log(data);
+                await addPermohonan(data);
             }
         ),
         []

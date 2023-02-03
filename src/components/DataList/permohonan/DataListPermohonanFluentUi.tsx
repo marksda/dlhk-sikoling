@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens } from "@fluentui/react";
+import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, SelectionMode } from "@fluentui/react";
 import { FC, useCallback } from "react";
 import { IListItemRegisterPermohonan, ISubFormDetailPermohonanProps } from "./InterfaceDataListPermohonan";
 
@@ -38,11 +38,13 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                 case 'c5':
                     return (
                         <span>
-                            {item.posisiTahapPemberkasan?.keterangan}
+                            {
+                                item.statusTahapPemberkasan?.nama == 'Selesai' ? `${item.statusTahapPemberkasan?.keterangan}` : `${item.statusTahapPemberkasan?.nama} - ${item.statusTahapPemberkasan?.keterangan}`
+                            }
                         </span>
                     ); 
                 default:
-                    return(<span>ddd</span>);
+                    return(<span>-</span>);
             }
         },
         []
@@ -54,6 +56,7 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
             setKey="set"
             layoutMode={DetailsListLayoutMode.justified}
             onRenderItemColumn={handleRenderItemColumn}
+            selectionMode={SelectionMode.none}
         />
     );
 };
