@@ -66,23 +66,13 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     const dokNibOptions: IDropdownOption<any>[] = useMemo(
         () => {
             var dt:IDropdownOption<any>[] = []
-            if(daftarDok != undefined) {
-                    // daftarDok.map(
-                    //     (t) => {
-                    //         if(t.dokumen?.id == '010301'){
-                    //             dt.push({
-                    //                 key: t.id as string,
-                    //                 text: `(${t.dokumen!.nama}) - tanggal : ${t.dokumen.tanggal != undefined ? t.dokumen.tanggal : '-'}`
-                    //             });
-                    //         }                            
-                    //     }
-                    // );   
+            if(daftarDok != undefined) {                      
                     daftarDok.map(
                         (t) => {
                             // if(t.dokumen?.id == '010301'){
                                 dt.push({
                                     key: t.id as string,
-                                    text: `(${t.dokumen!.nama}) - tanggal : ${t.dokumen.tanggal != undefined ? t.dokumen.tanggal : '-'}`
+                                    text: `(${t.dokumen?.nama}) - tanggal : ${t.dokumen?.tanggal != undefined ? t.dokumen.tanggal : '-'}`
                                 });
                             // }                            
                         }
