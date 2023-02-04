@@ -1,18 +1,19 @@
 import { DefaultButton, Dropdown, IconButton, IDropdownOption, IStackTokens, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { useBoolean } from "@fluentui/react-hooks";
-import { CommentSolidIcon } from "@fluentui/react-icons-mdl2";
 import { motion } from "framer-motion";
 import find from "lodash.find";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
-import { useGetRegisterDokumenByIdPerusahaanQuery, useGetRegisterDokumenByPerusahaanQuery } from "../../../features/dokumen/register-dokumen-api-slice";
+import { useGetRegisterDokumenByIdPerusahaanQuery } from "../../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { IRegisterPermohonanSuratArahan, useAddRegisterPermohonanMutation } from "../../../features/permohonan/register-permohonan-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
-import { ControlledFluentUiTextField } from "../../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { ModalFormulirAddDokumenNib } from "../../Modal/ModalFormulirAddDokumenNib";
-import { contentStyles, durationAnimFormSuratArahan, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
+import { 
+    contentStyles, durationAnimFormSuratArahan, ISubFormPermohonanSuratArahanProps, 
+    labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan 
+} from "./interfacePermohonanSuratArahan";
 
 
 interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
@@ -34,35 +35,10 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
     const [isModalAddDokumenNibOpen, { setTrue: showModalAddDokumenNib, setFalse: hideModalAddDokumenNib }] = useBoolean(false);
     const [isModalAddDokumenImbOpen, { setTrue: showModalAddDokumenImb, setFalse: hideModalAddDokumenImb }] = useBoolean(false);
-    // const [dokOptions, setDokOptions] = useState<IDropdownOption<any>[]>([]);
     //rtk query perusahaan variable hook
     const { data: daftarDok, error: errorFetchDataDok,  isFetching: isFetchingDaftarDok, isError } = useGetRegisterDokumenByIdPerusahaanQuery(registerPerusahaan.id as string);
     const [addPermohonan ] = useAddRegisterPermohonanMutation();
-
-    // console.log(daftarDokumenSyarat);
-
-    // useEffect(
-    //     () => {
-    //         console.log(daftarDok);
-    //         if(daftarDok != undefined) {
-    //             setDokOptions(
-    //                 [
-    //                     ...daftarDok.map(
-    //                         (t) => ({
-    //                             key: t.dokumen!.id!,
-    //                             text: `${t.dokumen!.nama}`
-    //                         })
-    //                     )
-    //                 ]
-    //             );
-    //             }
-    //             else {
-    //                 setDokOptions([]);
-    //             }
-    //     },
-    //     [daftarDok]
-    // );
-
+    
     const dokNibOptions: IDropdownOption<any>[] = useMemo(
         () => {
             var dt:IDropdownOption<any>[] = []
