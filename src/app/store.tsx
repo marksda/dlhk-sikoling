@@ -43,6 +43,7 @@ import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-perm
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { FlowLogApiSlice } from "../features/log/flow-log-api-slice";
+import { StatusWaliPermohonanApiSlice } from "../features/permohonan/status-wali-api-slice";
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice"
 // import { loginApi } from "../services/sikoling-api"
