@@ -179,6 +179,17 @@ const getSlideSubFormSuratArahan = (
                     setMotionKey={setMotionKey}
                 />;
             break; 
+        case 'tahapKetiga':
+            konten = 
+                <SubFormSuratArahanTahapKetiga
+                    control={control}
+                    setValue={setValue}
+                    handleSubmit={handleSubmit}
+                    setIsLoading={setIsLoading}
+                    setError={setError}
+                    setMotionKey={setMotionKey}
+                />;
+            break; 
         default:
             konten = null;
             break;
