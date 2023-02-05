@@ -16,7 +16,7 @@ import {
 } from "./interfacePermohonanSuratArahan";
 
 
-interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
+interface ISubFormTahapKetigaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
     setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     handleSubmit: UseFormHandleSubmit<IRegisterPermohonanSuratArahan>;
@@ -24,7 +24,7 @@ interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArah
 
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };
 
-export const SubFormSuratArahanTahapKetiga: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control, handleSubmit}) => {
+export const SubFormSuratArahanTahapKetiga: FC<ISubFormTahapKetigaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control, handleSubmit}) => {
     //react-form hook variable
     const [registerPerusahaan, jenisPermohonanSuratArahan, daftarDokumenSyarat] = useWatch({
         control: control, 

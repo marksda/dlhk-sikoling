@@ -9,6 +9,7 @@ import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/regist
 import { SubFormSuratArahanTahapKetiga } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKetiga";
 import { useDispatch } from "react-redux";
 import { useAppDispatch } from "../../app/hooks";
+import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -170,10 +171,9 @@ const getSlideSubFormSuratArahan = (
             break; 
         case 'tahapKedua':
             konten = 
-                <SubFormSuratArahanTahapKetiga
+                <SubFormSuratArahanTahapKedua
                     control={control}
                     setValue={setValue}
-                    handleSubmit={handleSubmit}
                     setIsLoading={setIsLoading}
                     setError={setError}
                     setMotionKey={setMotionKey}

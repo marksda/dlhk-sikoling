@@ -92,6 +92,7 @@ export const store = configureStore({
         [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
+        [StatusWaliPermohonanApiSlice.reducerPath]: StatusWaliPermohonanApiSlice.reducer,
         [FlowLogApiSlice.reducerPath]: FlowLogApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
@@ -119,6 +120,7 @@ export const store = configureStore({
                                             .concat(RegisterPermohonanApiSlice.middleware)
                                             .concat(FlowLogApiSlice.middleware)
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
+                                            .concat(StatusWaliPermohonanApiSlice.middleware)
                                             .concat(KategoriPermohonanApiSlice.middleware),
 });
 
