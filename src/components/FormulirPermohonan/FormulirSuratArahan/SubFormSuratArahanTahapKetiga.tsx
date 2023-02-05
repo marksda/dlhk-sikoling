@@ -24,7 +24,7 @@ interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArah
 
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };
 
-export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control, handleSubmit}) => {
+export const SubFormSuratArahanTahapKetiga: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control, handleSubmit}) => {
     //react-form hook variable
     const [registerPerusahaan, jenisPermohonanSuratArahan, daftarDokumenSyarat] = useWatch({
         control: control, 
@@ -32,7 +32,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     });
 
     // local state
-    const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
+    const [animTahapKetiga, setAnimTahapKetiga] = useState<string>('open');
     const [isModalAddDokumenNibOpen, { setTrue: showModalAddDokumenNib, setFalse: hideModalAddDokumenNib }] = useBoolean(false);
     const [isModalAddDokumenImbOpen, { setTrue: showModalAddDokumenImb, setFalse: hideModalAddDokumenImb }] = useBoolean(false);
     //rtk query perusahaan variable hook
@@ -75,7 +75,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     
     const processBackToPreviousStep = useCallback(
         () => {
-            setAnimTahapKedua('closed');            
+            setAnimTahapKetiga('closed');            
             let timer = setTimeout(
                 () => {
                     setMotionKey('tahapPertama');
@@ -212,7 +212,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
 
     return (
         <motion.div 
-            animate={animTahapKedua}
+            animate={animTahapKetiga}
             variants={variantAnimSuratArahan}
             className={contentStyles.body} 
         >

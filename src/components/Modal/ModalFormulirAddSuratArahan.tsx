@@ -6,7 +6,7 @@ import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan"
 import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
 import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
-import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
+import { SubFormSuratArahanTahapKetiga } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKetiga";
 import { useDispatch } from "react-redux";
 import { useAppDispatch } from "../../app/hooks";
 
@@ -91,6 +91,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             tanggalRegistrasi: null,
             pengurusPermohonan: null,
             statusWali: null,
+            penanggungJawabPermohonan: null,
             statusTahapPemberkasan: null,
             daftarDokumenSyarat: [],
             daftarDokumenHasil: [],
@@ -169,7 +170,7 @@ const getSlideSubFormSuratArahan = (
             break; 
         case 'tahapKedua':
             konten = 
-                <SubFormSuratArahanTahapKedua
+                <SubFormSuratArahanTahapKetiga
                     control={control}
                     setValue={setValue}
                     handleSubmit={handleSubmit}
