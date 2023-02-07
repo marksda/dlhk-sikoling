@@ -17,7 +17,7 @@ export const StatusWaliPermohonanApiSlice = createApi({
     endpoints(builder) {
         return {
             getAllStatusWaliPermohonan: builder.query<daftarStatusWaliPermohonan, void>({
-                query: () => 'register_permohonan',
+                query: () => 'status_wali',
                 providesTags: (result) => 
                     result ?
                     [

@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
+import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerson } from "./person-slice";
 
 
 export const PersonApiSlice = createApi({
     reducerPath: 'personApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
+    refetchOnReconnect: true,
     endpoints(builder) {
         return {
             getAllPerson: builder.query<IPerson[], number|void>({
@@ -21,6 +21,9 @@ export const PersonApiSlice = createApi({
             }),
             getPersonByNamaAndPage: builder.query<IPerson[], string|void>({
                 query: (nama, page=1, pageSize=10) => `person/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            }),
+            getPersonByNik: builder.query<IPerson, string>({
+                query: (nik) => `person/nik/${nik}`,
             }),
             getPersonByPemrakarsa: builder.query<IPerson[], string|void>({
                 query: (idPemrakarsa) => `person/pemrakarsa?idPemrakarsa=${idPemrakarsa}`,
@@ -36,5 +39,8 @@ export const PersonApiSlice = createApi({
     }
 })
 
-export const { useGetAllPersonQuery, useGetPersonByPageQuery, useGetPersonByNamaQuery,
-    useGetPersonByNamaAndPageQuery, useGetPersonByPemrakarsaQuery, useAddPersonMutation } = PersonApiSlice;
+export const { 
+    useGetAllPersonQuery, useGetPersonByPageQuery, useGetPersonByNamaQuery,
+    useGetPersonByNikQuery, useGetPersonByNamaAndPageQuery, useGetPersonByPemrakarsaQuery, 
+    useAddPersonMutation 
+} = PersonApiSlice;

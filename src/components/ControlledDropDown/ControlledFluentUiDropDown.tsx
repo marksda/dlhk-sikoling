@@ -18,7 +18,7 @@ export const ControlledFluentUiDropDown: FC<HookFluentUiDropDownProps & IDropdow
                                 props.onChangeItem(item);                       
                             }
                         }
-                        onBlur={onBlur}
+                        // onBlur={onBlur}
                         defaultSelectedKey={props.defaultItemSelected}
                         errorMessage={error && error?.message}
                     />

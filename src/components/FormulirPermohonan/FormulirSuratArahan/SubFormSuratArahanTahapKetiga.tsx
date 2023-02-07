@@ -78,7 +78,7 @@ export const SubFormSuratArahanTahapKetiga: FC<ISubFormTahapKetigaSuratArahanPro
             setAnimTahapKetiga('closed');            
             let timer = setTimeout(
                 () => {
-                    setMotionKey('tahapPertama');
+                    setMotionKey('tahapKedua');
                 },
                 durationAnimFormSuratArahan*1000
             );

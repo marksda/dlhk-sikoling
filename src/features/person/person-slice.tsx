@@ -1,20 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { IAlamat } from "../alamat/alamat-slice";
+import { IKontak } from "../alamat/kontak-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
 
-
-export interface IKontak {
-    telepone: string|null;
-    fax?: string|null;
-    email: string|null;
-}
 
 export interface IPerson {
     nik: string|null;
     nama: string|null;
-    jenisKelamin: IJenisKelamin|null;
-    alamat: IAlamat|null;
-    kontak: IKontak|null;
+    jenisKelamin: Partial<IJenisKelamin>|null;
+    alamat: Partial<IAlamat>|null;
+    kontak: Partial<IKontak>|null;
     scanKTP: string|null;
 }
 

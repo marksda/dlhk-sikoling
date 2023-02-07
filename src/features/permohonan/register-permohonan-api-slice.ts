@@ -30,7 +30,7 @@ export const RegisterPermohonanApiSlice = createApi({
     reducerPath: 'registerPermohonanApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
+    // keepUnusedDataFor: 30,
     tagTypes: ['RegisterPermohonan', 'RegisterPermohonanPage'],
     endpoints(builder) {
         return {
