@@ -9,7 +9,6 @@ export const RegisterDokumenApiSlice = createApi({
     reducerPath: 'registerDokumenApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
     tagTypes:['RegisterDokumen', 'RegisterDokumenPage', 'RegisterDokumenNama', 'RegisterDokumenNamaPage', 'RegisterDokumenIdDokumen', 'RegisterDokumenIdDokumenPage', 'RegisterDokumenPerusahaan', 'RegisterDokumenPerusahaanPage', 'RegisterDokumenIdPerusahaan', 'RegisterDokumenIdPerusahaanPage'],
     endpoints(builder) {
         return {
@@ -19,6 +18,14 @@ export const RegisterDokumenApiSlice = createApi({
                     url: `files/sec/dok/${npwpPerusahaan}/${idRegisterDokumen}`,
                     method: 'POST',
                     body: formData,
+                  };
+                },
+            }),
+            downloadFileDokumenWithSecurity: builder.query<File, {namaFile: string; npwpPerusahaan: string;}>({
+                query({namaFile, npwpPerusahaan}) {
+                  return {
+                    url: `files/sec/dok/${npwpPerusahaan}/${namaFile}`,
+                    method: 'GET',
                   };
                 },
             }),
@@ -178,5 +185,5 @@ export const {
     useGetRegisterDokumenByPerusahaanAndPageQuery, useGetRegisterDokumenByIdPerusahaanQuery,
     useGetRegisterDokumenByIdPerusahaanAndPageQuery, useGetRegisterDokumenByDokumenQuery,
     useGetRegisterDokumenByDokumenAndPageQuery, useGetRegisterDokumenByIdDokumenQuery,
-    useGetRegisterDokumenByIdDokumenAndPageQuery
+    useGetRegisterDokumenByIdDokumenAndPageQuery, useDownloadFileDokumenWithSecurityQuery
 } = RegisterDokumenApiSlice;

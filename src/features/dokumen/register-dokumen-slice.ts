@@ -2,13 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../person/person-slice";
 import { IPerusahaan } from "../perusahaan/perusahaan-slice";
+import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
 import { IDokumen } from "./dokumen-slice";
 
 export interface IRegisterDokumen {
     id: string|null;
     dokumen: (Pick<IDokumenNibOss, 'id'> & Partial<IDokumenNibOss>)|null;
-    perusahaan: (Pick<IPerusahaan, 'id'> & Omit<IPerusahaan, 'id'>)|null;
+    registerPerusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
     lokasiFile: string|null;
     tanggalRegistrasi: string|null;
     uploader: (Pick<IPerson, 'nik'>& Partial<IPerson>)|null;

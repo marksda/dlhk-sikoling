@@ -1,8 +1,9 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, SelectionMode } from "@fluentui/react";
-import { FC, useCallback } from "react";
+import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, SelectionMode } from "@fluentui/react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
 import { IDokumenNibOss } from "../../../features/dokumen/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
+import { useDownloadFileDokumenWithSecurityQuery } from "../../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
 import { IRekomendasiDPLH } from "../../../features/dokumen/rekomendasi-dplh-api-slice";
 import { IRekomendasiUKLUPL } from "../../../features/dokumen/rekomendasi-ukl-upl-api-slice";
@@ -20,6 +21,41 @@ const _columns = [
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
 
 export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({dataPermohonan}) => {
+    //localState
+    const [namaFile, setNamaFile] = useState<string>('');
+    const [npwpPerusahaan, setNpwpPerusahaan] = useState<string>('');
+    const [skipDownload, setSkipDownload] = useState<boolean>(true);
+    //rtk query perusahaan variable hook
+    const {data: donwloadFile, error: ErrorFetchDownloadFile} = useDownloadFileDokumenWithSecurityQuery(
+        {
+            namaFile,
+            npwpPerusahaan
+        }, 
+        {
+            skip: skipDownload
+        }
+    );
+
+    console.log(donwloadFile);
+
+    useEffect(
+        () => {
+            console.log(donwloadFile);
+        },
+        [donwloadFile]
+    )
+
+    const handleClickOnLink = useCallback(
+        (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLElement>) => {
+            var btnElemen = event.target as HTMLButtonElement;     
+            var split_text = btnElemen.ariaLabel?.split('**') as string[];
+            setNamaFile(split_text[1]);
+            setNpwpPerusahaan(split_text[0]);
+            setSkipDownload(false);
+        },
+        []
+    );
+
     const handleRenderItemColumn = useCallback(
         (item: IListItemRegisterPermohonan, index: number|undefined, column: IColumn|undefined) => {
             // const fieldContent = item[column!.fieldName as keyof IListItemPerusahaan] as string;
@@ -109,11 +145,18 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                 else if(dataRegisterDokumen.dokumen?.id == '010301') {
                                     dokumen = dataRegisterDokumen.dokumen as IDokumenNibOss;
                                     return (
-                                        <>
+                                        <div key={item.id} >
                                             <span>- {dokumen?.nama}</span><br />
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>perihal: {dokumen?.tanggal}</span><br />
-                                        </>                                    
+                                            <Link 
+                                                aria-label={`${item.registerPerusahaan?.perusahaan?.id}**${dataRegisterDokumen.lokasiFile}`}
+                                                onClick={handleClickOnLink} 
+                                                underline
+                                            >
+                                                Download dokumen
+                                            </Link>
+                                        </div>                                    
                                     );
                                 }
                             })
