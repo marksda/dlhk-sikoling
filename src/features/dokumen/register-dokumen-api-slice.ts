@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IRegisterDokumen } from "./register-dokumen-slice";
 
@@ -43,7 +42,7 @@ export const RegisterDokumenApiSlice = createApi({
                     method: 'PUT',
                     body: registerDokumen,
                 }),
-                invalidatesTags: (result, error, { perusahaan, dokumen }) => [{type: 'RegisterDokumen', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPage', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenNama', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenNamaPage', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdDokumen', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdDokumenPage', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPerusahaan', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPerusahaanPage', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdPerusahaan', id: `${perusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdPerusahaanPage', id: `${perusahaan?.id}*${dokumen?.id}`}],
+                invalidatesTags: (result, error, { registerPerusahaan, dokumen }) => [{type: 'RegisterDokumen', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPage', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenNama', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenNamaPage', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdDokumen', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdDokumenPage', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPerusahaan', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenPerusahaanPage', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdPerusahaan', id: `${registerPerusahaan?.id}*${dokumen?.id}`}, {type: 'RegisterDokumenIdPerusahaanPage', id: `${registerPerusahaan?.id}*${dokumen?.id}`}],
             }),
             deleteRegisterDokumen: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
@@ -60,7 +59,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumen' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumen' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumen', id: 'LIST' },
                     ]:
@@ -72,7 +71,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenPage' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenPage' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenPage', id: 'LIST' },
                     ]:
@@ -84,7 +83,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenPerusahaan' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenPerusahaan' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenPerusahaan', id: 'LIST' },
                     ]:
@@ -96,7 +95,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenPerusahaanPage' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenPerusahaanPage' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenPerusahaanPage', id: 'LIST' },
                     ]:
@@ -108,7 +107,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenIdPerusahaan' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenIdPerusahaan' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenIdPerusahaan', id: 'LIST' },
                     ]:
@@ -120,7 +119,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenIdPerusahaanPage' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenIdPerusahaanPage' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenIdPerusahaanPage', id: 'LIST' },
                     ]:
@@ -132,7 +131,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenNama' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenNama' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenNama', id: 'LIST' },
                     ]:
@@ -144,7 +143,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenNamaPage' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenNamaPage' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenNamaPage', id: 'LIST' },
                     ]:
@@ -156,7 +155,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenIdDokumen' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenIdDokumen' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenIdDokumen', id: 'LIST' },
                     ]:
@@ -168,7 +167,7 @@ export const RegisterDokumenApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ perusahaan, dokumen }) => ({ type: 'RegisterDokumenIdDokumenPage' as const, id: `${perusahaan?.id}*${dokumen?.id}` })
+                            ({ registerPerusahaan, dokumen }) => ({ type: 'RegisterDokumenIdDokumenPage' as const, id: `${registerPerusahaan?.id}*${dokumen?.id}` })
                         ),
                         { type: 'RegisterDokumenIdDokumenPage', id: 'LIST' },
                     ]:

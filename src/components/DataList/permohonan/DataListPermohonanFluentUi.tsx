@@ -1,5 +1,6 @@
 import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, SelectionMode } from "@fluentui/react";
 import { FC, useCallback, useEffect, useState } from "react";
+import { baseRestAPIUrl } from "../../../features/config/config";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
 import { IDokumenNibOss } from "../../../features/dokumen/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
@@ -150,8 +151,8 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>perihal: {dokumen?.tanggal}</span><br />
                                             <Link 
-                                                aria-label={`${item.registerPerusahaan?.perusahaan?.id}**${dataRegisterDokumen.lokasiFile}`}
-                                                onClick={handleClickOnLink} 
+                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                target="_blank"
                                                 underline
                                             >
                                                 Download dokumen
