@@ -279,7 +279,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                 try {
                     let regDok: Partial<IRegisterDokumen> = {
                         dokumen: data,
-                        perusahaan: registerPerusahaan.perusahaan,
+                        registerPerusahaan: registerPerusahaan,
                     };
 
                     await addRegisterDokumen(regDok).unwrap().then(
@@ -288,7 +288,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({i
                             formData.append('file', dokumen);
                             await uploadFileDokumen({
                                 idRegisterDokumen: payload.id as string,
-                                npwpPerusahaan: payload.perusahaan!.id as string,
+                                npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
                                 formData: formData
                             });
                             hideModal();
