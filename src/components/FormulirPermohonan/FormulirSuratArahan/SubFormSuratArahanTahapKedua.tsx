@@ -1,4 +1,4 @@
-import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
+import { DefaultButton, DefaultPalette, IconButton, IDropdownOption, IStackItemStyles, IStackStyles, IStackTokens, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -7,6 +7,7 @@ import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/reg
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
 import { useGetPersonByNikQuery } from "../../../features/person/person-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
+import { ControlledFluentUiMaskTextField } from "../../ControlledTextField/ControlledFluentUiMaskTextField";
 import { ControlledFluentUiTextField } from "../../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
@@ -15,12 +16,22 @@ interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArah
     setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
+const stackItemStyles: IStackItemStyles = {
+    root: {
+        margintop: 0,
+        border: `1px solid ${DefaultPalette.orangeLighter}`,
+        padding: 8,
+    },
+};
+// export const stackTokensVert = { childrenGap: 0 };
+const sectionStackTokens: IStackTokens = { childrenGap: 2 };
 
 export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
     // local state
     const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
-    // const [nik, setNik] = useState<string>('');
-    // const [skip, setSkip] = useState<boolean>(true);
+    const [nik, setNik] = useState<string>('');
+    const [buttonTitle, setButtonTitle] = useState<string>('cek');
+    const [skip, setSkip] = useState<boolean>(true);
     //react-form hook variable
     const [registerPerusahaan, statusWali, penanggungJawabPermohonan] = useWatch({
         control: control, 
@@ -29,6 +40,30 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     //rtk query perusahaan variable hook
     const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetAllStatusWaliPermohonanQuery();
     // const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip});
+    const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip: skip});
+    // console.log(pJ);
+
+    // useEffect(
+    //     () => {
+    //         if(nik.length == 16) {
+    //             setSkip(false);
+    //         }
+    //         else {
+    //             setSkip(true);
+    //         }
+    //     },
+    //     [nik]
+    // );
+
+    useEffect(
+        () => {
+            if(pJ != undefined) {
+                setValue('penanggungJawabPermohonan', pJ);
+            }
+        },
+        [pJ]
+    );
+
     
     const statusWaliOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -72,18 +107,31 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
         [daftarStatusWali]
     );
 
+    const processNikChange = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+            setNik(newValue||'');
+        },
+        [],
+    );
+
     const processNextStep = useCallback(
         () => {
-            setAnimTahapKedua('closed');
-            let timer = setTimeout(
-                () => {
-                    setMotionKey('tahapKetiga');
-                },
-                durationAnimFormSuratArahan*1000
-            );
-            return () => clearTimeout(timer);
+            if(buttonTitle == 'cek') {
+                setSkip(false);
+                setButtonTitle('lanjut');
+            }
+            else {
+                setAnimTahapKedua('closed');
+                let timer = setTimeout(
+                    () => {
+                        setMotionKey('tahapKetiga');
+                    },
+                    durationAnimFormSuratArahan*1000
+                );
+                return () => clearTimeout(timer);
+            }            
         },
-        []
+        [buttonTitle]
     );
 
     return (
@@ -114,9 +162,9 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
                 <Label styles={labelStyle}>Penanggung jawab permohonan</Label>
-                <Label styles={subLabelStyle}>Penanggung jawab permohonan selain pemilik/direktur wajib menyertakan surat kuasa perusahaan. Nik wajib diinputkan, jika disistem tidak menemukan inputan nik tekan tombol tambah.</Label>
+                <Label styles={subLabelStyle}>Status penanggung jawab permohonan selain pemilik/direktur wajib menyertakan surat kuasa perusahaan. Pilihan dokumen surat kuasa akan muncul apabila sudah diupload, jika belum maka tekan tombol file untuk upload terlebih dahulu.</Label>
             </Stack>
-            <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
+            <Stack styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
                         label="Status penanggung jawab permohonan"
@@ -129,30 +177,74 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                         control={control}
                         onChangeItem={handleSetStatusWali}
                         selectedKey={statusWali != null ? statusWali.id : undefined}
-                    />     
-                </Stack.Item>
-                <Stack.Item>
-                    <ControlledFluentUiTextField
-                        label="Nik"
-                        name="penanggungJawabPermohonan.nik"         
-                        control={control}  
-                        rules={{ required: "harus diisi sesuai dengan akta perusahaan" }}  
-                        required
-                        disabled={statusWali == null ? true : false}
                     />
                 </Stack.Item>
+                {
+                    statusWali == null ?
+                    null:(
+                    statusWali.id == '01' ? null :
+                    <Stack.Item>
+                        <Stack horizontal tokens={sectionStackTokens}>
+                            <Stack.Item grow align="center">
+                                <ControlledFluentUiDropDown
+                                    label="Dokumen surat kuasa"
+                                    options={[]}
+                                    placeholder="Pilih dokumen"
+                                    name="jenisPermohonan"
+                                    control={control}
+                                />     
+                            </Stack.Item>
+                            <Stack.Item align="end">                            
+                                <DefaultButton text="File"/>
+                            </Stack.Item>
+                        </Stack>
+                    </Stack.Item>
+                    )
+                }                     
                 <Stack.Item>
-                    <ControlledFluentUiTextField
-                        label="Nama"
-                        name="penanggungJawabPermohonan.nama"         
-                        control={control} 
-                        disabled={true}
-                    />
+                    <Label>Data penanggung jawab</Label>
                 </Stack.Item>
+                <Stack.Item styles={stackItemStyles}>
+                        <Stack.Item>
+                            <ControlledFluentUiDropDown
+                                label="Nik"
+                                placeholder="Pilih nik status penanggung jawab permohonan"
+                                dropdownWidth="auto"
+                                options={statusWaliOptions}
+                                required
+                                name="statusWali"
+                                rules={{ required: "harus diisi" }} 
+                                control={control}
+                                onChangeItem={handleSetStatusWali}
+                                selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <TextField 
+                                label='Nik'
+                                placeholder="masukkan NIK sesuai dengan KTP" 
+                                value={nik}
+                                onChange={processNikChange}
+                                onKeyUp={
+                                    (event) => {
+                                        if(event.key == 'Enter') {
+                                            processNextStep();
+                                        }
+                                    }
+                                }
+                                disabled={statusWali == null ? true : false} />
+                        </Stack.Item>
+                        <Stack.Item>
+                        <TextField 
+                                label='Nama'
+                                value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nama: ''}
+                                disabled={true} />
+                        </Stack.Item>              
+                </Stack.Item>                
                 <Stack.Item align="end">
                     <PrimaryButton 
-                        style={{marginTop: 16, width: 100}}
-                        text="cek" 
+                        style={{width: 100, marginTop: 8}}
+                        text={buttonTitle}
                         onClick={processNextStep}
                     />
                 </Stack.Item>

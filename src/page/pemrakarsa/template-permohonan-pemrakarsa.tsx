@@ -3,9 +3,10 @@ import {CommandBar, IStackStyles, Stack } from "@fluentui/react";
 import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUi";
 import { ModalFormulirAddSuratArahan } from "../../components/Modal/ModalFormulirAddSuratArahan";
 import { useBoolean } from "@fluentui/react-hooks";
-import { useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import { useGetAllRegisterPermohonanQuery, useGetRegisterPermohonanByUserQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import omit from "lodash.omit";
 import { IListItemRegisterPermohonan } from "../../components/DataList/permohonan/InterfaceDataListPermohonan";
+import { useAppSelector } from "../../app/hooks";
 
 const kontenStyles: IStackStyles = {
     root: {
@@ -17,11 +18,13 @@ const kontenStyles: IStackStyles = {
 type daftarItemRegisterPermohonan = IListItemRegisterPermohonan[];
 
 export const KontenPermohonanPemrakarsa: FC = () => {
+    //react redux hook variable
+    const token = useAppSelector((state) => state.token);
     // local state
     const [isModalAddPermohonanSuratArahanOpen, { setTrue: showModalAddPermohonanSuratArahan, setFalse: hideModalAddPermohonanSuratArahan }] = useBoolean(false);
     const [isModalAddPermohonanSPPLOpen, { setTrue: showModalAddPermohonanSPPL, setFalse: hideModalAddPermohonanSPPL }] = useBoolean(false);
     //rtk query permohonan variable hook
-    const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetAllRegisterPermohonanQuery();
+    const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetRegisterPermohonanByUserQuery(token.userId!);
 
 
     const _items = useMemo(
