@@ -1,5 +1,6 @@
-import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, mergeStyles, Selection, SelectionMode, Stack } from "@fluentui/react";
+import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, Link, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
+import { baseRestAPIUrl } from "../../../features/config/config";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
 import { IDokumenNibOss } from "../../../features/dokumen/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
@@ -17,6 +18,19 @@ const _columns = [
     { key: 'c5', name: 'Dokumen', fieldName: 'dokumen', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
+const contentStyles = mergeStyleSets({
+    contenItemDok: {
+        marginLeft: 12,
+        marginBottom: 4,
+    },
+    title: {
+        fontWeight: 'bold',
+    },
+    mainTitle: {
+        marginBottom: 4,
+        fontWeight: 'bold',
+    }
+});
 
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, isDataLoading, dataPerusahaan, deletePerusahaan}) => {
     // local state
@@ -139,17 +153,26 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                 case 'c5':
                     return(
                         <>
-                        <span>Jumlah Dokumen : {item.perusahaan?.daftarRegisterDokumen?.length}</span><br />                     
+                        <div className={contentStyles.mainTitle}>Jumlah Dokumen : {item.perusahaan?.daftarRegisterDokumen?.length}</div>                    
                         {
-                            item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen) => {
+                            item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen, index) => {
                                 let dokumen = null;
                                 if(dataRegisterDokumen.dokumen?.id == '010401') {
                                     dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span >Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -157,8 +180,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
+                                            
                                         </>                                    
                                     );
                                 }
@@ -166,9 +199,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as IAktaPendirian;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.nomor}</span><br />
-                                            <span>notaris: {dokumen?.namaNotaris}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.nomor}</span><br />
+                                                <span>notaris: {dokumen?.namaNotaris}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -176,9 +218,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -186,9 +237,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -196,9 +256,18 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
                                     dokumen = dataRegisterDokumen.dokumen as IDokumenNibOss;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.nomor}</span><br />
-                                            <span>perihal: {dokumen?.tanggal}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.nomor}</span><br />
+                                                <span>perihal: {dokumen?.tanggal}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }

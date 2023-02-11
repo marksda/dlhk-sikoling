@@ -26,7 +26,6 @@ export const KontenPermohonanPemrakarsa: FC = () => {
     //rtk query permohonan variable hook
     const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetRegisterPermohonanByUserQuery(token.userId!);
 
-
     const _items = useMemo(
         () => {
             return [{

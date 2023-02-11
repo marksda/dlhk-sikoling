@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, SelectionMode } from "@fluentui/react";
+import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, mergeStyleSets, SelectionMode } from "@fluentui/react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { baseRestAPIUrl } from "../../../features/config/config";
 import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
@@ -18,8 +18,19 @@ const _columns = [
     { key: 'c4', name: 'Dokumen Pendukung', fieldName: 'kontak', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'c5', name: 'Status Permohonan', fieldName: 'status', minWidth: 100, maxWidth: 200, isResizable: true },
 ];
-
-const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
+const contentStyles = mergeStyleSets({
+    contenItemDok: {
+        marginLeft: 12,
+        marginBottom: 4,
+    },
+    title: {
+        fontWeight: 'bold',
+    },
+    mainTitle: {
+        marginBottom: 4,
+        fontWeight: 'bold',
+    }
+});
 
 export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({dataPermohonan}) => {
     //localState
@@ -90,17 +101,26 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                 default:
                     return(
                         <>
-                        <span>Jumlah Dokumen : {item.daftarDokumenSyarat?.length}</span><br />                     
+                        <div className={contentStyles.mainTitle}>Jumlah Dokumen : {item.daftarDokumenSyarat?.length}</div>                    
                         {
-                            item.daftarDokumenSyarat?.map((dataRegisterDokumen:IRegisterDokumen) => {
+                            item.daftarDokumenSyarat?.map((dataRegisterDokumen:IRegisterDokumen, index) => {
                                 let dokumen = null;
                                 if(dataRegisterDokumen.dokumen?.id == '010401') {
                                     dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -108,8 +128,17 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                     dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link> 
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -117,9 +146,18 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                     dokumen = dataRegisterDokumen.dokumen as IAktaPendirian;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.nomor}</span><br />
-                                            <span>notaris: {dokumen?.namaNotaris}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.nomor}</span><br />
+                                                <span>notaris: {dokumen?.namaNotaris}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link> 
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -127,9 +165,18 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br /> 
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
@@ -137,27 +184,38 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
                                     return (
                                         <>
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.noSurat}</span><br />
-                                            <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                            <span>- {dokumen?.nama}</span><br /><div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.noSurat}</span><br />
+                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
                                         </>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010301') {
                                     dokumen = dataRegisterDokumen.dokumen as IDokumenNibOss;
                                     return (
-                                        <div key={item.id} >
-                                            <span>- {dokumen?.nama}</span><br />
-                                            <span>Nomor: {dokumen?.nomor}</span><br />
-                                            <span>perihal: {dokumen?.tanggal}</span><br />
-                                            <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                target="_blank"
-                                                underline
-                                            >
-                                                Download dokumen
-                                            </Link>
-                                        </div>                                    
+                                        <>
+                                            <div className={contentStyles.title}>{index+1}. {dokumen?.nama}</div>
+                                            <div className={contentStyles.contenItemDok}>
+                                                <span>Nomor: {dokumen?.nomor}</span><br />
+                                                <span>perihal: {dokumen?.tanggal}</span><br />
+                                                <Link 
+                                                    href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    target="_blank"
+                                                    underline
+                                                >
+                                                    Download dokumen
+                                                </Link>
+                                            </div>
+                                        </>                                    
                                     );
                                 }
                             })
@@ -170,8 +228,8 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
     );
     return (
         <DetailsList
-            columns={_columns}
             items={dataPermohonan}
+            columns={_columns}
             setKey="set"
             layoutMode={DetailsListLayoutMode.justified}
             onRenderItemColumn={handleRenderItemColumn}

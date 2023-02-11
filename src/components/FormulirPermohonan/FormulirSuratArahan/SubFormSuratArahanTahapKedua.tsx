@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
+import { IPegawai, useGetPegawaiByIdRegisterPerusahaanQuery } from "../../../features/pegawai/pegawai-api-slice";
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
-import { useGetPersonByNikQuery } from "../../../features/person/person-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
@@ -27,9 +27,7 @@ const sectionStackTokens: IStackTokens = { childrenGap: 2 };
 export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
     // local state
     const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
-    const [nik, setNik] = useState<string>('');
-    const [buttonTitle, setButtonTitle] = useState<string>('cek');
-    const [skip, setSkip] = useState<boolean>(true);
+    const [idPj, setIdPj] = useState<string|undefined>(undefined);
     //react-form hook variable
     const [registerPerusahaan, statusWali, penanggungJawabPermohonan] = useWatch({
         control: control, 
@@ -37,9 +35,10 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     });
     //rtk query perusahaan variable hook
     const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetAllStatusWaliPermohonanQuery();
-    // const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip});
-    const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip: skip});
-    // console.log(pJ);
+    const { data: daftarPegawai, error: errorDataPegawai} = useGetPegawaiByIdRegisterPerusahaanQuery(registerPerusahaan.id);
+    // const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip: skip});
+    
+    console.log(penanggungJawabPermohonan);
 
     // useEffect(
     //     () => {
@@ -53,14 +52,14 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     //     [nik]
     // );
 
-    useEffect(
-        () => {
-            if(pJ != undefined) {
-                setValue('penanggungJawabPermohonan', pJ);
-            }
-        },
-        [pJ]
-    );
+    // useEffect(
+    //     () => {
+    //         if(pJ != undefined) {
+    //             setValue('penanggungJawabPermohonan', pJ);
+    //         }
+    //     },
+    //     [pJ]
+    // );
 
     
     const statusWaliOptions: IDropdownOption<any>[] = useMemo(
@@ -80,6 +79,25 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
             }
         },
         [daftarStatusWali]
+    );
+
+    const daftarPegawaiOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(daftarPegawai != undefined) {
+                return [
+                    ...daftarPegawai.map(
+                        (t) => ({
+                            key: `${t.person?.nik}`,
+                            text: `${t.person?.nik} - ${t.person?.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarPegawai]
     );
 
     const processBackToPreviousStep = useCallback(
@@ -105,31 +123,28 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
         [daftarStatusWali]
     );
 
-    const processNikChange = useCallback(
-        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-            setNik(newValue||'');
+    const handleSetPenanggungJawab = useCallback(
+        (item) => {
+            var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
+            var pj = itemSelected.person
+            setValue("penanggungJawabPermohonan", pj);
+            // setIdPJ(itemSelected.id);
         },
-        [],
+        [daftarPegawai]
     );
 
     const processNextStep = useCallback(
         () => {
-            if(buttonTitle == 'cek') {
-                setSkip(false);
-                setButtonTitle('lanjut');
-            }
-            else {
-                setAnimTahapKedua('closed');
-                let timer = setTimeout(
-                    () => {
-                        setMotionKey('tahapKetiga');
-                    },
-                    durationAnimFormSuratArahan*1000
-                );
-                return () => clearTimeout(timer);
-            }            
+            setAnimTahapKedua('closed');
+            let timer = setTimeout(
+                () => {
+                    setMotionKey('tahapKetiga');
+                },
+                durationAnimFormSuratArahan*1000
+            );
+            return () => clearTimeout(timer);
         },
-        [buttonTitle]
+        []
     );
 
     return (
@@ -203,46 +218,32 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                     <Label>Data penanggung jawab</Label>
                 </Stack.Item>
                 <Stack.Item styles={stackItemStyles}>
-                        <Stack.Item>
-                            <ControlledFluentUiDropDown
-                                label="Nik"
-                                placeholder="Pilih nik status penanggung jawab permohonan"
-                                dropdownWidth="auto"
-                                options={statusWaliOptions}
-                                required
-                                name="statusWali"
-                                rules={{ required: "harus diisi" }} 
-                                control={control}
-                                onChangeItem={handleSetStatusWali}
-                                selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
-                            />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <TextField 
-                                label='Nik'
-                                placeholder="masukkan NIK sesuai dengan KTP" 
-                                value={nik}
-                                onChange={processNikChange}
-                                onKeyUp={
-                                    (event) => {
-                                        if(event.key == 'Enter') {
-                                            processNextStep();
-                                        }
-                                    }
-                                }
-                                disabled={statusWali == null ? true : false} />
-                        </Stack.Item>
-                        <Stack.Item>
+                    <Stack.Item>
+                        <ControlledFluentUiDropDown
+                            label="Nik-Nama"
+                            placeholder="Pilih nik status penanggung jawab permohonan"
+                            dropdownWidth="auto"
+                            options={daftarPegawaiOptions}
+                            required
+                            name="penanggungJawabPermohonan"
+                            rules={{ required: "harus diisi" }} 
+                            control={control}
+                            onChangeItem={handleSetPenanggungJawab}
+                            selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik:null}
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
                         <TextField 
-                                label='Nama'
-                                value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nama: ''}
-                                disabled={true} />
-                        </Stack.Item>              
-                </Stack.Item>                
+                            label='Nama'
+                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nama: ''}
+                            disabled={true} 
+                        />
+                    </Stack.Item>              
+                </Stack.Item>                 
                 <Stack.Item align="end">
                     <PrimaryButton 
                         style={{width: 100, marginTop: 8}}
-                        text={buttonTitle}
+                        text={'Lanjut'}
                         onClick={processNextStep}
                     />
                 </Stack.Item>
