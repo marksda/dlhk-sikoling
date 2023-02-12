@@ -10,19 +10,19 @@ export const KecamatanApiSlice = createApi({
     }),
     endpoints(builder) {
         return {
-            getAllKecamatan: builder.query<IKecamatan[], number|void>({
+            getAllKecamatan: builder.query<IKecamatan[], number|null>({
                 query: () => `kecamatan`,
             }),
-            getKecamatanByPage: builder.query<IKecamatan[], number|void>({
+            getKecamatanByPage: builder.query<IKecamatan[], number|null>({
                 query: (page = 1, pageSize = 10) => `kecamatan/page?page=${page}&pageSize=${pageSize}`,
             }),
-            getKecamatanByNama: builder.query<IKecamatan[], string|void>({
+            getKecamatanByNama: builder.query<IKecamatan[], string|null>({
                 query: (nama = 'jawa timur') => `kecamatan/nama?nama=${nama}`,
             }),
-            getKecamatanByNamaAndPage: builder.query<IKecamatan[], string|void>({
+            getKecamatanByNamaAndPage: builder.query<IKecamatan[], string|null>({
                 query: (nama = 'jawa timur', page=1, pageSize=10) => `kecamatan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
-            getKecamatanByKabupaten: builder.query<IKecamatan[], string|void>({
+            getKecamatanByKabupaten: builder.query<IKecamatan[], string|null>({
                 query: (idKabupaten = defaultKabupaten.id!) => `kecamatan/kabupaten?idKabupaten=${idKabupaten}`,
             }),
         }

@@ -179,7 +179,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
             <Stack styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
-                        label="Status penanggung jawab permohonan"
+                        label="Status penanggung jawab"
                         placeholder="Pilih status penanggung jawab permohonan"
                         dropdownWidth="auto"
                         options={statusWaliOptions}
@@ -214,9 +214,8 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                     )
                 }                     
                 <Stack.Item>
-                    <Label>Data penanggung jawab</Label>
+                    <Label>Identitas penanggung jawab</Label>
                 </Stack.Item>
-                <TemplatePerson />
                 <Stack.Item styles={stackItemStyles}>
                     <Stack.Item>
                         <Dropdown

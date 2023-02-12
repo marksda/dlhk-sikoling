@@ -6,7 +6,10 @@ export interface IJenisKelamin {
     nama: string|null;
 }
 
-const initialState: IJenisKelamin = defaultJenisKelamin;
+const initialState: IJenisKelamin = {
+    id: null,
+    nama: null
+};
 
 export const jenisKelaminSlice = createSlice({
     name: 'jenisKelamin',

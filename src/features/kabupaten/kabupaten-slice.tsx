@@ -6,7 +6,10 @@ export interface IKabupaten {
     nama: string|null;
 }
 
-const initialState: IKabupaten = defaultKabupaten;
+const initialState: IKabupaten = {
+    id: null,
+    nama: null
+};
 
 //redux busines logic
 export const kabupatenSlice = createSlice({

@@ -35,22 +35,22 @@ export const alamatSlice = createSlice({
         setAlamatPropinsi: (state, action: PayloadAction<IPropinsi>) => {
             state.propinsi = {id: action.payload.id, nama: action.payload.nama};
         },
-        setAlamatKabupaten: (state, action: PayloadAction<IKabupaten>) => {
-            state.propinsi = action.payload;
+        setAlamatKabupaten: (state, action: PayloadAction<IKabupaten|null>) => {
+            state.kabupaten = action.payload;
         },
-        setAlamatKecamatan: (state, action: PayloadAction<IKecamatan>) => {
+        setAlamatKecamatan: (state, action: PayloadAction<IKecamatan|null>) => {
             state.kecamatan = action.payload;
         },
-        setAlamatDesa: (state, action: PayloadAction<IDesa>) => {
+        setAlamatDesa: (state, action: PayloadAction<IDesa|null>) => {
             state.desa = action.payload;
         },
-        setAlamatKeterangan: (state, action: PayloadAction<string>) => {
+        setAlamatKeterangan: (state, action: PayloadAction<string|null>) => {
             state.keterangan = action.payload;
         }
     },
 }) 
 
 // redux action creator
-export const { setAlamat, setAlamatPropinsi: setPropinsi, setAlamatKabupaten: setKabupaten, setAlamatKecamatan: setKecamatan, setAlamatDesa: setDesa, setAlamatKeterangan: setKeterangan} = alamatSlice.actions
+export const { setAlamat, setAlamatPropinsi, setAlamatKabupaten, setAlamatKecamatan, setAlamatDesa, setAlamatKeterangan} = alamatSlice.actions
 
 export default alamatSlice.reducer

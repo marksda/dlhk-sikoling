@@ -22,7 +22,7 @@ export const KabupatenApiSlice = createApi({
             getKabupatenByNamaAndPage: builder.query<daftarKabupaten, string|void>({
                 query: (nama = 'jawa timur', page=1, pageSize=10) => `kabupaten/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
             }),
-            getKabupatenByPropinsi: builder.query<daftarKabupaten, string|void>({
+            getKabupatenByPropinsi: builder.query<daftarKabupaten, string|null>({
                 query: (idPropinsi = defaultPropinsi.id!) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
             }),
             getKabupatenByPropinsiAndPage: builder.query<daftarKabupaten, string|void>({

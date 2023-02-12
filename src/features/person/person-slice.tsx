@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
 import { IKontak } from "../alamat/kontak-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
@@ -13,7 +14,14 @@ export interface IPerson {
     scanKTP: string|null;
 }
 
-const initialState: IPerson = {} as IPerson
+const initialState: IPerson = {
+    nik: null,
+    nama: null,
+    jenisKelamin: null,
+    alamat: null,
+    kontak: null,
+    scanKTP: null
+} as IPerson
 
 export const personSlice = createSlice({
     name: 'person',
@@ -57,38 +65,14 @@ export const personSlice = createSlice({
         setNama: (state, action: PayloadAction<string>) => {
             state.nama = action.payload;
         },
-        setJenisKelamin: (state, action: PayloadAction<IJenisKelamin>) => {
-            state.jenisKelamin = {
-                id: action.payload.id,
-                nama: action.payload.nama
-            };
+        setPersonJenisKelamin: (state, action: PayloadAction<IJenisKelamin>) => {
+            state.jenisKelamin = cloneDeep(action.payload);
         },
-        setAlamat: (state, action: PayloadAction<IAlamat>) => {
-            state.alamat = {
-                propinsi: {
-                    id: action.payload.propinsi!.id,
-                    nama: action.payload.propinsi!.nama
-                },
-                kabupaten: {
-                    id: action.payload.kabupaten!.id,
-                    nama: action.payload.kabupaten!.nama
-                },
-                kecamatan: {
-                    id: action.payload.kecamatan!.id,
-                    nama: action.payload.kecamatan!.nama
-                },
-                desa: {
-                    id: action.payload.desa!.id,
-                    nama: action.payload.desa!.nama
-                },
-                keterangan: action.payload.keterangan
-            };
+        setPersonAlamat: (state, action: PayloadAction<IAlamat>) => {
+            state.alamat = cloneDeep(action.payload);
         },
-        setKontak: (state, action: PayloadAction<IKontak>) => {
-            state.kontak = {
-                telepone: action.payload.telepone,
-                email: action.payload.email
-            };
+        setPersonKontak: (state, action: PayloadAction<IKontak>) => {
+            state.kontak = cloneDeep(action.payload);
         },
         setScanKtp: (state, action: PayloadAction<string>) => {
             state.scanKTP = action.payload;
@@ -96,5 +80,5 @@ export const personSlice = createSlice({
     },
 })
 
-export const {setPerson, setNik, setNama, setAlamat, setJenisKelamin, setKontak, setScanKtp} = personSlice.actions
+export const {setPerson, setNik, setNama, setPersonAlamat, setPersonJenisKelamin, setPersonKontak, setScanKtp} = personSlice.actions
 export default personSlice.reducer
