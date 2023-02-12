@@ -193,13 +193,6 @@ export const TemplatePerson = () => {
                         disabled={false}/>
                 </FormProvider>  
             </Stack.Item>
-            <Stack.Item align="end">
-                <PrimaryButton 
-                    style={{width: 100, marginTop: 8}}
-                    text={'Lanjut'}
-                    onClick={save}
-                />
-            </Stack.Item>
         </>
     );
 }

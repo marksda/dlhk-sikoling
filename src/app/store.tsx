@@ -9,6 +9,7 @@ import desaReducer from "../features/desa/desa-slice";
 import { DesaApiSlice } from "../features/desa/desa-api-slice";
 import alamatReducer from "../features/alamat/alamat-slice";
 import jabatanReducer from "../features/jabatan/jabatan-slice";
+import { JabatanApiSlice } from "../features/jabatan/jabatan-api-slice";
 import jenisKelaminReducer from "../features/jenis-kelamin/jenis-kelamin-slice";
 import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-api-slice";
 // import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
@@ -62,6 +63,7 @@ export const store = configureStore({
         [DesaApiSlice.reducerPath]: DesaApiSlice.reducer,
         alamat: alamatReducer,
         jabatan: jabatanReducer,
+        [JabatanApiSlice.reducerPath]: JabatanApiSlice.reducer,
         jenisKelamin: jenisKelaminReducer,
         [JenisKelaminApiSlice.reducerPath]: JenisKelaminApiSlice.reducer,
         // penanggungJawab: penanggungJawabReducer,
@@ -126,6 +128,7 @@ export const store = configureStore({
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
                                             .concat(StatusWaliPermohonanApiSlice.middleware)
                                             .concat(PegawaiApiSlice.middleware)
+                                            .concat(JabatanApiSlice.middleware)
                                             .concat(KategoriPermohonanApiSlice.middleware),
 });
 

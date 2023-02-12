@@ -13,7 +13,7 @@ export const JabatanApiSlice = createApi({
         return {
             getAllJabatan: builder.query<daftarJabatan, void>({
                 query: () => ({
-                    url: 'pegawai_perusahaan',
+                    url: 'jabatan_perusahaan',
                     method: 'GET'
                 }),
                 providesTags: (result) => 
@@ -29,3 +29,7 @@ export const JabatanApiSlice = createApi({
         };
     }
 });
+
+export const {
+    useGetAllJabatanQuery
+} = JabatanApiSlice;
