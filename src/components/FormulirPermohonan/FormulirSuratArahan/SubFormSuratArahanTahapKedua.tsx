@@ -7,6 +7,7 @@ import { IPegawai, useGetPegawaiByIdRegisterPerusahaanQuery } from "../../../fea
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
+import { TemplateAlamat } from "../../FormTemplate/template-alamat";
 import { TemplatePerson } from "../../FormTemplate/template-person";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
@@ -215,6 +216,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 <Stack.Item>
                     <Label>Data penanggung jawab</Label>
                 </Stack.Item>
+                <TemplatePerson />
                 <Stack.Item styles={stackItemStyles}>
                     <Stack.Item>
                         <Dropdown

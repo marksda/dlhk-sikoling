@@ -1,8 +1,9 @@
 import { PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { object, z } from "zod";
+import { TemplateAlamat } from "./template-alamat";
 
 
 const personSchema = object({
@@ -13,19 +14,20 @@ const personSchema = object({
 type FormData = z.infer<typeof personSchema>;
 
 export const TemplatePerson = () => {
+    const refAlamat = useRef();
     const {handleSubmit, control} = useForm<FormData>({
         resolver: zodResolver(personSchema)
     });
     
     const save = useCallback(
         handleSubmit(
-            async (data) => {                
+            (data) => {        
                 console.log(data);       
             }
         ),
-        []
+        [refAlamat]
     );
-    
+
     return (
         <>
             <Stack.Item>
@@ -70,6 +72,7 @@ export const TemplatePerson = () => {
                     }
                 />               
             </Stack.Item>
+            <TemplateAlamat ref={refAlamat}/>
             <Stack.Item align="end">
                 <PrimaryButton 
                     style={{width: 100, marginTop: 8}}
