@@ -13,8 +13,6 @@ import { TemplateAlamat } from "./template-alamat";
 
 
 const pegawaiSchema = object({
-    nik: z.string().regex(/^\d+$/, {message: 'harus diisi bilangan bukan abjad'}).length(17, {message: 'Nik harus 17 digit'}),
-    nama: z.string().min(3, {message: 'nama diisi minimal 3 karakter'}),
     jenisKelamin: object({
         id: z.string(),
         nama: z.string()
@@ -33,7 +31,7 @@ const stackHorTokens = { childrenGap: 4 };
 
 export const TemplatePerson = () => {
     //redux state variable
-    const pegawai = useAppSelector((state) => state.pegawai);
+    // const pegawai = useAppSelector((state) => state.pegawai);
     const perusahaan = useAppSelector((state) => state.registerPerusahaan);
     const person = useAppSelector((state) => state.person);
     const jabatan = useAppSelector((state) => state.jabatan);
@@ -96,7 +94,7 @@ export const TemplatePerson = () => {
 
     //react form hook state
     const {handleSubmit, control} = useForm<FormData>({
-        resolver: zodResolver(personSchema)
+        resolver: zodResolver(pegawaiSchema)
     });
     
     const save = useCallback(
