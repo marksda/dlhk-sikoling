@@ -38,35 +38,36 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
     const [npwpPerusahaan, setNpwpPerusahaan] = useState<string>('');
     const [skipDownload, setSkipDownload] = useState<boolean>(true);
     //rtk query perusahaan variable hook
-    const {data: donwloadFile, error: ErrorFetchDownloadFile} = useDownloadFileDokumenWithSecurityQuery(
-        {
-            namaFile,
-            npwpPerusahaan
-        }, 
-        {
-            skip: skipDownload
-        }
-    );
+    // const {data: donwloadFile, error: ErrorFetchDownloadFile} = useDownloadFileDokumenWithSecurityQuery(
+    //     {
+    //         namaFile,
+    //         npwpPerusahaan
+    //     }, 
+    //     {
+    //         skip: skipDownload
+    //     }
+    // );
 
-    console.log(donwloadFile);
+    console.log(dataPermohonan);
 
-    useEffect(
-        () => {
-            console.log(donwloadFile);
-        },
-        [donwloadFile]
-    )
 
-    const handleClickOnLink = useCallback(
-        (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLElement>) => {
-            var btnElemen = event.target as HTMLButtonElement;     
-            var split_text = btnElemen.ariaLabel?.split('**') as string[];
-            setNamaFile(split_text[1]);
-            setNpwpPerusahaan(split_text[0]);
-            setSkipDownload(false);
-        },
-        []
-    );
+    // useEffect(
+    //     () => {
+    //         console.log(donwloadFile);
+    //     },
+    //     [donwloadFile]
+    // )
+
+    // const handleClickOnLink = useCallback(
+    //     (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLElement>) => {
+    //         var btnElemen = event.target as HTMLButtonElement;     
+    //         var split_text = btnElemen.ariaLabel?.split('**') as string[];
+    //         setNamaFile(split_text[1]);
+    //         setNpwpPerusahaan(split_text[0]);
+    //         setSkipDownload(false);
+    //     },
+    //     []
+    // );
 
     const handleRenderItemColumn = useCallback(
         (item: IListItemRegisterPermohonan, index: number|undefined, column: IColumn|undefined) => {
@@ -226,14 +227,22 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
         },
         []
     );
-    return (
-        <DetailsList
-            items={dataPermohonan}
-            columns={_columns}
-            setKey="set"
-            layoutMode={DetailsListLayoutMode.justified}
-            onRenderItemColumn={handleRenderItemColumn}
-            selectionMode={SelectionMode.none}
-        />
-    );
+
+    // const _getKey = useCallback(
+    //     (item: any, index?: number): string => {
+    //         return item.key;
+    //     },
+    //     []
+    // );
+
+    return dataPermohonan != null ?
+            <DetailsList
+                items={dataPermohonan}
+                columns={_columns}
+                setKey="none"
+                layoutMode={DetailsListLayoutMode.justified}
+                onRenderItemColumn={handleRenderItemColumn}
+                selectionMode={SelectionMode.none}
+            />:null;     
+    
 };

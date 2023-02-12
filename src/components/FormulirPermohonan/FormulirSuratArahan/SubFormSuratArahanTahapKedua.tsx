@@ -1,4 +1,4 @@
-import { DefaultButton, DefaultPalette, IconButton, IDropdownOption, IStackItemStyles, IStackStyles, IStackTokens, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import { DefaultButton, DefaultPalette, Dropdown, IconButton, IDropdownOption, IStackItemStyles, IStackStyles, IStackTokens, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -7,6 +7,7 @@ import { IPegawai, useGetPegawaiByIdRegisterPerusahaanQuery } from "../../../fea
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
+import { TemplatePerson } from "../../FormTemplate/template-person";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
@@ -38,7 +39,6 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     const { data: daftarPegawai, error: errorDataPegawai} = useGetPegawaiByIdRegisterPerusahaanQuery(registerPerusahaan.id);
     // const {data: pJ, error: ErrorFetchPj} = useGetPersonByNikQuery(nik, {skip: skip});
     
-    console.log(penanggungJawabPermohonan);
 
     // useEffect(
     //     () => {
@@ -87,7 +87,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 return [
                     ...daftarPegawai.map(
                         (t) => ({
-                            key: `${t.person?.nik}`,
+                            key: `${t.id}`,
                             text: `${t.person?.nik} - ${t.person?.nama}`
                         })
                     )
@@ -124,11 +124,9 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
     );
 
     const handleSetPenanggungJawab = useCallback(
-        (item) => {
+        (event, item) => {
             var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
-            var pj = itemSelected.person
-            setValue("penanggungJawabPermohonan", pj);
-            // setIdPJ(itemSelected.id);
+            setValue("penanggungJawabPermohonan", itemSelected);
         },
         [daftarPegawai]
     );
@@ -219,32 +217,36 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 </Stack.Item>
                 <Stack.Item styles={stackItemStyles}>
                     <Stack.Item>
-                        <ControlledFluentUiDropDown
-                            label="Nik-Nama"
+                        <Dropdown
+                            label="Nik"
                             placeholder="Pilih nik status penanggung jawab permohonan"
-                            dropdownWidth="auto"
+                            selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
+                            onChange={handleSetPenanggungJawab}
                             options={daftarPegawaiOptions}
-                            required
-                            name="penanggungJawabPermohonan"
-                            rules={{ required: "harus diisi" }} 
-                            control={control}
-                            onChangeItem={handleSetPenanggungJawab}
-                            selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik:null}
+                            disabled={statusWali == null ?  true: false}
                         />
                     </Stack.Item>
                     <Stack.Item>
                         <TextField 
                             label='Nama'
-                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nama: ''}
+                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
                             disabled={true} 
                         />
-                    </Stack.Item>              
+                    </Stack.Item>  
+                    <Stack.Item>
+                        <TextField 
+                            label='Jabatan'
+                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
+                            disabled={true} 
+                        />
+                    </Stack.Item>             
                 </Stack.Item>                 
                 <Stack.Item align="end">
                     <PrimaryButton 
                         style={{width: 100, marginTop: 8}}
                         text={'Lanjut'}
                         onClick={processNextStep}
+                        disabled={penanggungJawabPermohonan == null ? true:false}
                     />
                 </Stack.Item>
             </Stack>

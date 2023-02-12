@@ -80,7 +80,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 ];
             }
             else {
-                return [];
+                return null;
             }
         },
         [daftarRegisterPermohonan]
