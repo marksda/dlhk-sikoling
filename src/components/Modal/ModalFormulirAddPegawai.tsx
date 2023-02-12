@@ -1,7 +1,7 @@
 import { 
-    ComboBox, ContextualMenu, DatePicker, DayOfWeek, DefaultPalette, FontSizes, FontWeights, 
+    ComboBox, ContextualMenu, DefaultPalette, FontSizes, FontWeights, 
     getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, 
-    IProgressIndicatorStyles, IStackItemStyles, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, 
+    IProgressIndicatorStyles, IStackItemStyles, mergeStyleSets, Modal, PrimaryButton, 
     ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
@@ -44,7 +44,6 @@ const contentStyles = mergeStyleSets({
         display: 'flex',
         flexFlow: 'column nowrap',
         alignItems: 'stretch',
-        width: 500
     },
     header: [
         // eslint-disable-next-line deprecation/deprecation
@@ -130,10 +129,7 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
             hideModal();
         },
         []
-    );    
-
-
-    
+    );      
 
     return (
         <Modal
@@ -156,7 +152,7 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
                     alignItems: 'center',
                     padding: '8px 12px 14px 24px'}}
                 >
-                    <span id={titleId}>Formulir Dokumen Nib OSS</span>
+                    <span id={titleId}>Formulir Penanggung Jawab</span>
                     <IconButton
                         styles={iconButtonStyles}
                         iconProps={cancelIcon}
@@ -166,7 +162,7 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
                 </div>                  
             </div>     
             <div className={contentStyles.body}>
-                <Stack tokens={stackTokens} >
+                <Stack tokens={stackTokens} >                    
                     <TemplatePerson />
                 </Stack> 
             </div>               

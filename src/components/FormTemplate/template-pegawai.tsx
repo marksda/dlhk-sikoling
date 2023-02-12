@@ -6,12 +6,13 @@ import { array, object, TypeOf, z } from "zod";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
 import { IJenisKelamin } from "../../features/jenis-kelamin/jenis-kelamin-slice";
+import { setPersonPegawai, setPerusahaanPegawai } from "../../features/pegawai/pegawai-slice";
 import { setNama, setNik, setPersonAlamat, setPersonJenisKelamin } from "../../features/person/person-slice";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { TemplateAlamat } from "./template-alamat";
 
 
-const personSchema = object({
+const pegawaiSchema = object({
     nik: z.string().regex(/^\d+$/, {message: 'harus diisi bilangan bukan abjad'}).length(17, {message: 'Nik harus 17 digit'}),
     nama: z.string().min(3, {message: 'nama diisi minimal 3 karakter'}),
     jenisKelamin: object({
@@ -19,13 +20,7 @@ const personSchema = object({
         nama: z.string()
     }),
 });
-type FormData = z.infer<typeof personSchema>;
-
-const dokumenUploadSchema = object({
-    dokumen: z.instanceof(File),
-    dokumens: array(z.instanceof(File))
-});
-type IDokumenUpload = TypeOf<typeof dokumenUploadSchema>;
+type FormData = z.infer<typeof pegawaiSchema>;
 
 const stackItemStyles: IStackItemStyles = {
     root: {
@@ -38,22 +33,34 @@ const stackHorTokens = { childrenGap: 4 };
 
 export const TemplatePerson = () => {
     //redux state variable
-    // const person = useAppSelector((state) => state.person);
-    const alamat = useAppSelector((state) => state.alamat);
+    const pegawai = useAppSelector((state) => state.pegawai);
+    const perusahaan = useAppSelector((state) => state.registerPerusahaan);
+    const person = useAppSelector((state) => state.person);
+    const jabatan = useAppSelector((state) => state.jabatan);
     const dispatch = useAppDispatch();
 
-    const methods = useForm<IDokumenUpload>({
-        resolver: zodResolver(dokumenUploadSchema),
-    });
-
     //rtk query hook vatiable
-    const { data: daftarSex, isFetching: isFetchingDataSex, isError: isErrorSex } = useGetAllJenisKelaminQuery();
+    // const { data: daftarSex, isFetching: isFetchingDataSex, isError: isErrorSex } = useGetAllJenisKelaminQuery();
 
     useEffect(
         () => {
-            dispatch(setPersonAlamat(alamat));
+            dispatch(setPerusahaanPegawai(perusahaan));
         },
-        [alamat]
+        [perusahaan]
+    );
+
+    useEffect(
+        () => {
+            dispatch(setPersonPegawai(person));
+        },
+        [person]
+    );
+
+    useEffect(
+        () => {
+            dispatch(setPersonPegawai(jabatan));
+        },
+        [jabatan]
     );
 
     const sexOptions: IDropdownOption<any>[] = useMemo(

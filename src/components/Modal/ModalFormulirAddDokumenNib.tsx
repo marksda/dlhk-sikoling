@@ -23,9 +23,8 @@ import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
-import path from "node:path/win32";
 
-interface IModalFormulirDokumenNibProps {
+interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
     hideModal: () => void;
     isDraggable: boolean;
@@ -118,7 +117,7 @@ const containerStyle: IContainerUploadStyle = {
     backgroundColor: '#ECECEC',
 };
 
-export const ModalFormulirAddDokumenNib: FC<IModalFormulirDokumenNibProps> = ({isModalOpen, hideModal, isDraggable}) => {
+export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isModalOpen, hideModal, isDraggable}) => {
     const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);

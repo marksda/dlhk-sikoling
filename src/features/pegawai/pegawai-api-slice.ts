@@ -1,16 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IJabatan } from "../jabatan/jabatan-slice";
-import { IPerson } from "../person/person-slice";
-import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
+import { IPegawai } from "./pegawai-slice";
 
-
-export interface IPegawai {
-    id: string|null;
-    perusahaan: Partial<IRegisterPerusahaan>|null;
-    person: Partial<IPerson>|null;
-    jabatan: Partial<IJabatan>|null;
-}
 
 type daftarPegawai = IPegawai[];
 

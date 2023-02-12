@@ -1,4 +1,5 @@
-import { DefaultButton, DefaultPalette, Dropdown, IconButton, IDropdownOption, IStackItemStyles, IStackStyles, IStackTokens, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import { DefaultButton, DefaultPalette, Dropdown, IconButton, IDropdownOption, IIconProps, IStackItemStyles, IStackStyles, IStackTokens, ITooltipHostStyles, Label, PrimaryButton, Stack, TextField, Tooltip, TooltipHost } from "@fluentui/react";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -7,9 +8,8 @@ import { IPegawai, useGetPegawaiByIdRegisterPerusahaanQuery } from "../../../fea
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
-import { TemplateAlamat } from "../../FormTemplate/template-alamat";
-import { TemplatePerson } from "../../FormTemplate/template-person";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
+import { ModalFormulirAddPegawai } from "../../Modal/ModalFormulirAddPegawai";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
 interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
@@ -25,11 +25,17 @@ const stackItemStyles: IStackItemStyles = {
 };
 // export const stackTokensVert = { childrenGap: 0 };
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };
+const stackHorTokens = { childrenGap: 0 };
+const calloutProps = { gapSpace: 0 };
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
+const plusIcon: IIconProps = { iconName: 'CirclePlus' };
 
 export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
     // local state
-    const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');
-    const [idPj, setIdPj] = useState<string|undefined>(undefined);
+    const [animTahapKedua, setAnimTahapKedua] = useState<string>('open');    
+    const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
+    const tooltipAddPegawaiId = useId('toolTipAddPegawai');
+    // const [idPj, setIdPj] = useState<string|undefined>(undefined);
     //react-form hook variable
     const [registerPerusahaan, statusWali, penanggungJawabPermohonan] = useWatch({
         control: control, 
@@ -176,7 +182,7 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                 <Label styles={labelStyle}>Penanggung jawab permohonan</Label>
                 <Label styles={subLabelStyle}>Status penanggung jawab permohonan selain pemilik/direktur wajib menyertakan surat kuasa perusahaan. Pilihan dokumen surat kuasa akan muncul apabila sudah diupload, jika belum maka tekan tombol file untuk upload terlebih dahulu.</Label>
             </Stack>
-            <Stack styles={{root: { width: 400, alignItems: 'left'}}}>
+            <Stack styles={{root: { width: 450, alignItems: 'left'}}}>
                 <Stack.Item>
                     <ControlledFluentUiDropDown
                         label="Status penanggung jawab"
@@ -217,16 +223,28 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                     <Label>Identitas penanggung jawab</Label>
                 </Stack.Item>
                 <Stack.Item styles={stackItemStyles}>
-                    <Stack.Item>
-                        <Dropdown
-                            label="Nik"
-                            placeholder="Pilih nik status penanggung jawab permohonan"
-                            selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
-                            onChange={handleSetPenanggungJawab}
-                            options={daftarPegawaiOptions}
-                            disabled={statusWali == null ?  true: false}
-                        />
-                    </Stack.Item>
+                    <Stack horizontal tokens={stackHorTokens} styles={{root: { width: 438, alignItems: 'left'}}}>
+                        <Stack.Item grow>
+                            <Dropdown
+                                label="Nik"
+                                placeholder="Pilih nik status penanggung jawab permohonan"
+                                selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
+                                onChange={handleSetPenanggungJawab}
+                                options={daftarPegawaiOptions}
+                                disabled={statusWali == null ?  true: false}
+                            />
+                        </Stack.Item>
+                        <Stack.Item align="end">                            
+                            <TooltipHost
+                                id={tooltipAddPegawaiId}
+                                content="Klik untuk tambah pilihan Nik"
+                                calloutProps={calloutProps}
+                                styles={hostStyles}
+                            >
+                                <IconButton iconProps={plusIcon} aria-label="Plus" onClick={showModalAddPegawai}/>
+                            </TooltipHost>
+                        </Stack.Item>
+                    </Stack>
                     <Stack.Item>
                         <TextField 
                             label='Nama'
@@ -251,6 +269,14 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                     />
                 </Stack.Item>
             </Stack>
+            {
+                isModalAddPegawaiOpen == true ? 
+                <ModalFormulirAddPegawai
+                    isModalOpen={isModalAddPegawaiOpen}
+                    hideModal={hideModalAddPegawai}
+                    isDraggable={true}
+                /> : null  
+            }
         </motion.div>
     );
     

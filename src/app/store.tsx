@@ -11,9 +11,10 @@ import alamatReducer from "../features/alamat/alamat-slice";
 import jabatanReducer from "../features/jabatan/jabatan-slice";
 import jenisKelaminReducer from "../features/jenis-kelamin/jenis-kelamin-slice";
 import { JenisKelaminApiSlice } from "../features/jenis-kelamin/jenis-kelamin-api-slice";
-import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
+// import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/person/person-slice";
 import { PersonApiSlice } from "../features/person/person-api-slice";
+import pegawaiReducer from "../features/pegawai/pegawai-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
@@ -63,9 +64,10 @@ export const store = configureStore({
         jabatan: jabatanReducer,
         jenisKelamin: jenisKelaminReducer,
         [JenisKelaminApiSlice.reducerPath]: JenisKelaminApiSlice.reducer,
-        penanggungJawab: penanggungJawabReducer,
+        // penanggungJawab: penanggungJawabReducer,
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
+        pegawai: pegawaiReducer,
         credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,

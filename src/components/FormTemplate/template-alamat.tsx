@@ -32,8 +32,8 @@ const alamatSchema = object({
     }),
     keterangan: z.string()
 });
-
 type FormData = z.infer<typeof alamatSchema>;
+const stackHorTokens = { childrenGap: 4 };
 
 export const TemplateAlamat = () => {
     //redux state variable
@@ -196,97 +196,105 @@ export const TemplateAlamat = () => {
             
     return (
         <>
-            <Stack.Item>
-                <Controller
-                    name="propinsi"
-                    control={control}
-                    render={
-                        ({
-                            field: {onChange},
-                            fieldState: {error}
-                        }) => 
-                        <Dropdown 
-                            label="Propinsi"
-                            placeholder="Pilih propinsi"
-                            options={propinsiOptions}
-                            errorMessage={error?.message}
-                            onChange={(e, selectedItem) => {
-                                onChange(handleChangePropinsi(selectedItem));
-                            }}
-                            selectedKey={alamat.propinsi != null ? alamat.propinsi.id : null}
-                        />
-                    }
-                />               
-            </Stack.Item>
-            <Stack.Item>
-                <Controller
-                    name="kabupaten"
-                    control={control}
-                    render={
-                        ({
-                            field: {onChange},
-                            fieldState: {error}
-                        }) => 
-                        <Dropdown 
-                            label="Kabupaten"
-                            placeholder="Pilih kabupaten"
-                            options={kabupatenOptions}
-                            errorMessage={error?.message}
-                            onChange={(e, selectedItem) => {
-                                onChange(handleChangeKabupaten(selectedItem));
-                            }}
-                            selectedKey={alamat.kabupaten != null ? alamat.kabupaten.id : null}
-                            disabled={alamat.propinsi == null ? true : false}
-                        />
-                    }
-                />               
-            </Stack.Item>
-            <Stack.Item>
-                <Controller
-                    name="kecamatan"
-                    control={control}
-                    render={
-                        ({
-                            field: {onChange},
-                            fieldState: {error}
-                        }) => 
-                        <Dropdown 
-                            label="Kecamatan"
-                            placeholder="Pilih kecamatan"
-                            options={kecamatanOptions}
-                            errorMessage={error?.message}
-                            onChange={(e, selectedItem) => {
-                                onChange(handleChangeKecamatan(selectedItem));
-                            }}
-                            selectedKey={alamat.kecamatan != null ? alamat.kecamatan.id : null}
-                            disabled={alamat.kabupaten == null ? true : false}
-                        />
-                    }
-                />               
-            </Stack.Item>
-            <Stack.Item>
-                <Controller
-                    name="desa"
-                    control={control}
-                    render={
-                        ({
-                            field: {onChange},
-                            fieldState: {error}
-                        }) => 
-                        <Dropdown 
-                            label="Desa"
-                            placeholder="Pilih desa"
-                            options={desaOptions}
-                            errorMessage={error?.message}
-                            onChange={(e, selectedItem) => {
-                                onChange(handleChangeDesa(selectedItem));
-                            }}
-                            selectedKey={alamat.desa != null ? alamat.desa.id : null}
-                            disabled={alamat.kecamatan == null ? true : false}
-                        />
-                    }
-                />               
-            </Stack.Item>
+            <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
+                <Stack.Item>
+                    <Controller
+                        name="propinsi"
+                        control={control}
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Propinsi"
+                                placeholder="Pilih propinsi"
+                                options={propinsiOptions}
+                                errorMessage={error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangePropinsi(selectedItem));
+                                }}
+                                styles={{root:{width: 250}}}
+                                selectedKey={alamat.propinsi != null ? alamat.propinsi.id : null}
+                            />
+                        }
+                    />               
+                </Stack.Item>
+                <Stack.Item>
+                    <Controller
+                        name="kabupaten"
+                        control={control}
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Kabupaten"
+                                placeholder="Pilih kabupaten"
+                                options={kabupatenOptions}
+                                errorMessage={error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangeKabupaten(selectedItem));
+                                }}
+                                selectedKey={alamat.kabupaten != null ? alamat.kabupaten.id : null}
+                                disabled={alamat.propinsi == null ? true : false}
+                                styles={{root:{width: 250}}}
+                            />
+                        }
+                    />               
+                </Stack.Item>   
+            </Stack>
+            <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>    
+                <Stack.Item>
+                    <Controller
+                        name="kecamatan"
+                        control={control}
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Kecamatan"
+                                placeholder="Pilih kecamatan"
+                                options={kecamatanOptions}
+                                errorMessage={error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangeKecamatan(selectedItem));
+                                }}
+                                selectedKey={alamat.kecamatan != null ? alamat.kecamatan.id : null}
+                                disabled={alamat.kabupaten == null ? true : false}
+                                styles={{root:{width: 250}}}
+                            />
+                        }
+                    />               
+                </Stack.Item>
+                <Stack.Item>
+                    <Controller
+                        name="desa"
+                        control={control}
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Desa"
+                                placeholder="Pilih desa"
+                                options={desaOptions}
+                                errorMessage={error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangeDesa(selectedItem));
+                                }}
+                                selectedKey={alamat.desa != null ? alamat.desa.id : null}
+                                disabled={alamat.kecamatan == null ? true : false}
+                                styles={{root:{width: 250}}}
+                            />
+                        }
+                    />               
+                </Stack.Item>
+            </Stack>
             <Stack.Item>
                 <Controller
                     name="keterangan"
