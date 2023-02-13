@@ -193,9 +193,7 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
                     );
                 } catch (error) {
                     console.log(error);
-                }
-                
-                
+                }                
             }
         ),
         [registerPerusahaan]

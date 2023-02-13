@@ -1,26 +1,58 @@
-import { Dropdown, IDropdownOption, Stack } from "@fluentui/react";
+import { DefaultButton, DefaultPalette, Dropdown, IconButton, IDropdownOption, IIconProps, IStackItemStyles, IStackTokens, ITooltipHostStyles, Label, Stack, StackItem, TooltipHost } from "@fluentui/react";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import find from "lodash.find";
 import { useCallback, useMemo } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../app/hooks";
+import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../features/pegawai/pegawai-api-slice";
+import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
+import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../features/permohonan/status-wali-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
+
+
+const sectionStackTokens: IStackTokens = { childrenGap: 2 };
+const stackItemStyles: IStackItemStyles = {
+    root: {
+        margintop: 0,
+        border: `1px solid ${DefaultPalette.orangeLighter}`,
+        padding: 8,
+    },
+};
+const stackHorTokens = { childrenGap: 0 };
+const calloutProps = { gapSpace: 0 };
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
+const plusIcon: IIconProps = { iconName: 'CirclePlus' };
 
 export const TemplatePermohonanArahan = () => {
     //redux hook 
     const token = useAppSelector(state => state.token);
     //react-form hook
     const {control} = useFormContext();
-    const [registerPerusahaan, jenisPermohonanSuratArahan] = useWatch({
+    const [
+        registerPerusahaan, jenisPermohonanSuratArahan, statusWali,
+        regDokSuratKuasa, penanggungJawabPermohonan,
+    ] = useWatch({
         control: control, 
-        name: ['registerPerusahaan', 'jenisPermohonanSuratArahan']
+        name: [
+            'registerPerusahaan', 'jenisPermohonanSuratArahan', 'statusWali', 'regDokSuratKuasa',
+            'penanggungJawabPermohonan'
+        ]
     });
+
+    const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
+    const tooltipAddPegawaiId = useId('toolTipAddPegawai');
+
+    // console.log(jenisPermohonanSuratArahan);
 
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
     const { data: daftarJenisPermohonanSuratarahan, error: errorFetchDataJenisPermohonanSuratArahan,  isFetching: isFetchingDaftarJenisPermohonanSuratarahan, isError: isErrorJenisPermohonanSuratarahan } = useGetAllJenisPermohonanSuratArahanQuery();
-
+    const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetAllStatusWaliPermohonanQuery();
+    const { data: daftarPegawai, error: errorDataPegawai} = useGetPegawaiByIdRegisterPerusahaanQuery(
+        registerPerusahaan != undefined ? registerPerusahaan.id:null, {skip: registerPerusahaan == undefined ? true:false});
+    
     const perusahaanOptions: IDropdownOption<any>[] = useMemo(
         () => {
             if(daftarRegisterPerusahaan != undefined) {
@@ -61,9 +93,47 @@ export const TemplatePermohonanArahan = () => {
         [daftarJenisPermohonanSuratarahan]
     );
 
+    const statusWaliOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(daftarStatusWali != undefined) {
+                return [
+                    ...daftarStatusWali.map(
+                        (t) => ({
+                            key: t.id!,
+                            text: `${t.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarStatusWali]
+    );
+
+    const daftarPegawaiOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(daftarPegawai != undefined) {
+                return [
+                    ...daftarPegawai.map(
+                        (t) => ({
+                            key: `${t.id}`,
+                            text: `${t.person?.nik} - ${t.person?.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [daftarPegawai]
+    );
+
     const handleChangeRegisterPerusahaan = useCallback(
         (item): IRegisterPerusahaan => {
-            let itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
+            var itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
             // dispatch(setRegisterPerusahaan(registerPerusahaan));
             return itemSelected;
         },
@@ -72,10 +142,25 @@ export const TemplatePermohonanArahan = () => {
 
     const handleChangeStatusPermohonan = useCallback(
         (item) => {
-            let itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
+            var itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
             return itemSelected;
         },
         [daftarJenisPermohonanSuratarahan]
+    );
+
+    const handleChangeStatusWali= useCallback(
+        (item) => {
+            let itemSelected = find(daftarStatusWali, (i) => i.id == item.key) as IStatusWali;
+            return itemSelected;
+        },
+        [daftarStatusWali]
+    );
+    const handleChangePenanggungJawab = useCallback(
+        (item) => {
+            var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
+            return itemSelected;
+        },
+        [daftarPegawai]
     );
 
     return (
@@ -129,6 +214,129 @@ export const TemplatePermohonanArahan = () => {
                     }
                 />
             </Stack.Item>
+            <StackItem>
+                <Stack styles={{root: { width: 450, alignItems: 'left'}}}>
+                    <Stack.Item>
+                        <Controller 
+                            name="statusWali"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) => 
+                                <Dropdown 
+                                    label="Status penanggung jawab"
+                                    placeholder="Pilih status penanggung jawab"
+                                    options={statusWaliOptions}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={(e, selectedItem) => {
+                                        onChange(handleChangeStatusWali(selectedItem));
+                                    }}
+                                    styles={{root:{width: 250}}}
+                                    required
+                                    disabled={jenisPermohonanSuratArahan == null ? true : false}
+                                    selectedKey={statusWali != null ? statusWali.id : undefined}
+                                />
+                            }
+                        />
+                    </Stack.Item>
+                </Stack>
+            </StackItem>
+            <Stack.Item>
+                <Label>Data penanggung jawab</Label>
+            </Stack.Item>
+            <Stack.Item styles={stackItemStyles}>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: { width: 438, alignItems: 'left'}}}>
+                    <Stack.Item grow>
+                        <Controller 
+                            name="penanggungJawabPermohonan"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) =>
+                                <Dropdown
+                                    label="Nik"
+                                    placeholder="Pilih nik status penanggung jawab permohonan"
+                                    selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
+                                    onChange={(e, selectedItem) => {
+                                        onChange(handleChangePenanggungJawab(selectedItem));
+                                    }}
+                                    options={daftarPegawaiOptions}
+                                    disabled={statusWali == null ?  true: false}
+                                />
+                            }
+                        />
+                    </Stack.Item>
+                    <Stack.Item align="end">                            
+                        <TooltipHost
+                            id={tooltipAddPegawaiId}
+                            content="Klik untuk tambah pilihan Nik"
+                            calloutProps={calloutProps}
+                            styles={hostStyles}
+                        >
+                            <IconButton iconProps={plusIcon} aria-label="Plus" onClick={showModalAddPegawai}/>
+                        </TooltipHost>
+                    </Stack.Item>
+                </Stack>                    
+                <Stack.Item styles={{root: {marginTop: 8, padding: 8, background: '#a0e4e9'}}}>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}}>                                
+                            <span>Nama</span> 
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}} >                                
+                            <span>Jabatan</span> 
+                        </Stack.Item>
+                        <Stack.Item>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>            
+            </Stack.Item>
+            {
+                statusWali == null ?
+                null:(
+                statusWali.id == '01' ? null :
+                <Stack.Item>
+                    <Stack horizontal tokens={sectionStackTokens}>
+                        <Stack.Item grow align="center">
+                            <Controller 
+                                name="dokSuratKuasa"
+                                control={control}
+                                render={
+                                    ({
+                                        field: {onChange},
+                                        fieldState: {error}
+                                    }) => 
+                                    <Dropdown 
+                                        label="Dokumen surat kuasa"
+                                        placeholder="Pilih dokumen surat kuasa"
+                                        options={statusWaliOptions}
+                                        errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                        onChange={(e, selectedItem) => {
+                                            onChange(handleChangeStatusWali(selectedItem));
+                                        }}
+                                        styles={{root:{width: 250}}}
+                                        required
+                                        selectedKey={regDokSuratKuasa != null ? regDokSuratKuasa.id : undefined}
+                                    />
+                                }
+                            />
+                        </Stack.Item>
+                        <Stack.Item align="end">                            
+                            <DefaultButton text="File"/>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                )
+            }
         </>
     );
 };

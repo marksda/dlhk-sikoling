@@ -69,6 +69,7 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
 
     const handleRenderItemColumn = useCallback(
         (item: IListItemRegisterPermohonan, index: number|undefined, column: IColumn|undefined) => {
+            console.log(item);
             // const fieldContent = item[column!.fieldName as keyof IListItemPerusahaan] as string;
             switch (column!.key) {
                 case 'c1':

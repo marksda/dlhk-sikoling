@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
 import { IPegawai } from "../pegawai/pegawai-slice";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api-slice";
@@ -16,8 +17,8 @@ export interface IRegisterPermohonan {
     statusWali: Partial<IStatusWali>|null;
     penanggungJawabPermohonan: Partial<IPegawai>|null;
     statusTahapPemberkasan: Partial<IPosisiTahapPemberkasan>|null;
-    daftarDokumenSyarat: any[]|null;
-    daftarDokumenHasil: any[]|null;
+    daftarDokumenSyarat: IRegisterDokumen[]|null;
+    daftarDokumenHasil: IRegisterDokumen[]|null;
 };
 
 export interface IRegisterPermohonanSuratArahan extends IRegisterPermohonan {

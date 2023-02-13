@@ -1,19 +1,13 @@
-import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator, Stack } from "@fluentui/react";
+import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
-import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
-import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
+import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
-import { SubFormSuratArahanTahapKetiga } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKetiga";
-import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
 import { object, z } from "zod";
-import { useAppSelector } from "../../app/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import cloneDeep from "lodash.clonedeep";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -79,81 +73,81 @@ const stackTokens = { childrenGap: 4 };
 
 const permohonanSchema = object({
     registerPerusahaan: object({
-        id: z.string(),
+        id: z.string().nullable(),
         tanggalRegistrasi: z.string().nullable(),
         kreator: object({
-            nik: z.string(),
-            nama: z.string(),
+            nik: z.string().nullable(),
+            nama: z.string().nullable(),
             jenisKelamin: object({
-                id: z.string(),
-                nama: z.string()
+                id: z.string().nullable(),
+                nama: z.string().nullable()
             }).nullable(),
             alamat: object({
                 propinsi: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 kabupaten: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 kecamatan: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 desa: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
-                keterangan: z.string(),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
+                keterangan: z.string().nullable(),
             }).nullable(),
             kontak: object({
-                fax: z.string().optional(),
-                telepone: z.string(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+                fax: z.string().optional().nullable(),
+                telepone: z.string().nullable(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
             }).nullable(),
             scanKTP: z.string().nullable()
         }).nullable(),
         verifikator: object({
-            nik: z.string(),
-            nama: z.string(),
+            nik: z.string().nullable(),
+            nama: z.string().nullable(),
             jenisKelamin: object({
-                id: z.string(),
-                nama: z.string()
+                id: z.string().nullable(),
+                nama: z.string().nullable()
             }).nullable(),
             alamat: object({
                 propinsi: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 kabupaten: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 kecamatan: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 desa: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
-                keterangan: z.string(),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
+                keterangan: z.string().nullable(),
             }).nullable(),
             kontak: object({
-                fax: z.string().optional(),
-                telepone: z.string(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+                fax: z.string().optional().nullable(),
+                telepone: z.string().nullable(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
             }).nullable(),
             scanKTP: z.string().nullable()
         }).nullable(),
         perusahaan: object({
-            id: z.string(),
-            nama: z.string(),
+            id: z.string().nullable(),
+            nama: z.string().nullable(),
             modelPerizinan: object({
-                id: z.string(),
-                nama: z.string(),
-                singkatan: z.string()
+                id: z.string().nullable(),
+                nama: z.string().nullable(),
+                singkatan: z.string().nullable()
             }).nullable(),
             skalaUsaha: object({
                 id: z.string().nullable(),
@@ -172,27 +166,27 @@ const permohonanSchema = object({
             }).nullable(),
             alamat: object({
                 propinsi: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 kabupaten: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable()
+                }).nullable(),
                 kecamatan: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
                 desa: object({
-                    id: z.string(),
-                    nama: z.string(),
-                }),
-                keterangan: z.string(),
+                    id: z.string().nullable(),
+                    nama: z.string().nullable(),
+                }).nullable(),
+                keterangan: z.string().nullable(),
             }).nullable(),
             kontak: object({
-                fax: z.string().optional(),
-                telepone: z.string(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+                fax: z.string().optional().nullable(),
+                telepone: z.string().nullable(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
             }).nullable(),
             daftarRegisterDokumen: z.array(
                 object({
@@ -235,14 +229,21 @@ const permohonanSchema = object({
                         }).nullable(),
                         scanKTP: z.string().nullable()
                     }).nullable(),
-                })
-            )
+                }).nullable()
+            ).nullable()
         }).nullable()
     }),  
     jenisPermohonanSuratArahan: object({
         id: z.string(),
         keterangan: z.string()
     }),
+    statusWali: object({
+        id: z.string().nullable(),
+        nama: z.string().nullable()
+    }),
+    regDokSuratKuasa: object({
+        id: z.string().nullable(),
+    }).nullable(),
 });
 
 type FormData = z.infer<typeof permohonanSchema>;
@@ -254,28 +255,45 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
-    const methods = useForm<FormData>({
+    const methods = useForm<IRegisterPermohonanSuratArahan>({
         resolver: zodResolver(permohonanSchema),
+        defaultValues: {
+            id: null,
+            registerPerusahaan: null,
+            kategoriPermohonan: {
+                id: '01',
+                nama: ''
+            },
+            tanggalRegistrasi: null,
+            pengurusPermohonan: null,
+            statusWali: null,
+            penanggungJawabPermohonan: null,
+            statusTahapPemberkasan: null,
+            daftarRegisterDokumenSyarat: [],
+            daftarDokumenHasil: [],
+            jenisPermohonanSuratArahan: null
+        }
     });
-    const {handleSubmit, reset} = methods;    
+    const {handleSubmit, reset, formState} = methods;    
+    // console.log(formState);
     // const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
     //     mode: 'onSubmit',
-    //     defaultValues: {
-    //         id: null,
-    //         registerPerusahaan: null,
-    //         kategoriPermohonan: {
-    //             id: '01',
-    //             nama: ''
-    //         },
-    //         tanggalRegistrasi: null,
-    //         pengurusPermohonan: null,
-    //         statusWali: null,
-    //         penanggungJawabPermohonan: null,
-    //         statusTahapPemberkasan: null,
-    //         daftarDokumenSyarat: [],
-    //         daftarDokumenHasil: [],
-    //         jenisPermohonanSuratArahan: null
-    //     }
+        // defaultValues: {
+        //     id: null,
+        //     registerPerusahaan: null,
+        //     kategoriPermohonan: {
+        //         id: '01',
+        //         nama: ''
+        //     },
+        //     tanggalRegistrasi: null,
+        //     pengurusPermohonan: null,
+        //     statusWali: null,
+        //     penanggungJawabPermohonan: null,
+        //     statusTahapPemberkasan: null,
+        //     daftarDokumenSyarat: [],
+        //     daftarDokumenHasil: [],
+        //     jenisPermohonanSuratArahan: null
+        // }
     // });
 
     const handleCloseModal = useCallback(
@@ -289,25 +307,26 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 
     const simpanPermohonanArahan = useCallback(
         handleSubmit(
-            async (data) => {                  
-                var permohonan: IRegisterPermohonanSuratArahan = {
-                    id: null,
-                    kategoriPermohonan: {
-                        id: '01',
-                        nama: 'SURAT ARAHAN',
-                    },
-                    tanggalRegistrasi: null,                    
-                    registerPerusahaan: cloneDeep(data.registerPerusahaan) as IRegisterPerusahaan,                    
-                    jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan),
-                    pengurusPermohonan: null,
-                    statusWali: null,
-                    penanggungJawabPermohonan: null,
-                    statusTahapPemberkasan: null,
-                    daftarDokumenSyarat: [],
-                    daftarDokumenHasil: [],
-                    uraianKegiatan: null
-                };
-                console.log(permohonan);
+            (data) => {      
+                console.log(data);            
+                // var permohonan: IRegisterPermohonanSuratArahan = {
+                //     id: null,
+                //     kategoriPermohonan: {
+                //         id: '01',
+                //         nama: 'SURAT ARAHAN',
+                //     },
+                //     tanggalRegistrasi: null,                    
+                //     registerPerusahaan: cloneDeep(data.registerPerusahaan) as IRegisterPerusahaan,                    
+                //     jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan),
+                //     pengurusPermohonan: null,
+                //     statusWali: null,
+                //     penanggungJawabPermohonan: null,
+                //     statusTahapPemberkasan: null,
+                //     daftarDokumenSyarat: [],
+                //     daftarDokumenHasil: [],
+                //     uraianKegiatan: null
+                // };
+                // console.log(permohonan);
             }
         ),
         []
@@ -347,6 +366,13 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                 <Stack tokens={stackTokens} >
                     <FormProvider {...methods}>
                         <TemplatePermohonanArahan />
+                        <Stack.Item align="end">
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: 100}}
+                                text="Simpan" 
+                                onClick={simpanPermohonanArahan}
+                            />
+                        </Stack.Item>
                     </FormProvider>
                 </Stack>
             </div>             
