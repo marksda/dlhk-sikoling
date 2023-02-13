@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
+import { IKontak } from "../alamat/kontak-slice";
 import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
-import { IKontak } from "../person/person-slice";
 import { IModelPerizinan } from "./model-perizinan-api-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-slice";
 import { ISkalaUsaha } from "./skala-usaha-api-slice";

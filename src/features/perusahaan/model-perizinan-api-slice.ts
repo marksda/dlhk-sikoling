@@ -2,9 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
 
 export interface IModelPerizinan {
-    id: string;
-    nama: string;
-    singkatan: string;
+    id: string|null;
+    nama: string|null;
+    singkatan: string|null;
 };
 
 type daftarModelPerizinan = IModelPerizinan[];
@@ -50,7 +50,7 @@ export const ModelPerizinanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinan' as const, id })
+                            ({ id }) => ({ type: 'ModelPerizinan' as const, id: id! })
                         ),
                         { type: 'ModelPerizinan', id: 'LIST' },
                     ]:
@@ -62,7 +62,7 @@ export const ModelPerizinanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanPage' as const, id })
+                            ({ id }) => ({ type: 'ModelPerizinanPage' as const, id: id! })
                         ),
                         { type: 'ModelPerizinanPage', id: 'LIST' },
                     ]:
@@ -74,7 +74,7 @@ export const ModelPerizinanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanNama' as const, id })
+                            ({ id }) => ({ type: 'ModelPerizinanNama' as const, id: id! })
                         ),
                         { type: 'ModelPerizinanNama', id: 'LIST' },
                     ]:
@@ -86,7 +86,7 @@ export const ModelPerizinanApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanNamaPage' as const, id })
+                            ({ id }) => ({ type: 'ModelPerizinanNamaPage' as const, id: id! })
                         ),
                         { type: 'ModelPerizinanNamaPage', id: 'LIST' },
                     ]:

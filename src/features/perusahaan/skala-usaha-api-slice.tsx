@@ -3,9 +3,9 @@ import { baseRestAPIUrl } from "../config/config";
 import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
 
 export interface ISkalaUsaha {
-    id: string;
-    nama: string;
-    singkatan: string;
+    id: string|null;
+    nama: string|null;
+    singkatan: string|null;
 };
 
 type daftarSkalaUsaha = ISkalaUsaha[];
@@ -51,7 +51,7 @@ export const SkalaUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsaha' as const, id })
+                            ({ id }) => ({ type: 'SkalaUsaha' as const, id: id! })
                         ),
                         { type: 'SkalaUsaha', id: 'LIST' },
                     ]:
@@ -63,7 +63,7 @@ export const SkalaUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaPage' as const, id })
+                            ({ id }) => ({ type: 'SkalaUsahaPage' as const, id: id! })
                         ),
                         { type: 'SkalaUsahaPage', id: 'LIST' },
                     ]:
@@ -75,7 +75,7 @@ export const SkalaUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaNama' as const, id })
+                            ({ id }) => ({ type: 'SkalaUsahaNama' as const, id: id! })
                         ),
                         { type: 'SkalaUsahaNama', id: 'LIST' },
                     ]:
@@ -87,7 +87,7 @@ export const SkalaUsahaApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaNamaPage' as const, id })
+                            ({ id }) => ({ type: 'SkalaUsahaNamaPage' as const, id: id! })
                         ),
                         { type: 'SkalaUsahaNamaPage', id: 'LIST' },
                     ]:

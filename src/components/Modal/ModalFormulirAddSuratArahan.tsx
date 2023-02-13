@@ -13,6 +13,7 @@ import { useAppSelector } from "../../app/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
+import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -150,12 +151,23 @@ const permohonanSchema = object({
             id: z.string(),
             nama: z.string(),
             modelPerizinan: object({
-                
+                id: z.string(),
+                nama: z.string(),
+                singkatan: z.string()
             }).nullable(),
             skalaUsaha: object({
-
+                id: z.string().nullable(),
+                nama: z.string().nullable(),
+                singkatan: z.string().nullable()
             }).nullable(),
             pelakuUsaha: object({
+                id: z.string().nullable(),
+                nama: z.string().nullable(),
+                singkatan: z.string().nullable(),
+                kategoriPelakuUsaha: object({
+                    id: z.string().nullable(),
+                    nama: z.string().nullable()
+                }).nullable()
 
             }).nullable(),
             alamat: object({
@@ -182,9 +194,49 @@ const permohonanSchema = object({
                 telepone: z.string(),
                 email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
             }).nullable(),
-            daftarRegisterDokumen: object({
-
-            }).nullable()
+            daftarRegisterDokumen: z.array(
+                object({
+                    id: z.string().nullable(),
+                    dokumen: object({
+                        id: z.string().nullable()
+                    }).nullable(),
+                    lokasiFile: z.string().nullable(),
+                    tanggalRegistrasi: z.string().nullable(),
+                    uploader: object({
+                        nik: z.string(),
+                        nama: z.string(),
+                        jenisKelamin: object({
+                            id: z.string(),
+                            nama: z.string()
+                        }).nullable(),
+                        alamat: object({
+                            propinsi: object({
+                                id: z.string(),
+                                nama: z.string(),
+                            }),
+                            kabupaten: object({
+                                id: z.string(),
+                                nama: z.string(),
+                            }),
+                            kecamatan: object({
+                                id: z.string(),
+                                nama: z.string(),
+                            }),
+                            desa: object({
+                                id: z.string(),
+                                nama: z.string(),
+                            }),
+                            keterangan: z.string(),
+                        }).nullable(),
+                        kontak: object({
+                            fax: z.string().optional(),
+                            telepone: z.string(),
+                            email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+                        }).nullable(),
+                        scanKTP: z.string().nullable()
+                    }).nullable(),
+                })
+            )
         }).nullable()
     }),  
     jenisPermohonanSuratArahan: object({
@@ -245,7 +297,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                         nama: 'SURAT ARAHAN',
                     },
                     tanggalRegistrasi: null,                    
-                    registerPerusahaan: cloneDeep(data.registerPerusahaan),                    
+                    registerPerusahaan: cloneDeep(data.registerPerusahaan) as IRegisterPerusahaan,                    
                     jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan),
                     pengurusPermohonan: null,
                     statusWali: null,
