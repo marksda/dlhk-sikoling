@@ -1,26 +1,25 @@
-import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
+import { Dropdown, IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useFormContext, UseFormSetError, useWatch } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { Controller } from "react-hook-form/dist/controller";
+import { useAppSelector } from "../../../app/hooks";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
-import { IRegisterPerusahaan, setRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
-import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
-import { contentStyles, durationAnimFormSuratArahan, ISubFormPermohonanSuratArahanProps, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
+import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
+import { contentStyles, durationAnimFormSuratArahan, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
 
-interface ISubFormTahapPertamaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
-    setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
+interface ISubFormTahapPertamaSuratArahanProps {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue}) => {
-    //redux variable state
+export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading}) => {
+    //redux hook 
     const token = useAppSelector(state => state.token);
-    //react-form hook variable
+    // const dispatch = useAppDispatch();
+    //react-form hook
     const {control} = useFormContext();
     const [registerPerusahaan, jenisPermohonanSuratArahan] = useWatch({
         control: control, 
@@ -32,8 +31,7 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
     const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
     const { data: daftarJenisPermohonanSuratarahan, error: errorFetchDataJenisPermohonanSuratArahan,  isFetching: isFetchingDaftarJenisPermohonanSuratarahan, isError: isErrorJenisPermohonanSuratarahan } = useGetAllJenisPermohonanSuratArahanQuery();
  
-    //redux hook
-    const dispatch = useAppDispatch();
+    
 
     const perusahaanOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -75,19 +73,19 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
         [daftarJenisPermohonanSuratarahan]
     );
 
-    const handleSetRegisterPerusahaan = useCallback(
-        (item) => {
+    const handleChangeRegisterPerusahaan = useCallback(
+        (item): IRegisterPerusahaan => {
             let itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
-            dispatch(setRegisterPerusahaan(itemSelected));            
-            setValue("registerPerusahaan", itemSelected);
+            // dispatch(setRegisterPerusahaan(registerPerusahaan));
+            return itemSelected;
         },
         [daftarRegisterPerusahaan]
     );
 
-    const handleSetJenisPermohonanSuratArahan = useCallback(
+    const handleChangeStatusPermohonan = useCallback(
         (item) => {
             let itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
-            setValue("jenisPermohonanSuratArahan", itemSelected);
+            return itemSelected;
         },
         [daftarJenisPermohonanSuratarahan]
     );
@@ -113,36 +111,58 @@ export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanP
             className={contentStyles.body} 
         >
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left', marginBottom: 16}}}>
-                <Label styles={labelStyle}>Jenis permohonan</Label>
-                <Label styles={subLabelStyle}>Pilih baru untuk pengajuan dokumen lingkungan baru, atau pilih perubahan untuk pengajuan perubahan dokumen lingkungan</Label>
+                <Label styles={labelStyle}>Status permohonan</Label>
+                <Label styles={subLabelStyle}>Pilih baru untuk pengajuan baru atau perubahan untuk perubahan</Label>
             </Stack>
             <Stack tokens={stackTokens} styles={{root: { width: 400, alignItems: 'left'}}}>
                 <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Pemrakarsa"
-                        placeholder="Pilih pemrakarsa"
-                        options={perusahaanOptions}
-                        required
-                        name="perusahaan"
-                        rules={{ required: "harus diisi" }} 
+                    <Controller 
+                        name="registerPerusahaan"
                         control={control}
-                        onChangeItem={handleSetRegisterPerusahaan}
-                        selectedKey={registerPerusahaan != null ? registerPerusahaan.id : undefined}
-                    />     
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Pemrakarsa"
+                                placeholder="Pilih pemrakarsa"
+                                options={perusahaanOptions}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangeRegisterPerusahaan(selectedItem));
+                                }}
+                                styles={{root:{width: 250}}}
+                                required
+                                selectedKey={registerPerusahaan != null ? registerPerusahaan.id : undefined}
+                            />
+                        }
+                    />
                 </Stack.Item>
                 <Stack.Item>
-                    <ControlledFluentUiDropDown
-                        label="Jenis permohonan"
-                        placeholder="Pilih jenis"
-                        options={jenisPermohonanSuratArahanOptions}
-                        required
-                        name="jenisPermohonan"
-                        rules={{ required: "harus diisi" }} 
+                    <Controller 
+                        name="jenisPermohonanSuratArahan"
                         control={control}
-                        onChangeItem={handleSetJenisPermohonanSuratArahan}
-                        disabled={registerPerusahaan == null ? true : false}
-                        selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
-                    />     
+                        render={
+                            ({
+                                field: {onChange},
+                                fieldState: {error}
+                            }) => 
+                            <Dropdown 
+                                label="Status permohonan"
+                                placeholder="Pilih status permohonan"
+                                options={jenisPermohonanSuratArahanOptions}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                onChange={(e, selectedItem) => {
+                                    onChange(handleChangeStatusPermohonan(selectedItem));
+                                }}
+                                styles={{root:{width: 250}}}
+                                required
+                                disabled={registerPerusahaan == null ? true : false}
+                                selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
+                            />
+                        }
+                    />
                 </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens} styles={{root: { width: 400, justifyContent: 'flex-end'}}}>

@@ -1,4 +1,4 @@
-import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator } from "@fluentui/react";
+import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ import { object, z } from "zod";
 import { useAppSelector } from "../../app/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
+import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -73,20 +74,118 @@ const progressStyle: IProgressIndicatorStyles = {
     },
     progressTrack: null,
 };
+const stackTokens = { childrenGap: 4 };
 
 const permohonanSchema = object({
     registerPerusahaan: object({
         id: z.string(),
-        tanggalRegistrasi: z.string().optional(),
+        tanggalRegistrasi: z.string().nullable(),
         kreator: object({
-
-        }).optional(),
+            nik: z.string(),
+            nama: z.string(),
+            jenisKelamin: object({
+                id: z.string(),
+                nama: z.string()
+            }).nullable(),
+            alamat: object({
+                propinsi: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kabupaten: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kecamatan: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                desa: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }).nullable(),
+            kontak: object({
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }).nullable(),
+            scanKTP: z.string().nullable()
+        }).nullable(),
         verifikator: object({
-
-        }).optional(),
+            nik: z.string(),
+            nama: z.string(),
+            jenisKelamin: object({
+                id: z.string(),
+                nama: z.string()
+            }).nullable(),
+            alamat: object({
+                propinsi: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kabupaten: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kecamatan: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                desa: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }).nullable(),
+            kontak: object({
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }).nullable(),
+            scanKTP: z.string().nullable()
+        }).nullable(),
         perusahaan: object({
+            id: z.string(),
+            nama: z.string(),
+            modelPerizinan: object({
+                
+            }).nullable(),
+            skalaUsaha: object({
 
-        })
+            }).nullable(),
+            pelakuUsaha: object({
+
+            }).nullable(),
+            alamat: object({
+                propinsi: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kabupaten: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                kecamatan: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                desa: object({
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }).nullable(),
+            kontak: object({
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }).nullable(),
+            daftarRegisterDokumen: object({
+
+            }).nullable()
+        }).nullable()
     }),  
     jenisPermohonanSuratArahan: object({
         id: z.string(),
@@ -103,29 +202,29 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
-    // const methods = useForm<FormData>({
-    //     resolver: zodResolver(permohonanSchema),
-    // });
-    // const {handleSubmit} = methods;    
-    const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
-        mode: 'onSubmit',
-        defaultValues: {
-            id: null,
-            registerPerusahaan: null,
-            kategoriPermohonan: {
-                id: '01',
-                nama: ''
-            },
-            tanggalRegistrasi: null,
-            pengurusPermohonan: null,
-            statusWali: null,
-            penanggungJawabPermohonan: null,
-            statusTahapPemberkasan: null,
-            daftarDokumenSyarat: [],
-            daftarDokumenHasil: [],
-            jenisPermohonanSuratArahan: null
-        }
+    const methods = useForm<FormData>({
+        resolver: zodResolver(permohonanSchema),
     });
+    const {handleSubmit, reset} = methods;    
+    // const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
+    //     mode: 'onSubmit',
+    //     defaultValues: {
+    //         id: null,
+    //         registerPerusahaan: null,
+    //         kategoriPermohonan: {
+    //             id: '01',
+    //             nama: ''
+    //         },
+    //         tanggalRegistrasi: null,
+    //         pengurusPermohonan: null,
+    //         statusWali: null,
+    //         penanggungJawabPermohonan: null,
+    //         statusTahapPemberkasan: null,
+    //         daftarDokumenSyarat: [],
+    //         daftarDokumenHasil: [],
+    //         jenisPermohonanSuratArahan: null
+    //     }
+    // });
 
     const handleCloseModal = useCallback(
         () => {
@@ -192,64 +291,52 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     />
                 </div>                  
             </div>
-            <FormProvider {...methods}>
-            {                
-                getSlideSubFormSuratArahan({
-                    motionKey, 
-                    setMotionKey,
-                    control, 
-                    setValue,
-                    reset,
-                    handleSubmit,
-                    setError,
-                    setIsLoading
-                })
-            }   
-            </FormProvider>
-             
+            <div className={contentStyles.body}>
+                <Stack tokens={stackTokens} >
+                    <FormProvider {...methods}>
+                        <TemplatePermohonanArahan />
+                    </FormProvider>
+                </Stack>
+            </div>             
         </Modal>
     );
 };
 
-const getSlideSubFormSuratArahan = (
-    {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormPermohomanSuratArahanParam) => {
-    let konten = null;
-    switch (motionKey) {
-        case 'tahapPertama':
-            konten = 
-                <SubFormSuratArahanTahapPertama
-                    control={control}
-                    setValue={setValue}
-                    setIsLoading={setIsLoading}
-                    setError={setError}
-                    setMotionKey={setMotionKey}
-                />;
-            break; 
-        case 'tahapKedua':
-            konten = 
-                <SubFormSuratArahanTahapKedua
-                    control={control}
-                    setValue={setValue}
-                    setIsLoading={setIsLoading}
-                    setError={setError}
-                    setMotionKey={setMotionKey}
-                />;
-            break; 
-        case 'tahapKetiga':
-            konten = 
-                <SubFormSuratArahanTahapKetiga
-                    control={control}
-                    setValue={setValue}
-                    handleSubmit={handleSubmit}
-                    setIsLoading={setIsLoading}
-                    setError={setError}
-                    setMotionKey={setMotionKey}
-                />;
-            break; 
-        default:
-            konten = null;
-            break;
-    }
-    return konten;
-};
+// const getSlideSubFormSuratArahan = (
+//     {motionKey, setMotionKey, control, setValue, handleSubmit, setError, setIsLoading}: ISlideSubFormPermohomanSuratArahanParam) => {
+//     let konten = null;
+//     switch (motionKey) {
+//         case 'tahapPertama':
+//             konten = 
+//                 <SubFormSuratArahanTahapPertama
+//                     setIsLoading={setIsLoading}
+//                 />;
+//             break; 
+//         case 'tahapKedua':
+//             konten = 
+//                 <SubFormSuratArahanTahapKedua
+//                     control={control}
+//                     setValue={setValue}
+//                     setIsLoading={setIsLoading}
+//                     setError={setError}
+//                     setMotionKey={setMotionKey}
+//                 />;
+//             break; 
+//         case 'tahapKetiga':
+//             konten = 
+//                 <SubFormSuratArahanTahapKetiga
+//                     control={control}
+//                     setValue={setValue}
+//                     handleSubmit={handleSubmit}
+//                     setIsLoading={setIsLoading}
+//                     setError={setError}
+//                     setMotionKey={setMotionKey}
+//                 />;
+//             break; 
+//         default:
+//             konten = null;
+//             break;
+//     }
+//     return konten;
+// };
 

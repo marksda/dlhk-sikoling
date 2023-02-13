@@ -1,4 +1,4 @@
-import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, Stack, TextField } from "@fluentui/react";
+import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, Stack } from "@fluentui/react";
 import { useCallback,  useMemo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useGetAllJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
@@ -53,31 +53,33 @@ export const TemplatePegawai = () => {
 
     return (
         <>
-            <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
-                <Stack.Item>
-                    <Controller
-                        name="jabatan"
-                        control={control}
-                        render={
-                            ({
-                                field: {onChange},
-                                fieldState: {error}
-                            }) => 
-                            <Dropdown 
-                                label="Jabatan"
-                                placeholder="Pilih jabatan"
-                                options={jabatanOptions}
-                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
-                                onChange={(e, selectedItem) => {
-                                    onChange(handleChangeJabatan(selectedItem));
-                                }}
-                                styles={{root:{width: 250}}}
-                                required
-                            />
-                        }
-                    />
-                </Stack.Item>                
-            </Stack>
+            <Stack.Item>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
+                    <Stack.Item>
+                        <Controller
+                            name="jabatan"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) => 
+                                <Dropdown 
+                                    label="Jabatan"
+                                    placeholder="Pilih jabatan"
+                                    options={jabatanOptions}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={(e, selectedItem) => {
+                                        onChange(handleChangeJabatan(selectedItem));
+                                    }}
+                                    styles={{root:{width: 250}}}
+                                    required
+                                />
+                            }
+                        />
+                    </Stack.Item>                
+                </Stack>
+            </Stack.Item>
             <Stack.Item>
                 <Label>Data pribadi</Label>
             </Stack.Item>
