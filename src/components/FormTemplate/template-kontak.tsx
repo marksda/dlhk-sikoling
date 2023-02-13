@@ -30,9 +30,9 @@ const stackHorTokens = { childrenGap: 4 };
 
 export const TemplateKontak = () => {
     //redux state variable
-    const person = useAppSelector((state) => state.person);
-    const alamat = useAppSelector((state) => state.alamat);
-    const dispatch = useAppDispatch();
+    // const person = useAppSelector((state) => state.person);
+    // const alamat = useAppSelector((state) => state.alamat);
+    // const dispatch = useAppDispatch();
     const {
         control
     } = useFormContext();

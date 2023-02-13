@@ -1,15 +1,17 @@
 import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, ProgressIndicator } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { cancelIcon, IModalFormulirSuratArahanProps, ISlideSubFormPermohomanSuratArahanParam } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { SubFormSuratArahanTahapPertama } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapPertama";
 import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
 import { SubFormSuratArahanTahapKetiga } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKetiga";
-import { useDispatch } from "react-redux";
-import { useAppDispatch } from "../../app/hooks";
 import { SubFormSuratArahanTahapKedua } from "../FormulirPermohonan/FormulirSuratArahan/SubFormSuratArahanTahapKedua";
+import { object, z } from "zod";
+import { useAppSelector } from "../../app/hooks";
+import { zodResolver } from "@hookform/resolvers/zod";
+import cloneDeep from "lodash.clonedeep";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -72,14 +74,39 @@ const progressStyle: IProgressIndicatorStyles = {
     progressTrack: null,
 };
 
+const permohonanSchema = object({
+    registerPerusahaan: object({
+        id: z.string(),
+        tanggalRegistrasi: z.string().optional(),
+        kreator: object({
+
+        }).optional(),
+        verifikator: object({
+
+        }).optional(),
+        perusahaan: object({
+
+        })
+    }),  
+    jenisPermohonanSuratArahan: object({
+        id: z.string(),
+        keterangan: z.string()
+    }),
+});
+
+type FormData = z.infer<typeof permohonanSchema>;
+
 export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = ({isModalOpen, hideModal, isDraggable}) => {  
+    // const permohonan = useAppSelector((state) => state.per);
     //* local state *   
     const [motionKey, setMotionKey] = useState<string>('tahapPertama'); 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    
-
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
+    // const methods = useForm<FormData>({
+    //     resolver: zodResolver(permohonanSchema),
+    // });
+    // const {handleSubmit} = methods;    
     const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
         mode: 'onSubmit',
         defaultValues: {
@@ -106,6 +133,32 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             setMotionKey('tahapPertama');
             hideModal();
         },
+        []
+    );
+
+    const simpanPermohonanArahan = useCallback(
+        handleSubmit(
+            async (data) => {                  
+                var permohonan: IRegisterPermohonanSuratArahan = {
+                    id: null,
+                    kategoriPermohonan: {
+                        id: '01',
+                        nama: 'SURAT ARAHAN',
+                    },
+                    tanggalRegistrasi: null,                    
+                    registerPerusahaan: cloneDeep(data.registerPerusahaan),                    
+                    jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan),
+                    pengurusPermohonan: null,
+                    statusWali: null,
+                    penanggungJawabPermohonan: null,
+                    statusTahapPemberkasan: null,
+                    daftarDokumenSyarat: [],
+                    daftarDokumenHasil: [],
+                    uraianKegiatan: null
+                };
+                console.log(permohonan);
+            }
+        ),
         []
     );
 
@@ -139,6 +192,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     />
                 </div>                  
             </div>
+            <FormProvider {...methods}>
             {                
                 getSlideSubFormSuratArahan({
                     motionKey, 
@@ -150,7 +204,9 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     setError,
                     setIsLoading
                 })
-            }    
+            }   
+            </FormProvider>
+             
         </Modal>
     );
 };

@@ -1,7 +1,7 @@
 import { 
-    ContextualMenu, DefaultPalette, FontSizes, FontWeights, 
+    ContextualMenu, FontSizes, FontWeights, 
     getTheme, IconButton, IDragOptions, IIconProps, 
-    IProgressIndicatorStyles, IStackItemStyles, mergeStyleSets, Modal, PrimaryButton, 
+    IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, 
     ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
@@ -10,7 +10,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { object, z, array, TypeOf } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppSelector } from "../../app/hooks";
-import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
 import { TemplatePegawai } from "../FormTemplate/template-pegawai";
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { useAddPegawaiMutation } from "../../features/pegawai/pegawai-api-slice";

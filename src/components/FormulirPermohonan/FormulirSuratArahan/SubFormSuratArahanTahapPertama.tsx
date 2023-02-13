@@ -2,7 +2,7 @@ import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
-import { UseFormSetError, useWatch } from "react-hook-form";
+import { useFormContext, UseFormSetError, useWatch } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
@@ -17,14 +17,15 @@ interface ISubFormTahapPertamaSuratArahanProps extends ISubFormPermohonanSuratAr
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue, control}) => {
+export const SubFormSuratArahanTahapPertama: FC<ISubFormTahapPertamaSuratArahanProps> = ({setMotionKey, setIsLoading, setError, setValue}) => {
+    //redux variable state
+    const token = useAppSelector(state => state.token);
     //react-form hook variable
+    const {control} = useFormContext();
     const [registerPerusahaan, jenisPermohonanSuratArahan] = useWatch({
         control: control, 
         name: ['registerPerusahaan', 'jenisPermohonanSuratArahan']
     });
-    //redux variable state
-    const token = useAppSelector(state => state.token);
     // local state
     const [animTahapPertama, setAnimTahapPertama] = useState<string>('open');
     //rtk query perusahaan variable hook

@@ -22,6 +22,7 @@ export interface IRegisterPermohonan {
 
 export interface IRegisterPermohonanSuratArahan extends IRegisterPermohonan {
     jenisPermohonanSuratArahan: IJenisPermohonanSuratArahan|null;
+    uraianKegiatan: string|null;
 }
 
 type daftarRegisterPermohonan = IRegisterPermohonan[];
