@@ -1,7 +1,4 @@
-import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { partial } from "lodash";
-import cloneDeep from "lodash.clonedeep";
+import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, Stack, TextField } from "@fluentui/react";
 import { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
 import { object, z } from "zod";
@@ -21,45 +18,11 @@ const stackItemStyles: IStackItemStyles = {
 const stackHorTokens = { childrenGap: 4 };
 
 export const TemplatePegawai = () => {
-    //redux state variable
-    // const pegawai = useAppSelector((state) => state.pegawai);
-    // const perusahaan = useAppSelector((state) => state.registerPerusahaan);
-    // const person = useAppSelector((state) => state.person);
-    // const jabatan = useAppSelector((state) => state.jabatan);
-    const dispatch = useAppDispatch();
-    //react form hook state
-    // const {handleSubmit, control} = useForm<FormData>({
-    //     resolver: zodResolver(pegawaiSchema),
-    // });
     const {
-        control,
-        formState: { isSubmitting, errors },
+        control
     } = useFormContext();
     //rtk query hook vatiable
     const { data: daftarJabatan, isFetching: isFetchingDataJabatan, isError: isErrorJabatan } = useGetAllJabatanQuery();
-
-
-
-    // useEffect(
-    //     () => {
-    //         dispatch(setPerusahaanPegawai(perusahaan));
-    //     },
-    //     [perusahaan]
-    // );
-
-    // useEffect(
-    //     () => {
-    //         dispatch(setPersonPegawai(person));
-    //     },
-    //     [person]
-    // );
-
-    // useEffect(
-    //     () => {
-    //         dispatch(setJabatanPegawai(jabatan));
-    //     },
-    //     [jabatan]
-    // );
 
     const jabatanOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -86,21 +49,10 @@ export const TemplatePegawai = () => {
                 id: item.key,
                 nama: item.text
             };
-            dispatch(setJabatan(jabatan));
             return jabatan;
         },
         []
     );
-    
-    // const save = useCallback(
-    //     handleSubmit(
-    //         (data) => {        
-    //             console.log(data);    
-    //             console.log(pegawai)   
-    //         }
-    //     ),
-    //     [pegawai]
-    // );
 
     return (
         <>
@@ -118,7 +70,7 @@ export const TemplatePegawai = () => {
                                 label="Jabatan"
                                 placeholder="Pilih jabatan"
                                 options={jabatanOptions}
-                                errorMessage={error?.message?'Jabatan harus diisi':''}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangeJabatan(selectedItem));
                                 }}

@@ -2,7 +2,7 @@ import { Dropdown, IDropdownOption, Stack, TextField } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useCallback, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFormContext } from "react-hook-form";
 import { object, z } from "zod";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setAlamatDesa, setAlamatKabupaten, setAlamatKecamatan, setAlamatKeterangan, setAlamatPropinsi } from "../../features/alamat/alamat-slice";
@@ -36,6 +36,10 @@ type FormData = z.infer<typeof alamatSchema>;
 const stackHorTokens = { childrenGap: 4 };
 
 export const TemplateAlamat = () => {
+    //react form hook context
+    const {
+        control
+    } = useFormContext();
     //redux state variable
     const alamat = useAppSelector((state) => state.alamat);
     const dispatch = useAppDispatch();
@@ -123,9 +127,9 @@ export const TemplateAlamat = () => {
         [daftarDesa]
     );
 
-    const {handleSubmit, control} = useForm<FormData>({
-        resolver: zodResolver(alamatSchema)
-    });
+    // const {handleSubmit, control} = useForm<FormData>({
+    //     resolver: zodResolver(alamatSchema)
+    // });
 
     const handleChangePropinsi = useCallback(
         (item): IPropinsi => {
@@ -185,14 +189,14 @@ export const TemplateAlamat = () => {
         []
     );
 
-    const save = useCallback(
-        handleSubmit(
-            async (data) => {                
-                console.log(data);       
-            }
-        ),
-        []
-    );
+    // const save = useCallback(
+    //     handleSubmit(
+    //         async (data) => {                
+    //             console.log(data);       
+    //         }
+    //     ),
+    //     []
+    // );
             
     return (
         <>
@@ -210,7 +214,7 @@ export const TemplateAlamat = () => {
                                 label="Propinsi"
                                 placeholder="Pilih propinsi"
                                 options={propinsiOptions}
-                                errorMessage={error?.message}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangePropinsi(selectedItem));
                                 }}
@@ -233,7 +237,7 @@ export const TemplateAlamat = () => {
                                 label="Kabupaten"
                                 placeholder="Pilih kabupaten"
                                 options={kabupatenOptions}
-                                errorMessage={error?.message}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangeKabupaten(selectedItem));
                                 }}
@@ -257,7 +261,7 @@ export const TemplateAlamat = () => {
                                 label="Kecamatan"
                                 placeholder="Pilih kecamatan"
                                 options={kecamatanOptions}
-                                errorMessage={error?.message}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangeKecamatan(selectedItem));
                                 }}
@@ -281,7 +285,7 @@ export const TemplateAlamat = () => {
                                 label="Desa"
                                 placeholder="Pilih desa"
                                 options={desaOptions}
-                                errorMessage={error?.message}
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangeDesa(selectedItem));
                                 }}
@@ -307,7 +311,7 @@ export const TemplateAlamat = () => {
                             label='Detail alamat'
                             placeholder="Isi detail alamat seperti: jalan, perumahan, blok, nomor rumah, rt,rw, gedung, lantai atau yang lainnya"
                             required multiline autoAdjustHeight
-                            errorMessage={error?.message}
+                            errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                             onChange={(e, v) => {
                                 dispatch(setAlamatKeterangan(v||null));
                                 onChange(v);

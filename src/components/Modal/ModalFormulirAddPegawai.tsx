@@ -26,6 +26,7 @@ import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
 import path from "node:path/win32";
 import { TemplatePerson } from "../FormTemplate/template-person";
 import { TemplatePegawai } from "../FormTemplate/template-pegawai";
+import { IPegawai } from "../../features/pegawai/pegawai-slice";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
@@ -34,7 +35,7 @@ interface IModalFormulirPegawaiProps {
 };
 
 const pegawaiSchema = object({
-    nik: z.string().regex(/^\d+$/, {message: 'harus diisi bilangan bukan abjad'}).length(17, {message: 'Nik harus 17 digit'}),
+    nik: z.string().regex(/^\d+$/, {message: 'input bukan abjad'}).length(17, {message: 'Nik harus 17 digit'}),
     nama: z.string().min(3, {message: 'nama diisi minimal 3 karakter'}),
     jenisKelamin: object({
         id: z.string(),
@@ -60,7 +61,11 @@ const pegawaiSchema = object({
         id: z.string(),
         nama: z.string(),
     }),
-    keterangan: z.string()
+    keterangan: z.string(),
+    fax: z.string(),
+    telepone: z.string(),
+    email: z.string().min(1, { message: "Harus diisi" })
+    .email("bukan format email yang benar"),
 });
 
 type FormData = z.infer<typeof pegawaiSchema>;
@@ -152,12 +157,14 @@ const containerStyle: IContainerUploadStyle = {
 };
 
 export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModalOpen, hideModal, isDraggable}) => {
+    const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const titleId = useId('Formulir Dokumen nib');
 
     const methods = useForm<FormData>({
-        resolver: zodResolver(dokumenUploadSchema),
+        resolver: zodResolver(pegawaiSchema),
     });
+    const {handleSubmit} = methods;
 
     const handleCloseModal = useCallback(
         () => {
@@ -166,7 +173,39 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
             hideModal();
         },
         []
-    );      
+    );   
+    
+    const simpanPegawai = useCallback(
+        handleSubmit(
+            (data) => {           
+                var pegawai: IPegawai = {
+                    id: null,
+                    perusahaan: cloneDeep(registerPerusahaan),
+                    person: {
+                        nik: data.nik,
+                        nama: data.nama,
+                        jenisKelamin: cloneDeep(data.jenisKelamin),
+                        alamat: {
+                            propinsi: cloneDeep(data.propinsi),
+                            kabupaten: cloneDeep(data.kabupaten),
+                            kecamatan: cloneDeep(data.kecamatan),
+                            desa: cloneDeep(data.desa),
+                            keterangan: data.keterangan
+                        },
+                        kontak: {
+                            telepone: data.telepone,
+                            fax: data.fax,
+                            email: data.email
+                        },
+                        scanKTP: null
+                    },
+                    jabatan: cloneDeep(data.jabatan)
+                }     
+                console.log(pegawai);
+            }
+        ),
+        [registerPerusahaan]
+    );
 
     return (
         <Modal
@@ -201,7 +240,14 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
             <div className={contentStyles.body}>
                 <Stack tokens={stackTokens} >    
                     <FormProvider {...methods}>                
-                        <TemplatePegawai />
+                        <TemplatePegawai />                         
+                        <Stack.Item align="end">
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: 100}}
+                                text="Simpan" 
+                                onClick={simpanPegawai}
+                            />
+                        </Stack.Item>                   
                     </FormProvider>
                 </Stack> 
             </div>               
