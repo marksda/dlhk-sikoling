@@ -91,11 +91,10 @@ export const TemplatePerson = () => {
                                 placeholder="Nik sesuai ktp"
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, v) => {
-                                    dispatch(setNik(v||""));
                                     onChange(v);
-                                    if(v?.length == 16) {
-                                        setSkipCekNik(false);
-                                    }                                    
+                                    // if(v?.length == 16) {
+                                    //     setSkipCekNik(false);
+                                    // }                                    
                                 }}
                                 defaultValue={value}
                                 styles={{root:{width: 150}}}
@@ -140,7 +139,6 @@ export const TemplatePerson = () => {
                                 placeholder="Nama harus sesuai dengan ktp"
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, v) => {
-                                    dispatch(setNama(v||""));
                                     onChange(v);
                                 }}
                                 defaultValue={value}

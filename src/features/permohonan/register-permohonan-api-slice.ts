@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IPegawai } from "../pegawai/pegawai-api-slice";
-import { IPerson } from "../person/person-slice";
+import { IPegawai } from "../pegawai/pegawai-slice";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api-slice";
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
