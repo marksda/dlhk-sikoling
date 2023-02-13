@@ -244,8 +244,6 @@ export const TemplateAlamat = () => {
                         }
                     />               
                 </Stack.Item>   
-            </Stack>
-            <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>    
                 <Stack.Item>
                     <Controller
                         name="kecamatan"
@@ -311,7 +309,7 @@ export const TemplateAlamat = () => {
                             required multiline autoAdjustHeight
                             errorMessage={error?.message}
                             onChange={(e, v) => {
-                                dispatch(setAlamatKeterangan||"");
+                                dispatch(setAlamatKeterangan(v||null));
                                 onChange(v);
                             }}
                             value={value}

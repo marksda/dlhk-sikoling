@@ -25,12 +25,45 @@ import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
 import path from "node:path/win32";
 import { TemplatePerson } from "../FormTemplate/template-person";
+import { TemplatePegawai } from "../FormTemplate/template-pegawai";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
     hideModal: () => void;
     isDraggable: boolean;
 };
+
+const pegawaiSchema = object({
+    nik: z.string().regex(/^\d+$/, {message: 'harus diisi bilangan bukan abjad'}).length(17, {message: 'Nik harus 17 digit'}),
+    nama: z.string().min(3, {message: 'nama diisi minimal 3 karakter'}),
+    jenisKelamin: object({
+        id: z.string(),
+        nama: z.string()
+    }),
+    jabatan: object({
+        id: z.string(),
+        nama: z.string()
+    }),
+    propinsi: object({
+        id: z.string(),
+        nama: z.string(),
+    }),
+    kabupaten: object({
+        id: z.string(),
+        nama: z.string(),
+    }),
+    kecamatan: object({
+        id: z.string(),
+        nama: z.string(),
+    }),
+    desa: object({
+        id: z.string(),
+        nama: z.string(),
+    }),
+    keterangan: z.string()
+});
+
+type FormData = z.infer<typeof pegawaiSchema>;
 
 const dokumenUploadSchema = object({
     dokumen: z.instanceof(File),
@@ -122,6 +155,10 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const titleId = useId('Formulir Dokumen nib');
 
+    const methods = useForm<FormData>({
+        resolver: zodResolver(dokumenUploadSchema),
+    });
+
     const handleCloseModal = useCallback(
         () => {
             // reset();
@@ -162,8 +199,10 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
                 </div>                  
             </div>     
             <div className={contentStyles.body}>
-                <Stack tokens={stackTokens} >                    
-                    <TemplatePerson />
+                <Stack tokens={stackTokens} >    
+                    <FormProvider {...methods}>                
+                        <TemplatePegawai />
+                    </FormProvider>
                 </Stack> 
             </div>               
         </Modal>

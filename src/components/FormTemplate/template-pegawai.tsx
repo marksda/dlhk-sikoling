@@ -1,26 +1,15 @@
 import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Controller, useForm, FormProvider } from "react-hook-form";
-import { array, object, TypeOf, z } from "zod";
+import { partial } from "lodash";
+import cloneDeep from "lodash.clonedeep";
+import { useCallback, useEffect, useMemo } from "react";
+import { Controller, useForm, useFormContext } from "react-hook-form";
+import { object, z } from "zod";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAllJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
 import { IJabatan, setJabatan } from "../../features/jabatan/jabatan-slice";
-import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
-import { IJenisKelamin } from "../../features/jenis-kelamin/jenis-kelamin-slice";
 import { setJabatanPegawai, setPersonPegawai, setPerusahaanPegawai } from "../../features/pegawai/pegawai-slice";
-import { setNama, setNik, setPersonAlamat, setPersonJenisKelamin } from "../../features/person/person-slice";
-import { FileUpload } from "../UploadFiles/FileUpload";
-import { TemplateAlamat } from "./template-alamat";
-
-
-const pegawaiSchema = object({
-    jabatan: object({
-        id: z.string(),
-        nama: z.string()
-    }),
-});
-type FormData = z.infer<typeof pegawaiSchema>;
+import { TemplatePerson } from "./template-person";
 
 const stackItemStyles: IStackItemStyles = {
     root: {
@@ -31,37 +20,46 @@ const stackItemStyles: IStackItemStyles = {
 };
 const stackHorTokens = { childrenGap: 4 };
 
-export const TemplatePerson = () => {
+export const TemplatePegawai = () => {
     //redux state variable
     // const pegawai = useAppSelector((state) => state.pegawai);
-    const perusahaan = useAppSelector((state) => state.registerPerusahaan);
-    const person = useAppSelector((state) => state.person);
-    const jabatan = useAppSelector((state) => state.jabatan);
+    // const perusahaan = useAppSelector((state) => state.registerPerusahaan);
+    // const person = useAppSelector((state) => state.person);
+    // const jabatan = useAppSelector((state) => state.jabatan);
     const dispatch = useAppDispatch();
-
+    //react form hook state
+    // const {handleSubmit, control} = useForm<FormData>({
+    //     resolver: zodResolver(pegawaiSchema),
+    // });
+    const {
+        control,
+        formState: { isSubmitting, errors },
+    } = useFormContext();
     //rtk query hook vatiable
     const { data: daftarJabatan, isFetching: isFetchingDataJabatan, isError: isErrorJabatan } = useGetAllJabatanQuery();
 
-    useEffect(
-        () => {
-            dispatch(setPerusahaanPegawai(perusahaan));
-        },
-        [perusahaan]
-    );
 
-    useEffect(
-        () => {
-            dispatch(setPersonPegawai(person));
-        },
-        [person]
-    );
 
-    useEffect(
-        () => {
-            dispatch(setJabatanPegawai(jabatan));
-        },
-        [jabatan]
-    );
+    // useEffect(
+    //     () => {
+    //         dispatch(setPerusahaanPegawai(perusahaan));
+    //     },
+    //     [perusahaan]
+    // );
+
+    // useEffect(
+    //     () => {
+    //         dispatch(setPersonPegawai(person));
+    //     },
+    //     [person]
+    // );
+
+    // useEffect(
+    //     () => {
+    //         dispatch(setJabatanPegawai(jabatan));
+    //     },
+    //     [jabatan]
+    // );
 
     const jabatanOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -93,19 +91,15 @@ export const TemplatePerson = () => {
         },
         []
     );
-
-    //react form hook state
-    const {handleSubmit, control} = useForm<FormData>({
-        resolver: zodResolver(pegawaiSchema)
-    });
     
     const save = useCallback(
         handleSubmit(
             (data) => {        
-                console.log(data);       
+                console.log(data);    
+                console.log(pegawai)   
             }
         ),
-        []
+        [pegawai]
     );
 
     return (
@@ -124,11 +118,12 @@ export const TemplatePerson = () => {
                                 label="Jabatan"
                                 placeholder="Pilih jabatan"
                                 options={jabatanOptions}
-                                errorMessage={error?.message}
+                                errorMessage={error?.message?'Jabatan harus diisi':''}
                                 onChange={(e, selectedItem) => {
                                     onChange(handleChangeJabatan(selectedItem));
                                 }}
-                                styles={{root:{width: 150}}}
+                                styles={{root:{width: 250}}}
+                                required
                             />
                         }
                     />

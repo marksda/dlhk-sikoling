@@ -48,8 +48,6 @@ export const DataListPermohonanFluentUI: FC<ISubFormDetailPermohonanProps> = ({d
     //     }
     // );
 
-    console.log(dataPermohonan);
-
 
     // useEffect(
     //     () => {

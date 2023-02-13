@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerson } from "./person-slice";
 

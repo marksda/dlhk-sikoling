@@ -53,9 +53,17 @@ export const personSlice = createSlice({
         setScanKtp: (state, action: PayloadAction<string>) => {
             state.scanKTP = action.payload;
         },
+        resetPerson:(state) => {
+            state.nik = null;
+            state.nama = null;
+            state.jenisKelamin = null;
+            state.alamat = null;
+            state.kontak = null;
+            state.scanKTP = null;
+        }
     },
 });
 
-export const {setPerson, setNik, setNama, setPersonAlamat, setPersonJenisKelamin, setPersonKontak, setScanKtp} = personSlice.actions;
+export const {setPerson, setNik, setNama, setPersonAlamat, setPersonJenisKelamin, setPersonKontak, setScanKtp, resetPerson} = personSlice.actions;
 
 export default personSlice.reducer;

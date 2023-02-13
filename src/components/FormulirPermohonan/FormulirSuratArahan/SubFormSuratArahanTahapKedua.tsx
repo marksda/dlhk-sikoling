@@ -244,21 +244,25 @@ export const SubFormSuratArahanTahapKedua: FC<ISubFormTahapKeduaSuratArahanProps
                                 <IconButton iconProps={plusIcon} aria-label="Plus" onClick={showModalAddPegawai}/>
                             </TooltipHost>
                         </Stack.Item>
-                    </Stack>
-                    <Stack.Item>
-                        <TextField 
-                            label='Nama'
-                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
-                            disabled={true} 
-                        />
-                    </Stack.Item>  
-                    <Stack.Item>
-                        <TextField 
-                            label='Jabatan'
-                            value={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
-                            disabled={true} 
-                        />
-                    </Stack.Item>             
+                    </Stack>                    
+                    <Stack.Item styles={{root: {marginTop: 8, padding: 8, background: '#a0e4e9'}}}>
+                        <Stack horizontal>
+                            <Stack.Item styles={{root: {width: 80}}}>                                
+                                <span>Nama</span> 
+                            </Stack.Item>
+                            <Stack.Item grow>
+                                : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
+                            </Stack.Item>
+                        </Stack>
+                        <Stack horizontal>
+                            <Stack.Item styles={{root: {width: 80}}} >                                
+                                <span>Jabatan</span> 
+                            </Stack.Item>
+                            <Stack.Item>
+                                : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
+                            </Stack.Item>
+                        </Stack>
+                    </Stack.Item>            
                 </Stack.Item>                 
                 <Stack.Item align="end">
                     <PrimaryButton 
