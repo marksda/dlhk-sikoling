@@ -1,32 +1,19 @@
 import { 
-    ComboBox, ContextualMenu, DefaultPalette, FontSizes, FontWeights, 
-    getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, 
+    ContextualMenu, DefaultPalette, FontSizes, FontWeights, 
+    getTheme, IconButton, IDragOptions, IIconProps, 
     IProgressIndicatorStyles, IStackItemStyles, mergeStyleSets, Modal, PrimaryButton, 
     ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import cloneDeep from "lodash.clonedeep";
-import find from "lodash.find";
-import omit from "lodash.omit";
-import remove from "lodash.remove";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { FC, useCallback, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { object, z, array, TypeOf } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppSelector } from "../../app/hooks";
-import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
-import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
-import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
-import { IKbli } from "../../features/dokumen/kbli-slice";
-import { useAddRegisterDokumenMutation, useUploadFileDokumenWithSecurityMutation } from "../../features/dokumen/register-dokumen-api-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
-import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
-import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
-import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
-import path from "node:path/win32";
-import { TemplatePerson } from "../FormTemplate/template-person";
 import { TemplatePegawai } from "../FormTemplate/template-pegawai";
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
+import { useAddPegawaiMutation } from "../../features/pegawai/pegawai-api-slice";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
@@ -62,12 +49,11 @@ const pegawaiSchema = object({
         nama: z.string(),
     }),
     keterangan: z.string(),
-    fax: z.string(),
+    fax: z.string().optional(),
     telepone: z.string(),
     email: z.string().min(1, { message: "Harus diisi" })
     .email("bukan format email yang benar"),
 });
-
 type FormData = z.infer<typeof pegawaiSchema>;
 
 const dokumenUploadSchema = object({
@@ -109,12 +95,6 @@ const contentStyles = mergeStyleSets({
     },
     
 });
-const stackItemStyles: IStackItemStyles = {
-    root: {
-        border: `1px solid ${DefaultPalette.orangeLighter}`,
-        padding: 4,
-    },
-};
 const iconButtonStyles = {
     root: {
       color: theme.palette.neutralPrimary,
@@ -149,12 +129,6 @@ const dragOptions: IDragOptions = {
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const stackTokens = { childrenGap: 4 };
-const stackHorTokens = { childrenGap: 8 };
-const containerStyle: IContainerUploadStyle = {
-    width: 300, 
-    height: 100, 
-    backgroundColor: '#ECECEC',
-};
 
 export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModalOpen, hideModal, isDraggable}) => {
     const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
@@ -165,6 +139,9 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
         resolver: zodResolver(pegawaiSchema),
     });
     const {handleSubmit} = methods;
+
+    //rtk query mutation addPerusahaan variable
+    const [addPegawai] = useAddPegawaiMutation();
 
     const handleCloseModal = useCallback(
         () => {
@@ -177,31 +154,49 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
     
     const simpanPegawai = useCallback(
         handleSubmit(
-            (data) => {           
-                var pegawai: IPegawai = {
-                    id: null,
-                    perusahaan: cloneDeep(registerPerusahaan),
-                    person: {
-                        nik: data.nik,
-                        nama: data.nama,
-                        jenisKelamin: cloneDeep(data.jenisKelamin),
-                        alamat: {
-                            propinsi: cloneDeep(data.propinsi),
-                            kabupaten: cloneDeep(data.kabupaten),
-                            kecamatan: cloneDeep(data.kecamatan),
-                            desa: cloneDeep(data.desa),
-                            keterangan: data.keterangan
+            async (data) => {                  
+                try {
+                    var pegawai: IPegawai = {
+                        id: null,
+                        perusahaan: cloneDeep(registerPerusahaan),
+                        person: {
+                            nik: data.nik,
+                            nama: data.nama,
+                            jenisKelamin: cloneDeep(data.jenisKelamin),
+                            alamat: {
+                                propinsi: cloneDeep(data.propinsi),
+                                kabupaten: cloneDeep(data.kabupaten),
+                                kecamatan: cloneDeep(data.kecamatan),
+                                desa: cloneDeep(data.desa),
+                                keterangan: data.keterangan
+                            },
+                            kontak: {
+                                telepone: data.telepone,
+                                fax: data.fax,
+                                email: data.email
+                            },
+                            scanKTP: null
                         },
-                        kontak: {
-                            telepone: data.telepone,
-                            fax: data.fax,
-                            email: data.email
-                        },
-                        scanKTP: null
-                    },
-                    jabatan: cloneDeep(data.jabatan)
-                }     
-                console.log(pegawai);
+                        jabatan: cloneDeep(data.jabatan)
+                    };
+                    await addPegawai(pegawai).unwrap().then(
+                        async (payload) => {
+                            // var formData = new FormData();
+                            // formData.append('file', dokumen);
+                            // await uploadFileDokumen({
+                            //     idRegisterDokumen: payload.id as string,
+                            //     npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
+                            //     formData: formData
+                            // });
+                            console.log(payload);
+                            hideModal();
+                        }
+                    );
+                } catch (error) {
+                    console.log(error);
+                }
+                
+                
             }
         ),
         [registerPerusahaan]

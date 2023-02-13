@@ -52,6 +52,7 @@ export const TemplateKontak = () => {
                         <TextField 
                             name={fieldName}
                             label="Email"
+                            required
                             placeholder="isi dengan email yang masih aktif"
                             errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                             onChange={onChange}
@@ -72,8 +73,9 @@ export const TemplateKontak = () => {
                         <TextField 
                             name={fieldName}
                             label="Telp."
-                            placeholder="Nik sesuai ktp"
-                            errorMessage={error?.message}
+                            required
+                            placeholder="nomor telepone"
+                            errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                             onChange={onChange}
                             defaultValue={value}
                             styles={{root:{width: 250}}}
@@ -93,7 +95,7 @@ export const TemplateKontak = () => {
                         <TextField 
                             name={fieldName}
                             label="Fax."
-                            placeholder="Nik sesuai ktp"
+                            placeholder="Nomor fax"
                             errorMessage={error?.message}
                             onChange={onChange}
                             defaultValue={value}

@@ -36,20 +36,19 @@ type FormData = z.infer<typeof alamatSchema>;
 const stackHorTokens = { childrenGap: 4 };
 
 export const TemplateAlamat = () => {
+    //redux state variable
+    const alamat = useAppSelector((state) => state.alamat);
+    const dispatch = useAppDispatch();
     //react form hook context
     const {
         control
     } = useFormContext();
-    //redux state variable
-    const alamat = useAppSelector((state) => state.alamat);
-    const dispatch = useAppDispatch();
     //rtk query hook state
     const { data: daftarPropinsi, isFetching: isFetchingDataPropinsi, isError: isErrorPropinsi } = useGetAllPropinsiQuery();
     const { data: daftarKabupaten, isFetching: isFetchingDataKabupaten, isError: isErrorKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi != null ? alamat.propinsi.id : null, {skip: alamat.propinsi == null ? true : false});
     const { data: daftarKecamatan, isFetching: isFetchingDataKecamatan, isError: isErrorKecamatan } = useGetKecamatanByKabupatenQuery(alamat.kabupaten != null ? alamat.kabupaten.id : null, {skip: alamat.kabupaten == null ? true : false});
     const { data: daftarDesa, isFetching: isFetchingDataDesa, isError: isErrorDesa } = useGetDesaByKecamatanQuery(alamat.kecamatan != null ? alamat.kecamatan.id : null, {skip: alamat.kecamatan == null ? true : false});
 
-    
 
     const propinsiOptions: IDropdownOption<any>[] = useMemo(
         () => {
@@ -127,10 +126,6 @@ export const TemplateAlamat = () => {
         [daftarDesa]
     );
 
-    // const {handleSubmit, control} = useForm<FormData>({
-    //     resolver: zodResolver(alamatSchema)
-    // });
-
     const handleChangePropinsi = useCallback(
         (item): IPropinsi => {
             var propinsi = {
@@ -188,15 +183,6 @@ export const TemplateAlamat = () => {
         },
         []
     );
-
-    // const save = useCallback(
-    //     handleSubmit(
-    //         async (data) => {                
-    //             console.log(data);       
-    //         }
-    //     ),
-    //     []
-    // );
             
     return (
         <>
@@ -213,6 +199,7 @@ export const TemplateAlamat = () => {
                             <Dropdown 
                                 label="Propinsi"
                                 placeholder="Pilih propinsi"
+                                required
                                 options={propinsiOptions}
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
@@ -236,6 +223,7 @@ export const TemplateAlamat = () => {
                             <Dropdown 
                                 label="Kabupaten"
                                 placeholder="Pilih kabupaten"
+                                required
                                 options={kabupatenOptions}
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
@@ -260,6 +248,7 @@ export const TemplateAlamat = () => {
                             <Dropdown 
                                 label="Kecamatan"
                                 placeholder="Pilih kecamatan"
+                                required
                                 options={kecamatanOptions}
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
@@ -284,6 +273,7 @@ export const TemplateAlamat = () => {
                             <Dropdown 
                                 label="Desa"
                                 placeholder="Pilih desa"
+                                required
                                 options={desaOptions}
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {

@@ -1,11 +1,8 @@
 import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, Stack, TextField } from "@fluentui/react";
-import { useCallback, useEffect, useMemo } from "react";
-import { Controller, useForm, useFormContext } from "react-hook-form";
-import { object, z } from "zod";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useCallback,  useMemo } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { useGetAllJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
-import { IJabatan, setJabatan } from "../../features/jabatan/jabatan-slice";
-import { setJabatanPegawai, setPersonPegawai, setPerusahaanPegawai } from "../../features/pegawai/pegawai-slice";
+import { IJabatan } from "../../features/jabatan/jabatan-slice";
 import { TemplatePerson } from "./template-person";
 
 const stackItemStyles: IStackItemStyles = {

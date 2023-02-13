@@ -5,7 +5,6 @@ import { Controller, useForm, FormProvider, useFormContext } from "react-hook-fo
 import { array, object, TypeOf, z } from "zod";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
 import { IJenisKelamin } from "../../features/jenis-kelamin/jenis-kelamin-slice";
-import { setNama, setNik,  setPersonJenisKelamin } from "../../features/person/person-slice";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { TemplateAlamat } from "./template-alamat";
 import { TemplateKontak } from "./template-kontak";
@@ -36,8 +35,6 @@ export const TemplatePerson = () => {
     });
     //local state
     const [skipCekNik, setSkipCekNik] = useState<boolean>(true);
-
-
     //rtk query hook vatiable
     const { data: daftarSex, isFetching: isFetchingDataSex, isError: isErrorSex } = useGetAllJenisKelaminQuery();
     // const { data: dataPerson, isFetching: isFetchingDataPerson, isError: isErrorPerson } = useGetPersonByNikQuery(
@@ -89,6 +86,7 @@ export const TemplatePerson = () => {
                                 name={fieldName}
                                 label="Nik"
                                 placeholder="Nik sesuai ktp"
+                                required
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, v) => {
                                     onChange(v);
@@ -114,6 +112,7 @@ export const TemplatePerson = () => {
                             <Dropdown 
                                 label="Jenis kelamin"
                                 placeholder="Pilih jenis kelamin"
+                                required
                                 options={sexOptions}
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, selectedItem) => {
@@ -137,6 +136,7 @@ export const TemplatePerson = () => {
                                 name={fieldName}
                                 label='Nama'
                                 placeholder="Nama harus sesuai dengan ktp"
+                                required
                                 errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
                                 onChange={(e, v) => {
                                     onChange(v);
