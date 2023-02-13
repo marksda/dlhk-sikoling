@@ -92,15 +92,15 @@ export const TemplatePegawai = () => {
         []
     );
     
-    const save = useCallback(
-        handleSubmit(
-            (data) => {        
-                console.log(data);    
-                console.log(pegawai)   
-            }
-        ),
-        [pegawai]
-    );
+    // const save = useCallback(
+    //     handleSubmit(
+    //         (data) => {        
+    //             console.log(data);    
+    //             console.log(pegawai)   
+    //         }
+    //     ),
+    //     [pegawai]
+    // );
 
     return (
         <>
@@ -134,13 +134,6 @@ export const TemplatePegawai = () => {
             </Stack.Item>
             <Stack.Item styles={stackItemStyles}>
                 <TemplatePerson />
-            </Stack.Item>
-            <Stack.Item align="end">
-                <PrimaryButton 
-                    style={{width: 100, marginTop: 8}}
-                    text={'Lanjut'}
-                    onClick={save}
-                />
             </Stack.Item>
         </>
     );
