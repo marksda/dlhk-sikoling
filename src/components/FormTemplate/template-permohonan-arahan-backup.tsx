@@ -32,19 +32,20 @@ export const TemplatePermohonanArahan = () => {
     //react-form hook
     const {control, setValue} = useFormContext();
     const [
-        registerPerusahaan, jenisPermohonanSuratArahan,
-        statusWali,
+        registerPerusahaan, jenisPermohonanSuratArahan, statusWali,
+        penanggungJawabPermohonan,
     ] = useWatch({
         control: control, 
         name: [
-            'registerPerusahaan', 'jenisPermohonanSuratArahan',
-            'statusWali'
+            'registerPerusahaan', 'jenisPermohonanSuratArahan', 'statusWali',
+            'penanggungJawabPermohonan'
         ]
     });
-    console.log(statusWali);
 
     const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');
+
+    // console.log(jenisPermohonanSuratArahan);
 
     //rtk query perusahaan variable hook
     const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
@@ -135,7 +136,7 @@ export const TemplatePermohonanArahan = () => {
         (item): IRegisterPerusahaan => {
             var itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
             // dispatch(setRegisterPerusahaan(registerPerusahaan));
-            // setValue('penanggungJawabPermohonan', null);
+            setValue('penanggungJawabPermohonan', null);
             return itemSelected;
         },
         [daftarRegisterPerusahaan]
@@ -143,7 +144,7 @@ export const TemplatePermohonanArahan = () => {
 
     const handleChangeStatusPermohonan = useCallback(
         (item) => {
-            var itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;  
+            var itemSelected = find(daftarJenisPermohonanSuratarahan, (i) => i.id == item.key) as IJenisPermohonanSuratArahan;
             return itemSelected;
         },
         [daftarJenisPermohonanSuratarahan]
@@ -151,13 +152,11 @@ export const TemplatePermohonanArahan = () => {
 
     const handleChangeStatusWali= useCallback(
         (item) => {
-            var itemSelected = find(daftarStatusWali, (i) => i.id == item.key) as IStatusWali;
-            console.log(itemSelected);
+            let itemSelected = find(daftarStatusWali, (i) => i.id == item.key) as IStatusWali;
             return itemSelected;
         },
         [daftarStatusWali]
     );
-
     const handleChangePenanggungJawab = useCallback(
         (item) => {
             var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
@@ -244,7 +243,120 @@ export const TemplatePermohonanArahan = () => {
                         />
                     </Stack.Item>
                 </Stack>
-            </Stack.Item>      
+            </Stack.Item>
+            <Stack.Item>
+                <Label>Penanggung jawab permohonan</Label>
+            </Stack.Item>
+            <Stack.Item styles={stackItemStyles}>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
+                    <Stack.Item grow>
+                        <Controller 
+                            name="penanggungJawabPermohonan"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) =>
+                                <Dropdown
+                                    placeholder="Pilih penanggung jawab"
+                                    options={daftarPegawaiOptions}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={
+                                        (e, selectedItem) => {
+                                            onChange(handleChangePenanggungJawab(selectedItem));
+                                        }
+                                    }                                    
+                                    selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik : undefined}
+                                    disabled={statusWali == undefined ? true : false}
+                                />
+                            }
+                        />
+                    </Stack.Item>
+                    <Stack.Item align="end">                            
+                        <TooltipHost
+                            id={tooltipAddPegawaiId}
+                            content="Klik untuk tambah pilihan Nik"
+                            calloutProps={calloutProps}
+                            styles={hostStyles}
+                        >
+                            <IconButton 
+                                iconProps={plusIcon} 
+                                aria-label="Plus" 
+                                onClick={showModalAddPegawai}
+                                disabled={statusWali == undefined ?  true: false}/>
+                        </TooltipHost>
+                    </Stack.Item>
+                </Stack>                    
+                <Stack.Item styles={{root: {marginTop: 8, padding: 8, background: '#a0e4e9'}}}>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}}>                                
+                            <span>Nama</span> 
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}} >                                
+                            <span>Jabatan</span> 
+                        </Stack.Item>
+                        <Stack.Item>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>            
+            </Stack.Item>
+            {
+                statusWali == null ?
+                null:(
+                statusWali.id == '01' ? null :
+                <Stack.Item>
+                    <Stack horizontal tokens={sectionStackTokens}>
+                        <Stack.Item>
+                            <Controller 
+                                name="dokSuratKuasa"
+                                control={control}
+                                render={
+                                    ({
+                                        field: {onChange},
+                                        fieldState: {error}
+                                    }) => 
+                                    <Dropdown 
+                                        label="Dokumen surat kuasa"
+                                        placeholder="Pilih dokumen surat kuasa"
+                                        options={statusWaliOptions}
+                                        errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                        onChange={(e, selectedItem) => {
+                                            onChange(handleChangeStatusWali(selectedItem));
+                                        }}
+                                        styles={{root:{width: 250}}}
+                                        required
+                                    />
+                                }
+                            />
+                        </Stack.Item>
+                        <Stack.Item align="end">                            
+                            <DefaultButton text="File"/>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                )
+            }
+            <Stack.Item>
+                <Label>Dokumen persyaratan</Label>
+            </Stack.Item>
+            <Stack.Item styles={stackItemStyles}>
+
+            </Stack.Item>
+            {
+                isModalAddPegawaiOpen == true ? 
+                <ModalFormulirAddPegawai
+                    isModalOpen={isModalAddPegawaiOpen}
+                    hideModal={hideModalAddPegawai}
+                    isDraggable={true}
+                /> : null  
+            }
         </>
     );
 };
