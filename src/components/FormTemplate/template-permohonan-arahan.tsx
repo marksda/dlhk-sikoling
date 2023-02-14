@@ -33,11 +33,11 @@ export const TemplatePermohonanArahan = () => {
     const {control, setValue} = useFormContext();
     const [
         registerPerusahaan, jenisPermohonanSuratArahan, statusWali,
-        regDokSuratKuasa, penanggungJawabPermohonan,
+        penanggungJawabPermohonan,
     ] = useWatch({
         control: control, 
         name: [
-            'registerPerusahaan', 'jenisPermohonanSuratArahan', 'statusWali', 'regDokSuratKuasa',
+            'registerPerusahaan', 'jenisPermohonanSuratArahan', 'statusWali',
             'penanggungJawabPermohonan'
         ]
     });
@@ -160,6 +160,7 @@ export const TemplatePermohonanArahan = () => {
     const handleChangePenanggungJawab = useCallback(
         (item) => {
             var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
+            console.log(itemSelected);
             return itemSelected;
         },
         [daftarPegawai]
@@ -185,7 +186,7 @@ export const TemplatePermohonanArahan = () => {
                                 onChange(handleChangeRegisterPerusahaan(selectedItem));
                             }}
                             required
-                            selectedKey={registerPerusahaan != null ? registerPerusahaan.id : undefined}
+                            selectedKey={registerPerusahaan != undefined ? registerPerusahaan.id : undefined}
                         />
                     }
                 />
@@ -211,8 +212,8 @@ export const TemplatePermohonanArahan = () => {
                                     }}
                                     styles={{root:{width: 150}}}
                                     required
-                                    disabled={registerPerusahaan == null ? true : false}
-                                    selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
+                                    disabled={registerPerusahaan == undefined ? true : false}
+                                    selectedKey={jenisPermohonanSuratArahan != undefined ? jenisPermohonanSuratArahan.id : undefined}
                                 />
                             }
                         />
@@ -235,8 +236,8 @@ export const TemplatePermohonanArahan = () => {
                                         onChange(handleChangeStatusWali(selectedItem));
                                     }}
                                     required
-                                    disabled={jenisPermohonanSuratArahan == null ? true : false}
-                                    selectedKey={statusWali != null ? statusWali.id : undefined}
+                                    disabled={jenisPermohonanSuratArahan == undefined ? true : false}
+                                    selectedKey={statusWali != undefined ? statusWali.id : undefined}
                                 />
                             }
                         />
@@ -259,12 +260,15 @@ export const TemplatePermohonanArahan = () => {
                                 }) =>
                                 <Dropdown
                                     placeholder="Pilih penanggung jawab"
-                                    selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
-                                    onChange={(e, selectedItem) => {
-                                        onChange(handleChangePenanggungJawab(selectedItem));
-                                    }}
                                     options={daftarPegawaiOptions}
-                                    disabled={statusWali == null ?  true: false}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={
+                                        (e, selectedItem) => {
+                                            onChange(handleChangePenanggungJawab(selectedItem));
+                                        }
+                                    }                                    
+                                    selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik : undefined}
+                                    disabled={statusWali == undefined ?  true: false}
                                 />
                             }
                         />
@@ -276,7 +280,11 @@ export const TemplatePermohonanArahan = () => {
                             calloutProps={calloutProps}
                             styles={hostStyles}
                         >
-                            <IconButton iconProps={plusIcon} aria-label="Plus" onClick={showModalAddPegawai}/>
+                            <IconButton 
+                                iconProps={plusIcon} 
+                                aria-label="Plus" 
+                                onClick={showModalAddPegawai}
+                                disabled={statusWali == undefined ?  true: false}/>
                         </TooltipHost>
                     </Stack.Item>
                 </Stack>                    
@@ -324,7 +332,6 @@ export const TemplatePermohonanArahan = () => {
                                         }}
                                         styles={{root:{width: 250}}}
                                         required
-                                        selectedKey={regDokSuratKuasa != null ? regDokSuratKuasa.id : undefined}
                                     />
                                 }
                             />

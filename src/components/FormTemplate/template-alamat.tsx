@@ -2,7 +2,7 @@ import { Dropdown, IDropdownOption, Stack, TextField } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useCallback, useMemo } from "react";
-import { Controller, useForm, useFormContext } from "react-hook-form";
+import { Controller, useForm, useFormContext, useWatch } from "react-hook-form";
 import { object, z } from "zod";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setAlamatDesa, setAlamatKabupaten, setAlamatKecamatan, setAlamatKeterangan, setAlamatPropinsi } from "../../features/alamat/alamat-slice";
@@ -43,6 +43,7 @@ export const TemplateAlamat = () => {
     const {
         control
     } = useFormContext();
+    
     //rtk query hook state
     const { data: daftarPropinsi, isFetching: isFetchingDataPropinsi, isError: isErrorPropinsi } = useGetAllPropinsiQuery();
     const { data: daftarKabupaten, isFetching: isFetchingDataKabupaten, isError: isErrorKabupaten } = useGetKabupatenByPropinsiQuery(alamat.propinsi != null ? alamat.propinsi.id : null, {skip: alamat.propinsi == null ? true : false});

@@ -73,136 +73,136 @@ const stackTokens = { childrenGap: 4 };
 
 const permohonanSchema = object({
     registerPerusahaan: object({
-        id: z.string().nullable(),
-        tanggalRegistrasi: z.string().nullable(),
+        id: z.string(),
+        tanggalRegistrasi: z.string(),
         kreator: object({
-            nik: z.string().nullable(),
-            nama: z.string().nullable(),
+            nik: z.string(),
+            nama: z.string(),
             jenisKelamin: object({
-                id: z.string().nullable(),
-                nama: z.string().nullable()
-            }).nullable(),
+                id: z.string(),
+                nama: z.string()
+            }),
             alamat: object({
                 propinsi: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 kabupaten: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 kecamatan: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 desa: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
-                keterangan: z.string().nullable(),
-            }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }),
             kontak: object({
-                fax: z.string().optional().nullable(),
-                telepone: z.string().nullable(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
-            }).nullable(),
-            scanKTP: z.string().nullable()
-        }).nullable(),
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }),
+            scanKTP: z.string()
+        }),
         verifikator: object({
-            nik: z.string().nullable(),
-            nama: z.string().nullable(),
+            nik: z.string(),
+            nama: z.string(),
             jenisKelamin: object({
-                id: z.string().nullable(),
-                nama: z.string().nullable()
-            }).nullable(),
+                id: z.string(),
+                nama: z.string()
+            }),
             alamat: object({
                 propinsi: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 kabupaten: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 kecamatan: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 desa: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
-                keterangan: z.string().nullable(),
-            }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }),
             kontak: object({
-                fax: z.string().optional().nullable(),
-                telepone: z.string().nullable(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
-            }).nullable(),
-            scanKTP: z.string().nullable()
-        }).nullable(),
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }),
+            scanKTP: z.string()
+        }),
         perusahaan: object({
-            id: z.string().nullable(),
-            nama: z.string().nullable(),
+            id: z.string(),
+            nama: z.string(),
             modelPerizinan: object({
-                id: z.string().nullable(),
-                nama: z.string().nullable(),
-                singkatan: z.string().nullable()
-            }).nullable(),
+                id: z.string(),
+                nama: z.string(),
+                singkatan: z.string()
+            }),
             skalaUsaha: object({
-                id: z.string().nullable(),
-                nama: z.string().nullable(),
-                singkatan: z.string().nullable()
-            }).nullable(),
+                id: z.string(),
+                nama: z.string(),
+                singkatan: z.string()
+            }),
             pelakuUsaha: object({
-                id: z.string().nullable(),
-                nama: z.string().nullable(),
-                singkatan: z.string().nullable(),
+                id: z.string(),
+                nama: z.string(),
+                singkatan: z.string(),
                 kategoriPelakuUsaha: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable()
-                }).nullable()
+                    id: z.string(),
+                    nama: z.string()
+                })
 
-            }).nullable(),
+            }),
             alamat: object({
                 propinsi: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 kabupaten: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable()
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string()
+                }),
                 kecamatan: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
                 desa: object({
-                    id: z.string().nullable(),
-                    nama: z.string().nullable(),
-                }).nullable(),
-                keterangan: z.string().nullable(),
-            }).nullable(),
+                    id: z.string(),
+                    nama: z.string(),
+                }),
+                keterangan: z.string(),
+            }),
             kontak: object({
-                fax: z.string().optional().nullable(),
-                telepone: z.string().nullable(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
-            }).nullable(),
+                fax: z.string().optional(),
+                telepone: z.string(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+            }),
             daftarRegisterDokumen: z.array(
                 object({
-                    id: z.string().nullable(),
+                    id: z.string(),
                     dokumen: object({
-                        id: z.string().nullable()
-                    }).nullable(),
-                    lokasiFile: z.string().nullable(),
-                    tanggalRegistrasi: z.string().nullable(),
+                        id: z.string()
+                    }),
+                    lokasiFile: z.string(),
+                    tanggalRegistrasi: z.string(),
                     uploader: object({
                         nik: z.string(),
                         nama: z.string(),
                         jenisKelamin: object({
                             id: z.string(),
                             nama: z.string()
-                        }).nullable(),
+                        }),
                         alamat: object({
                             propinsi: object({
                                 id: z.string(),
@@ -221,29 +221,32 @@ const permohonanSchema = object({
                                 nama: z.string(),
                             }),
                             keterangan: z.string(),
-                        }).nullable(),
+                        }),
                         kontak: object({
                             fax: z.string().optional(),
                             telepone: z.string(),
                             email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
-                        }).nullable(),
-                        scanKTP: z.string().nullable()
-                    }).nullable(),
-                }).nullable()
-            ).nullable()
-        }).nullable()
+                        }),
+                        scanKTP: z.string()
+                    }),
+                })
+            )
+        })
     }),  
     jenisPermohonanSuratArahan: object({
         id: z.string(),
         keterangan: z.string()
     }),
     statusWali: object({
-        id: z.string().nullable(),
-        nama: z.string().nullable()
+        id: z.string(),
+        nama: z.string()
     }),
-    regDokSuratKuasa: object({
-        id: z.string().nullable(),
-    }).nullable(),
+    penanggungJawabPermohonan:  object({
+        id: z.string()
+    })
+    // regDokSuratKuasa: object({
+    //     id: z.string(),
+    // }),
 });
 
 type FormData = z.infer<typeof permohonanSchema>;
@@ -255,26 +258,10 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const titleId = useId('Formulir Surat Arahan');
     //react hook form variable
-    const methods = useForm<IRegisterPermohonanSuratArahan>({
-        resolver: zodResolver(permohonanSchema),
-        defaultValues: {
-            id: null,
-            registerPerusahaan: null,
-            kategoriPermohonan: {
-                id: '01',
-                nama: ''
-            },
-            tanggalRegistrasi: null,
-            pengurusPermohonan: null,
-            statusWali: null,
-            penanggungJawabPermohonan: null,
-            statusTahapPemberkasan: null,
-            // daftarRegisterDokumenSyarat: [],
-            // daftarDokumenHasil: [],
-            jenisPermohonanSuratArahan: null
-        }
+    const methods = useForm<FormData>({
+        resolver: zodResolver(permohonanSchema)
     });
-    const {handleSubmit, reset, formState} = methods;    
+    const {handleSubmit, reset} = methods;    
     // console.log(formState);
     // const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
     //     mode: 'onSubmit',
