@@ -4,7 +4,6 @@ import { FC, useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
-import { IRegisterPermohonanSuratArahan } from "../../features/permohonan/register-permohonan-api-slice";
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
@@ -76,6 +75,7 @@ const permohonanSchema = object({
         id: z.string(),
         tanggalRegistrasi: z.string(),
         kreator: object({
+            hakAkses
             nik: z.string(),
             nama: z.string(),
             jenisKelamin: object({
@@ -200,8 +200,45 @@ const permohonanSchema = object({
         nama: z.string()
     }),
     // penanggungJawabPermohonan:  object({
-    //     id: z.string()
-    // })
+    //     id: z.string(),
+    //     jabatan: object({
+    //         id: z.string(),
+    //         nama: z.string(),
+    //     }),
+    //     person: object({
+    //         nik: z.string(),
+    //         nama: z.string(),
+    //         jenisKelamin: object({
+    //             id: z.string(),
+    //             nama: z.string()
+    //         }),
+    //         alamat: object({
+    //             propinsi: object({
+    //                 id: z.string(),
+    //                 nama: z.string(),
+    //             }),
+    //             kabupaten: object({
+    //                 id: z.string(),
+    //                 nama: z.string(),
+    //             }),
+    //             kecamatan: object({
+    //                 id: z.string(),
+    //                 nama: z.string(),
+    //             }),
+    //             desa: object({
+    //                 id: z.string(),
+    //                 nama: z.string(),
+    //             }),
+    //             keterangan: z.string(),
+    //         }),
+    //         kontak: object({
+    //             fax: z.string().optional(),
+    //             telepone: z.string(),
+    //             email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
+    //         }),
+    //         scanKTP: z.string().optional()
+    //     }),
+    // }),
     // regDokSuratKuasa: object({
     //     id: z.string(),
     // }),
@@ -298,7 +335,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     alignItems: 'center',
                     padding: '8px 12px 14px 24px'}}
                 >
-                    <span id={titleId}>Formulir Permohonan Surat Arahan</span>
+                    <span id={titleId}>FORMULIR PERMOHONAN ARAHAN</span>
                     <IconButton
                         styles={iconButtonStyles}
                         iconProps={cancelIcon}
