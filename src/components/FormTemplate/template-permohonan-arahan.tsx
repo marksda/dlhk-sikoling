@@ -33,15 +33,15 @@ export const TemplatePermohonanArahan = () => {
     const {control, setValue} = useFormContext();
     const [
         registerPerusahaan, jenisPermohonanSuratArahan,
-        statusWali,
+        statusWali, penanggungJawabPermohonan,
     ] = useWatch({
         control: control, 
         name: [
             'registerPerusahaan', 'jenisPermohonanSuratArahan',
-            'statusWali'
+            'statusWali', 'penanggungJawabPermohonan'
         ]
     });
-    console.log(statusWali);
+    console.log(registerPerusahaan);
 
     const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');
@@ -135,7 +135,7 @@ export const TemplatePermohonanArahan = () => {
         (item): IRegisterPerusahaan => {
             var itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
             // dispatch(setRegisterPerusahaan(registerPerusahaan));
-            // setValue('penanggungJawabPermohonan', null);
+            // setValue('penanggungJawabPermohonan', undefined);
             return itemSelected;
         },
         [daftarRegisterPerusahaan]
@@ -152,7 +152,6 @@ export const TemplatePermohonanArahan = () => {
     const handleChangeStatusWali= useCallback(
         (item) => {
             var itemSelected = find(daftarStatusWali, (i) => i.id == item.key) as IStatusWali;
-            console.log(itemSelected);
             return itemSelected;
         },
         [daftarStatusWali]
@@ -161,7 +160,7 @@ export const TemplatePermohonanArahan = () => {
     const handleChangePenanggungJawab = useCallback(
         (item) => {
             var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
-            console.log(itemSelected);
+            // console.log(itemSelected);
             return itemSelected;
         },
         [daftarPegawai]
@@ -239,6 +238,37 @@ export const TemplatePermohonanArahan = () => {
                                     required
                                     disabled={jenisPermohonanSuratArahan == undefined ? true : false}
                                     selectedKey={statusWali != undefined ? statusWali.id : undefined}
+                                />
+                            }
+                        />
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>
+            <Stack.Item>
+                <Label>Penanggung jawab permohonan</Label>
+            </Stack.Item>
+            <Stack.Item styles={stackItemStyles}>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
+                    <Stack.Item grow>
+                        <Controller 
+                            name="penanggungJawabPermohonan"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) =>
+                                <Dropdown
+                                    placeholder="Pilih penanggung jawab"
+                                    options={daftarPegawaiOptions}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={
+                                        (e, selectedItem) => {
+                                            onChange(handleChangePenanggungJawab(selectedItem));
+                                        }
+                                    }                                    
+                                    selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik : undefined}
+                                    disabled={statusWali == undefined ? true : false}
                                 />
                             }
                         />
