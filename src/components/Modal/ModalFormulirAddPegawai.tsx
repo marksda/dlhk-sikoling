@@ -48,10 +48,9 @@ const pegawaiSchema = object({
         nama: z.string(),
     }),
     keterangan: z.string(),
-    fax: z.string().optional(),
+    fax: z.string().nullable().optional(),
     telepone: z.string(),
-    email: z.string().min(1, { message: "Harus diisi" })
-    .email("bukan format email yang benar"),
+    email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
 });
 type FormData = z.infer<typeof pegawaiSchema>;
 
@@ -135,7 +134,7 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
     const titleId = useId('Formulir Dokumen nib');
 
     const methods = useForm<FormData>({
-        resolver: zodResolver(pegawaiSchema),
+        resolver: zodResolver(pegawaiSchema)
     });
     const {handleSubmit} = methods;
 
@@ -153,47 +152,48 @@ export const ModalFormulirAddPegawai: FC<IModalFormulirPegawaiProps> = ({isModal
     
     const simpanPegawai = useCallback(
         handleSubmit(
-            async (data) => {                  
-                try {
-                    var pegawai: IPegawai = {
-                        id: null,
-                        perusahaan: cloneDeep(registerPerusahaan),
-                        person: {
-                            nik: data.nik,
-                            nama: data.nama,
-                            jenisKelamin: cloneDeep(data.jenisKelamin),
-                            alamat: {
-                                propinsi: cloneDeep(data.propinsi),
-                                kabupaten: cloneDeep(data.kabupaten),
-                                kecamatan: cloneDeep(data.kecamatan),
-                                desa: cloneDeep(data.desa),
-                                keterangan: data.keterangan
-                            },
-                            kontak: {
-                                telepone: data.telepone,
-                                fax: data.fax,
-                                email: data.email
-                            },
-                            scanKTP: null
-                        },
-                        jabatan: cloneDeep(data.jabatan)
-                    };
-                    await addPegawai(pegawai).unwrap().then(
-                        async (payload) => {
-                            // var formData = new FormData();
-                            // formData.append('file', dokumen);
-                            // await uploadFileDokumen({
-                            //     idRegisterDokumen: payload.id as string,
-                            //     npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
-                            //     formData: formData
-                            // });
-                            console.log(payload);
-                            hideModal();
-                        }
-                    );
-                } catch (error) {
-                    console.log(error);
-                }                
+            async (data) => {         
+                console.log(data);         
+                // try {
+                //     var pegawai: IPegawai = {
+                //         id: null,
+                //         perusahaan: cloneDeep(registerPerusahaan),
+                //         person: {
+                //             nik: data.nik,
+                //             nama: data.nama,
+                //             jenisKelamin: cloneDeep(data.jenisKelamin),
+                //             alamat: {
+                //                 propinsi: cloneDeep(data.propinsi),
+                //                 kabupaten: cloneDeep(data.kabupaten),
+                //                 kecamatan: cloneDeep(data.kecamatan),
+                //                 desa: cloneDeep(data.desa),
+                //                 keterangan: data.keterangan
+                //             },
+                //             kontak: {
+                //                 telepone: data.telepone,
+                //                 fax: data.fax,
+                //                 email: data.email
+                //             },
+                //             scanKTP: null
+                //         },
+                //         jabatan: cloneDeep(data.jabatan)
+                //     };
+                //     await addPegawai(pegawai).unwrap().then(
+                //         async (payload) => {
+                //             // var formData = new FormData();
+                //             // formData.append('file', dokumen);
+                //             // await uploadFileDokumen({
+                //             //     idRegisterDokumen: payload.id as string,
+                //             //     npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
+                //             //     formData: formData
+                //             // });
+                //             console.log(payload);
+                //             hideModal();
+                //         }
+                //     );
+                // } catch (error) {
+                //     console.log(error);
+                // }                
             }
         ),
         [registerPerusahaan]

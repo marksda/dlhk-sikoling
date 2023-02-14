@@ -10,6 +10,7 @@ import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery }
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../features/permohonan/status-wali-api-slice";
 import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
+import { ModalFormulirAddPegawai } from "../Modal/ModalFormulirAddPegawai";
 
 
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };
@@ -29,7 +30,7 @@ export const TemplatePermohonanArahan = () => {
     //redux hook 
     const token = useAppSelector(state => state.token);
     //react-form hook
-    const {control} = useFormContext();
+    const {control, setValue} = useFormContext();
     const [
         registerPerusahaan, jenisPermohonanSuratArahan, statusWali,
         regDokSuratKuasa, penanggungJawabPermohonan,
@@ -135,6 +136,7 @@ export const TemplatePermohonanArahan = () => {
         (item): IRegisterPerusahaan => {
             var itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
             // dispatch(setRegisterPerusahaan(registerPerusahaan));
+            setValue('penanggungJawabPermohonan', null);
             return itemSelected;
         },
         [daftarRegisterPerusahaan]
@@ -340,7 +342,14 @@ export const TemplatePermohonanArahan = () => {
             <Stack.Item styles={stackItemStyles}>
 
             </Stack.Item>
-            
+            {
+                isModalAddPegawaiOpen == true ? 
+                <ModalFormulirAddPegawai
+                    isModalOpen={isModalAddPegawaiOpen}
+                    hideModal={hideModalAddPegawai}
+                    isDraggable={true}
+                /> : null  
+            }
         </>
     );
 };

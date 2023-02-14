@@ -95,7 +95,7 @@ export const TemplatePerson = () => {
                                     // }                                    
                                 }}
                                 defaultValue={value}
-                                styles={{root:{width: 150}}}
+                                styles={{root:{width: 180}}}
                             />
                         }
                     />               

@@ -72,7 +72,7 @@ export const TemplatePegawai = () => {
                                     onChange={(e, selectedItem) => {
                                         onChange(handleChangeJabatan(selectedItem));
                                     }}
-                                    styles={{root:{width: 250}}}
+                                    styles={{root:{width: 400}}}
                                     required
                                 />
                             }
