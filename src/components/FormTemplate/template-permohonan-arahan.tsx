@@ -1,7 +1,7 @@
 import { DefaultButton, DefaultPalette, Dropdown, IconButton, IDropdownOption, IIconProps, IStackItemStyles, IStackTokens, ITooltipHostStyles, Label, Stack, StackItem, TooltipHost } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import find from "lodash.find";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../app/hooks";
 import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../features/pegawai/pegawai-api-slice";
@@ -30,7 +30,7 @@ export const TemplatePermohonanArahan = () => {
     //redux hook 
     const token = useAppSelector(state => state.token);
     //react-form hook
-    const {control, setValue} = useFormContext();
+    const {control, resetField} = useFormContext();
     const [
         registerPerusahaan, jenisPermohonanSuratArahan,
         statusWali, penanggungJawabPermohonan,
@@ -41,7 +41,7 @@ export const TemplatePermohonanArahan = () => {
             'statusWali', 'penanggungJawabPermohonan'
         ]
     });
-    console.log(penanggungJawabPermohonan);
+    // console.log(penanggungJawabPermohonan);
 
     const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');
@@ -114,7 +114,7 @@ export const TemplatePermohonanArahan = () => {
 
     const daftarPegawaiOptions: IDropdownOption<any>[] = useMemo(
         () => {
-            if(daftarPegawai != undefined) {
+            if(daftarPegawai != undefined) {       
                 return [
                     ...daftarPegawai.map(
                         (t) => ({
@@ -134,8 +134,7 @@ export const TemplatePermohonanArahan = () => {
     const handleChangeRegisterPerusahaan = useCallback(
         (item): IRegisterPerusahaan => {
             var itemSelected = find(daftarRegisterPerusahaan, (i) => i.id == item.key) as IRegisterPerusahaan;
-            // dispatch(setRegisterPerusahaan(registerPerusahaan));
-            // setValue('penanggungJawabPermohonan', undefined);
+            resetField('penanggungJawabPermohonan');
             return itemSelected;
         },
         [daftarRegisterPerusahaan]
@@ -160,7 +159,6 @@ export const TemplatePermohonanArahan = () => {
     const handleChangePenanggungJawab = useCallback(
         (item) => {
             var itemSelected = find(daftarPegawai, (i) => i.id == item.key) as IPegawai;
-            // console.log(itemSelected);
             return itemSelected;
         },
         [daftarPegawai]
@@ -266,15 +264,55 @@ export const TemplatePermohonanArahan = () => {
                                         (e, selectedItem) => {
                                             onChange(handleChangePenanggungJawab(selectedItem));
                                         }
-                                    }                                    
-                                    selectedKey={penanggungJawabPermohonan != undefined ? penanggungJawabPermohonan.nik : undefined}
-                                    disabled={statusWali == undefined ? true : false}
+                                    }                                 
+                                    selectedKey={penanggungJawabPermohonan?penanggungJawabPermohonan.id:null}
+                                    disabled={statusWali ? false:true}
                                 />
                             }
                         />
                     </Stack.Item>
+                    <Stack.Item>                            
+                        <TooltipHost
+                            id={tooltipAddPegawaiId}
+                            content="Klik untuk tambah pilihan Nik"
+                            calloutProps={calloutProps}
+                            styles={hostStyles}
+                        >
+                            <IconButton 
+                                iconProps={plusIcon} 
+                                aria-label="Plus" 
+                                onClick={showModalAddPegawai}
+                                disabled={statusWali == undefined ?  true: false}/>
+                        </TooltipHost>
+                    </Stack.Item>
                 </Stack>
-            </Stack.Item>      
+                <Stack.Item styles={{root: {marginTop: 8, padding: 8, background: '#a0e4e9'}}}>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}}>                                
+                            <span>Nama</span> 
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.person.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal>
+                        <Stack.Item styles={{root: {width: 80}}} >                                
+                            <span>Jabatan</span> 
+                        </Stack.Item>
+                        <Stack.Item>
+                            : {penanggungJawabPermohonan != null ? penanggungJawabPermohonan.jabatan.nama: ''}
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+            </Stack.Item>  
+            {
+                isModalAddPegawaiOpen == true ? 
+                <ModalFormulirAddPegawai
+                    isModalOpen={isModalAddPegawaiOpen}
+                    hideModal={hideModalAddPegawai}
+                    isDraggable={true}
+                /> : null  
+            }    
         </>
     );
 };
