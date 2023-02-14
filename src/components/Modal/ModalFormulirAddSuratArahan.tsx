@@ -107,7 +107,7 @@ const permohonanSchema = object({
                 email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
             }),
             scanKTP: z.string()
-        }),
+        }).optional(),
         verifikator: object({
             nik: z.string(),
             nama: z.string(),
@@ -140,7 +140,7 @@ const permohonanSchema = object({
                 email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
             }),
             scanKTP: z.string()
-        }),
+        }).optional(),
         perusahaan: object({
             id: z.string(),
             nama: z.string(),
@@ -148,12 +148,12 @@ const permohonanSchema = object({
                 id: z.string(),
                 nama: z.string(),
                 singkatan: z.string()
-            }),
+            }).optional(),
             skalaUsaha: object({
                 id: z.string(),
                 nama: z.string(),
                 singkatan: z.string()
-            }),
+            }).optional(),
             pelakuUsaha: object({
                 id: z.string(),
                 nama: z.string(),
@@ -163,75 +163,33 @@ const permohonanSchema = object({
                     nama: z.string()
                 })
 
-            }),
+            }).optional(),
             alamat: object({
                 propinsi: object({
                     id: z.string(),
                     nama: z.string(),
-                }),
+                }).optional(),
                 kabupaten: object({
                     id: z.string(),
                     nama: z.string()
-                }),
+                }).optional(),
                 kecamatan: object({
                     id: z.string(),
                     nama: z.string(),
-                }),
+                }).optional(),
                 desa: object({
                     id: z.string(),
                     nama: z.string(),
-                }),
-                keterangan: z.string(),
+                }).optional(),
+                keterangan: z.string().optional(),
             }),
             kontak: object({
                 fax: z.string().optional(),
-                telepone: z.string(),
-                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
-            }),
-            daftarRegisterDokumen: z.array(
-                object({
-                    id: z.string(),
-                    dokumen: object({
-                        id: z.string()
-                    }),
-                    lokasiFile: z.string(),
-                    tanggalRegistrasi: z.string(),
-                    uploader: object({
-                        nik: z.string(),
-                        nama: z.string(),
-                        jenisKelamin: object({
-                            id: z.string(),
-                            nama: z.string()
-                        }),
-                        alamat: object({
-                            propinsi: object({
-                                id: z.string(),
-                                nama: z.string(),
-                            }),
-                            kabupaten: object({
-                                id: z.string(),
-                                nama: z.string(),
-                            }),
-                            kecamatan: object({
-                                id: z.string(),
-                                nama: z.string(),
-                            }),
-                            desa: object({
-                                id: z.string(),
-                                nama: z.string(),
-                            }),
-                            keterangan: z.string(),
-                        }),
-                        kontak: object({
-                            fax: z.string().optional(),
-                            telepone: z.string(),
-                            email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar"),
-                        }),
-                        scanKTP: z.string()
-                    }),
-                })
-            )
-        })
+                telepone: z.string().optional(),
+                email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").optional(),
+            }).optional()
+        }),
+        statusVerifikasi: z.boolean()
     }),  
     jenisPermohonanSuratArahan: object({
         id: z.string(),
@@ -241,9 +199,9 @@ const permohonanSchema = object({
         id: z.string(),
         nama: z.string()
     }),
-    penanggungJawabPermohonan:  object({
-        id: z.string()
-    })
+    // penanggungJawabPermohonan:  object({
+    //     id: z.string()
+    // })
     // regDokSuratKuasa: object({
     //     id: z.string(),
     // }),
