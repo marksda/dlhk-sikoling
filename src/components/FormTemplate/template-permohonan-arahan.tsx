@@ -41,7 +41,7 @@ export const TemplatePermohonanArahan = () => {
             'statusWali', 'penanggungJawabPermohonan'
         ]
     });
-    console.log(registerPerusahaan);
+    console.log(penanggungJawabPermohonan);
 
     const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');

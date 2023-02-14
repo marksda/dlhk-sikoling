@@ -1,0 +1,127 @@
+import { object, z } from "zod";
+
+export const JenisKelaminSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional()
+});
+
+export const PropinsiSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+});
+
+export const KabupatenSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+});
+
+export const KecamatanSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+});
+
+export const DesaSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+});
+
+export const AlamatSchema = object({
+    propinsi: PropinsiSchema.optional(),
+    kabupaten: KabupatenSchema.optional(),
+    kecamatan: KecamatanSchema.optional(),
+    desa: DesaSchema.optional(),
+    keterangan: z.string().optional(),
+});
+
+export const KontakSchema = object({
+    fax: z.string().optional(),
+    telepone: z.string().optional(),
+    email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").optional(),
+})
+
+export const PersonSchema = object({
+    nik: z.string().optional(),
+    nama: z.string().optional(),
+    jenisKelamin: JenisKelaminSchema.optional(),
+    alamat: AlamatSchema.optional(),
+    kontak: KontakSchema.optional(),
+    scanKTP: z.string().optional()
+});
+
+export const HakAksesSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    keterangan: z.string().optional()
+});
+
+export const AuthoritySchema = object({
+    hakAkses: HakAksesSchema.optional(),
+    person: PersonSchema.optional(),
+    statusInternal: z.boolean().optional(),
+    userName: z.string().optional(),
+    verified: z.boolean().optional()
+});
+
+export const ModelPerizinanSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    singkatan: z.string().optional()
+});
+
+export const SkalaUsahaSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    singkatan: z.string().optional()
+});
+
+export const KategoriPelakuUsahaSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional()
+});
+
+export const PelakuUsahaSchema = object({
+    id: z.string(),
+    nama: z.string(),
+    singkatan: z.string(),
+    kategoriPelakuUsaha: KategoriPelakuUsahaSchema.optional()
+});
+
+export const PerusahaanSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    modelPerizinan: ModelPerizinanSchema.optional(),
+    skalaUsaha: SkalaUsahaSchema.optional(),
+    pelakuUsaha: PelakuUsahaSchema.optional(),
+    alamat: AlamatSchema.optional(),
+    kontak: KontakSchema.optional()
+});
+
+export const RegisterPerusahaanSchema = object({
+    id: z.string(),
+    tanggalRegistrasi: z.string(),
+    kreator: AuthoritySchema.optional(),
+    verifikator: AuthoritySchema.optional(),
+    perusahaan: PerusahaanSchema.optional(),
+    statusVerifikasi: z.boolean().optional()
+});
+
+export const JenisPermohonanArahanSchema = object({
+    id: z.string().optional(),
+    keterangan: z.string().optional()
+});
+
+export const StatusWaliSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional()
+});
+
+export const JabatanSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+})
+
+export const PenanggungJawabPermohonanSchema =  object({
+    id: z.string().optional(),
+    jabatan: JabatanSchema,
+    person: PersonSchema
+});
