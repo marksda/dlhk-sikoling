@@ -20,7 +20,7 @@ const stackItemStyles: IStackItemStyles = {
         padding: 8,
     },
 };
-const stackHorTokens = { childrenGap: 0 };
+const stackHorTokens = { childrenGap: 8 };
 const calloutProps = { gapSpace: 0 };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const plusIcon: IIconProps = { iconName: 'CirclePlus' };
@@ -182,7 +182,6 @@ export const TemplatePermohonanArahan = () => {
                             onChange={(e, selectedItem) => {
                                 onChange(handleChangeRegisterPerusahaan(selectedItem));
                             }}
-                            styles={{root:{width: 250}}}
                             required
                             selectedKey={registerPerusahaan != null ? registerPerusahaan.id : undefined}
                         />
@@ -190,33 +189,33 @@ export const TemplatePermohonanArahan = () => {
                 />
             </Stack.Item>
             <Stack.Item>
-                <Controller 
-                    name="jenisPermohonanSuratArahan"
-                    control={control}
-                    render={
-                        ({
-                            field: {onChange},
-                            fieldState: {error}
-                        }) => 
-                        <Dropdown 
-                            label="Status permohonan"
-                            placeholder="Pilih status permohonan"
-                            options={jenisPermohonanSuratArahanOptions}
-                            errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
-                            onChange={(e, selectedItem) => {
-                                onChange(handleChangeStatusPermohonan(selectedItem));
-                            }}
-                            styles={{root:{width: 250}}}
-                            required
-                            disabled={registerPerusahaan == null ? true : false}
-                            selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
-                        />
-                    }
-                />
-            </Stack.Item>
-            <StackItem>
-                <Stack styles={{root: { width: 450, alignItems: 'left'}}}>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
                     <Stack.Item>
+                        <Controller 
+                            name="jenisPermohonanSuratArahan"
+                            control={control}
+                            render={
+                                ({
+                                    field: {onChange},
+                                    fieldState: {error}
+                                }) => 
+                                <Dropdown 
+                                    label="Status permohonan"
+                                    placeholder="--Pilih--"
+                                    options={jenisPermohonanSuratArahanOptions}
+                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                    onChange={(e, selectedItem) => {
+                                        onChange(handleChangeStatusPermohonan(selectedItem));
+                                    }}
+                                    styles={{root:{width: 150}}}
+                                    required
+                                    disabled={registerPerusahaan == null ? true : false}
+                                    selectedKey={jenisPermohonanSuratArahan != null ? jenisPermohonanSuratArahan.id : undefined}
+                                />
+                            }
+                        />
+                    </Stack.Item>
+                    <Stack.Item grow>
                         <Controller 
                             name="statusWali"
                             control={control}
@@ -233,7 +232,6 @@ export const TemplatePermohonanArahan = () => {
                                     onChange={(e, selectedItem) => {
                                         onChange(handleChangeStatusWali(selectedItem));
                                     }}
-                                    styles={{root:{width: 250}}}
                                     required
                                     disabled={jenisPermohonanSuratArahan == null ? true : false}
                                     selectedKey={statusWali != null ? statusWali.id : undefined}
@@ -242,12 +240,12 @@ export const TemplatePermohonanArahan = () => {
                         />
                     </Stack.Item>
                 </Stack>
-            </StackItem>
+            </Stack.Item>
             <Stack.Item>
-                <Label>Data penanggung jawab</Label>
+                <Label>Penanggung jawab permohonan</Label>
             </Stack.Item>
             <Stack.Item styles={stackItemStyles}>
-                <Stack horizontal tokens={stackHorTokens} styles={{root: { width: 438, alignItems: 'left'}}}>
+                <Stack horizontal tokens={stackHorTokens} styles={{root: {alignItems: 'left'}}}>
                     <Stack.Item grow>
                         <Controller 
                             name="penanggungJawabPermohonan"
@@ -258,8 +256,7 @@ export const TemplatePermohonanArahan = () => {
                                     fieldState: {error}
                                 }) =>
                                 <Dropdown
-                                    label="Nik"
-                                    placeholder="Pilih nik status penanggung jawab permohonan"
+                                    placeholder="Pilih penanggung jawab"
                                     selectedKey={penanggungJawabPermohonan != null ? penanggungJawabPermohonan.nik : undefined}
                                     onChange={(e, selectedItem) => {
                                         onChange(handleChangePenanggungJawab(selectedItem));
@@ -306,7 +303,7 @@ export const TemplatePermohonanArahan = () => {
                 statusWali.id == '01' ? null :
                 <Stack.Item>
                     <Stack horizontal tokens={sectionStackTokens}>
-                        <Stack.Item grow align="center">
+                        <Stack.Item>
                             <Controller 
                                 name="dokSuratKuasa"
                                 control={control}
@@ -337,6 +334,13 @@ export const TemplatePermohonanArahan = () => {
                 </Stack.Item>
                 )
             }
+            <Stack.Item>
+                <Label>Dokumen persyaratan</Label>
+            </Stack.Item>
+            <Stack.Item styles={stackItemStyles}>
+
+            </Stack.Item>
+            
         </>
     );
 };

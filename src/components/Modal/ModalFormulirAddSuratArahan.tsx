@@ -15,7 +15,7 @@ const contentStyles = mergeStyleSets({
         display: 'flex',
         flexFlow: 'column nowrap',
         alignItems: 'stretch',
-        minWidth: 400
+        minWidth: 650
     },
     header: [
         // eslint-disable-next-line deprecation/deprecation
@@ -269,8 +269,8 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
             statusWali: null,
             penanggungJawabPermohonan: null,
             statusTahapPemberkasan: null,
-            daftarRegisterDokumenSyarat: [],
-            daftarDokumenHasil: [],
+            // daftarRegisterDokumenSyarat: [],
+            // daftarDokumenHasil: [],
             jenisPermohonanSuratArahan: null
         }
     });
