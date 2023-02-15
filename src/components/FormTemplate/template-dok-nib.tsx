@@ -1,4 +1,4 @@
-import { ComboBox, DatePicker, DayOfWeek, DefaultPalette, IComboBox, IComboBoxOption, IDropdownOption, IStackItemStyles, MaskedTextField, mergeStyleSets, Stack } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultPalette, IComboBox, IComboBoxOption, IDropdownOption, IStackItemStyles, MaskedTextField,  Stack } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import find from "lodash.find";
@@ -14,7 +14,6 @@ import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 
-const stackTokens = { childrenGap: 4 };
 const stackHorTokens = { childrenGap: 8 };
 const stackItemStyles: IStackItemStyles = {
     root: {
@@ -22,13 +21,6 @@ const stackItemStyles: IStackItemStyles = {
         padding: 4,
     },
 };
-
-// const dokumenUploadSchema = object({
-//     dokumen: z.instanceof(File),
-//     dokumens: array(z.instanceof(File))
-// });
-// type FormData = z.infer<typeof dokumenUploadSchema>;
-
 
 export const TemplateDokumenNib = () => {
     //react hook form contex
@@ -41,21 +33,12 @@ export const TemplateDokumenNib = () => {
             'nomor', 'tanggal', 'daftarKbli'
         ]
     });
-    
-    //react hook form variable
-    // const methods = useForm<FormData>({
-    //     resolver: zodResolver(dokumenUploadSchema),
-    // });
-    // const [dokumen] = useWatch({
-    //     control: methods.control, 
-    //     name: ['dokumen']
-    // });
     // local state
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [kodeKbli, setKodeKbli] = useState<string>('01');
     const [daftarKbliSelected, setDaftarKbliSelected] = useState<({key: string} & Partial<IKbli>)[]>([]);
     const comboBoxKbliRef = useRef<IComboBox>(null);
-    //rtk query perusahaan variable hook
+    //rtk query variable hook
     const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
 
     const kbliOptions: IDropdownOption<any>[] = useMemo(
@@ -144,15 +127,6 @@ export const TemplateDokumenNib = () => {
         },
         []
     );
-
-    // const onChangeNib = useCallback(
-    //     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-    //       if (!newValue || newValue.length == 13) {
-    //         setValue('nomor', newValue || '');
-    //       }
-    //     },
-    //     [],
-    // );
     
     return(
         <>

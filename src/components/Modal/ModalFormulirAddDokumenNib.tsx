@@ -1,16 +1,13 @@
 import { 
-    ContextualMenu, DefaultPalette, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, IProgressIndicatorStyles, IStackItemStyles, mergeStyleSets, Modal, PrimaryButton, 
-    ProgressIndicator, Stack } from "@fluentui/react";
+    ContextualMenu, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
 import { FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
-import { object, z, array } from "zod";
+import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { useAddRegisterDokumenMutation, useUploadFileDokumenWithSecurityMutation } from "../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { FileUpload } from "../UploadFiles/FileUpload";
-import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
 import { DokumenNibSchema, FileDokumenUploadSchema } from "../../features/schema-resolver/zod-schema";
 import { TemplateDokumenNib } from "../FormTemplate/template-dok-nib";
 
@@ -126,6 +123,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
         control: methods.control, 
         name: ['dokumenFile']
     });
+    console.log(dokumenFile);
 
     //rtk query perusahaan variable hook
     // const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
