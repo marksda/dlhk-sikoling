@@ -5,11 +5,13 @@ import { IPerusahaan } from "../perusahaan/perusahaan-slice";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
 import { IDokumen } from "./dokumen-slice";
+import { IStatusDokumen } from "./status-dokumen-slice";
 
 export interface IRegisterDokumen {
     id: string|null;
     dokumen: any|null;
-    registerPerusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
+    perusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
+    statusDokumen: Partial<IStatusDokumen>|null;
     lokasiFile: string|null;
     tanggalRegistrasi: string|null;
     uploader: (Pick<IPerson, 'nik'>& Partial<IPerson>)|null;
@@ -18,7 +20,8 @@ export interface IRegisterDokumen {
 const initialState: IRegisterDokumen = {
     id: null,
     dokumen: null,
-    registerPerusahaan: null,
+    perusahaan: null,
+    statusDokumen: null,
     lokasiFile: null,
     tanggalRegistrasi: null,
     uploader: null
@@ -30,7 +33,7 @@ export const registerDokumenSlice = createSlice({
     reducers: {
         setRegisterDokumen: (state, action: PayloadAction<IRegisterDokumen>) => {
             state.dokumen = cloneDeep(action.payload.dokumen);
-            state.registerPerusahaan = cloneDeep(action.payload.registerPerusahaan)
+            state.perusahaan = cloneDeep(action.payload.perusahaan)
             state.lokasiFile = action.payload.lokasiFile;
             state.tanggalRegistrasi = action.payload.tanggalRegistrasi;
             state.uploader = cloneDeep(action.payload.uploader);
@@ -39,7 +42,10 @@ export const registerDokumenSlice = createSlice({
             state.dokumen = cloneDeep(action.payload);
         },
         setPerusahaanRegisterDokumen: (state, action: PayloadAction<Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>>) => {
-            state.registerPerusahaan = cloneDeep(action.payload);
+            state.perusahaan = cloneDeep(action.payload);
+        },
+        setStatusDokumenRegisterDokumen: (state, action: PayloadAction<Partial<IStatusDokumen>>) => {
+            state.statusDokumen = cloneDeep(action.payload);
         },
         setLokasiFileRegisterDokumen: (state, action: PayloadAction<string>) => {
             state.lokasiFile = cloneDeep(action.payload);
@@ -56,7 +62,8 @@ export const registerDokumenSlice = createSlice({
 export const {
     setRegisterDokumen, setDokumenRegisterDokumen,
     setPerusahaanRegisterDokumen, setLokasiFileRegisterDokumen,
-    setTanggalRegistrasiRegisterDokumen, setUploaderRegisterDokumen
+    setTanggalRegistrasiRegisterDokumen, setUploaderRegisterDokumen,
+    setStatusDokumenRegisterDokumen,
 } = registerDokumenSlice.actions;
 
 export default registerDokumenSlice.reducer;

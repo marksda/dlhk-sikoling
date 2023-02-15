@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IKategoriDokumen } from "./kategori-dokumen-slice";
-import { IKbli } from "./kbli-slice";
 
 export interface IDokumen {
     id: string|null;

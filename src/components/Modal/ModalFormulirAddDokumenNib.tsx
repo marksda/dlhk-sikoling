@@ -151,22 +151,22 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                         dokumen: {
                             ...data, id: '010301',  nama: 'NIB - OSS'
                         },
-                        registerPerusahaan: registerPerusahaan,
+                        perusahaan: registerPerusahaan,
                     };
 
                     console.log(regDok, dokumenFile);
-                //     await addRegisterDokumen(regDok).unwrap().then(
-                //         async (payload) => {
-                //             var formData = new FormData();
-                //             formData.append('file', dokumen);
-                //             await uploadFileDokumen({
-                //                 idRegisterDokumen: payload.id as string,
-                //                 npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
-                //                 formData: formData
-                //             });
-                //             hideModal();
-                //         }
-                //     );
+                    await addRegisterDokumen(regDok).unwrap().then(
+                        async (payload) => {
+                            var formData = new FormData();
+                            formData.append('file', dokumenFile);
+                            await uploadFileDokumen({
+                                idRegisterDokumen: payload.id as string,
+                                npwpPerusahaan: payload.perusahaan?.perusahaan!.id as string,
+                                formData: formData
+                            });
+                            hideModal();
+                        }
+                    );
                 } catch (error) {
                     //terjadi kegagalan
                 } finally {
