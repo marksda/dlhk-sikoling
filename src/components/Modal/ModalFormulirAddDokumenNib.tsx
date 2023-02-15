@@ -23,12 +23,15 @@ import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
+import { DokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
     hideModal: () => void;
     isDraggable: boolean;
 };
+
+type FormData = z.infer<typeof DokumenNibSchema>;
 
 const dokumenUploadSchema = object({
     dokumen: z.instanceof(File),

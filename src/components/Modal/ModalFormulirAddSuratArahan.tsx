@@ -7,7 +7,7 @@ import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohona
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { DaftarDokumenSyarat, JenisPermohonanArahanSchema, PenanggungJawabPermohonanSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
+import { DaftarDokumenSyarat, DokumenNibSchema, JenisPermohonanArahanSchema, PenanggungJawabPermohonanSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -76,6 +76,7 @@ const permohonanArahanSchema = object({
     jenisPermohonanSuratArahan: JenisPermohonanArahanSchema,
     statusWali: StatusWaliSchema,
     penanggungJawabPermohonan: PenanggungJawabPermohonanSchema,
+    dokumenNib: DokumenNibSchema,
     daftarDokumenSyarat: DaftarDokumenSyarat
 });
 

@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IDokumen } from "./dokumen-slice";
-import { IKbli } from "./kbli-slice";
 import { IRegisterKbli } from "./register-kbli-slice";
 
 type daftarRegisterKbli = Partial<IRegisterKbli>[];

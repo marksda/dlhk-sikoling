@@ -105,10 +105,8 @@ export const FileUpload: FC<IFileUploadProps> = ({ limit, multiple, name, mime, 
         [multiple, fileList, field]
     );
 
-
     return(
-        <>
-            
+        <>           
             {fileList.length > 0 || singleFile.length > 0 ? (
                 <Stack styles={stackItemStyles}>
                     <Stack>

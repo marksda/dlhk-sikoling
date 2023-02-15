@@ -25,8 +25,6 @@ export const TemplateDokumenSyaratArahan = () => {
         ]
     });
 
-    console.log(daftarDokumenSyarat);
-
     const [isModalAddDokumenNibOpen, { setTrue: showModalAddDokumenNib, setFalse: hideModalAddDokumenNib }] = useBoolean(false);
 
     const { data: daftarDok, error: errorFetchDataDok,  isFetching: isFetchingDaftarDok, isError } = useGetRegisterDokumenByIdPerusahaanQuery(registerPerusahaan != undefined ? registerPerusahaan.id:null, {skip: registerPerusahaan == undefined ? true: false});
@@ -81,15 +79,11 @@ export const TemplateDokumenSyaratArahan = () => {
 
     const handleSetRegisterDokNib = useCallback(
         (_e, item) => {
-            var itemSelected = find(daftarDok!, (i) => i.id == item.key) as IRegisterDokumen;
-            
+            var itemSelected = find(daftarDok!, (i) => i.id == item.key) as IRegisterDokumen;            
             var tmpData = daftarDokumenSyarat == undefined ? []:cloneDeep(daftarDokumenSyarat);
-
-            // let findObj = find(tmpData, (i) => i.id == item.key) as IRegisterDokumen;
-
             if(find(tmpData, (i) => i.id == item.key) as IRegisterDokumen == undefined) {
                 tmpData.push(itemSelected);
-                setValue('daftarDokumenSyarat', tmpData);
+                setValue('daftarDokumenSyarat', cloneDeep(tmpData));
             }            
             
         },

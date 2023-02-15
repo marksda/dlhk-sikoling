@@ -136,3 +136,29 @@ export const RegisterDokumenSchema = object({
 });
 
 export const DaftarDokumenSyarat = z.array(RegisterDokumenSchema);
+
+export const KategoriDokumenSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    parent: z.string().optional()
+});
+
+export const DokumenSchema = object({
+    id: z.string().optional(),
+    nama: z.string().optional(),
+    kategoriDokumen: KategoriDokumenSchema.optional(),
+});
+
+export const RegisterKbliSchema = object({
+    idNib: z.string().optional(),
+    idKbli: z.string().optional(),
+    nama: z.string().optional()
+});
+
+export const DaftarKbliSchema = z.array(RegisterKbliSchema);
+
+export const DokumenNibSchema = DokumenSchema.extend({
+    nomor: z.string().length(13, {message: 'harus 13 digit'}).optional(),
+    tanggal:z.string().optional(),
+    daftarKbli: DaftarKbliSchema.optional()
+});
