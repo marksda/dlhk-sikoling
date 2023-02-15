@@ -137,6 +137,11 @@ export const RegisterDokumenSchema = object({
 
 export const DaftarDokumenSyarat = z.array(RegisterDokumenSchema);
 
+export const FileDokumenUploadSchema = object({
+    dokumenFile: z.instanceof(File),
+    dokumenFiless: z.array(z.instanceof(File))
+});
+
 export const KategoriDokumenSchema = object({
     id: z.string().optional(),
     nama: z.string().optional(),

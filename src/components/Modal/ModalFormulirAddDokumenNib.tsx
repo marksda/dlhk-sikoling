@@ -1,29 +1,17 @@
 import { 
-    ComboBox, ContextualMenu, DatePicker, DayOfWeek, DefaultPalette, FontSizes, FontWeights, 
-    getTheme, IComboBox, IComboBoxOption, IconButton, IDragOptions, IDropdownOption, IIconProps, 
-    IProgressIndicatorStyles, IStackItemStyles, MaskedTextField, mergeStyleSets, Modal, PrimaryButton, 
+    ContextualMenu, DefaultPalette, FontSizes, FontWeights, getTheme, IconButton, IDragOptions, IIconProps, IProgressIndicatorStyles, IStackItemStyles, mergeStyleSets, Modal, PrimaryButton, 
     ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
-import cloneDeep from "lodash.clonedeep";
-import find from "lodash.find";
-import omit from "lodash.omit";
-import remove from "lodash.remove";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { FormProvider, useForm, useWatch } from "react-hook-form";
-import { object, z, array, TypeOf } from "zod";
+import { FC, useCallback, useState } from "react";
+import { FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
+import { object, z, array } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAppSelector } from "../../app/hooks";
-import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
-import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
-import { IKbli } from "../../features/dokumen/kbli-slice";
 import { useAddRegisterDokumenMutation, useUploadFileDokumenWithSecurityMutation } from "../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
-import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
-import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
-import { DokumenNibSchema } from "../../features/schema-resolver/zod-schema";
+import { DokumenNibSchema, FileDokumenUploadSchema } from "../../features/schema-resolver/zod-schema";
 import { TemplateDokumenNib } from "../FormTemplate/template-dok-nib";
 
 interface IModalFormulirPegawaiProps {
@@ -31,14 +19,8 @@ interface IModalFormulirPegawaiProps {
     hideModal: () => void;
     isDraggable: boolean;
 };
-
 type FormData = z.infer<typeof DokumenNibSchema>;
-
-const dokumenUploadSchema = object({
-    dokumen: z.instanceof(File),
-    dokumens: array(z.instanceof(File))
-});
-type IDokumenUpload = TypeOf<typeof dokumenUploadSchema>;
+type FormFileDokumenUpload = z.infer<typeof FileDokumenUploadSchema>;
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -74,12 +56,6 @@ const contentStyles = mergeStyleSets({
     },
     
 });
-const stackItemStyles: IStackItemStyles = {
-    root: {
-        border: `1px solid ${DefaultPalette.orangeLighter}`,
-        padding: 4,
-    },
-};
 const iconButtonStyles = {
     root: {
       color: theme.palette.neutralPrimary,
@@ -114,53 +90,45 @@ const dragOptions: IDragOptions = {
 };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const stackTokens = { childrenGap: 4 };
-const stackHorTokens = { childrenGap: 8 };
-const containerStyle: IContainerUploadStyle = {
-    width: 300, 
-    height: 100, 
-    backgroundColor: '#ECECEC',
-};
+
 
 export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isModalOpen, hideModal, isDraggable}) => {
-    const registerPerusahaan = useAppSelector((state) => state.registerPerusahaan);
+    //local state
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [kodeKbli, setKodeKbli] = useState<string>('01');
-    const titleId = useId('Formulir Dokumen nib');
-    const comboBoxKbliRef = useRef<IComboBox>(null);
-    const [daftarKbliSelected, setDaftarKbliSelected] = useState<({key: string} & Partial<IKbli>)[]>([]);
-    
+    const titleId = useId('Formulir Dokumen nib');    
     //react hook form variable
-    const methodNib = useForm<FormData>({
-        resolver: zodResolver(DokumenNibSchema),
-        // defaultValues: DokumenNibSchema.parse({
-        //     id: '010301',
-        //     nama: 'NIB - OSS',
-        //     // kategoriDokumen: null,
-        //     nomor: '',
-        //     // tanggal: null,
-        //     // daftarKbli: []
-        // })
+    const {control} = useFormContext();
+    const [
+        registerPerusahaan,
+    ] = useWatch({
+        control: control, 
+        name: [
+            'registerPerusahaan'
+        ]
     });
-    const {handleSubmit, control} = methodNib;
-    
+
+    const methodNib = useForm<FormData>({
+        resolver: zodResolver(DokumenNibSchema)
+    });
+    const {handleSubmit} = methodNib;    
 
     const [daftarKbli] = useWatch({
-        control,
+        control: methodNib.control,
         name: ['daftarKbli']
     });
 
-    const methods = useForm<IDokumenUpload>({
-        resolver: zodResolver(dokumenUploadSchema),
+    const methods = useForm<FormFileDokumenUpload>({
+        resolver: zodResolver(FileDokumenUploadSchema),
     });
 
-    const [dokumen, dokumens] = useWatch({
+    const [dokumenFile] = useWatch({
         control: methods.control, 
-        name: ['dokumen', 'dokumens']
+        name: ['dokumenFile']
     });
 
     //rtk query perusahaan variable hook
-    const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
+    // const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
     //rtk query mutation addPerusahaan variable
     const [addRegisterDokumen, ] = useAddRegisterDokumenMutation();
     const [uploadFileDokumen] = useUploadFileDokumenWithSecurityMutation();
@@ -178,13 +146,18 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
     const simpanDokumen = useCallback(
         handleSubmit(
             async (data) => {                
-                console.log(data);
-                // try {
-                //     let regDok: Partial<IRegisterDokumen> = {
-                //         dokumen: data,
-                //         registerPerusahaan: registerPerusahaan,
-                //     };
+                // console.log(data);
+                try {
 
+                    let regDok: Partial<IRegisterDokumen> = {
+                        id: null,
+                        dokumen: {
+                            ...data, id: '010301',  nama: 'NIB - OSS'
+                        },
+                        registerPerusahaan: registerPerusahaan,
+                    };
+
+                    console.log(regDok, dokumenFile);
                 //     await addRegisterDokumen(regDok).unwrap().then(
                 //         async (payload) => {
                 //             var formData = new FormData();
@@ -197,14 +170,14 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                 //             hideModal();
                 //         }
                 //     );
-                // } catch (error) {
-                //     //terjadi kegagalan
-                // } finally {
-                //     setDaftarKbliSelected([]);
-                // }
+                } catch (error) {
+                    //terjadi kegagalan
+                } finally {
+                    // setDaftarKbliSelected([]);
+                }
             }
         ),
-        [registerPerusahaan, dokumen]
+        [registerPerusahaan, dokumenFile]
     );
 
     return (
@@ -257,7 +230,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             style={{marginTop: 16, width: 100}}
                             text="Simpan" 
                             onClick={simpanDokumen}
-                            disabled={dokumen?false:true}
+                            disabled={dokumenFile?false:true}
                         />
                     </Stack.Item>  
                 </Stack> 
