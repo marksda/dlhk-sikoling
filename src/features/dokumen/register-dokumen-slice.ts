@@ -8,7 +8,7 @@ import { IDokumen } from "./dokumen-slice";
 
 export interface IRegisterDokumen {
     id: string|null;
-    dokumen: (Pick<IDokumenNibOss, 'id'> & Partial<IDokumenNibOss>)|null;
+    dokumen: any|null;
     registerPerusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
     lokasiFile: string|null;
     tanggalRegistrasi: string|null;

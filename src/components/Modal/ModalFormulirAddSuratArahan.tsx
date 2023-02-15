@@ -7,7 +7,7 @@ import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohona
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { JenisPermohonanArahanSchema, PenanggungJawabPermohonanSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
+import { DaftarDokumenSyarat, JenisPermohonanArahanSchema, PenanggungJawabPermohonanSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -15,7 +15,7 @@ const contentStyles = mergeStyleSets({
         display: 'flex',
         flexFlow: 'column nowrap',
         alignItems: 'stretch',
-        minWidth: 650
+        minWidth: 670
     },
     header: [
         // eslint-disable-next-line deprecation/deprecation
@@ -75,10 +75,8 @@ const permohonanArahanSchema = object({
     registerPerusahaan: RegisterPerusahaanSchema,  
     jenisPermohonanSuratArahan: JenisPermohonanArahanSchema,
     statusWali: StatusWaliSchema,
-    penanggungJawabPermohonan: PenanggungJawabPermohonanSchema
-    // regDokSuratKuasa: object({
-    //     id: z.string(),
-    // }),
+    penanggungJawabPermohonan: PenanggungJawabPermohonanSchema,
+    daftarDokumenSyarat: DaftarDokumenSyarat
 });
 
 type FormData = z.infer<typeof permohonanArahanSchema>;

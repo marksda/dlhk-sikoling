@@ -125,3 +125,14 @@ export const PenanggungJawabPermohonanSchema =  object({
     jabatan: JabatanSchema,
     person: PersonSchema
 });
+
+export const RegisterDokumenSchema = object({
+    id: z.string().optional(),
+    dokumen: z.any().optional(),
+    registerPerusahaan: RegisterPerusahaanSchema.optional(),
+    lokasiFile: z.string().optional(),
+    tanggalRegistrasi: z.string().optional(),
+    uploader: PersonSchema.optional()
+});
+
+export const DaftarDokumenSyarat = z.array(RegisterDokumenSchema);
