@@ -148,7 +148,6 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                 try {
 
                     let regDok: Partial<IRegisterDokumen> = {
-                        id: null,
                         dokumen: {
                             ...data, id: '010301',  nama: 'NIB - OSS'
                         },
@@ -218,7 +217,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             <FileUpload 
                                 limit={1} 
                                 multiple={false} 
-                                name='dokumen' 
+                                name='dokumenFile' 
                                 mime='application/pdf' 
                                 disabled={daftarKbli?.length > 0 ? false:true}/>
                         </FormProvider>  
@@ -228,7 +227,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             style={{marginTop: 16, width: 100}}
                             text="Simpan" 
                             onClick={simpanDokumen}
-                            disabled={dokumenFile?false:true}
+                            disabled={dokumenFile == undefined ? true:false}
                         />
                     </Stack.Item>  
                 </Stack> 

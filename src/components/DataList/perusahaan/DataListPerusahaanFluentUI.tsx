@@ -32,6 +32,10 @@ const contentStyles = mergeStyleSets({
     }
 });
 
+const _getKey = (item: any, index?: number): string => {
+    return item.key;
+};
+
 export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({showModalAddPerusahaan, isDataLoading, dataPerusahaan, deletePerusahaan}) => {
     // local state
     const [selectedItems, setSelectedItems] = useState<IObjectWithKey[]>([]);
@@ -295,7 +299,8 @@ export const DataListPerusahaanFluentUI: FC<ISubFormDetailPerusahaanProps> = ({s
             <DetailsList
                 items={dataPerusahaan}
                 columns={_columns}
-                setKey="set"
+                setKey="none"
+                getKey={_getKey}
                 layoutMode={DetailsListLayoutMode.justified}
                 selection={_selection}
                 selectionPreservedOnEmptyClick={true}

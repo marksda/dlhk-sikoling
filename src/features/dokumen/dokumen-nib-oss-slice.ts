@@ -43,7 +43,7 @@ export const IDokumenNibOss = createSlice({
         setTanggalDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.tanggal = action.payload;
         },        
-        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarKbli>) => {
+        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
             state.daftarKbli = cloneDeep(action.payload);
         },
     }

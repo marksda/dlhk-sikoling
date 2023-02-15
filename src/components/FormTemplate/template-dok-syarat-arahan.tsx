@@ -137,7 +137,7 @@ export const TemplateDokumenSyaratArahan = () => {
                             iconProps={plusIcon} 
                             aria-label="Plus" 
                             onClick={showModalAddDokumenNib}
-                            disabled={registerPerusahaan == undefined?false:true}
+                            disabled={registerPerusahaan?false:true}
                         />
                     </TooltipHost>
                 </Stack.Item>            

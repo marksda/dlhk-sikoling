@@ -327,6 +327,42 @@ export const TemplatePermohonanArahan = () => {
                         </Stack>
                     </Stack.Item>
                 </Stack.Item>
+                {
+                    statusWali == null ?
+                    null:(
+                    statusWali.id == '01' ? null :
+                    <Stack.Item>
+                        <Stack horizontal tokens={sectionStackTokens}>
+                            <Stack.Item>
+                                <Controller 
+                                    name="dokSuratKuasa"
+                                    control={control}
+                                    render={
+                                        ({
+                                            field: {onChange},
+                                            fieldState: {error}
+                                        }) => 
+                                        <Dropdown 
+                                            label="Dokumen surat kuasa"
+                                            placeholder="Pilih dokumen surat kuasa"
+                                            options={statusWaliOptions}
+                                            errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                            onChange={(e, selectedItem) => {
+                                                onChange(handleChangeStatusWali(selectedItem));
+                                            }}
+                                            styles={{root:{width: 250}}}
+                                            required
+                                        />
+                                    }
+                                />
+                            </Stack.Item>
+                            <Stack.Item align="end">                            
+                                <DefaultButton text="File"/>
+                            </Stack.Item>
+                        </Stack>
+                    </Stack.Item>
+                    )
+                }
             </Stack>  
             <Stack grow style={containerRedStyles}>
                 <Stack.Item>
@@ -337,43 +373,6 @@ export const TemplatePermohonanArahan = () => {
                 </Stack.Item>
             </Stack>
         </Stack>
-        {
-            statusWali == null ?
-            null:(
-            statusWali.id == '01' ? null :
-            <Stack.Item>
-                <Stack horizontal tokens={sectionStackTokens}>
-                    <Stack.Item>
-                        <Controller 
-                            name="dokSuratKuasa"
-                            control={control}
-                            render={
-                                ({
-                                    field: {onChange},
-                                    fieldState: {error}
-                                }) => 
-                                <Dropdown 
-                                    label="Dokumen surat kuasa"
-                                    placeholder="Pilih dokumen surat kuasa"
-                                    options={statusWaliOptions}
-                                    errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
-                                    onChange={(e, selectedItem) => {
-                                        onChange(handleChangeStatusWali(selectedItem));
-                                    }}
-                                    styles={{root:{width: 250}}}
-                                    required
-                                />
-                            }
-                        />
-                    </Stack.Item>
-                    <Stack.Item align="end">                            
-                        <DefaultButton text="File"/>
-                    </Stack.Item>
-                </Stack>
-            </Stack.Item>
-            )
-        }
-        
         {
             isModalAddPegawaiOpen == true ? 
             <ModalFormulirAddPegawai
