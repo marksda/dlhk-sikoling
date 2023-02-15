@@ -24,7 +24,6 @@ import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { IContainerUploadStyle } from "../UploadFiles/UploadFilesFluentUI";
 import { DokumenNibSchema } from "../../features/schema-resolver/zod-schema";
-import { TemplateDokumenNib } from "../FormTemplate/template-dok-nib";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;
@@ -131,18 +130,22 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
     const [daftarKbliSelected, setDaftarKbliSelected] = useState<({key: string} & Partial<IKbli>)[]>([]);
     
     //react hook form variable
-    const methodNib = useForm<FormData>({
-        resolver: zodResolver(DokumenNibSchema),
-        defaultValues: DokumenNibSchema.parse({
+    const { control, handleSubmit, setValue, reset, setError } = useForm<IDokumenNibOss>({
+        mode: 'onSubmit',
+        defaultValues: {
             id: '010301',
             nama: 'NIB - OSS',
-            // kategoriDokumen: null,
-            // nomor: null,
-            // tanggal: null,
-            // daftarKbli: []
-        })
+            kategoriDokumen: null,
+            nomor: null,
+            tanggal: null,
+            daftarKbli: []
+        }
     });
-    const {handleSubmit} = methodNib;
+
+    const [nomor, tanggal, daftarKbli] = useWatch({
+        control: control, 
+        name: ['nomor', 'tanggal', 'daftarKbli']
+    });
 
     const methods = useForm<IDokumenUpload>({
         resolver: zodResolver(dokumenUploadSchema),
@@ -160,7 +163,82 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
     //rtk query mutation addPerusahaan variable
     const [addRegisterDokumen, ] = useAddRegisterDokumenMutation();
     const [uploadFileDokumen] = useUploadFileDokumenWithSecurityMutation();
-    
+
+    const kbliOptions: IDropdownOption<any>[] = useMemo(
+        () => {
+            if(listKbli != undefined) {
+                return [
+                    ...listKbli.map(
+                        (t) => ({
+                            key: t.kode!,
+                            text: `${t.kode} - ${t.nama}`
+                        })
+                    )
+                ];
+            }
+            else {
+                return [];
+            }
+        },
+        [listKbli]
+    );
+
+    const onChangeNib = useCallback(
+        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+          if (!newValue || newValue.length == 13) {
+            setValue('nomor', newValue || '');
+          }
+        },
+        [],
+    );
+
+    const inputKbliChange = useCallback(
+        (newValue: string) => {
+            setKodeKbli(newValue||'');
+            if(newValue.length > 1) {
+                comboBoxKbliRef.current?.focus(true);
+            }
+        },
+        [comboBoxKbliRef],
+    );
+
+    const kbliItemClick = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {
+            let hasilSplit = option?.text.split(' - ');
+            let kbli: {key: string} & Partial<IKbli> = {
+                key: hasilSplit![0],
+                kode: hasilSplit![0],
+                nama: hasilSplit![1],                
+            };
+            
+            let registerKbli: IRegisterKbli = {
+                idNib: nomor,
+                idKbli: hasilSplit![0],
+                nama: hasilSplit![1]
+            };
+
+            let tmpDaftarRegisterKbli = cloneDeep(daftarKbli);
+            
+
+            // setValue("daftarKbli", tmp.map(
+            //     (item) => {
+            //         return omit(item, ['key']);
+            //     }) 
+            // );
+
+            setDaftarKbliSelected((prev) => {
+                let tmp = cloneDeep(prev);
+                let findObj = find(tmp, (i) => { return i.kode === kbli.kode});
+                tmpDaftarRegisterKbli?.push(registerKbli);
+                if(findObj == undefined) {
+                    tmp.push(kbli);
+                    setValue("daftarKbli", tmpDaftarRegisterKbli);                    
+                }
+                return tmp;                
+            });
+        },
+        [nomor, daftarKbli],
+    );    
 
     const handleCloseModal = useCallback(
         () => {
@@ -169,35 +247,60 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
             hideModal();
         },
         []
+    );    
+
+    const handleHapusKbli = useCallback(
+        (kode) => {
+            setDaftarKbliSelected(
+                (prev) => {
+                    let tmp = cloneDeep(prev);
+                    remove(tmp, (i) => { return i.kode === kode});
+                    setValue("daftarKbli", tmp.map(
+                        (item) => {
+                            return omit(item, ['key']);
+                        }) 
+                    );
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
+    const handleSelectedDate = useCallback(
+        (date) => {
+            setValue('tanggal', onFormatDateUtc(date));
+        },
+        []
     );
 
     const simpanDokumen = useCallback(
         handleSubmit(
             async (data) => {                
-                console.log(data);
-                // try {
-                //     let regDok: Partial<IRegisterDokumen> = {
-                //         dokumen: data,
-                //         registerPerusahaan: registerPerusahaan,
-                //     };
+                // console.log(data);
+                try {
+                    let regDok: Partial<IRegisterDokumen> = {
+                        dokumen: data,
+                        registerPerusahaan: registerPerusahaan,
+                    };
 
-                //     await addRegisterDokumen(regDok).unwrap().then(
-                //         async (payload) => {
-                //             var formData = new FormData();
-                //             formData.append('file', dokumen);
-                //             await uploadFileDokumen({
-                //                 idRegisterDokumen: payload.id as string,
-                //                 npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
-                //                 formData: formData
-                //             });
-                //             hideModal();
-                //         }
-                //     );
-                // } catch (error) {
-                //     //terjadi kegagalan
-                // } finally {
-                //     setDaftarKbliSelected([]);
-                // }
+                    await addRegisterDokumen(regDok).unwrap().then(
+                        async (payload) => {
+                            var formData = new FormData();
+                            formData.append('file', dokumen);
+                            await uploadFileDokumen({
+                                idRegisterDokumen: payload.id as string,
+                                npwpPerusahaan: payload.registerPerusahaan?.perusahaan!.id as string,
+                                formData: formData
+                            });
+                            hideModal();
+                        }
+                    );
+                } catch (error) {
+                    //terjadi kegagalan
+                } finally {
+                    setDaftarKbliSelected([]);
+                }
             }
         ),
         [registerPerusahaan, dokumen]
@@ -235,9 +338,47 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
             </div>     
             <div className={contentStyles.body}>
                 <Stack tokens={stackTokens} >
-                    <FormProvider {...methodNib}>
-                        <TemplateDokumenNib />
-                    </FormProvider>    
+                    <Stack horizontal tokens={stackHorTokens}>
+                        <Stack.Item>
+                            <MaskedTextField 
+                                label="Nib"
+                                required
+                                mask="9999999999999"
+                                onChange={onChangeNib}
+                            />
+                        </Stack.Item>
+                        <Stack.Item grow>
+                            <DatePicker
+                                label="Tanggal pengesahan"
+                                firstDayOfWeek={firstDayOfWeek}
+                                placeholder="Select a date..."
+                                ariaLabel="Select a date"
+                                strings={DayPickerIndonesiaStrings}
+                                formatDate={onFormatDate}
+                                onSelectDate={handleSelectedDate}
+                                disabled={nomor?.length != null ? false : true}
+                            />
+                        </Stack.Item>
+                    </Stack>                    
+                    <Stack.Item styles={stackItemStyles}>
+                        <ComboBox 
+                            componentRef={comboBoxKbliRef}
+                            label="KBLI 2020"
+                            placeholder="Ketik kode kbli untuk pencarian"
+                            selectedKey={null}
+                            dropdownMaxWidth={450}
+                            allowFreeform={true}
+                            autoComplete="on"
+                            options={kbliOptions}
+                            onInputValueChange={inputKbliChange}
+                            onItemClick={kbliItemClick}
+                            disabled={tanggal == null ? true:false}
+                        />
+                        <DataListKbliFluentUI 
+                            daftarKbli={daftarKbliSelected}
+                            handleHapus={handleHapusKbli}
+                        />
+                    </Stack.Item>
                     <Stack.Item>
                         <FormProvider {...methods}>
                             <FileUpload 

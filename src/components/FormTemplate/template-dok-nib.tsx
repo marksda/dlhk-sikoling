@@ -152,7 +152,7 @@ export const TemplateDokumenNib = () => {
     // );
     
     return(
-        <Stack tokens={stackTokens} >
+        <>
             <Stack horizontal tokens={stackHorTokens}>
                 <Stack.Item>
                     <Controller
@@ -221,16 +221,6 @@ export const TemplateDokumenNib = () => {
                     handleHapus={handleHapusKbli}
                 />
             </Stack.Item>
-            <Stack.Item>
-                <FormProvider {...methods}>
-                    <FileUpload 
-                        limit={1} 
-                        multiple={false} 
-                        name='dokumen' 
-                        mime='application/pdf' 
-                        disabled={daftarKbliSelected.length > 0 ? false:true}/>
-                </FormProvider>  
-            </Stack.Item>
-        </Stack> 
+        </> 
     );
 }
