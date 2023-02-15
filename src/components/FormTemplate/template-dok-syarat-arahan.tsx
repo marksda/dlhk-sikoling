@@ -98,6 +98,7 @@ export const TemplateDokumenSyaratArahan = () => {
                         options={dokNibOptions}
                         placeholder="--nib--"
                         onChange={handleSetRegisterDokNib}
+                        disabled={registerPerusahaan?false:true}
                     />
                 </Stack.Item>
                 <Stack.Item>                            
@@ -110,7 +111,9 @@ export const TemplateDokumenSyaratArahan = () => {
                         <IconButton 
                             iconProps={plusIcon} 
                             aria-label="Plus" 
-                            onClick={showModalAddDokumenNib}/>
+                            onClick={showModalAddDokumenNib}
+                            disabled={registerPerusahaan?false:true}
+                        />
                     </TooltipHost>
                 </Stack.Item>            
             </Stack>
@@ -120,6 +123,7 @@ export const TemplateDokumenSyaratArahan = () => {
                         options={dokAktaPendirianOptions}
                         placeholder="--akta pendirian--"
                         onChange={handleSetRegisterDokNib}
+                        disabled={registerPerusahaan?false:true}
                     />
                 </Stack.Item>
                 <Stack.Item>                            
@@ -132,7 +136,9 @@ export const TemplateDokumenSyaratArahan = () => {
                         <IconButton 
                             iconProps={plusIcon} 
                             aria-label="Plus" 
-                            onClick={showModalAddDokumenNib}/>
+                            onClick={showModalAddDokumenNib}
+                            disabled={registerPerusahaan == undefined?false:true}
+                        />
                     </TooltipHost>
                 </Stack.Item>            
             </Stack>

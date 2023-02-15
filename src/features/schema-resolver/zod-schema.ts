@@ -158,7 +158,7 @@ export const RegisterKbliSchema = object({
 export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 
 export const DokumenNibSchema = DokumenSchema.extend({
-    nomor: z.string().length(13, {message: 'harus 13 digit'}).optional(),
-    tanggal:z.string().optional(),
-    daftarKbli: DaftarKbliSchema.optional()
+    nomor: z.string().length(13, {message: 'harus 13 digit'}).nullable(),
+    tanggal:z.string(),
+    daftarKbli: DaftarKbliSchema
 });

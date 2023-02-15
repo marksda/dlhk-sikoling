@@ -1,4 +1,4 @@
-import { ComboBox, DatePicker, DayOfWeek, DefaultPalette, IComboBox, IComboBoxOption, IDropdownOption, IStackItemStyles, MaskedTextField, Stack } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultPalette, IComboBox, IComboBoxOption, IDropdownOption, IStackItemStyles, MaskedTextField, mergeStyleSets, Stack } from "@fluentui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import find from "lodash.find";
@@ -23,11 +23,11 @@ const stackItemStyles: IStackItemStyles = {
     },
 };
 
-const dokumenUploadSchema = object({
-    dokumen: z.instanceof(File),
-    dokumens: array(z.instanceof(File))
-});
-type FormData = z.infer<typeof dokumenUploadSchema>;
+// const dokumenUploadSchema = object({
+//     dokumen: z.instanceof(File),
+//     dokumens: array(z.instanceof(File))
+// });
+// type FormData = z.infer<typeof dokumenUploadSchema>;
 
 
 export const TemplateDokumenNib = () => {
@@ -41,14 +41,15 @@ export const TemplateDokumenNib = () => {
             'nomor', 'tanggal', 'daftarKbli'
         ]
     });
+    
     //react hook form variable
-    const methods = useForm<FormData>({
-        resolver: zodResolver(dokumenUploadSchema),
-    });
-    const [dokumen] = useWatch({
-        control: methods.control, 
-        name: ['dokumen']
-    });
+    // const methods = useForm<FormData>({
+    //     resolver: zodResolver(dokumenUploadSchema),
+    // });
+    // const [dokumen] = useWatch({
+    //     control: methods.control, 
+    //     name: ['dokumen']
+    // });
     // local state
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [kodeKbli, setKodeKbli] = useState<string>('01');
@@ -78,7 +79,9 @@ export const TemplateDokumenNib = () => {
     
     const handleSelectedDate = useCallback(
         (date) => {
-            setValue('tanggal', onFormatDateUtc(date));
+            // console.log(onFormatDateUtc(date));
+            // setValue('tanggal', onFormatDateUtc(date));
+            return onFormatDateUtc(date);
         },
         []
     );
@@ -196,6 +199,7 @@ export const TemplateDokumenNib = () => {
                                     onChange(handleSelectedDate(v));
                                 }}
                                 disabled={nomor ? false : true}
+                                isRequired
                             />
                         }
                     />
@@ -214,7 +218,7 @@ export const TemplateDokumenNib = () => {
                     options={kbliOptions}
                     onInputValueChange={inputKbliChange}
                     onItemClick={kbliItemClick}
-                    disabled={tanggal == null ? true:false}
+                    disabled={tanggal == undefined ? true:false}
                 />
                 <DataListKbliFluentUI 
                     daftarKbli={daftarKbliSelected}

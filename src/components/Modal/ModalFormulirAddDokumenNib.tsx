@@ -133,16 +133,22 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
     //react hook form variable
     const methodNib = useForm<FormData>({
         resolver: zodResolver(DokumenNibSchema),
-        defaultValues: DokumenNibSchema.parse({
-            id: '010301',
-            nama: 'NIB - OSS',
-            // kategoriDokumen: null,
-            // nomor: null,
-            // tanggal: null,
-            // daftarKbli: []
-        })
+        // defaultValues: DokumenNibSchema.parse({
+        //     id: '010301',
+        //     nama: 'NIB - OSS',
+        //     // kategoriDokumen: null,
+        //     nomor: '',
+        //     // tanggal: null,
+        //     // daftarKbli: []
+        // })
     });
-    const {handleSubmit} = methodNib;
+    const {handleSubmit, control} = methodNib;
+    
+
+    const [daftarKbli] = useWatch({
+        control,
+        name: ['daftarKbli']
+    });
 
     const methods = useForm<IDokumenUpload>({
         resolver: zodResolver(dokumenUploadSchema),
@@ -152,8 +158,6 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
         control: methods.control, 
         name: ['dokumen', 'dokumens']
     });
-
-    // console.log(dokumen);
 
     //rtk query perusahaan variable hook
     const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
@@ -245,7 +249,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                                 multiple={false} 
                                 name='dokumen' 
                                 mime='application/pdf' 
-                                disabled={daftarKbliSelected.length > 0 ? false:true}/>
+                                disabled={daftarKbli?.length > 0 ? false:true}/>
                         </FormProvider>  
                     </Stack.Item>
                     <Stack.Item align="end">
@@ -253,7 +257,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             style={{marginTop: 16, width: 100}}
                             text="Simpan" 
                             onClick={simpanDokumen}
-                            disabled={dokumen == undefined ? true:false}
+                            disabled={dokumen?false:true}
                         />
                     </Stack.Item>  
                 </Stack> 
