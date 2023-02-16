@@ -1,7 +1,7 @@
 import { CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, ICommandBarItemProps, IObjectWithKey, IStackTokens, Link, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { baseRestAPIUrl } from "../../../features/config/config";
-import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-api-slice";
+import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-slice";
 import { IDokumenNibOss } from "../../../features/dokumen/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
