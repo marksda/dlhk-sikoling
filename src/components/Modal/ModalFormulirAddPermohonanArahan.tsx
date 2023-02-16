@@ -8,7 +8,7 @@ import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
 import { DaftarDokumen, DokumenNibSchema, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
-import { IRegisterPermohonanArahan } from "../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanArahan, useAddRegisterPermohonanMutation } from "../../features/permohonan/register-permohonan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
@@ -122,6 +122,8 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
         // }
     // });
 
+    const [addRegisterPermohonan, ] = useAddRegisterPermohonanMutation();
+
     const handleCloseModal = useCallback(
         () => {
             reset();
@@ -148,9 +150,10 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     daftarDokumenSyarat: cloneDeep(data.daftarDokumenSyarat) as IRegisterDokumen[],
                     daftarDokumenHasil: null,
                     jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan) as IJenisPermohonanSuratArahan,
-                    uraianKegiatan: null
+                    uraianKegiatan: data.uraianKegiatan
                 };
                 console.log(permohonan);
+                addRegisterPermohonan(permohonan);
             }
         ),
         []
@@ -177,7 +180,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                     alignItems: 'center',
                     padding: '8px 12px 14px 24px'}}
                 >
-                    <span id={titleId}>FORMULIR PERMOHONAN ARAHAN</span>
+                    <span id={titleId}>Formulir Permohonan Arahan</span>
                     <IconButton
                         styles={iconButtonStyles}
                         iconProps={cancelIcon}

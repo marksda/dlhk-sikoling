@@ -15,8 +15,6 @@ const kontenStyles: IStackStyles = {
     },
 };
 
-type daftarItemRegisterPermohonan = IListItemRegisterPermohonan[];
-
 export const KontenPermohonanPemrakarsa: FC = () => {
     //react redux hook variable
     const token = useAppSelector((state) => state.token);
@@ -68,7 +66,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
         []
     );
 
-    const dataRegisterPermohonan: daftarItemRegisterPermohonan = useMemo(
+    const dataRegisterPermohonan: IListItemRegisterPermohonan[] = useMemo(
         () => {
             if(daftarRegisterPermohonan != undefined) {
                 return [
@@ -80,7 +78,7 @@ export const KontenPermohonanPemrakarsa: FC = () => {
                 ];
             }
             else {
-                return null;
+                return [];
             }
         },
         [daftarRegisterPermohonan]
