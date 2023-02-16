@@ -11,10 +11,11 @@ export const RegisterDokumenApiSlice = createApi({
     tagTypes:['RegisterDokumen', 'RegisterDokumenPage', 'RegisterDokumenNama', 'RegisterDokumenNamaPage', 'RegisterDokumenIdDokumen', 'RegisterDokumenIdDokumenPage', 'RegisterDokumenPerusahaan', 'RegisterDokumenPerusahaanPage', 'RegisterDokumenIdPerusahaan', 'RegisterDokumenIdPerusahaanPage'],
     endpoints(builder) {
         return {
-            uploadFileDokumenWithSecurity: builder.mutation<{}, {idRegisterDokumen: string; npwpPerusahaan: string; formData: FormData;}>({
-                query({idRegisterDokumen, npwpPerusahaan, formData}) {
+            uploadFileDokumenWithSecurity: builder.mutation<{}, 
+                {idRegisterDokumen: string; npwpPerusahaan: string; idRegisterPerusahaan: string; formData: FormData;}>({
+                query({idRegisterDokumen, npwpPerusahaan, idRegisterPerusahaan, formData}) {
                   return {
-                    url: `files/sec/dok/${npwpPerusahaan}/${idRegisterDokumen}`,
+                    url: `files/sec/dok/${idRegisterPerusahaan}/${npwpPerusahaan}/${idRegisterDokumen}`,
                     method: 'POST',
                     body: formData,
                   };

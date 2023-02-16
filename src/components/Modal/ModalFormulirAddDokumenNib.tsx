@@ -159,6 +159,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             await uploadFileDokumen({
                                 idRegisterDokumen: payload.id as string,
                                 npwpPerusahaan: payload.perusahaan?.perusahaan!.id as string,
+                                idRegisterPerusahaan: payload.perusahaan?.id as string,
                                 formData: formData
                             });
                             hideModal();

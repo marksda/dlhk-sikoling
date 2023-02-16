@@ -17,11 +17,11 @@ export const TemplateDokumenSyaratArahan = () => {
     //react-form hook
     const {control, setValue} = useFormContext();
     const [
-        registerPerusahaan, daftarDokumenSyarat,
+        registerPerusahaan, daftarDokumenSyarat, penanggungJawabPermohonan
     ] = useWatch({
         control: control, 
         name: [
-            'registerPerusahaan', 'daftarDokumenSyarat'
+            'registerPerusahaan', 'daftarDokumenSyarat', 'penanggungJawabPermohonan'
         ]
     });
 
@@ -98,7 +98,7 @@ export const TemplateDokumenSyaratArahan = () => {
                         options={dokNibOptions}
                         placeholder="--nib--"
                         onChange={handleSetRegisterDokNib}
-                        disabled={registerPerusahaan?false:true}
+                        disabled={penanggungJawabPermohonan?false:true}
                     />
                 </Stack.Item>
                 <Stack.Item>                            
@@ -112,7 +112,7 @@ export const TemplateDokumenSyaratArahan = () => {
                             iconProps={plusIcon} 
                             aria-label="Plus" 
                             onClick={showModalAddDokumenNib}
-                            disabled={registerPerusahaan?false:true}
+                            disabled={penanggungJawabPermohonan?false:true}
                         />
                     </TooltipHost>
                 </Stack.Item>            
@@ -123,7 +123,7 @@ export const TemplateDokumenSyaratArahan = () => {
                         options={dokAktaPendirianOptions}
                         placeholder="--akta pendirian--"
                         onChange={handleSetRegisterDokNib}
-                        disabled={registerPerusahaan?false:true}
+                        disabled={penanggungJawabPermohonan?false:true}
                     />
                 </Stack.Item>
                 <Stack.Item>                            
@@ -137,7 +137,7 @@ export const TemplateDokumenSyaratArahan = () => {
                             iconProps={plusIcon} 
                             aria-label="Plus" 
                             onClick={showModalAddDokumenNib}
-                            disabled={registerPerusahaan?false:true}
+                            disabled={penanggungJawabPermohonan?false:true}
                         />
                     </TooltipHost>
                 </Stack.Item>            

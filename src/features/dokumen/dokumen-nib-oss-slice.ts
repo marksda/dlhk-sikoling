@@ -20,8 +20,8 @@ const initialState: IDokumenNibOss = {
     daftarKbli: null,
 };
 
-export const IDokumenNibOss = createSlice({
-    name: 'dokumenOss',
+export const DokumenNibOss = createSlice({
+    name: 'dokumenNibOss',
     initialState,
     reducers: {
         setDokumenNibOss: (state, action: PayloadAction<IDokumenNibOss>) => {
@@ -53,5 +53,6 @@ export const {
     setDokumenNibOss, setIdDokumenNibOss,
     setNamaDokumeNibOss, setNomorDokumenNibOss,
     setTanggalDokumenNibOss, setDaftarKbliDokumenNibOss
-} = IDokumenNibOss.actions;
-export default IDokumenNibOss.reducer;
+} = DokumenNibOss.actions;
+
+export default DokumenNibOss.reducer;
