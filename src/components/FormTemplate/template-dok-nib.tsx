@@ -4,7 +4,7 @@ import cloneDeep from "lodash.clonedeep";
 import find from "lodash.find";
 import omit from "lodash.omit";
 import remove from "lodash.remove";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
 import { array, object, z } from "zod";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
@@ -22,7 +22,7 @@ const stackItemStyles: IStackItemStyles = {
     },
 };
 
-export const TemplateDokumenNib = () => {
+export const TemplateDokumenNib: FC<{isLoading: boolean;}> = ({isLoading}) => {
     //react hook form contex
     const {control, setValue} = useFormContext();
     const [
@@ -149,6 +149,7 @@ export const TemplateDokumenNib = () => {
                                     onChange(v);
                                 }}
                                 value={value}
+                                disabled={isLoading}
                             />
                         }
                     />                    
@@ -172,12 +173,11 @@ export const TemplateDokumenNib = () => {
                                 onSelectDate={(v) =>{
                                     onChange(handleSelectedDate(v));
                                 }}
-                                disabled={nomor ? false : true}
+                                disabled={ nomor||isLoading ? false : true }
                                 isRequired
                             />
                         }
-                    />
-                    
+                    />                    
                 </Stack.Item>
             </Stack>                    
             <Stack.Item styles={stackItemStyles}>
@@ -192,7 +192,7 @@ export const TemplateDokumenNib = () => {
                     options={kbliOptions}
                     onInputValueChange={inputKbliChange}
                     onItemClick={kbliItemClick}
-                    disabled={tanggal == undefined ? true:false}
+                    disabled={ (tanggal==undefined)||isLoading ? true:false }
                 />
                 <DataListKbliFluentUI 
                     daftarKbli={daftarKbliSelected}

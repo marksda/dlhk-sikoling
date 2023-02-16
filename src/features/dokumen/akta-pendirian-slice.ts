@@ -1,4 +1,4 @@
-import { IPerson } from "../person/person-slice";
+import { IPegawai } from "../pegawai/pegawai-slice";
 
 export interface IAktaPendirian {
     id: string|null;
@@ -6,5 +6,5 @@ export interface IAktaPendirian {
     nomor: string|null;
     tanggal: string|null;
     namaNotaris: string|null;    
-    pegawai: IPerson|null;
+    penanggungJawab: Partial<IPegawai>|null;
 }

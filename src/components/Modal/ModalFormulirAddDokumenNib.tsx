@@ -92,7 +92,6 @@ const stackTokens = { childrenGap: 4 };
 export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isModalOpen, hideModal, isDraggable}) => {
     //local state
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [kodeKbli, setKodeKbli] = useState<string>('01');
     const titleId = useId('Formulir Dokumen nib');    
     //react hook form variable
     const {control} = useFormContext();
@@ -123,7 +122,6 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
         control: methods.control, 
         name: ['dokumenFile']
     });
-    console.log(dokumenFile);
 
     //rtk query perusahaan variable hook
     // const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetKbliByKodeQuery(kodeKbli, {skip: (kodeKbli.length < 2 || kodeKbli.length > 5) ? true : false});
@@ -143,11 +141,9 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
 
     const simpanDokumen = useCallback(
         handleSubmit(
-            async (data) => {                
-                // console.log(data);
+            async (data) => {       
                 try {
-
-                    let regDok: Partial<IRegisterDokumen> = {
+                    var regDok: Partial<IRegisterDokumen> = {
                         dokumen: {
                             ...data, id: '010301',  nama: 'NIB - OSS'
                         },
@@ -155,6 +151,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                     };
 
                     console.log(regDok, dokumenFile);
+                    setIsLoading(true);
                     await addRegisterDokumen(regDok).unwrap().then(
                         async (payload) => {
                             var formData = new FormData();
@@ -167,11 +164,11 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             hideModal();
                         }
                     );
+                    setIsLoading(false);
                 } catch (error) {
                     //terjadi kegagalan
-                } finally {
-                    // setDaftarKbliSelected([]);
-                }
+                    setIsLoading(false);
+                } 
             }
         ),
         [registerPerusahaan, dokumenFile]
@@ -210,7 +207,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
             <div className={contentStyles.body}>
                 <Stack tokens={stackTokens} >
                     <FormProvider {...methodNib}>
-                        <TemplateDokumenNib />
+                        <TemplateDokumenNib isLoading={isLoading}/>
                     </FormProvider>    
                     <Stack.Item>
                         <FormProvider {...methods}>
@@ -227,7 +224,7 @@ export const ModalFormulirAddDokumenNib: FC<IModalFormulirPegawaiProps> = ({isMo
                             style={{marginTop: 16, width: 100}}
                             text="Simpan" 
                             onClick={simpanDokumen}
-                            disabled={dokumenFile == undefined ? true:false}
+                            disabled={(dokumenFile == undefined)||isLoading ? true:false}
                         />
                     </Stack.Item>  
                 </Stack> 

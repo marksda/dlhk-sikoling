@@ -1,7 +1,7 @@
 import { FontSizes, FontWeights, getTheme, IconButton, IProgressIndicatorStyles, mergeStyleSets, Modal, PrimaryButton, ProgressIndicator, Stack } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { dragOptions } from "../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohonan/FormulirSuratArahan/interfacePermohonanSuratArahan";
 import { object, z } from "zod";
@@ -92,7 +92,11 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
     const methods = useForm<FormData>({
         resolver: zodResolver(permohonanArahanSchema)
     });
-    const {handleSubmit, reset} = methods;    
+    const {control, handleSubmit, reset} = methods;    
+    const [daftarDokumenSyarat] = useWatch({
+        control,
+        name: ['daftarDokumenSyarat']
+    });
     // console.log(formState);
     // const { control, handleSubmit, setValue, reset, setError } = useForm<IRegisterPermohonanSuratArahan>({
     //     mode: 'onSubmit',
@@ -189,6 +193,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
                                 style={{marginTop: 16, width: 100}}
                                 text="Simpan" 
                                 onClick={simpanPermohonanArahan}
+                                disabled={ (daftarDokumenSyarat == undefined) || isLoading ? true:false }
                             />
                         </Stack.Item>
                     </FormProvider>
