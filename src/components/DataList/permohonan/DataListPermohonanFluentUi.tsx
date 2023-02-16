@@ -1,7 +1,7 @@
 import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, mergeStyleSets, SelectionMode } from "@fluentui/react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { baseRestAPIUrl } from "../../../features/config/config";
-import { IAktaPendirian } from "../../../features/dokumen/akta-pendirian-slice";
+import { IAktaPendirian } from "../../../features/dokumen/dokumen-akta-pendirian-slice";
 import { IDokumenNibOss } from "../../../features/dokumen/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { useDownloadFileDokumenWithSecurityQuery } from "../../../features/dokumen/register-dokumen-api-slice";
