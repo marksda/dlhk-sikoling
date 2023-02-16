@@ -7,7 +7,7 @@ import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohona
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { DaftarDokumenSyarat, DokumenNibSchema, JenisPermohonanArahanSchema, PenanggungJawabPermohonanSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
+import { DaftarDokumen, DokumenNibSchema, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -75,9 +75,9 @@ const permohonanArahanSchema = object({
     registerPerusahaan: RegisterPerusahaanSchema,  
     jenisPermohonanSuratArahan: JenisPermohonanArahanSchema,
     statusWali: StatusWaliSchema,
-    penanggungJawabPermohonan: PenanggungJawabPermohonanSchema,
+    penanggungJawabPermohonan: PenanggungJawabSchema,
     dokumenNib: DokumenNibSchema,
-    daftarDokumenSyarat: DaftarDokumenSyarat
+    daftarDokumenSyarat: DaftarDokumen
 });
 
 type FormData = z.infer<typeof permohonanArahanSchema>;
@@ -121,7 +121,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
     const handleCloseModal = useCallback(
         () => {
             reset();
-            setMotionKey('tahapPertama');
+            // setMotionKey('tahapPertama');
             hideModal();
         },
         []

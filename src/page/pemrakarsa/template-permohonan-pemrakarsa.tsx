@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import {CommandBar, IStackStyles, Stack } from "@fluentui/react";
 import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUi";
-import { ModalFormulirAddSuratArahan } from "../../components/Modal/ModalFormulirAddSuratArahan";
+import { ModalFormulirAddSuratArahan } from "../../components/Modal/ModalFormulirAddPermohonanArahan";
 import { useBoolean } from "@fluentui/react-hooks";
 import { useGetAllRegisterPermohonanQuery, useGetRegisterPermohonanByUserQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import omit from "lodash.omit";

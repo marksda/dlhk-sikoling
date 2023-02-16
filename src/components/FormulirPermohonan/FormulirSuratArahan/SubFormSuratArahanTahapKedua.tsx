@@ -6,7 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../../features/pegawai/pegawai-api-slice";
 import { IPegawai } from "../../../features/pegawai/pegawai-slice";
-import { IRegisterPermohonanSuratArahan } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanArahan } from "../../../features/permohonan/register-permohonan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../../features/permohonan/status-wali-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
@@ -14,7 +14,7 @@ import { ModalFormulirAddPegawai } from "../../Modal/ModalFormulirAddPegawai";
 import { contentStyles, durationAnimFormSuratArahan, ISlideSubFormPermohomanSuratArahanParam, ISubFormPermohonanSuratArahanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 
 interface ISubFormTahapKeduaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
-    setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
+    setError: UseFormSetError<IRegisterPermohonanArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const stackItemStyles: IStackItemStyles = {

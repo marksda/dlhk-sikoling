@@ -6,7 +6,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
 import { useGetRegisterDokumenByIdPerusahaanQuery } from "../../../features/dokumen/register-dokumen-api-slice";
 import { IRegisterDokumen } from "../../../features/dokumen/register-dokumen-slice";
-import { IRegisterPermohonanSuratArahan, useAddRegisterPermohonanMutation } from "../../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonanArahan, useAddRegisterPermohonanMutation } from "../../../features/permohonan/register-permohonan-api-slice";
 import { ControlledFluentUiDropDown } from "../../ControlledDropDown/ControlledFluentUiDropDown";
 import { backIcon } from "../../FormulirPerusahaanFormHook/InterfacesPerusahaan";
 import { ModalFormulirAddDokumenNib } from "../../Modal/ModalFormulirAddDokumenNib";
@@ -17,9 +17,9 @@ import {
 
 
 interface ISubFormTahapKetigaSuratArahanProps extends ISubFormPermohonanSuratArahanProps {
-    setError: UseFormSetError<IRegisterPermohonanSuratArahan>;
+    setError: UseFormSetError<IRegisterPermohonanArahan>;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    handleSubmit: UseFormHandleSubmit<IRegisterPermohonanSuratArahan>;
+    handleSubmit: UseFormHandleSubmit<IRegisterPermohonanArahan>;
 };
 
 const sectionStackTokens: IStackTokens = { childrenGap: 2 };

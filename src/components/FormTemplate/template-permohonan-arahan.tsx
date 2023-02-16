@@ -1,4 +1,4 @@
-import { DefaultButton, DefaultEffects, DefaultPalette, Dropdown, IconButton, IDropdownOption, IIconProps, IStackItemStyles, IStackTokens, ITooltipHostStyles, Label, Stack, StackItem, TooltipHost } from "@fluentui/react";
+import { DefaultButton, DefaultEffects, DefaultPalette, Dropdown, IconButton, IDropdownOption, IIconProps, IStackItemStyles, IStackTokens, ITooltipHostStyles, Label, Stack, StackItem, TextField, TooltipHost } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import find from "lodash.find";
 import { useCallback, useMemo, useState } from "react";
@@ -53,7 +53,7 @@ export const TemplatePermohonanArahan = () => {
     const {control, resetField} = useFormContext();
     const [
         registerPerusahaan, jenisPermohonanSuratArahan,
-        statusWali, penanggungJawabPermohonan,
+        statusWali, penanggungJawabPermohonan
     ] = useWatch({
         control: control, 
         name: [
@@ -62,6 +62,9 @@ export const TemplatePermohonanArahan = () => {
         ]
     });
     // console.log(penanggungJawabPermohonan);
+
+    //local state 
+    const [isiUraian, setIsiUraian] = useState<string>('');
 
     const [isModalAddPegawaiOpen, { setTrue: showModalAddPegawai, setFalse: hideModalAddPegawai }] = useBoolean(false);
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');
@@ -183,7 +186,7 @@ export const TemplatePermohonanArahan = () => {
         },
         [daftarPegawai]
     );
-
+    
     return (
         <>
         <Stack horizontal tokens={stackHorTokens}>
@@ -264,6 +267,34 @@ export const TemplatePermohonanArahan = () => {
                         </Stack.Item>
                     </Stack>
                 </Stack.Item>
+                <StackItem>
+                    <Controller
+                        name="uraianKegiatan"
+                        control={control}
+                        render={
+                            ({
+                                field: {name: fieldName, onChange, value},
+                                fieldState: {error}
+                            }) => 
+                            <TextField 
+                                name={fieldName}
+                                label={
+                                    jenisPermohonanSuratArahan == undefined ?
+                                    'Deskripsi singkat kegiatan usaha' : jenisPermohonanSuratArahan.id == 1 ?
+                                    'Deskripsi singkat kegiatan usaha' : 'Deskripsi singkat perubahan kegiatan usaha'
+                                }
+                                required multiline autoAdjustHeight
+                                errorMessage={error?.message == 'Required'?'Harus diisi':error?.message}
+                                onChange={(e, v) => {
+                                    setIsiUraian(v||'');
+                                    onChange(v);
+                                }}
+                                value={isiUraian}
+                                disabled={statusWali ? false:true}
+                            />
+                        }
+                    />
+                </StackItem>
                 <Stack.Item>
                     <Label>Penanggung jawab permohonan</Label>
                 </Stack.Item>
@@ -288,7 +319,7 @@ export const TemplatePermohonanArahan = () => {
                                             }
                                         }                                 
                                         selectedKey={penanggungJawabPermohonan?penanggungJawabPermohonan.id:null}
-                                        disabled={statusWali ? false:true}
+                                        disabled={isiUraian ? false:true}
                                     />
                                 }
                             />
@@ -304,7 +335,7 @@ export const TemplatePermohonanArahan = () => {
                                     iconProps={plusIcon} 
                                     aria-label="Plus" 
                                     onClick={showModalAddPegawai}
-                                    disabled={statusWali == undefined ?  true: false}/>
+                                    disabled={isiUraian == undefined ?  true: false}/>
                             </TooltipHost>
                         </Stack.Item>
                     </Stack>

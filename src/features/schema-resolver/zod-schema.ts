@@ -120,7 +120,7 @@ export const JabatanSchema = object({
     nama: z.string().optional(),
 })
 
-export const PenanggungJawabPermohonanSchema =  object({
+export const PenanggungJawabSchema =  object({
     id: z.string().optional(),
     jabatan: JabatanSchema,
     person: PersonSchema
@@ -135,7 +135,7 @@ export const RegisterDokumenSchema = object({
     uploader: PersonSchema.optional()
 });
 
-export const DaftarDokumenSyarat = z.array(RegisterDokumenSchema);
+export const DaftarDokumen = z.array(RegisterDokumenSchema);
 
 export const FileDokumenUploadSchema = object({
     dokumenFile: z.instanceof(File),
