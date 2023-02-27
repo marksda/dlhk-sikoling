@@ -9,6 +9,7 @@ import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
 import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
 import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
+import { PermohonanBackEnd } from "./admin/permohonan-backend";
 import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./pemrakarsa/template-permohonan-pemrakarsa";
@@ -118,7 +119,7 @@ const getContentPage = (idContentPage: string) => {
               <KontenDashboardPemrakarsa />;
             break; 
         case 'pmh':
-            konten = <KontenPermohonanPemrakarsa />;   
+            konten = <PermohonanBackEnd />;   
             break;
         case 'plp':
             konten = <KontenPelaporanPemrakarsa />;   

@@ -134,7 +134,7 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 
     const simpanPermohonanArahan = useCallback(
         handleSubmit(
-            (data) => {             
+            async (data) => {             
                 var permohonan: IRegisterPermohonanArahan = {
                     id: null,
                     kategoriPermohonan: {
