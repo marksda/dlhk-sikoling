@@ -4,12 +4,15 @@ import { IPosisiTahapPemberkasan } from "../permohonan/posisi-tahap-pemberkasan-
 import { IRegisterPermohonan } from "../permohonan/register-permohonan-api-slice";
 import { IAuthorization } from "../security/authorization-slice";
 import { IKategoriFlowLog } from "./kategori-flow-log-api-slice";
+import { IStatusFlowLog } from "./status-flow-log-api-slice";
 
 export interface IFlowLog {
     id: string|null;
     tanggal: string|null;
     kategoriFlowLog: IKategoriFlowLog|null;
-    posisiTahapPemberkasan: IPosisiTahapPemberkasan|null;
+    pengirimBerkas: Partial<IPosisiTahapPemberkasan>|null;
+    penerimaBerkas: Partial<IPosisiTahapPemberkasan>|null;
+    statusFlowLog: Partial<IStatusFlowLog>|null;
     keterangan: string|null;
     pengakses: IAuthorization|null;
 };

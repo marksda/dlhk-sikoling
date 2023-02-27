@@ -134,26 +134,35 @@ export const ModalFormulirAddSuratArahan: FC<IModalFormulirSuratArahanProps> = (
 
     const simpanPermohonanArahan = useCallback(
         handleSubmit(
-            async (data) => {             
-                var permohonan: IRegisterPermohonanArahan = {
-                    id: null,
-                    kategoriPermohonan: {
-                        id: '01',
-                        nama: 'SURAT ARAHAN',
-                    },
-                    tanggalRegistrasi: null,                    
-                    registerPerusahaan: cloneDeep(data.registerPerusahaan) as IRegisterPerusahaan,      
-                    pengurusPermohonan: null,              
-                    statusWali: cloneDeep(data.statusWali),
-                    penanggungJawabPermohonan: cloneDeep(data.penanggungJawabPermohonan) as IPegawai,
-                    statusTahapPemberkasan: null,
-                    daftarDokumenSyarat: cloneDeep(data.daftarDokumenSyarat) as IRegisterDokumen[],
-                    daftarDokumenHasil: null,
-                    jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan) as IJenisPermohonanSuratArahan,
-                    uraianKegiatan: data.uraianKegiatan
-                };
-                console.log(permohonan);
-                addRegisterPermohonan(permohonan);
+            async (data) => {           
+                try {
+                    setIsLoading(true);
+                    var permohonan: IRegisterPermohonanArahan = {
+                        id: null,
+                        kategoriPermohonan: {
+                            id: '01',
+                            nama: 'SURAT ARAHAN',
+                        },
+                        tanggalRegistrasi: null,                    
+                        registerPerusahaan: cloneDeep(data.registerPerusahaan) as IRegisterPerusahaan,      
+                        pengurusPermohonan: null,              
+                        statusWali: cloneDeep(data.statusWali),
+                        penanggungJawabPermohonan: cloneDeep(data.penanggungJawabPermohonan) as IPegawai,
+                        pengirimBerkas: null,
+                        penerimaBerkas: null,
+                        statusFlowLog: null,
+                        daftarDokumenSyarat: cloneDeep(data.daftarDokumenSyarat) as IRegisterDokumen[],
+                        daftarDokumenHasil: null,
+                        jenisPermohonanSuratArahan: cloneDeep(data.jenisPermohonanSuratArahan) as IJenisPermohonanSuratArahan,
+                        uraianKegiatan: data.uraianKegiatan
+                    };
+                    console.log(permohonan);
+                    await addRegisterPermohonan(permohonan);
+                    setIsLoading(false);
+                } catch (error) {
+                    //terjadi kegagalan
+                    setIsLoading(false);
+                }                
             }
         ),
         []
