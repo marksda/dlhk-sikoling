@@ -1,5 +1,5 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, SelectionMode } from "@fluentui/react";
-import { FC, useCallback } from "react";
+import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from "@fluentui/react";
+import { FC } from "react";
 import { IListItemFlowLog, ISubFormDetailFlowLogProps } from "./InterfaceDataListFlowLog";
 // import { IListItemRegisterPermohonan, ISubFormDetailPermohonanProps } from "./InterfaceDataListPermohonan";
 
@@ -17,7 +17,7 @@ const _columns: IColumn[] = [
     },
     { 
         key: 'c2', 
-        name: 'Kategori log', 
+        name: 'Jenis log', 
         minWidth: 100, 
         maxWidth: 200, 
         isResizable: true,
@@ -87,13 +87,20 @@ const _columns: IColumn[] = [
         key: 'c5', 
         name: 'Keterangan', 
         fieldName: 'keterangan', 
+        minWidth: 100,
         isResizable: true,
         data: 'string',
         onRender: (item: IListItemFlowLog) => {
             return (
+                <>
+                <span>
+                    *** {item.penerimaBerkas?.keterangan} ***
+                </span><br />
                 <span>
                     {item.statusFlowLog?.nama}
+                    {item.keterangan != undefined ? ` : ${item.keterangan}` : null}
                 </span>
+                </>
             ); 
         }
     }
