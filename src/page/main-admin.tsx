@@ -9,6 +9,7 @@ import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
 import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
 import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
+import { DashboardBackEnd } from "./admin/dashboard-backend";
 import { PermohonanBackEnd } from "./admin/permohonan-backend";
 import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
@@ -95,6 +96,7 @@ export const AdminPage: FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
+                            style={{margin: 16}}
                         >
                             {
                             getContentPage(idContentPage)
@@ -115,7 +117,7 @@ const getContentPage = (idContentPage: string) => {
     switch (idContentPage) {
         case 'dsb':
             konten =             
-              <KontenDashboardPemrakarsa />;
+              <DashboardBackEnd />;
             break; 
         case 'pmh':
             konten = <PermohonanBackEnd />;   

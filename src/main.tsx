@@ -10,6 +10,7 @@ import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
 import { PemrakarsaPage } from './page/main-pemrakarsa';
 import './index.css';
+import { ChakraProvider } from '@chakra-ui/react';
 
 initializeIcons();
 
@@ -52,7 +53,9 @@ const root = createRoot(container!);
 
 root.render(
   <Provider store={store}>
-    <RouterProvider router={router} />    
+    <ChakraProvider>        
+      <RouterProvider router={router} />  
+    </ChakraProvider>  
   </Provider>
 );
 
