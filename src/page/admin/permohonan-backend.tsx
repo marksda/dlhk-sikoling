@@ -1,4 +1,4 @@
-import { Tab, TabList, Tabs } from "@chakra-ui/react";
+import { Tab, TabList, TabPanels, Tabs } from "@chakra-ui/react";
 import { FC } from "react";
 
 export const PermohonanBackEnd: FC = () => {
@@ -15,6 +15,9 @@ export const PermohonanBackEnd: FC = () => {
                 <Tab>BO-Penomoran (TU)</Tab>
                 <Tab>BO-Penyerahan (TU)</Tab>
             </TabList>
+            <TabPanels>
+                
+            </TabPanels>
         </Tabs>
     )
 }
