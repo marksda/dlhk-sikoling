@@ -33,7 +33,7 @@ const containerStyles: React.CSSProperties = {
     borderTop: '2px solid #0078D7', 
     // borderRadius: 3, 
     padding: 48,
-    width:300,
+    width: 400,
     background: 'white',
 };
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};

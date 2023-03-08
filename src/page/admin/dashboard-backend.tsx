@@ -1,4 +1,4 @@
-import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import { DefaultEffects, Label, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useMemo } from "react";
@@ -26,7 +26,6 @@ const containerDetailBadget: React.CSSProperties = {
 
 
 export const DashboardBackEnd: FC = () => {
-
     //rtk query perusahaan variable hook
     const { data: daftarFlowLog, error: errorFetchDataFlowLog,  isFetching: isFetchingDataFlowLog, isError } = useGetFlowLogByKategoriQuery('1');
     
@@ -49,329 +48,345 @@ export const DashboardBackEnd: FC = () => {
     );
 
     return (
-        <>
-            <Stack style={{margin: 16}}>
-                <Text fontSize='xl' color='Gray.900'>Statistik permohonan, pertek dan pelaporan dokumen lingkungan</Text>
-            </Stack>
-            <Stack horizontal wrap tokens={stackHorTokens}>
-                <div style={containerBlueStyles}>
-                    <Label style={{color: '#009340'}}>Permohonan Arahan</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item style={{cursor: 'pointer'}}>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>  
-                <div style={containerBlueStyles}>
-                    <Label style={{color: '#009340'}}>Permohonan UKL-UPL</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>   
-                <div style={containerBlueStyles}>
-                    <Label style={{color: '#009340'}}>Permohonan SPPL</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div> 
-                <div style={containerBlueStyles}>
-                    <Label style={{color: 'rgb(240, 67, 67)'}}>Pertek Pengolahan Limbah B3</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div> 
-                <div style={containerBlueStyles}>
-                    <Label style={{color: 'rgb(240, 67, 67)'}}>Pertek Pemenuhan BMAL</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>
-                <div style={containerBlueStyles}>
-                    <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Pembuangan Air Limbah</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>
-                <div style={containerBlueStyles}>
-                    <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Penyimpanan Limbah B3</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>
-                <div style={containerBlueStyles}>
-                    <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Kualitas Udara</Label>
-                    <div style={containerDetailBadget}>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Baru
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Dalam proses
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Ditolak
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                        <Stack horizontal horizontalAlign="space-between">
-                            <Stack.Item>
-                                Selesai
-                            </Stack.Item>
-                            <Stack.Item>
-                                8
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                </div>
-            </Stack>       
-            <Stack style={{margin: 16}}>
-                <Text fontSize='xl' color='Gray.900'>Monitoring Permohonan dan Laporan</Text>
-            </Stack>            
-            <Stack>
-                <Tabs variant='enclosed'>
-                    <TabList>
-                        <Tab>Permohonan</Tab>
-                        <Tab>Laporan</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel>
-                            <DataListFlowLogFluentUI
-                                dataFlowLog={dataFlowLog}
-                            />
-                        </TabPanel>
-                        <TabPanel>
-                            <p>two!</p>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
-            </Stack>
-        </>
+        <Accordion>
+            <AccordionItem>
+                <h2>
+                    <AccordionButton>
+                        <Box as="span" flex='1' textAlign='left'>
+                        Statistik permohonan, pertek dan pelaporan dokumen lingkungan
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                    <Stack horizontal wrap tokens={stackHorTokens}>
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: '#009340'}}>Permohonan Arahan</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item style={{cursor: 'pointer'}}>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>  
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: '#009340'}}>Permohonan UKL-UPL</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>   
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: '#009340'}}>Permohonan SPPL</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div> 
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: 'rgb(240, 67, 67)'}}>Pertek Pengolahan Limbah B3</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div> 
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: 'rgb(240, 67, 67)'}}>Pertek Pemenuhan BMAL</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Pembuangan Air Limbah</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Penyimpanan Limbah B3</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>
+                        <div style={containerBlueStyles}>
+                            <Label style={{color: 'rgb(142, 72, 1)'}}>Pelaporan Kualitas Udara</Label>
+                            <div style={containerDetailBadget}>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Baru
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Dalam proses
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Ditolak
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                                <Stack horizontal horizontalAlign="space-between">
+                                    <Stack.Item>
+                                        Selesai
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        8
+                                    </Stack.Item>
+                                </Stack>
+                            </div>
+                        </div>
+                    </Stack>     
+                </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+                <h2>
+                    <AccordionButton>
+                        <Box as="span" flex='1' textAlign='left'>
+                        Monitoring Permohonan dan Laporan
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                    <Tabs variant='enclosed'>
+                        <TabList>
+                            <Tab>Permohonan</Tab>
+                            <Tab>Laporan</Tab>
+                        </TabList>
+                        <TabPanels>
+                            <TabPanel>
+                                <DataListFlowLogFluentUI
+                                    dataFlowLog={dataFlowLog}
+                                />
+                            </TabPanel>
+                            <TabPanel>
+                                <p>two!</p>
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </AccordionPanel>
+            </AccordionItem>
+        </Accordion>
     )
 }

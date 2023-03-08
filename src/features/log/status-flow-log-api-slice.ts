@@ -23,7 +23,7 @@ export const StatusFlowLogApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'StatusFlowLog', id: 'LIST'}],
             }),
-        }
+    
     }        
 });
 
@@ -32,4 +32,3 @@ export const StatusFlowLogApiSlice = createApi({
 export const {
     useAddStatusFlowLogMutation,
 } = StatusFlowLogApiSlice;
-
