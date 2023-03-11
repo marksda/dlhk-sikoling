@@ -117,7 +117,31 @@ export const RegisterPermohonanApiSlice = createApi({
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
             }),
             getRegisterPermohonanByPenerima: builder.query<daftarRegisterPermohonan, string>({
-                query: (idRegister) => `register_permohonan/perusahaan/${idRegister}`,
+                query: (idPenerima) => `register_permohonan/penerima/${idPenerima}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
+                        ),
+                        { type: 'RegisterPermohonan', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterPermohonan', id: 'LIST'}],
+            }),
+            getRegisterPermohonanByPengirim: builder.query<daftarRegisterPermohonan, string>({
+                query: (idPengirim) => `register_permohonan/pengirim/${idPengirim}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
+                        ),
+                        { type: 'RegisterPermohonan', id: 'LIST' },
+                    ]:
+                    [{type: 'RegisterPermohonan', id: 'LIST'}],
+            }),
+            getRegisterPermohonanByPengirimAtauPenerima: builder.query<daftarRegisterPermohonan, {idPengirim: string; idPenerima: string}>({
+                query: ({idPengirim, idPenerima}) => `register_permohonan/pengirim_penerima/${idPengirim}/${idPenerima}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -137,4 +161,5 @@ export const {
     useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery,
     useGetRegisterPermohonanByPageQuery, useGetRegisterPermohonanByUserQuery,
     useGetRegisterPermohonanByRegisterPerusahaanQuery, useGetRegisterPermohonanByPenerimaQuery,
+    useGetRegisterPermohonanByPengirimQuery, useGetRegisterPermohonanByPengirimAtauPenerimaQuery
 } = RegisterPermohonanApiSlice;

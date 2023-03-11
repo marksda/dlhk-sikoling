@@ -4,13 +4,16 @@ import { FC, useMemo } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUi";
 import { IListItemRegisterPermohonan } from "../../components/DataList/permohonan/InterfaceDataListPermohonan";
-import { useGetRegisterPermohonanByPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import { useGetRegisterPermohonanByPengirimAtauPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
 
 export const PermohonanBackEnd: FC = () => {
     const token = useAppSelector((state) => state.token);
     console.log(token);
      //rtk query permohonan variable hook
-     const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetRegisterPermohonanByPenerimaQuery('idPenerima');
+     const {data: daftarRegisterPermohonan, error, isFetching, isError} = useGetRegisterPermohonanByPengirimAtauPenerimaQuery({
+        idPengirim: '1',
+        idPenerima: '1'
+     });
      
      const dataRegisterPermohonan: IListItemRegisterPermohonan[] = useMemo(
         () => {
