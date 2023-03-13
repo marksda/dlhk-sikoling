@@ -74,9 +74,9 @@ export const baseQueryForToken: BaseQueryFn<string|FetchArgs, unknown, FetchBase
 
     let result = await baseQuery(args, api, extraOptions); 
     let hasil = result.data as IResponseStatusToken;
-    if(hasil.status == 'oke') {        
+    if(hasil.status == 'oke') {    
         localStorage.removeItem('token');
-        localStorage.setItem('token', JSON.stringify(hasil.token));
+        localStorage.setItem('token', JSON.stringify(hasil.token));        
         api.dispatch(setToken(hasil.token));
         api.dispatch(resetCredential());
     }

@@ -140,8 +140,8 @@ export const RegisterPermohonanApiSlice = createApi({
                     ]:
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
             }),
-            getRegisterPermohonanByPengirimAtauPenerima: builder.query<daftarRegisterPermohonan, {idPengirim: string; idPenerima: string}>({
-                query: ({idPengirim, idPenerima}) => `register_permohonan/pengirim_penerima/${idPengirim}/${idPenerima}`,
+            getRegisterPermohonanByPengirimAtauPenerimaOnProses: builder.query<daftarRegisterPermohonan, {idPengirim: string; idPenerima: string}>({
+                query: ({idPengirim, idPenerima}) => `register_permohonan/pengirim_penerima_on_proses/${idPengirim}/${idPenerima}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -161,5 +161,5 @@ export const {
     useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery,
     useGetRegisterPermohonanByPageQuery, useGetRegisterPermohonanByUserQuery,
     useGetRegisterPermohonanByRegisterPerusahaanQuery, useGetRegisterPermohonanByPenerimaQuery,
-    useGetRegisterPermohonanByPengirimQuery, useGetRegisterPermohonanByPengirimAtauPenerimaQuery
+    useGetRegisterPermohonanByPengirimQuery, useGetRegisterPermohonanByPengirimAtauPenerimaOnProsesQuery
 } = RegisterPermohonanApiSlice;

@@ -9,12 +9,12 @@ export interface IToken {
     accessToken: string|null;
     refreshToken: string|null;
     expireOn: string|null;
-}
+};
 
 export interface IResponseStatusToken {
     status: string;
     token: IToken;
-}
+};
 
 const initialState: IToken = localStorage.getItem('token') != null ?
 JSON.parse(localStorage.getItem('token') as string) :
@@ -26,7 +26,7 @@ JSON.parse(localStorage.getItem('token') as string) :
     accessToken: null,
     refreshToken: null,
     expireOn: null,
-}
+};
 
 export const tokenSlice = createSlice({
     name: 'token',
