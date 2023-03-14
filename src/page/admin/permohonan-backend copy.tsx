@@ -1,15 +1,10 @@
 import { Card, CardBody, CardHeader, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { ILabelStyles, IStyleSet, Label, Pivot, PivotItem } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useMemo } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUi";
 import { IListItemRegisterPermohonan } from "../../components/DataList/permohonan/InterfaceDataListPermohonan";
 import { useGetRegisterPermohonanByPengirimAtauPenerimaOnProsesQuery } from "../../features/permohonan/register-permohonan-api-slice";
-
-const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
-    root: { marginTop: 10 },
-};
 
 export const PermohonanBackEnd: FC = () => {
     const token = useAppSelector((state) => state.token);
@@ -39,35 +34,32 @@ export const PermohonanBackEnd: FC = () => {
     );
 
     return (
-        <Pivot>
-            <PivotItem
-                headerText="Permohonan Masuk"
-                headerButtonProps={{
-                'data-order': 1,
-                'data-title': 'baru',
-                }}
-                itemIcon="DownloadDocument"
-            >
-                <DataListPermohonanFluentUI dataPermohonan={dataRegisterPermohonan}/>
-            </PivotItem>
-            <PivotItem 
-                headerText="Permohonan Keluar"
-                itemIcon="Generate"
-            >
-                <Label styles={labelStyles}>Pivot #2</Label>
-            </PivotItem>
-            <PivotItem 
-                headerText="Permohonam Selesai"
-                itemIcon="DocumentApproval"    
-            >
-                <Label styles={labelStyles}>Pivot #3</Label>
-            </PivotItem>
-            <PivotItem 
-                headerText="Permohonan Tertolak"
-                itemIcon="PageRemove"
-            >
-                <Label styles={labelStyles}>Pivot #3</Label>
-            </PivotItem>
-        </Pivot>
+        <Tabs isLazy>
+            {
+                token.hakAkses == 'Administrator' ?
+                <TabList>                
+                    <Tab>FO-Helpdesk</Tab>
+                    <Tab>BO-Teknis</Tab>
+                    <Tab>FO-Korektor</Tab>
+                    <Tab>BO-Kasubid</Tab>
+                    <Tab>BO-Kabid</Tab>
+                    <Tab>BO-Ka. DLHK</Tab>
+                    <Tab>BO-Penomoran (TU)</Tab>
+                    <Tab>BO-Penyerahan (TU)</Tab>
+                </TabList> : null
+            }            
+            <TabPanels>
+                <TabPanel pl="0px" pr="0px" pb="0px">
+                    <Card h={'calc(100vh - 140px)'}>
+                        <CardHeader pb="0px">
+                            <Heading size='md'>Data Permohonan</Heading>
+                        </CardHeader>
+                        <CardBody pt="0px">
+                            <DataListPermohonanFluentUI dataPermohonan={dataRegisterPermohonan}/>
+                        </CardBody>
+                    </Card>                    
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
     )
 }
