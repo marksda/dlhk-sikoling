@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
 import { IStatusFlowLog } from "../log/status-flow-log-api-slice";
 import { IPegawai } from "../pegawai/pegawai-slice";
@@ -8,6 +9,7 @@ import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
 import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan-api-slice";
 import { IStatusWali } from "./status-wali-api-slice";
+import qs from "qs";
 
 export interface IRegisterPermohonan {
     id: string|null;
@@ -116,8 +118,11 @@ export const RegisterPermohonanApiSlice = createApi({
                     ]:
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
             }),
-            getRegisterPermohonanByPenerima: builder.query<daftarRegisterPermohonan, string>({
-                query: (idPenerima) => `register_permohonan/penerima/${idPenerima}`,
+            getRegisterPermohonanByPenerima: builder.query<daftarRegisterPermohonan, {idPenerima: string, queryParams: IQueryParams}>({
+                query: ({idPenerima, queryParams}) => ({
+                    url: `register_permohonan/penerima/${idPenerima}?${qs.stringify(queryParams)}`,
+                    method: 'GET',
+                }),
                 providesTags: (result) => 
                     result ?
                     [
