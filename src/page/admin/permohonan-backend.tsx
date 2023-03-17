@@ -1,4 +1,4 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, IconButton, ILabelStyles, IStyleSet, Label, Pivot, PivotItem, SelectionMode } from "@fluentui/react";
+import { ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IconButton, IContextualMenuListProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, SearchBox, SelectionMode } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useCallback, useState } from "react";
 import { IQueryParams } from "../../features/config/query-params-slice";
@@ -7,30 +7,60 @@ import { IRegisterPermohonan, useGetRegisterPermohonanByPenerimaQuery } from "..
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
 };
+const searchBoxStyles: Partial<ISearchBoxStyles> = { root: { width: 300, marginLeft: 24, marginRight: 8, marginBottom: 8 } };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 
-const DataListPermohonanMasuk = () => {
+const DataListPermohonanMasuk = () => {    
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
-            let newColumns: IColumn[] = columns.slice();
-            let currColumn: IColumn = newColumns.filter(currCol => column.key === currCol.key)[0];
-
-            newColumns.forEach((newCol: IColumn) => {
-                if (newCol === currColumn) {
-                  currColumn.isSortedDescending = !currColumn.isSortedDescending;
-                  currColumn.isSorted = true;                  
-                } else {
-                  newCol.isSorted = false;
-                  newCol.isSortedDescending = true;
-                }
+            const items = [
+                {
+                    key: 'aToZ',
+                    name: 'A to Z',
+                    iconProps: { iconName: 'SortUp' },
+                    canCheck: true,
+                    checked: column.isSorted && !column.isSortedDescending,
+                    onClick: () => _onSortColumn(column.key),
+                },
+                {
+                    key: 'zToA',
+                    name: 'Z to A',
+                    iconProps: { iconName: 'SortDown' },
+                    canCheck: true,
+                    checked: column.isSorted && column.isSortedDescending,
+                    onClick: () => _onSortColumn(column.key),
+                },
+            ];
+            setContextualMenuProps({         
+                onRenderMenuList: _renderMenuList,
+                items: items,
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomLeftEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuDismissed,                  
             });
-
-            setColumns(newColumns);
         },
         []
     );
 
-    const _columns_permohonan_masuk: IColumn[] = [    
+    //local state
+    const [queryParams, setQueryParams] = useState<IQueryParams>({
+        pageNumber: 0,
+        pageSize: 10,
+        filter: [
+            {
+                fieldName: '1',
+                value: 'sda'
+            },
+            {
+                fieldName: '2',
+                value: 'oke'
+            }
+        ],
+        sortBy: [],
+    });
+    const [columns, setColumns] = useState<IColumn[]>([    
         { 
             key: 'k1', 
             name: 'Tanggal', 
@@ -39,12 +69,7 @@ const DataListPermohonanMasuk = () => {
             maxWidth: 100, 
             isRowHeader: true,
             isResizable: true,
-            // isSorted: true,
-            // isSortedDescending: false,
-            // sortAscendingAriaLabel: 'Sorted A to Z',
-            // sortDescendingAriaLabel: 'Sorted Z to A',
             onColumnClick: handleOnColumnClick,
-            // data: 'number',
             isPadded: true,
         },
         { 
@@ -145,30 +170,30 @@ const DataListPermohonanMasuk = () => {
             },
             isPadded: true,
         },
-    ];
-
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
-        pageNumber: 0,
-        pageSize: 10,
-        filter: [
-            {
-                fieldName: '1',
-                value: 'sda'
-            },
-            {
-                fieldName: '2',
-                value: 'oke'
-            }
-        ],
-        sortBy: null,
-    });
-
-    const [columns, setColumns] = useState<IColumn[]>([..._columns_permohonan_masuk]);    
-
+    ]);    
+    const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    // rtk hook state
     const { data: posts, isLoading } = useGetRegisterPermohonanByPenerimaQuery({
         idPenerima: '1', 
         queryParams
-    });
+    });   
+
+    const _renderMenuList = useCallback(
+        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
+          return (
+            <div>
+                {defaultRender(menuListProps)}
+                <SearchBox
+                    ariaLabel="Filter actions by text"
+                    placeholder="Pencarian"
+                    styles={searchBoxStyles}
+
+                />
+            </div>
+          );
+        },
+        [],
+    );
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -177,23 +202,53 @@ const DataListPermohonanMasuk = () => {
         []
     );
 
+    const _onContextualMenuDismissed = useCallback(
+        () => {
+            setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onSortColumn = useCallback(
+        (key) => {
+            let newColumns: IColumn[] = columns.slice();
+            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
+
+            newColumns.forEach((newCol: IColumn) => {
+                if (newCol === currColumn) {
+                  currColumn.isSortedDescending = !currColumn.isSortedDescending;
+                  currColumn.isSorted = true;                  
+                } else {
+                  newCol.isSorted = false;
+                  newCol.isSortedDescending = true;
+                }
+            });
+
+            setColumns(newColumns);
+        },
+        [columns]
+    );
+
     return (
-        <DetailsList 
-            items={
-                posts != undefined ? posts?.map(
-                    (t) => (
-                        {key: t.id as string, ...omit(t, ['id'])}
-                    )
-                ) : []
-            }
-            compact={true}
-            columns={columns}
-            setKey="none"
-            getKey={_getKey}
-            layoutMode={DetailsListLayoutMode.justified}
-            selectionMode={SelectionMode.none}
-            isHeaderVisible={true}
-        />
+        <>
+            <DetailsList
+                items={
+                    posts != undefined ? posts?.map(
+                        (t) => (
+                            {key: t.id as string, ...omit(t, ['id'])}
+                        )
+                    ) : []
+                }
+                compact={true}
+                columns={columns}
+                setKey="none"
+                getKey={_getKey}
+                layoutMode={DetailsListLayoutMode.justified}
+                selectionMode={SelectionMode.none}
+                isHeaderVisible={true}
+            />
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+        </>
     );
 };
 
