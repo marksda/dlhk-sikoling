@@ -7,7 +7,7 @@ import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohona
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { DaftarDokumen, DokumenNibSchema, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
+import { DaftarDokumen, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
 import { IRegisterPermohonanArahan, useAddRegisterPermohonanMutation } from "../../features/permohonan/register-permohonan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";

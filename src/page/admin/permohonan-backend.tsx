@@ -1,18 +1,26 @@
-import { ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IconButton, IContextualMenuListProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, SearchBox, SelectionMode } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, PrimaryButton, SearchBox, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useCallback, useState } from "react";
+import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IQueryParams } from "../../features/config/query-params-slice";
+import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { IRegisterPermohonan, useGetRegisterPermohonanByPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
 };
+const stackTokens = { childrenGap: 1 };
 const searchBoxStyles: Partial<ISearchBoxStyles> = { root: { width: 300, marginLeft: 24, marginRight: 8, marginBottom: 8 } };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 
+const filterIcon: IIconProps = { iconName: 'Filter' };
+
+
 const DataListPermohonanMasuk = () => {    
+    
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
+            console.log(column);
             const items = [
                 {
                     key: 'aToZ',
@@ -37,8 +45,23 @@ const DataListPermohonanMasuk = () => {
                 target: ev.currentTarget as HTMLElement,
                 directionalHint: DirectionalHint.bottomLeftEdge,
                 gapSpace: 2,
-                isBeakVisible: true,
+                // isBeakVisible: true,
                 onDismiss: _onContextualMenuDismissed,                  
+            });
+        },
+        []
+    );
+
+    const handleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {       
+            console.log(ev);     
+            setContextualMenuFilterProps({         
+                // onRenderMenuList: _renderMenuList,
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomRightEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuFilterDismissed,                  
             });
         },
         []
@@ -60,6 +83,7 @@ const DataListPermohonanMasuk = () => {
         ],
         sortBy: [],
     });
+    const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
             key: 'k1', 
@@ -172,11 +196,14 @@ const DataListPermohonanMasuk = () => {
         },
     ]);    
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
     const { data: posts, isLoading } = useGetRegisterPermohonanByPenerimaQuery({
         idPenerima: '1', 
         queryParams
     });   
+    const { data: postsJenisPermohonan, isLoading: loadingJenisPermohonan } = useGetAllKategoriPermohonanQuery();  
+
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
@@ -229,25 +256,96 @@ const DataListPermohonanMasuk = () => {
         [columns]
     );
 
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
+        },
+        []
+    );
+
+    const handleSelectedDate = useCallback(
+        (date) => {
+            return onFormatDateUtc(date);
+        },
+        []
+    );
+
     return (
         <>
-            <DetailsList
-                items={
-                    posts != undefined ? posts?.map(
-                        (t) => (
-                            {key: t.id as string, ...omit(t, ['id'])}
-                        )
-                    ) : []
-                }
-                compact={true}
-                columns={columns}
-                setKey="none"
-                getKey={_getKey}
-                layoutMode={DetailsListLayoutMode.justified}
-                selectionMode={SelectionMode.none}
-                isHeaderVisible={true}
-            />
+            <Stack tokens={stackTokens}>
+                <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item>
+                        <SearchBox 
+                            style={{width: 300}} 
+                            placeholder="pencarian pemrakarsa" 
+                            underlined={false} 
+                        />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ActionButton 
+                            iconProps={filterIcon} 
+                            onClick={handleButtonFilterClick}
+                        > 
+                            Filter
+                        </ActionButton>       
+                    </Stack.Item>
+                </Stack>
+                <DetailsList
+                    items={
+                        posts != undefined ? posts?.map(
+                            (t) => (
+                                {key: t.id as string, ...omit(t, ['id'])}
+                            )
+                        ) : []
+                    }
+                    compact={true}
+                    columns={columns}
+                    setKey="none"
+                    getKey={_getKey}
+                    layoutMode={DetailsListLayoutMode.justified}
+                    selectionMode={SelectionMode.none}
+                    isHeaderVisible={true}
+                />
+            </Stack>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 8}}> 
+                    <Stack tokens={stackTokens}>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Jenis permohonan"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsJenisPermohonan != undefined ? postsJenisPermohonan?.map(
+                                        (t) => ({
+                                            id: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <DatePicker
+                                label="Tanggal pengesahan"
+                                firstDayOfWeek={firstDayOfWeek}
+                                placeholder="Select a date..."
+                                ariaLabel="Select a date"
+                                strings={DayPickerIndonesiaStrings}
+                                formatDate={onFormatDate}
+                                onSelectDate={handleSelectedDate}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{width: 200}}
+                                text="Simpan" 
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>
+                
+            }
         </>
     );
 };
@@ -265,6 +363,7 @@ export const PermohonanBackEnd: FC = () => {
                 'data-title': 'baru',
                 }}
                 itemIcon="DownloadDocument"
+                style={{padding: 8}}
             >
                 <DataListPermohonanMasuk />
             </PivotItem>
