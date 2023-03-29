@@ -4,12 +4,13 @@ import { FC, useCallback, useState } from "react";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IQueryParams } from "../../features/config/query-params-slice";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
+import { IPosisiTahapPemberkasan, useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IRegisterPermohonan, useGetRegisterPermohonanByPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
 };
-const stackTokens = { childrenGap: 1 };
+const stackTokens = { childrenGap: 8 };
 const searchBoxStyles: Partial<ISearchBoxStyles> = { root: { width: 300, marginLeft: 24, marginRight: 8, marginBottom: 8 } };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 
@@ -53,10 +54,8 @@ const DataListPermohonanMasuk = () => {
     );
 
     const handleButtonFilterClick = useCallback(
-        (ev: React.MouseEvent<HTMLElement>): void => {       
-            console.log(ev);     
+        (ev: React.MouseEvent<HTMLElement>): void => {  
             setContextualMenuFilterProps({         
-                // onRenderMenuList: _renderMenuList,
                 target: ev.currentTarget as HTMLElement,
                 directionalHint: DirectionalHint.bottomRightEdge,
                 gapSpace: 2,
@@ -202,8 +201,8 @@ const DataListPermohonanMasuk = () => {
         idPenerima: '1', 
         queryParams
     });   
-    const { data: postsJenisPermohonan, isLoading: loadingJenisPermohonan } = useGetAllKategoriPermohonanQuery();  
-
+    const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
+    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
@@ -309,25 +308,11 @@ const DataListPermohonanMasuk = () => {
             </Stack>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
             {contextualMenuFilterProps && 
-                <Callout {...contextualMenuFilterProps} style={{padding: 8}}> 
-                    <Stack tokens={stackTokens}>
-                        <Stack.Item>
-                            <Dropdown 
-                                label="Jenis permohonan"
-                                placeholder="--Pilih--"
-                                options={
-                                    postsJenisPermohonan != undefined ? postsJenisPermohonan?.map(
-                                        (t) => ({
-                                            id: t.id!, 
-                                            text: `${t.nama}`
-                                        })
-                                    ) : []
-                                }
-                            />
-                        </Stack.Item>
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
                         <Stack.Item>
                             <DatePicker
-                                label="Tanggal pengesahan"
+                                label="Tanggal"
                                 firstDayOfWeek={firstDayOfWeek}
                                 placeholder="Select a date..."
                                 ariaLabel="Select a date"
@@ -337,9 +322,37 @@ const DataListPermohonanMasuk = () => {
                             />
                         </Stack.Item>
                         <Stack.Item>
+                            <Dropdown 
+                                label="Jenis permohonan"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsJenisPermohonan != undefined ? postsJenisPermohonan?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Pengirim"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsPosisiTahapPemberkasan != undefined ? postsPosisiTahapPemberkasan?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
                             <PrimaryButton 
-                                style={{width: 200}}
-                                text="Simpan" 
+                                style={{width: 200, marginTop: 16}}
+                                text="Reset" 
                             />
                         </Stack.Item>
                     </Stack>
