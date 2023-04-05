@@ -16,7 +16,6 @@ type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan
 
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-
 const DataListPermohonanMasuk = () => {    
     
     const handleOnColumnClick = useCallback(
