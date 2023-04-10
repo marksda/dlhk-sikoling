@@ -1,11 +1,11 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, PrimaryButton, SearchBox, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, useCallback, useState } from "react";
-import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
+import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IQueryParams } from "../../features/config/query-params-slice";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { IPosisiTahapPemberkasan, useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
-import { IRegisterPermohonan, useGetRegisterPermohonanByPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetRegisterPermohonanByPenerimaQuery } from "../../features/permohonan/register-permohonan-api-slice";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
@@ -20,7 +20,7 @@ const DataListPermohonanMasuk = () => {
     
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
-            console.log(column);
+            // console.log(column);
             const items = [
                 {
                     key: 'aToZ',
@@ -68,18 +68,19 @@ const DataListPermohonanMasuk = () => {
     //local state
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         pageNumber: 0,
-        pageSize: 10,
-        filter: [
+        pageSize: 0,
+        filters: [
             {
-                fieldName: '1',
-                value: 'sda'
-            },
-            {
-                fieldName: '2',
-                value: 'oke'
+                fieldName: 'posisi_tahap_pemberkasan_penerima',
+                value: '1'
             }
         ],
-        sortBy: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
     });
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
@@ -93,6 +94,9 @@ const DataListPermohonanMasuk = () => {
             isResizable: true,
             onColumnClick: handleOnColumnClick,
             isPadded: true,
+            onRender: (item: IItemRegisterPermohonan) => {
+                return flipFormatDate(item.tanggalRegistrasi!);
+            }
         },
         { 
             key: 'k2', 
@@ -187,7 +191,7 @@ const DataListPermohonanMasuk = () => {
             isResizable: true,
             onRender: (item: IItemRegisterPermohonan) => {
                 return (
-                    <IconButton iconProps={{ iconName: 'Edit' }} title="Edit" ariaLabel="Edit" />
+                    <IconButton iconProps={{ iconName: 'Edit' }} title="Edit" ariaLabel="Edit" onClick={() => alert('sss')}/>
                 );
             },
             isPadded: true,
@@ -196,10 +200,11 @@ const DataListPermohonanMasuk = () => {
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading } = useGetRegisterPermohonanByPenerimaQuery({
-        idPenerima: '1', 
-        queryParams
-    });   
+    const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);   
+    // const { data: posts, isLoading } = useGetRegisterPermohonanByPenerimaQuery({
+    //     idPenerima: '1', 
+    //     queryParams
+    // });   
     const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
 

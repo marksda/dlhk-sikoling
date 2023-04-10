@@ -70,8 +70,8 @@ export const RegisterPermohonanApiSlice = createApi({
                     return [{type: 'RegisterPermohonan', id: idRegisterPermohonan}]
                 },
             }),
-            getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, void>({
-                query: () => 'register_permohonan',
+            getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, IQueryParams>({
+                query: (queryParams) => `register_permohonan?${qs.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [

@@ -42,10 +42,14 @@ export const DayPickerIndonesiaStrings: IDatePickerStrings = {
     nextYearAriaLabel: 'Tahun Berikutnya'
 };
 export const onFormatDate = (date?: Date) => {
-    return !date ? '' : addZeroDigitInFront(date.getDate()) + '/' + addZeroDigitInFront(date.getMonth() + 1) + '/' + date.getFullYear();
+    return !date ? '' : addZeroDigitInFront(date.getDate()) + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + date.getFullYear();
 };
 export const onFormatDateUtc = (date?: Date) => {
     return !date ? '' : date.getFullYear() + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + addZeroDigitInFront(date.getDate());
+};
+export const flipFormatDate = (tglStr?: string) => {
+    let tgl = tglStr?.split("-");
+    return `${tgl![2]}-${tgl![1]}-${tgl![0]}`;    
 };
 const addZeroDigitInFront = (bilangan: number) => {
     if(bilangan < 10) {

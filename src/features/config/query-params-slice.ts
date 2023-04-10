@@ -1,11 +1,11 @@
 export interface IQueryParams {
     pageNumber: number|null;
     pageSize: number|null;
-    filter: {
+    filters: {
         fieldName: string;
         value: string;
     }[]|null;
-    sortBy: {
+    sortOrders: {
         fieldName: string;
         value: string;
     }[]|null;
