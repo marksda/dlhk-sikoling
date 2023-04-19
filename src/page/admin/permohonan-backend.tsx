@@ -77,7 +77,7 @@ const DataListPermohonanMasuk = () => {
         ],
         sortOrders: [
             {
-                fieldName: 'nama',
+                fieldName: 'perusahaan',
                 value: 'ASC'
             },
         ],

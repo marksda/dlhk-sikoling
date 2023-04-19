@@ -71,7 +71,8 @@ export const RegisterPermohonanApiSlice = createApi({
                 },
             }),
             getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, IQueryParams>({
-                query: (queryParams) => `register_permohonan?${qs.stringify(queryParams)}`,
+                // query: (queryParams) => `register_permohonan?filters=${JSON.stringifyqs.stringify(queryParams)}`,
+                query: (queryParams) => `register_permohonan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
