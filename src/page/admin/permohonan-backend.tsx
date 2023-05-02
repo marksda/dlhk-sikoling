@@ -6,6 +6,7 @@ import { IQueryParams } from "../../features/config/query-params-slice";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import cloneDeep from "lodash.clonedeep";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
@@ -266,6 +267,44 @@ const DataListPermohonanMasuk = () => {
         []
     );
 
+    const _onSearch = useCallback(
+        (newValue) => {
+            console.log(newValue);
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;
+                    console.log(tmp);                    
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
     const handleSelectedDate = useCallback(
         (date) => {
             return onFormatDateUtc(date);
@@ -282,6 +321,7 @@ const DataListPermohonanMasuk = () => {
                             style={{width: 300}} 
                             placeholder="pencarian pemrakarsa" 
                             underlined={false} 
+                            onSearch={_onSearch}
                         />
                     </Stack.Item>
                     <Stack.Item>
