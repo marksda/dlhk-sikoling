@@ -1,6 +1,6 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, PrimaryButton, SearchBox, SelectionMode, Stack } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IDropdownOption, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, PrimaryButton, SearchBox, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
-import { FC, useCallback, useState } from "react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { IQueryParams } from "../../features/config/query-params-slice";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
@@ -67,6 +67,9 @@ const DataListPermohonanMasuk = () => {
     );
 
     //local state
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
+    const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         pageNumber: 0,
         pageSize: 0,
@@ -269,7 +272,6 @@ const DataListPermohonanMasuk = () => {
 
     const _onSearch = useCallback(
         (newValue) => {
-            console.log(newValue);
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -296,8 +298,7 @@ const DataListPermohonanMasuk = () => {
                         }
                     }
                     
-                    tmp.filters = filters;
-                    console.log(tmp);                    
+                    tmp.filters = filters;             
                     return tmp;
                 }
             );
@@ -307,7 +308,129 @@ const DataListPermohonanMasuk = () => {
 
     const handleSelectedDate = useCallback(
         (date) => {
-            return onFormatDateUtc(date);
+            let tanggalTerpilih = onFormatDateUtc(date);
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal_registrasi'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'tanggal_registrasi',
+                            value: tanggalTerpilih
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'tanggal_registrasi',
+                            value: tanggalTerpilih
+                        });
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedDate(date);
+        },
+        []
+    );
+
+    const onChangeJenisPermohonan = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_permohonan'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kategori_permohonan',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kategori_permohonan',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+            setSelectedJenisPermohonan(item);
+        },
+        []
+    );
+
+    const onChangePengirim = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengiriman'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+            setSelectedPengirim(item);
+        },
+        []
+    );
+
+    const handleResetFilter = useCallback(
+        () => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal_registrasi'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_permohonan'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengiriman'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+
+            setSelectedDate(undefined);
+            setSelectedJenisPermohonan(null);
+            setSelectedPengirim(null);
         },
         []
     );
@@ -358,11 +481,12 @@ const DataListPermohonanMasuk = () => {
                             <DatePicker
                                 label="Tanggal"
                                 firstDayOfWeek={firstDayOfWeek}
-                                placeholder="Select a date..."
-                                ariaLabel="Select a date"
+                                placeholder="Pilih tanggal..."
+                                ariaLabel="Pilih tanggal"
                                 strings={DayPickerIndonesiaStrings}
                                 formatDate={onFormatDate}
                                 onSelectDate={handleSelectedDate}
+                                value={selectedDate}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -377,6 +501,8 @@ const DataListPermohonanMasuk = () => {
                                         })
                                     ) : []
                                 }
+                                selectedKey={selectedJenisPermohonan ? selectedJenisPermohonan.key : null}
+                                onChange={onChangeJenisPermohonan}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -391,12 +517,15 @@ const DataListPermohonanMasuk = () => {
                                         })
                                     ) : []
                                 }
+                                selectedKey={selectedPengirim ? selectedPengirim.key : null}
+                                onChange={onChangePengirim}
                             />
                         </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 
                                 style={{width: 200, marginTop: 16}}
                                 text="Reset" 
+                                onClick={handleResetFilter}
                             />
                         </Stack.Item>
                     </Stack>
