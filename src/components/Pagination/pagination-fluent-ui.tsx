@@ -1,4 +1,5 @@
-import { FC, useMemo, useState } from "react";
+import { DefaultButton, IIconProps, IconButton, PrimaryButton, Stack } from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 
 export interface IUsePaginationProps {
@@ -87,6 +88,9 @@ export interface IPaginationProps {
     pageSize: number;
 };
 
+const previousIcon: IIconProps = { iconName: 'Previous' };
+const nextIcon: IIconProps = { iconName: 'Next' };
+
 export const Pagination: FC<IPaginationProps> = ({
     onPageChange,
     totalCount,
@@ -105,52 +109,67 @@ export const Pagination: FC<IPaginationProps> = ({
         return null;
     }
     
-    const onNext = () => {
-        onPageChange(currentPage + 1);
-    };
+    const onNext = useCallback(
+        () => {
+            onPageChange(currentPage + 1);
+        },
+        [currentPage]
+    );
 
-    const onPrevious = () => {
-        onPageChange(currentPage - 1);
-    };
+    const onPrevious = useCallback(
+        () => {
+            onPageChange(currentPage - 1);
+        },
+        [currentPage]
+    );
 
     let lastPage = paginationRange![paginationRange?.length! - 1] as number;
 
-    return (
-        <ul className={classnames('pagination-container', { [className]: className })}>
-            <li
-                className={classnames('pagination-item', {
-                disabled: currentPage === 1
-                })}
-                onClick={onPrevious}
-            >
-                <div className="arrow left" />
-            </li>
+    return (        
+        <Stack horizontal>
+            <Stack.Item align="center">
+                <IconButton 
+                    iconProps={previousIcon} 
+                    aria-label="previous" 
+                    disabled={currentPage === 1}
+                    onClick={onPrevious}
+                />
+            </Stack.Item>  
             {
-                paginationRange!.map(pageNumber => {
+                paginationRange?.map(pageNumber => {
                     if (pageNumber === DOTS) {
-                        return <li className="pagination-item dots">&#8230;</li>;
+                        return (
+                            <Stack.Item align="center">
+                                <DefaultButton text="..." />
+                            </Stack.Item>
+                        );
                     }
-
-                    return (
-                        <li
-                          className={classnames('pagination-item', {
-                            selected: pageNumber === currentPage
-                          })}
-                          onClick={() => onPageChange(pageNumber)}
-                        >
-                          {pageNumber}
-                        </li>
-                    );
+                    else {
+                        return (
+                            <Stack.Item align="center">
+                                {
+                                    pageNumber === currentPage ?
+                                    <PrimaryButton 
+                                        text={pageNumber.toString()} 
+                                        onClick={() => onPageChange(pageNumber as number)} /> :
+                                    <DefaultButton 
+                                        text={pageNumber.toString()} 
+                                        onClick={() => onPageChange(pageNumber as number)} />
+                                }                                
+                            </Stack.Item>
+                        );
+                    }
                 })
             }
-            <li
-                className={classnames('pagination-item', {
-                disabled: currentPage === lastPage
-                })}
-                onClick={onNext}
-            >
-                <div className="arrow right" />
-            </li>
-        </ul>
+            <Stack.Item align="center">
+                <IconButton 
+                    iconProps={nextIcon} 
+                    aria-label="next" 
+                    disabled={currentPage === lastPage}
+                    onClick={onNext}
+                />
+            </Stack.Item>            
+        </Stack>                        
     );
 }
+
