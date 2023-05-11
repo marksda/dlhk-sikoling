@@ -7,6 +7,7 @@ import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kate
 import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import cloneDeep from "lodash.clonedeep";
+import { Pagination } from "../../components/Pagination/pagination-fluent-ui";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
@@ -67,6 +68,7 @@ const DataListPermohonanMasuk = () => {
     );
 
     //local state
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
@@ -471,6 +473,13 @@ const DataListPermohonanMasuk = () => {
                     layoutMode={DetailsListLayoutMode.justified}
                     selectionMode={SelectionMode.none}
                     isHeaderVisible={true}
+                />
+                <Pagination 
+                    currentPage={1}
+                    siblingCount={1}
+                    totalCount={100}
+                    pageSize={10}
+                    onPageChange={page => setCurrentPage(page)}
                 />
             </Stack>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}

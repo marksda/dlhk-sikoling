@@ -83,7 +83,7 @@ export const usePagination = ({
 export interface IPaginationProps {
     onPageChange: (v:number) => void;
     totalCount: number;
-    siblingCount : number;
+    siblingCount: number;
     currentPage: number;
     pageSize: number;
 };
@@ -97,12 +97,12 @@ export const Pagination: FC<IPaginationProps> = ({
     siblingCount=1,
     currentPage,
     pageSize
-}) => {
+}) => {    
     const paginationRange = usePagination({
+        currentPage,
         totalCount,
-        pageSize,
         siblingCount,
-        currentPage
+        pageSize
     });
 
     if (currentPage === 0 || paginationRange?.length! < 2) {
