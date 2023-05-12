@@ -18,13 +18,6 @@ type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan
 
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-// Styles definition
-// const dataListStyles: IDetailsListStyles  = {
-//     root: {
-//       background: DefaultPalette.themeTertiary,
-//     },
-// };
-
 const classNames = mergeStyleSets({
     container: {
         width: "100%",
@@ -43,7 +36,6 @@ const DataListPermohonanMasuk = () => {
     
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
-            // console.log(column);
             const items = [
                 {
                     key: 'aToZ',
@@ -51,7 +43,7 @@ const DataListPermohonanMasuk = () => {
                     iconProps: { iconName: 'SortUp' },
                     canCheck: true,
                     checked: column.isSorted && !column.isSortedDescending,
-                    onClick: () => _onSortColumn(column.key),
+                    onClick: () => _onSortColumn(column.key, false),
                 },
                 {
                     key: 'zToA',
@@ -59,7 +51,7 @@ const DataListPermohonanMasuk = () => {
                     iconProps: { iconName: 'SortDown' },
                     canCheck: true,
                     checked: column.isSorted && column.isSortedDescending,
-                    onClick: () => _onSortColumn(column.key),
+                    onClick: () => _onSortColumn(column.key, true),
                 },
             ];
             setContextualMenuProps({         
@@ -96,7 +88,7 @@ const DataListPermohonanMasuk = () => {
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         pageNumber: currentPage,
-        pageSize: 0,
+        pageSize: pageSize,
         filters: [
             {
                 fieldName: 'posisi_tahap_pemberkasan_penerima',
@@ -105,8 +97,8 @@ const DataListPermohonanMasuk = () => {
         ],
         sortOrders: [
             {
-                fieldName: 'perusahaan',
-                value: 'ASC'
+                fieldName: 'tanggal_registrasi',
+                value: 'DESC'
             },
         ],
     });
@@ -122,6 +114,8 @@ const DataListPermohonanMasuk = () => {
             isResizable: true,
             onColumnClick: handleOnColumnClick,
             isPadded: true,
+            isSortedDescending: true,
+            isSorted: true,
             onRender: (item: IItemRegisterPermohonan) => {
                 return flipFormatDate(item.tanggalRegistrasi!);
             }
@@ -241,12 +235,6 @@ const DataListPermohonanMasuk = () => {
           return (
             <div>
                 {defaultRender(menuListProps)}
-                <SearchBox
-                    ariaLabel="Filter actions by text"
-                    placeholder="Pencarian"
-                    styles={searchBoxStyles}
-
-                />
             </div>
           );
         },
@@ -268,17 +256,17 @@ const DataListPermohonanMasuk = () => {
     );
 
     const _onSortColumn = useCallback(
-        (key) => {
+        (key, isAsc: boolean) => {
             let newColumns: IColumn[] = columns.slice();
             let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
 
             newColumns.forEach((newCol: IColumn) => {
                 if (newCol === currColumn) {
-                  currColumn.isSortedDescending = !currColumn.isSortedDescending;
+                  currColumn.isSortedDescending = isAsc;
                   currColumn.isSorted = true;                  
                 } else {
+                  newCol.isSortedDescending = undefined;                  
                   newCol.isSorted = false;
-                  newCol.isSortedDescending = true;
                 }
             });
 
@@ -459,6 +447,20 @@ const DataListPermohonanMasuk = () => {
         []
     );
 
+    const handlePageSizeChange = useCallback(
+        (v: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageSize = v;            
+                    return tmp;
+                }
+            );
+            setPageSize(v);
+        },
+        []
+    );
+
     return (
         <>
             <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
@@ -505,10 +507,11 @@ const DataListPermohonanMasuk = () => {
                 <Stack.Item>
                     <Pagination 
                         currentPage={currentPage}
+                        pageSize={pageSize}
                         siblingCount={1}
                         totalCount={100}
                         onPageChange={page => setCurrentPage(page)}
-                        onPageSizeChange={size => setPageSize(size)}
+                        onPageSizeChange={handlePageSizeChange}
                     />
                 </Stack.Item>
             </Stack>
@@ -576,9 +579,6 @@ const DataListPermohonanMasuk = () => {
 };
 
 export const PermohonanBackEnd: FC = () => {
-    // const token = useAppSelector((state) => state.token);
-    // console.log(token);
-
     return (
         <Pivot>
             <PivotItem

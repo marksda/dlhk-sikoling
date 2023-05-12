@@ -22,62 +22,55 @@ export const usePagination = ({
     siblingCount=1,
     currentPage
 }: IUsePaginationProps) => {
-    const paginationRange = useMemo(
-        () => {
-            const totalPageCount = Math.ceil(totalCount / pageSize);
-            // Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
-            const totalPageNumbers = siblingCount + 5;
+    const totalPageCount = Math.ceil(totalCount / pageSize);
+    // Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
+    const totalPageNumbers = siblingCount + 5;
 
-            /*
-                If the number of pages is less than the page numbers we want to show in our
-                paginationComponent, we return the range [1..totalPageCount]
-              */
-            if (totalPageNumbers >= totalPageCount) {
-                return range(1, totalPageCount);
-            }
+    /*
+        If the number of pages is less than the page numbers we want to show in our
+        paginationComponent, we return the range [1..totalPageCount]
+        */
+    if (totalPageNumbers >= totalPageCount) {
+        return range(1, totalPageCount);
+    }
 
-            const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-            const rightSiblingIndex = Math.min(
-                currentPage + siblingCount,
-                totalPageCount
-            );
-
-            /*
-                We do not want to show dots if there is only one position left 
-                after/before the left/right page count as that would lead to a change if our Pagination
-                component size which we do not want
-              */
-            const shouldShowLeftDots = leftSiblingIndex > 2;
-            const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
-        
-            const firstPageIndex = 1;
-            const lastPageIndex = totalPageCount;
-
-            if (!shouldShowLeftDots && shouldShowRightDots) {
-                let leftItemCount = 3 + 2 * siblingCount;
-                let leftRange = range(1, leftItemCount);
-          
-                return [...leftRange, DOTS, totalPageCount];
-            }
-
-            if (shouldShowLeftDots && !shouldShowRightDots) {
-                let rightItemCount = 3 + 2 * siblingCount;
-                let rightRange = range(
-                  totalPageCount - rightItemCount + 1,
-                  totalPageCount
-                );
-                return [firstPageIndex, DOTS, ...rightRange];
-            }
-
-            if (shouldShowLeftDots && shouldShowRightDots) {
-                let middleRange = range(leftSiblingIndex, rightSiblingIndex);
-                return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
-            }
-        },
-        [totalCount, pageSize, siblingCount, currentPage]
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(
+        currentPage + siblingCount,
+        totalPageCount
     );
 
-    return paginationRange;
+    /*
+        We do not want to show dots if there is only one position left 
+        after/before the left/right page count as that would lead to a change if our Pagination
+        component size which we do not want
+        */
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPageCount;
+
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+        let leftItemCount = 3 + 2 * siblingCount;
+        let leftRange = range(1, leftItemCount);
+    
+        return [...leftRange, DOTS, totalPageCount];
+    }
+
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+        let rightItemCount = 3 + 2 * siblingCount;
+        let rightRange = range(
+            totalPageCount - rightItemCount + 1,
+            totalPageCount
+        );
+        return [firstPageIndex, DOTS, ...rightRange];
+    }
+
+    if (shouldShowLeftDots && shouldShowRightDots) {
+        let middleRange = range(leftSiblingIndex, rightSiblingIndex);
+        return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
+    }
 };
 
 export interface IPaginationProps {
@@ -86,6 +79,7 @@ export interface IPaginationProps {
     totalCount: number;
     siblingCount: number;
     currentPage: number;
+    pageSize: number;
 };
 
 const previousIcon: IIconProps = { iconName: 'Previous' };
@@ -105,20 +99,15 @@ export const Pagination: FC<IPaginationProps> = ({
     onPageSizeChange,
     totalCount,
     siblingCount=1,
-    currentPage
+    currentPage,
+    pageSize
 }) => {    
-    const [selectedItem, setSelectedItem] = useState<IDropdownOption|undefined|null>({ key: '50', text: '50' });
-
     const paginationRange = usePagination({
         currentPage,
         totalCount,
         siblingCount,
-        pageSize: Number(selectedItem!.key)
+        pageSize
     });
-
-    if (currentPage === 0 || paginationRange?.length! < 2) {
-        return null;
-    }
     
     const onNext = useCallback(
         () => {
@@ -138,7 +127,6 @@ export const Pagination: FC<IPaginationProps> = ({
 
     const onChangePageSize = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {  
-            setSelectedItem(item);
             onPageSizeChange(Number(item?.key));
         },
         []
@@ -149,22 +137,27 @@ export const Pagination: FC<IPaginationProps> = ({
             <Stack.Item align="center">
                 <Dropdown 
                     options={dropDownPageSizeOptions}
-                    selectedKey={selectedItem ? selectedItem.key : null}
+                    selectedKey={pageSize.toString()}
                     onChange={onChangePageSize}
+                    style={{marginRight: 4}}
                 />
             </Stack.Item>
             <Stack.Item align="center">
                 <Text variant="mediumPlus" block style={{marginRight: 32}}>item/page</Text>
             </Stack.Item>
-            <Stack.Item align="center">
-                <IconButton 
-                    iconProps={previousIcon} 
-                    aria-label="previous" 
-                    disabled={currentPage === 1}
-                    onClick={onPrevious}
-                />
-            </Stack.Item>  
             {
+                paginationRange?.length! < 2 ? null :
+                <Stack.Item align="center">
+                    <IconButton 
+                        iconProps={previousIcon} 
+                        aria-label="previous" 
+                        disabled={currentPage === 1}
+                        onClick={onPrevious}
+                    />
+                </Stack.Item>
+            }
+            {
+                paginationRange?.length! < 2 ? null :
                 paginationRange?.map((pageNumber, index) => {
                     if (pageNumber === DOTS) {
                         return (
@@ -190,14 +183,17 @@ export const Pagination: FC<IPaginationProps> = ({
                     }
                 })
             }
-            <Stack.Item align="center">
-                <IconButton 
-                    iconProps={nextIcon} 
-                    aria-label="next" 
-                    disabled={currentPage === lastPage}
-                    onClick={onNext}
-                />
-            </Stack.Item>            
+            {
+                paginationRange?.length! < 2 ? null :
+                <Stack.Item align="center">
+                    <IconButton 
+                        iconProps={nextIcon} 
+                        aria-label="next" 
+                        disabled={currentPage === lastPage}
+                        onClick={onNext}
+                    />
+                </Stack.Item> 
+            }                       
         </Stack>                        
     );
 }
