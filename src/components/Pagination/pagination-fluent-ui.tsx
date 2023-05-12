@@ -1,5 +1,5 @@
-import { DefaultButton, IIconProps, IconButton, PrimaryButton, Stack } from "@fluentui/react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { DefaultButton, Dropdown, IDropdownOption, IIconProps, IconButton, PrimaryButton, Stack, Text } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 
 
 export interface IUsePaginationProps {
@@ -82,28 +82,38 @@ export const usePagination = ({
 
 export interface IPaginationProps {
     onPageChange: (v:number) => void;
+    onPageSizeChange: (v:number) => void;
     totalCount: number;
     siblingCount: number;
     currentPage: number;
-    pageSize: number;
 };
 
 const previousIcon: IIconProps = { iconName: 'Previous' };
 const nextIcon: IIconProps = { iconName: 'Next' };
 const stackTokens = { childrenGap: 1 };
 
+const dropDownPageSizeOptions = [
+    { key: '50', text: '50' },
+    { key: '100', text: '100' },
+    { key: '500', text: '500' },
+    { key: '1000', text: '1000' },
+    { key: '10000', text: '10000' },
+  ];
+
 export const Pagination: FC<IPaginationProps> = ({
     onPageChange,
+    onPageSizeChange,
     totalCount,
     siblingCount=1,
-    currentPage,
-    pageSize
+    currentPage
 }) => {    
+    const [selectedItem, setSelectedItem] = useState<IDropdownOption|undefined|null>({ key: '50', text: '50' });
+
     const paginationRange = usePagination({
         currentPage,
         totalCount,
         siblingCount,
-        pageSize
+        pageSize: Number(selectedItem!.key)
     });
 
     if (currentPage === 0 || paginationRange?.length! < 2) {
@@ -126,8 +136,26 @@ export const Pagination: FC<IPaginationProps> = ({
 
     let lastPage = paginationRange![paginationRange?.length! - 1] as number;
 
+    const onChangePageSize = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {  
+            setSelectedItem(item);
+            onPageSizeChange(Number(item?.key));
+        },
+        []
+    );
+
     return (        
         <Stack horizontal tokens={stackTokens} horizontalAlign="center">
+            <Stack.Item align="center">
+                <Dropdown 
+                    options={dropDownPageSizeOptions}
+                    selectedKey={selectedItem ? selectedItem.key : null}
+                    onChange={onChangePageSize}
+                />
+            </Stack.Item>
+            <Stack.Item align="center">
+                <Text variant="mediumPlus" block style={{marginRight: 32}}>item/page</Text>
+            </Stack.Item>
             <Stack.Item align="center">
                 <IconButton 
                     iconProps={previousIcon} 
@@ -137,17 +165,17 @@ export const Pagination: FC<IPaginationProps> = ({
                 />
             </Stack.Item>  
             {
-                paginationRange?.map(pageNumber => {
+                paginationRange?.map((pageNumber, index) => {
                     if (pageNumber === DOTS) {
                         return (
-                            <Stack.Item align="center">
+                            <Stack.Item align="center" key={index}>
                                 <DefaultButton text="..." />
                             </Stack.Item>
                         );
                     }
                     else {
                         return (
-                            <Stack.Item align="center">
+                            <Stack.Item align="center" key={index}>
                                 {
                                     pageNumber === currentPage ?
                                     <PrimaryButton 

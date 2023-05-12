@@ -507,8 +507,8 @@ const DataListPermohonanMasuk = () => {
                         currentPage={currentPage}
                         siblingCount={1}
                         totalCount={100}
-                        pageSize={pageSize}
                         onPageChange={page => setCurrentPage(page)}
+                        onPageSizeChange={size => setPageSize(size)}
                     />
                 </Stack.Item>
             </Stack>
