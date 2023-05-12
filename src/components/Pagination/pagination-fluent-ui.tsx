@@ -90,6 +90,7 @@ export interface IPaginationProps {
 
 const previousIcon: IIconProps = { iconName: 'Previous' };
 const nextIcon: IIconProps = { iconName: 'Next' };
+const stackTokens = { childrenGap: 1 };
 
 export const Pagination: FC<IPaginationProps> = ({
     onPageChange,
@@ -126,7 +127,7 @@ export const Pagination: FC<IPaginationProps> = ({
     let lastPage = paginationRange![paginationRange?.length! - 1] as number;
 
     return (        
-        <Stack horizontal>
+        <Stack horizontal tokens={stackTokens} horizontalAlign="center">
             <Stack.Item align="center">
                 <IconButton 
                     iconProps={previousIcon} 

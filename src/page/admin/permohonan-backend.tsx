@@ -1,4 +1,4 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IDropdownOption, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, Pivot, PivotItem, PrimaryButton, SearchBox, SelectionMode, Stack } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IconButton, IContextualMenuListProps, IDetailsListStyles, IDropdownOption, IIconProps, ILabelStyles, IRenderFunction, ISearchBoxStyles, IStyleSet, Label, mergeStyleSets, Pivot, PivotItem, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack } from "@fluentui/react";
 import omit from "lodash.omit";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
@@ -17,6 +17,27 @@ const searchBoxStyles: Partial<ISearchBoxStyles> = { root: { width: 300, marginL
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 
 const filterIcon: IIconProps = { iconName: 'Filter' };
+
+// Styles definition
+// const dataListStyles: IDetailsListStyles  = {
+//     root: {
+//       background: DefaultPalette.themeTertiary,
+//     },
+// };
+
+const classNames = mergeStyleSets({
+    container: {
+        width: "100%",
+        position: "relative",
+        minHeight: 200,
+    },
+    gridContainer: {
+        height: window.innerHeight - 230,
+        overflowY: "auto",
+        overflowX: "auto",
+        position: "relative",
+    },
+});
 
 const DataListPermohonanMasuk = () => {    
     
@@ -69,11 +90,12 @@ const DataListPermohonanMasuk = () => {
 
     //local state
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(50);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
-        pageNumber: 0,
+        pageNumber: currentPage,
         pageSize: 0,
         filters: [
             {
@@ -439,48 +461,56 @@ const DataListPermohonanMasuk = () => {
 
     return (
         <>
-            <Stack tokens={stackTokens}>
-                <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                    <Stack.Item>
-                        <SearchBox 
-                            style={{width: 300}} 
-                            placeholder="pencarian pemrakarsa" 
-                            underlined={false} 
-                            onSearch={_onSearch}
+            <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+                <Stack.Item>
+                    <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                        <Stack.Item>
+                            <SearchBox 
+                                style={{width: 300}} 
+                                placeholder="pencarian pemrakarsa" 
+                                underlined={false} 
+                                onSearch={_onSearch}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <ActionButton 
+                                iconProps={filterIcon} 
+                                onClick={handleButtonFilterClick}
+                            > 
+                                Filter
+                            </ActionButton>       
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item grow className={classNames.gridContainer}>
+                    <ScrollablePane scrollbarVisibility="auto">
+                        <DetailsList
+                            items={
+                                posts != undefined ? posts?.map(
+                                    (t) => (
+                                        {key: t.id as string, ...omit(t, ['id'])}
+                                    )
+                                ) : []
+                            }
+                            compact={true}
+                            columns={columns}
+                            setKey="none"
+                            getKey={_getKey}
+                            layoutMode={DetailsListLayoutMode.justified}
+                            selectionMode={SelectionMode.none}
+                            isHeaderVisible={true}
                         />
-                    </Stack.Item>
-                    <Stack.Item>
-                        <ActionButton 
-                            iconProps={filterIcon} 
-                            onClick={handleButtonFilterClick}
-                        > 
-                            Filter
-                        </ActionButton>       
-                    </Stack.Item>
-                </Stack>
-                <DetailsList
-                    items={
-                        posts != undefined ? posts?.map(
-                            (t) => (
-                                {key: t.id as string, ...omit(t, ['id'])}
-                            )
-                        ) : []
-                    }
-                    compact={true}
-                    columns={columns}
-                    setKey="none"
-                    getKey={_getKey}
-                    layoutMode={DetailsListLayoutMode.justified}
-                    selectionMode={SelectionMode.none}
-                    isHeaderVisible={true}
-                />
-                <Pagination 
-                    currentPage={1}
-                    siblingCount={1}
-                    totalCount={100}
-                    pageSize={10}
-                    onPageChange={page => setCurrentPage(page)}
-                />
+                    </ScrollablePane>
+                </Stack.Item>
+                <Stack.Item>
+                    <Pagination 
+                        currentPage={currentPage}
+                        siblingCount={1}
+                        totalCount={100}
+                        pageSize={pageSize}
+                        onPageChange={page => setCurrentPage(page)}
+                    />
+                </Stack.Item>
             </Stack>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
             {contextualMenuFilterProps && 
