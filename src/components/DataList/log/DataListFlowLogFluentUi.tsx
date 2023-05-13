@@ -1,11 +1,13 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, Dropdown, IColumn, IDropdownOption, IIconProps, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams } from "../../../features/config/query-params-slice";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery } from "../../../features/log/flow-log-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../../Pagination/pagination-fluent-ui";
+import { useGetAllQuery } from "../../../features/log/kategori-flow-log-api-slice";
+import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 
 
 type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
@@ -78,7 +80,7 @@ export const DataListFlowLogFluentUI: FC = () => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);    
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPenerima, setSelectedPenerima] = useState<IDropdownOption|null|undefined>(null);
-    
+    const [selectedKategoriLog, setSelectedKategoriLog] = useState<IDropdownOption|null|undefined>(null);    
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         pageNumber: currentPage,
         pageSize: pageSize,
@@ -250,7 +252,9 @@ export const DataListFlowLogFluentUI: FC = () => {
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading } = useGetAllFlowLogQuery(queryParams);
+    const { data: posts, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);
+    const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetAllQuery();
+    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -295,6 +299,75 @@ export const DataListFlowLogFluentUI: FC = () => {
         []
     );
 
+    const _onSortColumn = useCallback(
+        (key, isAsc: boolean) => {
+            let newColumns: IColumn[] = columns.slice();
+            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
+
+            newColumns.forEach((newCol: IColumn) => {
+                if (newCol === currColumn) {
+                  currColumn.isSortedDescending = !isAsc;
+                  currColumn.isSorted = true;                  
+                } else {
+                  newCol.isSortedDescending = undefined;                  
+                  newCol.isSorted = false;
+                }
+            });
+
+            setColumns(newColumns);
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let sortOrders = cloneDeep(tmp.sortOrders);
+                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
+                    
+                    if(found == -1) {
+                        sortOrders?.splice(0, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        });
+                    }
+                    else {
+                        sortOrders?.splice(found, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        })
+                    }                    
+                    
+                    tmp.sortOrders = sortOrders;            
+                    return tmp;
+                }
+            );
+        },
+        [columns]
+    );
+
+    const _onContextualMenuDismissed = useCallback(
+        () => {
+            setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _renderMenuList = useCallback(
+        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
+          return (
+            <div>
+                {defaultRender(menuListProps)}
+            </div>
+          );
+        },
+        [],
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
+        },
+        []
+    );
+
     const handleSelectedDate = useCallback(
         (date) => {
             let tanggalTerpilih = onFormatDateUtc(date);
@@ -324,6 +397,139 @@ export const DataListFlowLogFluentUI: FC = () => {
             );
 
             setSelectedDate(date);
+        },
+        []
+    );
+
+    const onChangeKategoriLog = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kategori_log',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kategori_log',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+            setSelectedKategoriLog(item);
+        },
+        []
+    );
+
+    const onChangePengirim = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+            setSelectedPengirim(item);
+        },
+        []
+    );
+
+    const onChangePenerima = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_penerima',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_penerima',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+            setSelectedPenerima(item);
+        },
+        []
+    );
+
+    const handleResetFilter = useCallback(
+        () => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+
+            setSelectedDate(undefined);
+            setSelectedKategoriLog(null);
+            setSelectedPengirim(null);
+            setSelectedPenerima(null);
+
         },
         []
     );
@@ -418,15 +624,15 @@ export const DataListFlowLogFluentUI: FC = () => {
                                 label="Jenis log"
                                 placeholder="--Pilih--"
                                 options={
-                                    postsJenisLog != undefined ? postsJenisLog?.map(
+                                    kategoriLogPosts != undefined ? kategoriLogPosts?.map(
                                         (t) => ({
                                             key: t.id!, 
                                             text: `${t.nama}`
                                         })
                                     ) : []
                                 }
-                                selectedKey={selectedJenisPermohonan ? selectedJenisPermohonan.key : null}
-                                onChange={onChangeJenisPermohonan}
+                                selectedKey={selectedKategoriLog ? selectedKategoriLog.key : null}
+                                onChange={onChangeKategoriLog}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -443,6 +649,22 @@ export const DataListFlowLogFluentUI: FC = () => {
                                 }
                                 selectedKey={selectedPengirim ? selectedPengirim.key : null}
                                 onChange={onChangePengirim}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Penerima"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsPosisiTahapPemberkasan != undefined ? postsPosisiTahapPemberkasan?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                                selectedKey={selectedPenerima ? selectedPenerima.key : null}
+                                onChange={onChangePenerima}
                             />
                         </Stack.Item>
                         <Stack.Item>

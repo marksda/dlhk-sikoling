@@ -4,7 +4,6 @@ import omit from "lodash.omit";
 import { FC, useMemo } from "react";
 import { DataListFlowLogFluentUI } from "../../components/DataList/log/DataListFlowLogFluentUi";
 import { IListItemFlowLog } from "../../components/DataList/log/InterfaceDataListFlowLog";
-import { useGetFlowLogByKategoriQuery } from "../../features/log/flow-log-api-slice";
 
 const stackHorTokens = { childrenGap: 16 };
 const containerBlueStyles: React.CSSProperties = {    
