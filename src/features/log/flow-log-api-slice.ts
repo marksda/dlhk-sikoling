@@ -5,6 +5,7 @@ import { IRegisterPermohonan } from "../permohonan/register-permohonan-api-slice
 import { IAuthorization } from "../security/authorization-slice";
 import { IKategoriFlowLog } from "./kategori-flow-log-api-slice";
 import { IStatusFlowLog } from "./status-flow-log-api-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
 export interface IFlowLog {
     id: string|null;
@@ -27,7 +28,7 @@ export const FlowLogApiSlice = createApi({
     reducerPath: 'flowLogApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
+    // keepUnusedDataFor: 30,
     tagTypes: ['FlowLog'],
     endpoints(builder) {
         return {
@@ -60,37 +61,13 @@ export const FlowLogApiSlice = createApi({
                     return [{type: 'FlowLog', id: idFlowLog}]
                 },
             }),
-            getAllFlowLog: builder.query<daftarFlowLog, void>({
-                query: () => 'flow_log',
+            getAllFlowLog: builder.query<daftarFlowLog, IQueryParams>({
+                query: (queryParams) => `flow_log?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
                         ...result.map(
                             ({ id }) => ({ type: 'FlowLog' as const, id: id! })
-                        ),
-                        { type: 'FlowLog', id: 'LIST' },
-                    ]:
-                    [{type: 'FlowLog', id: 'LIST'}],
-            }),
-            getFlowLogByUser: builder.query<daftarFlowLog, string>({
-                query: (idUser) => `flow_log/user/${idUser}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'FlowLog' as const, id: id!  })
-                        ),
-                        { type: 'FlowLog', id: 'LIST' },
-                    ]:
-                    [{type: 'FlowLog', id: 'LIST'}],
-            }),
-            getFlowLogByKategori: builder.query<daftarFlowLog, string>({
-                query: (idKategori) => `flow_log/kategori/${idKategori}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'FlowLog' as const, id: id!  })
                         ),
                         { type: 'FlowLog', id: 'LIST' },
                     ]:
@@ -102,6 +79,5 @@ export const FlowLogApiSlice = createApi({
 
 export const {
     useAddFlowLogMutation, useUpdateFlowLogMutation,
-    useDeleteFlowLogMutation, useGetAllFlowLogQuery,
-    useGetFlowLogByUserQuery, useGetFlowLogByKategoriQuery
+    useDeleteFlowLogMutation, useGetAllFlowLogQuery
 } = FlowLogApiSlice;

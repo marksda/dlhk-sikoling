@@ -91,7 +91,6 @@ const dropDownPageSizeOptions = [
     { key: '100', text: '100' },
     { key: '500', text: '500' },
     { key: '1000', text: '1000' },
-    { key: '10000', text: '10000' },
   ];
 
 export const Pagination: FC<IPaginationProps> = ({

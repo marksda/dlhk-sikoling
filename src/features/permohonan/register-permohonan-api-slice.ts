@@ -71,7 +71,6 @@ export const RegisterPermohonanApiSlice = createApi({
                 },
             }),
             getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, IQueryParams>({
-                // query: (queryParams) => `register_permohonan?filters=${JSON.stringifyqs.stringify(queryParams)}`,
                 query: (queryParams) => `register_permohonan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -82,90 +81,12 @@ export const RegisterPermohonanApiSlice = createApi({
                         { type: 'RegisterPermohonan', id: 'LIST' },
                     ]:
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByPage: builder.query<daftarRegisterPermohonan, {page: number; pageSize: number}>({
-                query: ({page, pageSize}) => `register_permohonan/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonanPage' as const, id: id! })
-                        ),
-                        { type: 'RegisterPermohonanPage', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonanPage', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByUser: builder.query<daftarRegisterPermohonan, string>({
-                query: (idUser) => `register_permohonan/user/${idUser}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'RegisterPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByRegisterPerusahaan: builder.query<daftarRegisterPermohonan, string>({
-                query: (idRegister) => `register_permohonan/perusahaan/${idRegister}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'RegisterPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByPenerima: builder.query<daftarRegisterPermohonan, {idPenerima: string, queryParams: IQueryParams}>({
-                query: ({idPenerima, queryParams}) => ({
-                    url: `register_permohonan/penerima/${idPenerima}?${qs.stringify(queryParams)}`,
-                    method: 'GET',
-                }),
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'RegisterPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByPengirim: builder.query<daftarRegisterPermohonan, string>({
-                query: (idPengirim) => `register_permohonan/pengirim/${idPengirim}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'RegisterPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
-            getRegisterPermohonanByPengirimAtauPenerimaOnProses: builder.query<daftarRegisterPermohonan, {idPengirim: string; idPenerima: string}>({
-                query: ({idPengirim, idPenerima}) => `register_permohonan/pengirim_penerima_on_proses/${idPengirim}/${idPenerima}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'RegisterPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'RegisterPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPermohonan', id: 'LIST'}],
-            }),
+            })
         }
     }
 });
 
 export const {
     useAddRegisterPermohonanMutation, useUpdateRegisterPermohonanMutation,
-    useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery,
-    useGetRegisterPermohonanByPageQuery, useGetRegisterPermohonanByUserQuery,
-    useGetRegisterPermohonanByRegisterPerusahaanQuery, useGetRegisterPermohonanByPenerimaQuery,
-    useGetRegisterPermohonanByPengirimQuery, useGetRegisterPermohonanByPengirimAtauPenerimaOnProsesQuery
+    useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery
 } = RegisterPermohonanApiSlice;

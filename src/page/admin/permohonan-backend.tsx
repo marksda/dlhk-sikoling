@@ -43,7 +43,7 @@ const DataListPermohonanMasuk = () => {
                     iconProps: { iconName: 'SortUp' },
                     canCheck: true,
                     checked: column.isSorted && !column.isSortedDescending,
-                    onClick: () => _onSortColumn(column.key, false),
+                    onClick: () => _onSortColumn(column.key, true),
                 },
                 {
                     key: 'zToA',
@@ -51,7 +51,7 @@ const DataListPermohonanMasuk = () => {
                     iconProps: { iconName: 'SortDown' },
                     canCheck: true,
                     checked: column.isSorted && column.isSortedDescending,
-                    onClick: () => _onSortColumn(column.key, true),
+                    onClick: () => _onSortColumn(column.key, false),
                 },
             ];
             setContextualMenuProps({         
@@ -105,7 +105,7 @@ const DataListPermohonanMasuk = () => {
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
-            key: 'k1', 
+            key: 'tanggal_registrasi', 
             name: 'Tanggal', 
             fieldName: 'tanggalRegistrasi', 
             minWidth: 100, 
@@ -121,7 +121,7 @@ const DataListPermohonanMasuk = () => {
             }
         },
         { 
-            key: 'k2', 
+            key: 'perusahaan', 
             name: 'Pemrakarsa', 
             minWidth: 100, 
             maxWidth: 200, 
@@ -160,7 +160,7 @@ const DataListPermohonanMasuk = () => {
             isPadded: true,
         },
         { 
-            key: 'k3', 
+            key: 'kategori_permohonan', 
             name: 'Jenis Permohonan', 
             minWidth: 100, 
             maxWidth: 200, 
@@ -179,7 +179,7 @@ const DataListPermohonanMasuk = () => {
             isPadded: true,
         },
         { 
-            key: 'k4', 
+            key: 'posisi_tahap_pemberkasan_pengirim', 
             name: 'Pengirim', 
             minWidth: 100, 
             maxWidth: 200, 
@@ -262,7 +262,7 @@ const DataListPermohonanMasuk = () => {
 
             newColumns.forEach((newCol: IColumn) => {
                 if (newCol === currColumn) {
-                  currColumn.isSortedDescending = isAsc;
+                  currColumn.isSortedDescending = !isAsc;
                   currColumn.isSorted = true;                  
                 } else {
                   newCol.isSortedDescending = undefined;                  
@@ -271,6 +271,30 @@ const DataListPermohonanMasuk = () => {
             });
 
             setColumns(newColumns);
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let sortOrders = cloneDeep(tmp.sortOrders);
+                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
+                    
+                    if(found == -1) {
+                        sortOrders?.splice(0, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        });
+                    }
+                    else {
+                        sortOrders?.splice(found, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        })
+                    }                    
+                    
+                    tmp.sortOrders = sortOrders;            
+                    return tmp;
+                }
+            );
         },
         [columns]
     );
@@ -387,7 +411,7 @@ const DataListPermohonanMasuk = () => {
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengiriman'}) as number;   
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number;   
                     
                     if(found == -1) {
                         filters?.push({
@@ -429,7 +453,7 @@ const DataListPermohonanMasuk = () => {
                         filters?.splice(found, 1);          
                     }
 
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengiriman'}) as number; 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number; 
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
