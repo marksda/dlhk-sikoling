@@ -79,26 +79,13 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     );
 
     //local state
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(50);
+    const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
+    const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
-        pageNumber: currentPage,
-        pageSize: pageSize,
-        filters: [
-            {
-                fieldName: 'posisi_tahap_pemberkasan_penerima',
-                value: '1'
-            }
-        ],
-        sortOrders: [
-            {
-                fieldName: 'tanggal_registrasi',
-                value: 'DESC'
-            },
-        ],
+        ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
