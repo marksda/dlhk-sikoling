@@ -1,20 +1,19 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams } from "../../../features/config/query-params-slice";
-import { IFlowLogPermohonan, useGetAllFlowLogQuery } from "../../../features/log/flow-log-api-slice";
+import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../../features/permohonan/register-permohonan-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../../features/config/config";
+import { useGetAllKategoriPermohonanQuery } from "../../../features/permohonan/kategori-permohonan-api-slice";
+import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../../Pagination/pagination-fluent-ui";
-import { useGetAllQuery } from "../../../features/log/kategori-flow-log-api-slice";
-import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 
-
-interface IDataListFlowLogFluentUIProps {
+interface IDataListPermohonanFluentUIProps {
     minusHeigh: number;
     initSelectedFilters: IQueryParams;
 };
-type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
+type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -23,6 +22,7 @@ const classNames = mergeStyleSets({
         minHeight: 200,
     },
     gridContainer: {
+        // height: window.innerHeight - 230,
         overflowY: "auto",
         overflowX: "auto",
         position: "relative",
@@ -30,7 +30,8 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minusHeigh, initSelectedFilters}) => {   
+export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({minusHeigh, initSelectedFilters}) => {    
+    
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -78,21 +79,33 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
     );
 
     //local state
-    const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
-    const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);    
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(50);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
-    const [selectedPenerima, setSelectedPenerima] = useState<IDropdownOption|null|undefined>(null);
-    const [selectedKategoriLog, setSelectedKategoriLog] = useState<IDropdownOption|null|undefined>(null);    
     const [queryParams, setQueryParams] = useState<IQueryParams>({
-        ...initSelectedFilters, pageNumber: currentPage, pageSize
+        pageNumber: currentPage,
+        pageSize: pageSize,
+        filters: [
+            {
+                fieldName: 'posisi_tahap_pemberkasan_penerima',
+                value: '1'
+            }
+        ],
+        sortOrders: [
+            {
+                fieldName: 'tanggal_registrasi',
+                value: 'DESC'
+            },
+        ],
     });
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
-            key: 'tanggal', 
+            key: 'tanggal_registrasi', 
             name: 'Tanggal', 
-            fieldName: 'tanggal', 
+            fieldName: 'tanggalRegistrasi', 
             minWidth: 100, 
             maxWidth: 100, 
             isRowHeader: true,
@@ -101,8 +114,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             isPadded: true,
             isSortedDescending: true,
             isSorted: true,
-            onRender: (item: IItemFlowLogPermohonan) => {
-                return flipFormatDate(item.tanggal as string);
+            onRender: (item: IItemRegisterPermohonan) => {
+                return flipFormatDate(item.tanggalRegistrasi!);
             }
         },
         { 
@@ -113,29 +126,29 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             isResizable: true, 
             onColumnClick: handleOnColumnClick,
             data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemRegisterPermohonan) => {
                 return (
                     <div>
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}` : `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}`
+                            item.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPerusahaan?.perusahaan?.nama}` : `${item.registerPerusahaan?.perusahaan?.nama}`
                             }
                         </span><br />
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.id !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.id}`: null
+                            item.registerPerusahaan?.perusahaan?.id !== undefined ?
+                            `${item.registerPerusahaan?.perusahaan?.id}`: null
                             }
                         </span><br />
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama}`: null
+                            item.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
+                            `${item.registerPerusahaan?.perusahaan?.alamat?.desa?.nama}`: null
                             }
                             {
-                                item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
-                                `, ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.kecamatan?.nama}`: null
+                                item.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
+                                `, ${item.registerPerusahaan?.perusahaan?.alamat?.kecamatan?.nama}`: null
                             }
                         </span>
                     </div>
@@ -145,42 +158,21 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             isPadded: true,
         },
         { 
-            key: 'kategori_log', 
-            name: 'Jenis log', 
+            key: 'kategori_permohonan', 
+            name: 'Jenis Permohonan', 
             minWidth: 100, 
             maxWidth: 200, 
-            isResizable: true, 
+            isResizable: true,
             onColumnClick: handleOnColumnClick,
             data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
-                if(item.kategoriFlowLog?.id === '1') {
-                    return (
-                        <>
-                            <span style={{color: 'green'}}>
-                                {
-                                    `${item.kategoriFlowLog?.nama} : ${item.registerPermohonan?.kategoriPermohonan?.nama?.toLowerCase()}`
-                                } 
-                            </span><br/>
-                            <span>
-                                <b>
-                                    {
-                                        `${
-                                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha.singkatan : null
-                                        }. ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}`
-                                    }
-                                </b>
-                            </span><br/>
-                        </>
-                    ); 
-                }
-                else {
-                    return (
-                        <span>
-                            {item.kategoriFlowLog?.nama}
-                        </span>
-                    ); 
-                }
+            onRender: (item: IItemRegisterPermohonan) => {
+                return (
+                    <span>
+                        {
+                            item.kategoriPermohonan?.nama
+                        }
+                    </span>
+                );
             },
             isPadded: true,
         },
@@ -191,60 +183,57 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             maxWidth: 200, 
             isResizable: true,
             onColumnClick: handleOnColumnClick,
-            data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemRegisterPermohonan) => {
                 return (
-                    <span>
-                        {
-                            item.pengirimBerkas?.nama
-                        }
-                    </span>
+                    <span>{item.pengirimBerkas?.nama}</span>
                 );
             },
             isPadded: true,
         },
         { 
-            key: 'posisi_tahap_pemberkasan_penerima', 
-            name: 'Penerima', 
+            key: 'k5', 
+            name: 'Status Permohonan', 
             minWidth: 100, 
             maxWidth: 200, 
             isResizable: true,
-            onColumnClick: handleOnColumnClick,
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemRegisterPermohonan) => {
                 return (
-                    <span>{item.penerimaBerkas?.nama}</span>
+                    <span>{item.statusFlowLog?.nama}</span>
                 );
             },
             isPadded: true,
         },
         { 
-            key: 'keterangan', 
-            name: 'Keterangan', 
+            key: 'k6', 
+            name: 'Edit', 
             minWidth: 100, 
             maxWidth: 200, 
             isResizable: true,
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemRegisterPermohonan) => {
                 return (
-                    <>
-                    <span>
-                        *** {item.penerimaBerkas?.keterangan} ***
-                    </span><br />
-                    <span>
-                        {item.statusFlowLog?.nama}
-                        {item.keterangan != undefined ? ` : ${item.keterangan}` : null}
-                    </span>
-                    </>
-                ); 
+                    <IconButton iconProps={{ iconName: 'Edit' }} title="Edit" ariaLabel="Edit" onClick={() => alert('sss')}/>
+                );
             },
             isPadded: true,
         },
-    ]);
+    ]);    
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);
-    const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetAllQuery();
-    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
+    const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);  
+    const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
+    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
+
+    const _renderMenuList = useCallback(
+        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
+          return (
+            <div>
+                {defaultRender(menuListProps)}
+            </div>
+          );
+        },
+        [],
+    );
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -253,38 +242,9 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         []
     );
 
-    const _onSearch = useCallback(
-        (newValue) => {
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'perusahaan',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
+    const _onContextualMenuDismissed = useCallback(
+        () => {
+            setContextualMenuProps(undefined);
         },
         []
     );
@@ -333,27 +293,45 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         [columns]
     );
 
-    const _onContextualMenuDismissed = useCallback(
+    const _onContextualMenuFilterDismissed = useCallback(
         () => {
-            setContextualMenuProps(undefined);
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
 
-    const _renderMenuList = useCallback(
-        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
-          return (
-            <div>
-                {defaultRender(menuListProps)}
-            </div>
-          );
-        },
-        [],
-    );
-
-    const _onContextualMenuFilterDismissed = useCallback(
-        () => {
-            setContextualMenuFilterProps(undefined);
+    const _onSearch = useCallback(
+        (newValue) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
         },
         []
     );
@@ -366,17 +344,17 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;   
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal_registrasi'}) as number;   
                     
                     if(found == -1) {
                         filters?.push({
-                            fieldName: 'tanggal',
+                            fieldName: 'tanggal_registrasi',
                             value: tanggalTerpilih
                         });
                     }
                     else {
                         filters?.splice(found, 1, {
-                            fieldName: 'tanggal',
+                            fieldName: 'tanggal_registrasi',
                             value: tanggalTerpilih
                         });
                     }                    
@@ -391,23 +369,23 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         []
     );
 
-    const onChangeKategoriLog = useCallback(
+    const onChangeJenisPermohonan = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;   
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_permohonan'}) as number;   
                     
                     if(found == -1) {
                         filters?.push({
-                            fieldName: 'kategori_log',
+                            fieldName: 'kategori_permohonan',
                             value: item?.key as string
                         });
                     }
                     else {
                         filters?.splice(found, 1, {
-                            fieldName: 'kategori_log',
+                            fieldName: 'kategori_permohonan',
                             value: item?.key as string
                         })
                     }                    
@@ -416,7 +394,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                     return tmp;
                 }
             );
-            setSelectedKategoriLog(item);
+            setSelectedJenisPermohonan(item);
         },
         []
     );
@@ -451,60 +429,25 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         []
     );
 
-    const onChangePenerima = useCallback(
-        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number;   
-                    
-                    if(found == -1) {
-                        filters?.push({
-                            fieldName: 'posisi_tahap_pemberkasan_penerima',
-                            value: item?.key as string
-                        });
-                    }
-                    else {
-                        filters?.splice(found, 1, {
-                            fieldName: 'posisi_tahap_pemberkasan_penerima',
-                            value: item?.key as string
-                        })
-                    }                    
-                    
-                    tmp.filters = filters;            
-                    return tmp;
-                }
-            );
-            setSelectedPenerima(item);
-        },
-        []
-    );
-
     const handleResetFilter = useCallback(
         () => {
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal_registrasi'}) as number;
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
                     
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;  
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_permohonan'}) as number;  
                     
                     if(found != -1) {
                         filters?.splice(found, 1);          
                     }
 
                     found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number; 
-                    if(found != -1) {
-                        filters?.splice(found, 1);  
-                    }
-
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number; 
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
@@ -516,10 +459,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             );                
 
             setSelectedDate(undefined);
-            setSelectedKategoriLog(null);
+            setSelectedJenisPermohonan(null);
             setSelectedPengirim(null);
-            setSelectedPenerima(null);
-
         },
         []
     );
@@ -593,8 +534,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                 </Stack.Item>
             </Stack>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            {
-                contextualMenuFilterProps && 
+            {contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
@@ -611,18 +551,18 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                         </Stack.Item>
                         <Stack.Item>
                             <Dropdown 
-                                label="Jenis log"
+                                label="Jenis permohonan"
                                 placeholder="--Pilih--"
                                 options={
-                                    kategoriLogPosts != undefined ? kategoriLogPosts?.map(
+                                    postsJenisPermohonan != undefined ? postsJenisPermohonan?.map(
                                         (t) => ({
                                             key: t.id!, 
                                             text: `${t.nama}`
                                         })
                                     ) : []
                                 }
-                                selectedKey={selectedKategoriLog ? selectedKategoriLog.key : null}
-                                onChange={onChangeKategoriLog}
+                                selectedKey={selectedJenisPermohonan ? selectedJenisPermohonan.key : null}
+                                onChange={onChangeJenisPermohonan}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -639,22 +579,6 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                                 }
                                 selectedKey={selectedPengirim ? selectedPengirim.key : null}
                                 onChange={onChangePengirim}
-                            />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <Dropdown 
-                                label="Penerima"
-                                placeholder="--Pilih--"
-                                options={
-                                    postsPosisiTahapPemberkasan != undefined ? postsPosisiTahapPemberkasan?.map(
-                                        (t) => ({
-                                            key: t.id!, 
-                                            text: `${t.nama}`
-                                        })
-                                    ) : []
-                                }
-                                selectedKey={selectedPenerima ? selectedPenerima.key : null}
-                                onChange={onChangePenerima}
                             />
                         </Stack.Item>
                         <Stack.Item>
