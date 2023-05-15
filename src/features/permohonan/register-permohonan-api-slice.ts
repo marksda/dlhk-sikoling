@@ -9,7 +9,6 @@ import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
 import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan-api-slice";
 import { IStatusWali } from "./status-wali-api-slice";
-import qs from "qs";
 
 export interface IRegisterPermohonan {
     id: string|null;
