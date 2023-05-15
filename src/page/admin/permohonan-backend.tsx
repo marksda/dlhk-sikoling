@@ -1,6 +1,6 @@
 import { ILabelStyles, IStyleSet, Label, Pivot, PivotItem } from "@fluentui/react";
 import { FC } from "react";
-import { DataListPermohonanFluentUI } from "../../components/DataList/permohonan/DataListPermohonanFluentUI";
+import { DataListPermohonanFluentUI } from "../../components/DataList/backend/DataListPermohonanFluentUI";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
@@ -19,7 +19,7 @@ export const PermohonanBackEnd: FC = () => {
                 style={{padding: 8}}
             >
                 <DataListPermohonanFluentUI
-                    minusHeigh={230}
+                    minusHeigh={220}
                     initSelectedFilters={
                         {
                             pageNumber: 1,
