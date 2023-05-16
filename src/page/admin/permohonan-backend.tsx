@@ -1,10 +1,24 @@
-import { ILabelStyles, IStyleSet, Label, Pivot, PivotItem } from "@fluentui/react";
+import { ILabelStyles, IStyleSet, Label, Pivot, PivotItem, mergeStyleSets } from "@fluentui/react";
 import { FC } from "react";
 import { DataListPermohonanFluentUI } from "../../components/DataList/backend/DataListPermohonanFluentUI";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
 };
+
+const classNames = mergeStyleSets({
+    container: {
+        width: "100%",
+        height: '100%',
+        position: "relative",
+        minHeight: 200,
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        // flexGrow: 1
+        // flex: '1 1 auto'
+    }
+});
 
 export const PermohonanBackEnd: FC = () => {
     return (
@@ -16,10 +30,9 @@ export const PermohonanBackEnd: FC = () => {
                 'data-title': 'baru',
                 }}
                 itemIcon="DownloadDocument"
-                style={{padding: 8}}
+                style={{padding: 4, height: window.innerHeight - 115}}
             >
                 <DataListPermohonanFluentUI
-                    minusHeigh={220}
                     initSelectedFilters={
                         {
                             pageNumber: 1,

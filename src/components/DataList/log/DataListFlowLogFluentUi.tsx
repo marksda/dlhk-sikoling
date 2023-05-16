@@ -11,7 +11,6 @@ import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohon
 
 
 interface IDataListFlowLogFluentUIProps {
-    minusHeigh: number;
     initSelectedFilters: IQueryParams;
 };
 type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
@@ -31,7 +30,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minusHeigh, initSelectedFilters}) => {   
+export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({initSelectedFilters}) => {   
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -94,10 +93,10 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             key: 'tanggal', 
             name: 'Tanggal', 
             fieldName: 'tanggal', 
-            minWidth: 100, 
-            maxWidth: 100, 
+            minWidth: 75, 
+            maxWidth: 75, 
             isRowHeader: true,
-            isResizable: true,
+            isResizable: false,
             onColumnClick: handleOnColumnClick,
             isPadded: true,
             isSortedDescending: true,
@@ -187,7 +186,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             key: 'posisi_tahap_pemberkasan_pengirim', 
             name: 'Pengirim', 
             minWidth: 100, 
-            maxWidth: 200, 
+            maxWidth: 100, 
             isResizable: true,
             onColumnClick: handleOnColumnClick,
             data: 'string',
@@ -206,7 +205,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             key: 'posisi_tahap_pemberkasan_penerima', 
             name: 'Penerima', 
             minWidth: 100, 
-            maxWidth: 200, 
+            maxWidth: 100, 
             isResizable: true,
             onColumnClick: handleOnColumnClick,
             onRender: (item: IItemFlowLogPermohonan) => {
@@ -220,7 +219,6 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
             key: 'keterangan', 
             name: 'Keterangan', 
             minWidth: 100, 
-            maxWidth: 200, 
             isResizable: true,
             onRender: (item: IItemFlowLogPermohonan) => {
                 return (
@@ -548,58 +546,62 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
     );
 
     return (
-        <>
-            <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                <Stack.Item>
-                    <SearchBox 
-                        style={{width: 300}} 
-                        placeholder="pencarian pemrakarsa" 
-                        underlined={false} 
-                        onSearch={_onSearch}
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <ActionButton 
-                        iconProps={filterIcon} 
-                        onClick={handleButtonFilterClick}
-                    > 
-                        Filter
-                    </ActionButton>       
-                </Stack.Item>
-            </Stack>
-            <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
-                <Stack.Item grow className={classNames.gridContainer}>
-                    <ScrollablePane scrollbarVisibility="auto">
-                        <DetailsList
-                            items={
-                                posts != undefined ? posts?.map(
-                                    (t) => (
-                                        {key: t.id as string, ...omit(t, ['id'])}
-                                    )
-                                ) : []
-                            }
-                            compact={true}
-                            columns={columns}
-                            setKey="none"
-                            getKey={_getKey}
-                            layoutMode={DetailsListLayoutMode.justified}
-                            selectionMode={SelectionMode.none}
-                            isHeaderVisible={true}
-                            onRenderDetailsHeader={_onRenderDetailsHeader}
+        <Stack grow verticalFill>
+            <Stack.Item>
+                <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item>
+                        <SearchBox 
+                            style={{width: 300}} 
+                            placeholder="pencarian pemrakarsa" 
+                            underlined={false} 
+                            onSearch={_onSearch}
                         />
-                    </ScrollablePane>
-                </Stack.Item>
-                <Stack.Item>
-                    <Pagination 
-                        currentPage={currentPage}
-                        pageSize={pageSize}
-                        siblingCount={1}
-                        totalCount={100}
-                        onPageChange={page => setCurrentPage(page)}
-                        onPageSizeChange={handlePageSizeChange}
-                    />
-                </Stack.Item>
-            </Stack>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ActionButton 
+                            iconProps={filterIcon} 
+                            onClick={handleButtonFilterClick}
+                        > 
+                            Filter
+                        </ActionButton>       
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>
+            <Stack.Item grow>
+                <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+                    <Stack.Item grow className={classNames.gridContainer}>
+                        <ScrollablePane scrollbarVisibility="auto">
+                            <DetailsList
+                                items={
+                                    posts != undefined ? posts?.map(
+                                        (t) => (
+                                            {key: t.id as string, ...omit(t, ['id'])}
+                                        )
+                                    ) : []
+                                }
+                                compact={true}
+                                columns={columns}
+                                setKey="none"
+                                getKey={_getKey}
+                                layoutMode={DetailsListLayoutMode.justified}
+                                selectionMode={SelectionMode.none}
+                                isHeaderVisible={true}
+                                onRenderDetailsHeader={_onRenderDetailsHeader}
+                            />
+                        </ScrollablePane>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <Pagination 
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            siblingCount={1}
+                            totalCount={100}
+                            onPageChange={page => setCurrentPage(page)}
+                            onPageSizeChange={handlePageSizeChange}
+                        />
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
             {
                 contextualMenuFilterProps && 
@@ -675,6 +677,6 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                     </Stack>
                 </Callout>                
             }
-        </>
+        </Stack>
     );
 };

@@ -1,12 +1,7 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
-import { AnimatePresence, motion } from "framer-motion";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
-import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
-import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
-import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
-import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
 import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
 import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
 import { DashboardBackEnd } from "./admin/dashboard-backend";

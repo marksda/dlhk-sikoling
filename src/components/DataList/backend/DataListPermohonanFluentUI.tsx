@@ -10,7 +10,6 @@ import omit from "lodash.omit";
 import { Pagination } from "../../Pagination/pagination-fluent-ui";
 
 interface IDataListPermohonanFluentUIProps {
-    minusHeigh: number;
     initSelectedFilters: IQueryParams;
 };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
@@ -22,7 +21,7 @@ const classNames = mergeStyleSets({
         minHeight: 200,
     },
     gridContainer: {
-        // height: window.innerHeight - 230,
+        height: '100%',
         overflowY: "auto",
         overflowX: "auto",
         position: "relative",
@@ -30,7 +29,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({minusHeigh, initSelectedFilters}) => {    
+export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({initSelectedFilters}) => {    
     
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -467,59 +466,61 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     );
 
     return (
-        <>
-            <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
-                <Stack.Item>
-                    <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                        <Stack.Item>
-                            <SearchBox 
-                                style={{width: 300}} 
-                                placeholder="pencarian pemrakarsa" 
-                                underlined={false} 
-                                onSearch={_onSearch}
-                            />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <ActionButton 
-                                iconProps={filterIcon} 
-                                onClick={handleButtonFilterClick}
-                            > 
-                                Filter
-                            </ActionButton>       
-                        </Stack.Item>
-                    </Stack>
-                </Stack.Item>
-                <Stack.Item grow className={classNames.gridContainer} style={{height: window.innerHeight - minusHeigh}}>
-                    <ScrollablePane scrollbarVisibility="auto">
-                        <DetailsList
-                            items={
-                                posts != undefined ? posts?.map(
-                                    (t) => (
-                                        {key: t.id as string, ...omit(t, ['id'])}
-                                    )
-                                ) : []
-                            }
-                            compact={true}
-                            columns={columns}
-                            setKey="none"
-                            getKey={_getKey}
-                            layoutMode={DetailsListLayoutMode.justified}
-                            selectionMode={SelectionMode.none}
-                            isHeaderVisible={true}
+        <Stack grow verticalFill>
+            <Stack.Item>
+                <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item>
+                        <SearchBox 
+                            style={{width: 300}} 
+                            placeholder="pencarian pemrakarsa" 
+                            underlined={false} 
+                            onSearch={_onSearch}
                         />
-                    </ScrollablePane>
-                </Stack.Item>
-                <Stack.Item>
-                    <Pagination 
-                        currentPage={currentPage}
-                        pageSize={pageSize}
-                        siblingCount={1}
-                        totalCount={100}
-                        onPageChange={page => setCurrentPage(page)}
-                        onPageSizeChange={handlePageSizeChange}
-                    />
-                </Stack.Item>
-            </Stack>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <ActionButton 
+                            iconProps={filterIcon} 
+                            onClick={handleButtonFilterClick}
+                        > 
+                            Filter
+                        </ActionButton>       
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>
+            <Stack.Item grow>
+                <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+                    <Stack.Item grow className={classNames.gridContainer}>
+                        <ScrollablePane scrollbarVisibility="auto">
+                            <DetailsList
+                                items={
+                                    posts != undefined ? posts?.map(
+                                        (t) => (
+                                            {key: t.id as string, ...omit(t, ['id'])}
+                                        )
+                                    ) : []
+                                }
+                                compact={true}
+                                columns={columns}
+                                setKey="none"
+                                getKey={_getKey}
+                                layoutMode={DetailsListLayoutMode.justified}
+                                selectionMode={SelectionMode.none}
+                                isHeaderVisible={true}
+                            />
+                        </ScrollablePane>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <Pagination 
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            siblingCount={1}
+                            totalCount={100}
+                            onPageChange={page => setCurrentPage(page)}
+                            onPageSizeChange={handlePageSizeChange}
+                        />
+                    </Stack.Item>
+                </Stack>
+            </Stack.Item>            
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
             {contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
@@ -578,6 +579,6 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                     </Stack>
                 </Callout>                
             }
-        </>
+        </Stack>
     );
 };
