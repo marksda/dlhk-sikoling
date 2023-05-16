@@ -68,7 +68,7 @@ export const TopBarLayoutFluentUI: FC = () => {
     );
 
     return (
-        <>
+        <Stack.Item>
             <Stack horizontal styles={RootStackStyles}>
                 <Stack.Item grow align="center" styles={labelTopBarStyles}>
                     Sikoling  
@@ -105,6 +105,6 @@ export const TopBarLayoutFluentUI: FC = () => {
                 </Popup>
             </Layer>
             }
-          </>
+        </Stack.Item>
     );
 };

@@ -1,4 +1,4 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams } from "../../../features/config/query-params-slice";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery } from "../../../features/log/flow-log-api-slice";
@@ -23,6 +23,7 @@ const classNames = mergeStyleSets({
         minHeight: 200,
     },
     gridContainer: {
+        height: '100%',
         overflowY: "auto",
         overflowX: "auto",
         position: "relative",
@@ -146,7 +147,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         },
         { 
             key: 'kategori_log', 
-            name: 'Jenis log', 
+            name: 'Jenis', 
             minWidth: 100, 
             maxWidth: 200, 
             isResizable: true, 
@@ -162,14 +163,12 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                                 } 
                             </span><br/>
                             <span>
-                                <b>
-                                    {
-                                        `${
-                                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha.singkatan : null
-                                        }. ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}`
-                                    }
-                                </b>
+                                {
+                                    `Tanggal registrasi: ${
+                                        item.registerPermohonan != undefined ?
+                                         flipFormatDate(item.registerPermohonan?.tanggalRegistrasi as string): '-'
+                                    }`
+                                }
                             </span><br/>
                         </>
                     ); 
@@ -537,31 +536,39 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
         },
         []
     );
+    const _onRenderDetailsHeader  = useCallback(
+        (props: IDetailsHeaderProps|undefined, defaultRender?: IRenderFunction<IDetailsHeaderProps>): JSX.Element => {
+            return (
+                <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true}>
+                    {defaultRender!({...props!})}
+                </Sticky>
+            );
+        },
+        []
+    );
 
     return (
         <>
-            <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+            <Stack horizontal horizontalAlign="end" verticalAlign="center">
                 <Stack.Item>
-                    <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                        <Stack.Item>
-                            <SearchBox 
-                                style={{width: 300}} 
-                                placeholder="pencarian pemrakarsa" 
-                                underlined={false} 
-                                onSearch={_onSearch}
-                            />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <ActionButton 
-                                iconProps={filterIcon} 
-                                onClick={handleButtonFilterClick}
-                            > 
-                                Filter
-                            </ActionButton>       
-                        </Stack.Item>
-                    </Stack>
+                    <SearchBox 
+                        style={{width: 300}} 
+                        placeholder="pencarian pemrakarsa" 
+                        underlined={false} 
+                        onSearch={_onSearch}
+                    />
                 </Stack.Item>
-                <Stack.Item grow className={classNames.gridContainer} style={{height: window.innerHeight - minusHeigh}}>
+                <Stack.Item>
+                    <ActionButton 
+                        iconProps={filterIcon} 
+                        onClick={handleButtonFilterClick}
+                    > 
+                        Filter
+                    </ActionButton>       
+                </Stack.Item>
+            </Stack>
+            <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+                <Stack.Item grow className={classNames.gridContainer}>
                     <ScrollablePane scrollbarVisibility="auto">
                         <DetailsList
                             items={
@@ -578,6 +585,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({minu
                             layoutMode={DetailsListLayoutMode.justified}
                             selectionMode={SelectionMode.none}
                             isHeaderVisible={true}
+                            onRenderDetailsHeader={_onRenderDetailsHeader}
                         />
                     </ScrollablePane>
                 </Stack.Item>
