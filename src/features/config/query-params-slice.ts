@@ -10,3 +10,5 @@ export interface IQueryParams {
         value: string;
     }[]|null;
 };
+
+export type qFilters = Pick<IQueryParams, "filters">;

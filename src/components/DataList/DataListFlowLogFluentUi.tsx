@@ -1,6 +1,6 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IQueryParams } from "../../features/config/query-params-slice";
+import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
@@ -13,7 +13,6 @@ import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/
 interface IDataListFlowLogFluentUIProps {
     initSelectedFilters: IQueryParams;
 };
-type qFilters = Pick<IQueryParams, "filters">;
 type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({

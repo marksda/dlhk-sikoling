@@ -80,12 +80,16 @@ export const RegisterPermohonanApiSlice = createApi({
                         { type: 'RegisterPermohonan', id: 'LIST' },
                     ]:
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
-            })
+            }),
+            getTotalCountRegisterPermohonan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `register_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
 
 export const {
     useAddRegisterPermohonanMutation, useUpdateRegisterPermohonanMutation,
-    useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery
+    useDeleteRegisterPermohonanMutation, useGetAllRegisterPermohonanQuery,
+    useGetTotalCountRegisterPermohonanQuery,
 } = RegisterPermohonanApiSlice;

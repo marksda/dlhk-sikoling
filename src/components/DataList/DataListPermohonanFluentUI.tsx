@@ -1,6 +1,6 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IQueryParams } from "../../features/config/query-params-slice";
+import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
@@ -86,6 +86,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
+    const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
@@ -207,6 +208,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
     const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);  
+    const { data: postCountTegisterPermohonan, isLoading: isLoadingCount } = useGetAllRegisterPermohonanQuery(queryParams);
     const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
 
@@ -467,6 +469,20 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
+    const _onPageNumberChange = useCallback(
+        (pageNumber: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageNumber = pageNumber;      
+                    return tmp;
+                }
+            );
+            setCurrentPage(pageNumber);
+        },
+        []
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item>
@@ -517,7 +533,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             pageSize={pageSize}
                             siblingCount={1}
                             totalCount={100}
-                            onPageChange={page => setCurrentPage(page)}
+                            onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />
                     </Stack.Item>
