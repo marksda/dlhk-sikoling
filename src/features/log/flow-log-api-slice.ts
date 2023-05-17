@@ -73,11 +73,15 @@ export const FlowLogApiSlice = createApi({
                     ]:
                     [{type: 'FlowLog', id: 'LIST'}],
             }),
+            getTotalCountFlowLog: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `flow_log/count?filters=${JSON.stringify(queryFilters)}`,
+            }),            
         }
     }
 });
 
 export const {
     useAddFlowLogMutation, useUpdateFlowLogMutation,
-    useDeleteFlowLogMutation, useGetAllFlowLogQuery
+    useDeleteFlowLogMutation, useGetAllFlowLogQuery,
+    useGetTotalCountFlowLogQuery
 } = FlowLogApiSlice;

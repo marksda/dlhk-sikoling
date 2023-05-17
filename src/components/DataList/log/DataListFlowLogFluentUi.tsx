@@ -1,7 +1,7 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams } from "../../../features/config/query-params-slice";
-import { IFlowLogPermohonan, useGetAllFlowLogQuery } from "../../../features/log/flow-log-api-slice";
+import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../../features/log/flow-log-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
@@ -13,6 +13,7 @@ import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohon
 interface IDataListFlowLogFluentUIProps {
     initSelectedFilters: IQueryParams;
 };
+type qFilters = Pick<IQueryParams, "filters">;
 type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
@@ -87,6 +88,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
+    const [queryFilters, setQueryFilters] = useState<qFilters>({...initSelectedFilters.filters} as qFilters);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
@@ -239,7 +241,9 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);
+    const { data: postsFlowLog, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);
+    const { data: postsCountFlowLog, isLoading: isLoadingCountPosts } = useGetTotalCountFlowLogQuery
+    (queryFilters);
     const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetAllQuery();
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
 
@@ -573,7 +577,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    posts != undefined ? posts?.map(
+                                    postsFlowLog != undefined ? postsFlowLog?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
@@ -595,7 +599,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={100}
+                            totalCount={postsCountFlowLog as number}
                             onPageChange={page => setCurrentPage(page)}
                             onPageSizeChange={handlePageSizeChange}
                         />
