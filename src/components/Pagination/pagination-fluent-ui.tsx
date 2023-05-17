@@ -132,17 +132,16 @@ export const Pagination: FC<IPaginationProps> = ({
     );
 
     return (        
-        <Stack horizontal tokens={stackTokens} horizontalAlign="center">
+        <Stack horizontal tokens={stackTokens} horizontalAlign="center" style={{borderTop: '1px solid rgb(237, 235, 233)', paddingTop: 4}}>
             <Stack.Item align="center">
-                <Dropdown 
-                    options={dropDownPageSizeOptions}
-                    selectedKey={pageSize.toString()}
-                    onChange={onChangePageSize}
-                    style={{marginRight: 4}}
-                />
+                <Text variant="mediumPlus" block style={{marginRight: 32}}>
+                    Total item: {totalCount}
+                </Text>
             </Stack.Item>
             <Stack.Item align="center">
-                <Text variant="mediumPlus" block style={{marginRight: 32}}>item/page</Text>
+                <Text variant="mediumPlus" block style={{marginRight: 8}}>
+                    Page:
+                </Text>
             </Stack.Item>
             {
                 paginationRange?.length! < 2 ? null :
@@ -192,7 +191,18 @@ export const Pagination: FC<IPaginationProps> = ({
                         onClick={onNext}
                     />
                 </Stack.Item> 
-            }                       
+            }            
+            <Stack.Item align="center" style={{marginLeft: 32}}>
+                <Dropdown 
+                    options={dropDownPageSizeOptions}
+                    selectedKey={pageSize.toString()}
+                    onChange={onChangePageSize}
+                    style={{marginRight: 4}}
+                />
+            </Stack.Item>
+            <Stack.Item align="center">
+                <Text variant="mediumPlus" block>item/page</Text>
+            </Stack.Item>                       
         </Stack>                        
     );
 }

@@ -1,13 +1,13 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IQueryParams } from "../../../features/config/query-params-slice";
-import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../../features/permohonan/register-permohonan-api-slice";
-import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../../features/config/config";
-import { useGetAllKategoriPermohonanQuery } from "../../../features/permohonan/kategori-permohonan-api-slice";
-import { useGetAllPosisiTahapPemberkasanQuery } from "../../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
+import { IQueryParams } from "../../features/config/query-params-slice";
+import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
+import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
+import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
-import { Pagination } from "../../Pagination/pagination-fluent-ui";
+import { Pagination } from "../Pagination/pagination-fluent-ui";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParams;

@@ -88,7 +88,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
-    const [queryFilters, setQueryFilters] = useState<qFilters>({...initSelectedFilters.filters} as qFilters);
+    const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});    
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
@@ -246,7 +246,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     (queryFilters);
     const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetAllQuery();
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
-
+    
     const _getKey = useCallback(
         (item: any, index?: number): string => {
             return item.key;
@@ -525,19 +525,34 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const handlePageSizeChange = useCallback(
-        (v: number) => {
+    const _onHandlePageSizeChange = useCallback(
+        (pageSize: number) => {
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);                    
-                    tmp.pageSize = v;            
+                    tmp.pageSize = pageSize;            
                     return tmp;
                 }
             );
-            setPageSize(v);
+            setPageSize(pageSize);
         },
         []
     );
+
+    const _onPageChange = useCallback(
+        (p: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageNumber = p;            
+                    return tmp;
+                }
+            );
+            setCurrentPage(p);
+        },
+        []
+    );
+
     const _onRenderDetailsHeader  = useCallback(
         (props: IDetailsHeaderProps|undefined, defaultRender?: IRenderFunction<IDetailsHeaderProps>): JSX.Element => {
             return (
@@ -599,9 +614,9 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={postsCountFlowLog as number}
-                            onPageChange={page => setCurrentPage(page)}
-                            onPageSizeChange={handlePageSizeChange}
+                            totalCount={postsCountFlowLog == undefined ? 50:postsCountFlowLog }
+                            onPageChange={_onPageChange}
+                            onPageSizeChange={_onHandlePageSizeChange}
                         />
                     </Stack.Item>
                 </Stack>

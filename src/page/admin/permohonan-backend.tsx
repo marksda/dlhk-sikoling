@@ -1,6 +1,6 @@
 import { ILabelStyles, IStyleSet, Label, Pivot, PivotItem, mergeStyleSets } from "@fluentui/react";
 import { FC } from "react";
-import { DataListPermohonanFluentUI } from "../../components/DataList/backend/DataListPermohonanFluentUI";
+import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 
 const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
     root: { marginTop: 10 },
