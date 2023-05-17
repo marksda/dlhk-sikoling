@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { DataListFlowLogFluentUI } from "../../components/DataList/log/DataListFlowLogFluentUi";
+import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 
 
 export const DashboardBackEnd: FC = () => {

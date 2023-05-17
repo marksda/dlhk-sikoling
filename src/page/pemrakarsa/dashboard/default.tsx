@@ -1,7 +1,7 @@
 import { DocumentCard, DocumentCardPreview, DocumentCardStatus, DocumentCardTitle, DocumentCardType, getTheme, IDocumentCardPreviewProps, IStackTokens, Stack } from "@fluentui/react";
 import { FC, useCallback } from "react";
 import { useAppSelector } from "../../../app/hooks";
-import { DataListFlowLogFluentUI } from "../../../components/DataList/log/DataListFlowLogFluentUi";
+import { DataListFlowLogFluentUI } from "../../../components/DataList/DataListFlowLogFluentUi";
 import { IListItemFlowLog } from "../../../components/DataList/log/InterfaceDataListFlowLog";
 
 const theme = getTheme();
