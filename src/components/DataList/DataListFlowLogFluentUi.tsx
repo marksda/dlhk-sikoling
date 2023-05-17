@@ -530,25 +530,27 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);                    
-                    tmp.pageSize = pageSize;            
+                    tmp.pageSize = pageSize;   
+                    tmp.pageNumber = 1;        
                     return tmp;
                 }
             );
+            setCurrentPage(1);
             setPageSize(pageSize);
         },
         []
     );
 
-    const _onPageChange = useCallback(
-        (p: number) => {
+    const _onPageNumberChange = useCallback(
+        (pageNumber: number) => {
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);                    
-                    tmp.pageNumber = p;            
+                    tmp.pageNumber = pageNumber;      
                     return tmp;
                 }
             );
-            setCurrentPage(p);
+            setCurrentPage(pageNumber);
         },
         []
     );
@@ -615,7 +617,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                             pageSize={pageSize}
                             siblingCount={1}
                             totalCount={postsCountFlowLog == undefined ? 50:postsCountFlowLog }
-                            onPageChange={_onPageChange}
+                            onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />
                     </Stack.Item>

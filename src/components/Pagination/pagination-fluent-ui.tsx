@@ -101,12 +101,15 @@ export const Pagination: FC<IPaginationProps> = ({
     currentPage,
     pageSize
 }) => {    
-    const paginationRange = usePagination({
-        currentPage,
-        totalCount,
-        siblingCount,
-        pageSize
-    });
+    const paginationRange = useMemo(
+        () => usePagination({
+                currentPage,
+                totalCount,
+                siblingCount,
+                pageSize
+            }),
+        [currentPage, totalCount, siblingCount, pageSize]
+    );
     
     const onNext = useCallback(
         () => {

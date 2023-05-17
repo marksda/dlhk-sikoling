@@ -451,16 +451,18 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
-    const handlePageSizeChange = useCallback(
-        (v: number) => {
+    const _onHandlePageSizeChange = useCallback(
+        (pageSize: number) => {
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);                    
-                    tmp.pageSize = v;            
+                    tmp.pageSize = pageSize;  
+                    tmp.pageNumber = 1;           
                     return tmp;
                 }
             );
-            setPageSize(v);
+            setCurrentPage(1);
+            setPageSize(pageSize);
         },
         []
     );
@@ -516,7 +518,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             siblingCount={1}
                             totalCount={100}
                             onPageChange={page => setCurrentPage(page)}
-                            onPageSizeChange={handlePageSizeChange}
+                            onPageSizeChange={_onHandlePageSizeChange}
                         />
                     </Stack.Item>
                 </Stack>
