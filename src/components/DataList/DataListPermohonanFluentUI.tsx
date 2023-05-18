@@ -1,4 +1,4 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
@@ -11,6 +11,7 @@ import { Pagination } from "../Pagination/pagination-fluent-ui";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParams;
+    title?: string;
 };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
 const stackTokens = { childrenGap: 8 };
@@ -29,7 +30,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({initSelectedFilters}) => {    
+export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({initSelectedFilters, title}) => {    
     
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -487,25 +488,29 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     return (
         <Stack grow verticalFill>
             <Stack.Item>
-                <Stack>
-                    adsad
-                </Stack>
-                <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                    <Stack.Item>
-                        <SearchBox 
-                            style={{width: 300}} 
-                            placeholder="pencarian pemrakarsa" 
-                            underlined={false} 
-                            onSearch={_onSearch}
-                        />
+                <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+                    <Stack.Item style={{paddingLeft: 16}}>
+                        <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
                     <Stack.Item>
-                        <ActionButton 
-                            iconProps={filterIcon} 
-                            onClick={handleButtonFilterClick}
-                        > 
-                            Filter
-                        </ActionButton>       
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                            <Stack.Item>
+                                <SearchBox 
+                                    style={{width: 300}} 
+                                    placeholder="pencarian pemrakarsa" 
+                                    underlined={false} 
+                                    onSearch={_onSearch}
+                                />
+                            </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={handleButtonFilterClick}
+                                > 
+                                    Filter
+                                </ActionButton>       
+                            </Stack.Item>
+                        </Stack>
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
