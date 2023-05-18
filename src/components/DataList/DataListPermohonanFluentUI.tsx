@@ -211,6 +211,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetTotalCountRegisterPermohonanQuery(queryFilters);
     const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
+    console.log(postCountRegisterPermohonan);
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
