@@ -5,10 +5,10 @@ import { Provider } from 'react-redux';
 import { store } from './app/store';
 import { Home } from './page/home';
 import { ErrorPage } from './error-page';
-import { AdminPage } from './page/main-admin';
+import { AdminPage } from './page/admin/main-admin';
 import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
-import { PemrakarsaPage } from './page/main-pemrakarsa';
+import { PemrakarsaPage } from './page/pemrakarsa/main-pemrakarsa';
 import './index.css';
 // import { ChakraProvider } from '@chakra-ui/react';
 

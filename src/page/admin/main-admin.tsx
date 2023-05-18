@@ -1,13 +1,13 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../app/hooks";
-import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
-import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
-import { DashboardBackEnd } from "./admin/dashboard-backend";
-import { PermohonanBackEnd } from "./admin/permohonan-backend";
-import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
-import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
+import { useAppSelector } from "../../app/hooks";
+import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
+import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
+import { DashboardBackEnd } from "./dashboard-backend";
+import { PermohonanBackEnd } from "./permohonan-backend";
+import { KontenDashboardPemrakarsa } from "../pemrakarsa/template-dashboard-pemrakarsa";
+import { KontenPelaporanPemrakarsa } from "../pemrakarsa/template-pelaporan-pemrakarsa";
 
 
 const classNames = mergeStyleSets({

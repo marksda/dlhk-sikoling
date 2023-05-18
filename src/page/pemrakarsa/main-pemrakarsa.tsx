@@ -1,17 +1,17 @@
 import { INavLinkGroup } from "@fluentui/react";
 import { useEffect, useState } from "react";
-import { KontenDashboardPemrakarsa } from "./pemrakarsa/template-dashboard-pemrakarsa";
-import { KontenPelaporanPemrakarsa } from "./pemrakarsa/template-pelaporan-pemrakarsa";
-import { KontenPermohonanPemrakarsa } from "./pemrakarsa/template-permohonan-pemrakarsa";
-import { TopBarLayoutFluentUI } from "../components/Layout/TopBarLayoutFluentUI";
-import { SideBarLayoutFluentUI } from "../components/Layout/SideBarLayoutFluentUI";
-import { AppLayoutFluentUI } from "../components/Layout/AppLayoutFluentUI";
-import { MainLayoutFluentUI } from "../components/Layout/MainLayoutFluentUI";
-import { PageLayoutFluentUI } from "../components/Layout/PageLayoutFluentUI";
+import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
+import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
+import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
+import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
+import { SideBarLayoutFluentUI } from "../../components/Layout/SideBarLayoutFluentUI";
+import { AppLayoutFluentUI } from "../../components/Layout/AppLayoutFluentUI";
+import { MainLayoutFluentUI } from "../../components/Layout/MainLayoutFluentUI";
+import { PageLayoutFluentUI } from "../../components/Layout/PageLayoutFluentUI";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { LeftMenuFluentUI } from "../components/Menu/LeftMenuFluentUI";
+import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 
 const navLinkGroups: INavLinkGroup[] = [
   {
