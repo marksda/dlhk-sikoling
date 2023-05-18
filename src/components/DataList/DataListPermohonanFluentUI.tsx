@@ -1,7 +1,7 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
+import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useGetAllKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
@@ -207,8 +207,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);  
-    const { data: postCountTegisterPermohonan, isLoading: isLoadingCount } = useGetAllRegisterPermohonanQuery(queryParams);
+    const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);
+    const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetTotalCountRegisterPermohonanQuery(queryFilters);
     const { data: postsJenisPermohonan } = useGetAllKategoriPermohonanQuery(); 
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
 
@@ -532,7 +532,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={100}
+                            totalCount={postCountRegisterPermohonan == undefined ? 50:postCountRegisterPermohonan}
                             onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />

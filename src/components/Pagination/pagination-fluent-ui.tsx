@@ -141,59 +141,62 @@ export const Pagination: FC<IPaginationProps> = ({
                     Total item: {totalCount}
                 </Text>
             </Stack.Item>
+            {
+            paginationRange?.length! < 2 ? null :
             <Stack.Item align="center">
                 <Text variant="mediumPlus" block style={{marginRight: 8}}>
                     Page:
                 </Text>
             </Stack.Item>
-            {
-                paginationRange?.length! < 2 ? null :
-                <Stack.Item align="center">
-                    <IconButton 
-                        iconProps={previousIcon} 
-                        aria-label="previous" 
-                        disabled={currentPage === 1}
-                        onClick={onPrevious}
-                    />
-                </Stack.Item>
             }
             {
-                paginationRange?.length! < 2 ? null :
-                paginationRange?.map((pageNumber, index) => {
-                    if (pageNumber === DOTS) {
-                        return (
-                            <Stack.Item align="center" key={index}>
-                                <DefaultButton text="..." />
-                            </Stack.Item>
-                        );
-                    }
-                    else {
-                        return (
-                            <Stack.Item align="center" key={index}>
-                                {
-                                    pageNumber === currentPage ?
-                                    <PrimaryButton 
-                                        text={pageNumber.toString()} 
-                                        onClick={() => onPageChange(pageNumber as number)} /> :
-                                    <DefaultButton 
-                                        text={pageNumber.toString()} 
-                                        onClick={() => onPageChange(pageNumber as number)} />
-                                }                                
-                            </Stack.Item>
-                        );
-                    }
-                })
+            paginationRange?.length! < 2 ? null :
+            <Stack.Item align="center">
+                <IconButton 
+                    iconProps={previousIcon} 
+                    aria-label="previous" 
+                    disabled={currentPage === 1}
+                    onClick={onPrevious}
+                />
+            </Stack.Item>
             }
             {
-                paginationRange?.length! < 2 ? null :
-                <Stack.Item align="center">
-                    <IconButton 
-                        iconProps={nextIcon} 
-                        aria-label="next" 
-                        disabled={currentPage === lastPage}
-                        onClick={onNext}
-                    />
-                </Stack.Item> 
+            paginationRange?.length! < 2 ? null :
+            paginationRange?.map((pageNumber, index) => {
+                if (pageNumber === DOTS) {
+                    return (
+                        <Stack.Item align="center" key={index}>
+                            <DefaultButton text="..." />
+                        </Stack.Item>
+                    );
+                }
+                else {
+                    return (
+                        <Stack.Item align="center" key={index}>
+                            {
+                                pageNumber === currentPage ?
+                                <PrimaryButton 
+                                    text={pageNumber.toString()} 
+                                    onClick={() => onPageChange(pageNumber as number)} /> :
+                                <DefaultButton 
+                                    text={pageNumber.toString()} 
+                                    onClick={() => onPageChange(pageNumber as number)} />
+                            }                                
+                        </Stack.Item>
+                    );
+                }
+            })
+            }
+            {
+            paginationRange?.length! < 2 ? null :
+            <Stack.Item align="center">
+                <IconButton 
+                    iconProps={nextIcon} 
+                    aria-label="next" 
+                    disabled={currentPage === lastPage}
+                    onClick={onNext}
+                />
+            </Stack.Item> 
             }            
             <Stack.Item align="center" style={{marginLeft: 32}}>
                 <Dropdown 
