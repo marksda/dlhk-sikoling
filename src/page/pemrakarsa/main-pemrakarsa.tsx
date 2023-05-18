@@ -1,17 +1,42 @@
-import { INavLinkGroup } from "@fluentui/react";
+import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
 import { useEffect, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
 import { SideBarLayoutFluentUI } from "../../components/Layout/SideBarLayoutFluentUI";
-import { AppLayoutFluentUI } from "../../components/Layout/AppLayoutFluentUI";
 import { MainLayoutFluentUI } from "../../components/Layout/MainLayoutFluentUI";
 import { PageLayoutFluentUI } from "../../components/Layout/PageLayoutFluentUI";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
+
+const classNames = mergeStyleSets({
+  container: {
+      width: "100%",
+      height: "100%",
+      position: "relative",
+      minHeight: 200,
+  },
+  gridContainer: {
+    height: '100%',
+    overflowY: "auto",
+    overflowX: "auto",
+    position: "relative",
+  },
+  leftKonten: {
+    height: '100%',
+    width: 200,
+    padding: 8,        
+    border: '1px solid #eee',
+    background: '#f9f6f6',
+  },
+  mainKonten: {
+    padding: 4,     
+    backgroundColor: 'white'
+  }
+});
 
 const navLinkGroups: INavLinkGroup[] = [
   {
@@ -79,31 +104,22 @@ export const PemrakarsaPage = () => {
     <>
     {
       token.hakAkses != null ? ( 
-      <AppLayoutFluentUI>
+        <Stack grow verticalFill className={classNames.container}>
           <TopBarLayoutFluentUI />
-          <MainLayoutFluentUI>
-              <SideBarLayoutFluentUI>
+          <Stack.Item grow className={classNames.gridContainer}>
+            <Stack horizontal>
+              <Stack.Item className={classNames.leftKonten}>
                 <LeftMenuFluentUI 
                   menus={navLinkGroups}
                   setIdContentPage={setIdContentPage}
                 />
-              </SideBarLayoutFluentUI>
-              <PageLayoutFluentUI>
-                <AnimatePresence>
-                  <motion.div
-                    key={idContentPage}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    {
-                      getContentPage(idContentPage)
-                    }
-                  </motion.div>
-                </AnimatePresence>
-              </PageLayoutFluentUI>
-          </MainLayoutFluentUI>
-      </AppLayoutFluentUI>
+              </Stack.Item>
+              <Stack.Item grow className={classNames.mainKonten}>
+                {getContentPage(idContentPage)}
+              </Stack.Item>
+            </Stack>
+          </Stack.Item>
+      </Stack>
       ) : null
     }
     </>

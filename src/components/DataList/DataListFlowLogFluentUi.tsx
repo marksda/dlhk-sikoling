@@ -1,4 +1,4 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
@@ -12,6 +12,7 @@ import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/
 
 interface IDataListFlowLogFluentUIProps {
     initSelectedFilters: IQueryParams;
+    title?: string;
 };
 type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
 const stackTokens = { childrenGap: 8 };
@@ -30,7 +31,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({initSelectedFilters}) => {   
+export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({initSelectedFilters, title}) => {   
     const handleOnColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -568,24 +569,31 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     return (
         <Stack grow verticalFill>
             <Stack.Item>
-                <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                    <Stack.Item>
-                        <SearchBox 
-                            style={{width: 300}} 
-                            placeholder="pencarian pemrakarsa" 
-                            underlined={false} 
-                            onSearch={_onSearch}
-                        />
+                <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+                    <Stack.Item style={{paddingLeft: 16}}>
+                        <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
                     <Stack.Item>
-                        <ActionButton 
-                            iconProps={filterIcon} 
-                            onClick={handleButtonFilterClick}
-                        > 
-                            Filter
-                        </ActionButton>       
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                            <Stack.Item>
+                                <SearchBox 
+                                    style={{width: 300}} 
+                                    placeholder="pencarian pemrakarsa" 
+                                    underlined={false} 
+                                    onSearch={_onSearch}
+                                />
+                            </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={handleButtonFilterClick}
+                                > 
+                                    Filter
+                                </ActionButton>       
+                            </Stack.Item>
+                        </Stack>
                     </Stack.Item>
-                </Stack>
+                </Stack>                
             </Stack.Item>
             <Stack.Item grow>
                 <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>

@@ -99,7 +99,7 @@ export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPag
     );
     
     return(
-        <Stack tokens={stackTokens}>
+        <Stack grow verticalFill tokens={stackTokens}>
             <Stack.Item>
                 <Stack horizontal tokens={stackTokens}>
                     <DocumentCard
@@ -161,8 +161,23 @@ export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPag
                     </DocumentCard>
                 </Stack>
             </Stack.Item>
-            <Stack.Item>
-                <DataListFlowLogFluentUI />
+            <Stack.Item grow>
+                <DataListFlowLogFluentUI 
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'tanggal',
+                                    value: 'DESC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Log tracking"
+                /> 
             </Stack.Item>
         </Stack>
     );

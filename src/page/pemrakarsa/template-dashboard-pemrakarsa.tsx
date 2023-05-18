@@ -1,6 +1,6 @@
 import { Breadcrumb,  IBreadcrumbItem,  Stack } from "@fluentui/react";
 import { useMemo, useState } from "react";
-import { DashboardDefault } from "./dashboard/default";
+import { DashboardDefault } from "./dashboard/dashboard-default";
 import { KontenDashboardPerusahaan } from "./dashboard/dashboard-perusahaan";
 import find from "lodash.find";
 import cloneDeep from "lodash.clonedeep";
@@ -63,22 +63,20 @@ export const KontenDashboardPemrakarsa = () => {
         [selectedPage]
     );
 
-    return (
-        <div style={{margin: '0px 16px'}}>
-            <Stack>
-                <Stack.Item>                
-                    <Breadcrumb
-                        items={selectedBreadCrumb}
-                        maxDisplayedItems={3}
-                        ariaLabel="Breadcrumb beranda"
-                        overflowAriaLabel="More links"
-                    />
-                </Stack.Item>
-                <Stack.Item grow align="auto"> 
-                    {konten}
-                </Stack.Item>
-            </Stack>
-        </div>
+    return (        
+        <Stack grow verticalFill>
+            <Stack.Item>                
+                <Breadcrumb
+                    items={selectedBreadCrumb}
+                    maxDisplayedItems={3}
+                    ariaLabel="Breadcrumb beranda"
+                    overflowAriaLabel="More links"
+                />
+            </Stack.Item>
+            <Stack.Item grow align="auto"> 
+                {konten}
+            </Stack.Item>
+        </Stack>
     );
 };
 
