@@ -91,10 +91,17 @@ export const AdminPage: FC = () => {
   const navigate = useNavigate();
 
   useEffect(
-      () => {            
-          if(token.hakAkses == null) {
-          navigate("/");          
-          }
+      () => {       
+        switch (token.hakAkses) {
+          case 'Administrator':
+              break;
+          case 'Umum':
+              navigate("/pemrakarsa");
+              break;
+          default:
+            navigate("/"); 
+            break;
+        }  
       },
       [token]
   );
@@ -102,7 +109,7 @@ export const AdminPage: FC = () => {
   return (        
     <>
     {
-      token.hakAkses == 'Admin' ? 
+      token.hakAkses == 'Administrator' ? 
       <Stack grow verticalFill className={classNames.container}>
         <TopBarLayoutFluentUI />
         <Stack.Item grow className={classNames.gridContainer}>
@@ -119,7 +126,7 @@ export const AdminPage: FC = () => {
           </Stack>
         </Stack.Item>
       </Stack>
-      : navigate("/")
+      : null
     }
     </>
   );

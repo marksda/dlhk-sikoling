@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 export const Home = () => {
     const token = useAppSelector((state) => state.token);
-    console.log(token);
     const navigate = useNavigate();
 
     useEffect(

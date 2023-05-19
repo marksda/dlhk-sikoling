@@ -1,10 +1,11 @@
 import { ActionButton, IconButton, ILabelStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import { motion } from "framer-motion";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { ICredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
+import { useNavigate } from "react-router-dom";
 
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {
@@ -24,11 +25,12 @@ const labelUserNameStyle: ILabelStyles  = {
 export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading}) => {
     //redux global state
     const credential = useAppSelector(state => state.credential);
+    const navigate = useNavigate();
     
     //local state
     const [animPassword, setAnimPassword] = useState<string>('open');
     const [password, setPassword] = useState<string>('');
-    const [errorPassword, setErrorPassword] = useState<string>('');
+    const [errorPassword, setErrorPassword] = useState<string|undefined>(undefined);
 
     //rtk query
     const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();
@@ -73,6 +75,15 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     //     [dataToken]
     // );
 
+    useEffect(
+        () => {
+            if(errorPassword != undefined && errorPassword == "") {
+                navigate("/");
+            }
+        },
+        [errorPassword]
+    );
+
     const processBackToPreviousStep = useCallback(
         () => {
             setAnimPassword('closed');            
@@ -104,7 +115,11 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
             };
 
             try {
-                await getToken(item);                
+                await getToken(item).unwrap().then((originalPromiseResult) => {
+                    setErrorPassword("");
+                  }).catch((rejectedValueOrSerializedError) => {
+                    setErrorPassword("Sandi tidak sesuai");
+                  });                
             } catch (error) {
                 // if (isFetchBaseQueryError(error)) {
                 //     if ("message" in error.data) {

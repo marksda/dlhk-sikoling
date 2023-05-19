@@ -93,9 +93,16 @@ export const PemrakarsaPage = () => {
 
   useEffect(
     () => {            
-      if(token.hakAkses == null) {
-        navigate("/");          
-      }
+      switch (token.hakAkses) {
+        case 'Administrator':
+          navigate("/admin");
+          break;
+        case 'Umum':
+          break;
+        default:
+          navigate("/"); 
+          break;
+      }  
     },
     [token]
   );
@@ -103,7 +110,7 @@ export const PemrakarsaPage = () => {
   return (       
     <>
     {
-      token.hakAkses != null ? ( 
+      token.hakAkses == "Umum" ? ( 
         <Stack grow verticalFill className={classNames.container}>
           <TopBarLayoutFluentUI />
           <Stack.Item grow className={classNames.gridContainer}>
