@@ -10,6 +10,7 @@ import { UserRegistrasi } from './page/user-registrasi';
 import { NotifikasiRegistrasi } from './page/notif-registrasi';
 import { PemrakarsaPage } from './page/pemrakarsa/main-pemrakarsa';
 import './index.css';
+import { LoginPage } from './page/login';
 // import { ChakraProvider } from '@chakra-ui/react';
 
 initializeIcons();
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Home />,
     errorElement: <ErrorPage />
+  },
+  {
+    path: "login",
+    element: <LoginPage />,
   },
   {
     path: "registrasi",

@@ -102,7 +102,7 @@ export const AdminPage: FC = () => {
   return (        
     <>
     {
-      token.hakAkses != null ? ( 
+      token.hakAkses == 'Admin' ? 
       <Stack grow verticalFill className={classNames.container}>
         <TopBarLayoutFluentUI />
         <Stack.Item grow className={classNames.gridContainer}>
@@ -119,7 +119,7 @@ export const AdminPage: FC = () => {
           </Stack>
         </Stack.Item>
       </Stack>
-      ) : null
+      : navigate("/")
     }
     </>
   );
