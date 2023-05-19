@@ -176,7 +176,7 @@ export const DashboardDefault: FC<IKontenDashboardDefaultProps> = ({setParentPag
                             ],
                         }
                     }
-                    title="Log tracking"
+                    title="Tracking log"
                 /> 
             </Stack.Item>
         </Stack>

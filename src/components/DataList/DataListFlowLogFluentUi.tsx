@@ -171,6 +171,16 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                     }`
                                 }
                             </span><br/>
+                            <span>
+                            Nomor registrasi: <b>
+                            {
+                                `${
+                                    item.registerPermohonan != undefined ?
+                                    item.registerPermohonan.id: '-'
+                                }`
+                            }
+                            </b>
+                            </span>
                         </>
                     ); 
                 }
@@ -359,9 +369,32 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const handleSelectedDate = useCallback(
+    const _onHandleSelectedDate = useCallback(
         (date) => {
-            let tanggalTerpilih = onFormatDateUtc(date);
+            let tanggalTerpilih = onFormatDateUtc(date);            
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number; 
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
 
             setQueryParams(
                 prev => {
@@ -392,8 +425,32 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const onChangeKategoriLog = useCallback(
+    const _onChangeKategoriLog = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kategori_log',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kategori_log',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -417,13 +474,37 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     return tmp;
                 }
             );
+
             setSelectedKategoriLog(item);
         },
         []
     );
 
-    const onChangePengirim = useCallback(
+    const _onChangePengirim = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -432,13 +513,13 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     
                     if(found == -1) {
                         filters?.push({
-                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
                             value: item?.key as string
                         });
                     }
                     else {
                         filters?.splice(found, 1, {
-                            fieldName: 'posisi_tahap_pemberkasan_pengiriman',
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
                             value: item?.key as string
                         })
                     }                    
@@ -452,8 +533,31 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const onChangePenerima = useCallback(
+    const _onChangePenerima = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_penerima',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_penerima',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -482,8 +586,40 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const handleResetFilter = useCallback(
+    const _onHandleResetFilter = useCallback(
         () => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_log'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_penerima'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -643,7 +779,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                 ariaLabel="Pilih tanggal"
                                 strings={DayPickerIndonesiaStrings}
                                 formatDate={onFormatDate}
-                                onSelectDate={handleSelectedDate}
+                                onSelectDate={_onHandleSelectedDate}
                                 value={selectedDate}
                             />
                         </Stack.Item>
@@ -660,7 +796,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                     ) : []
                                 }
                                 selectedKey={selectedKategoriLog ? selectedKategoriLog.key : null}
-                                onChange={onChangeKategoriLog}
+                                onChange={_onChangeKategoriLog}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -676,7 +812,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                     ) : []
                                 }
                                 selectedKey={selectedPengirim ? selectedPengirim.key : null}
-                                onChange={onChangePengirim}
+                                onChange={_onChangePengirim}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -692,14 +828,14 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                     ) : []
                                 }
                                 selectedKey={selectedPenerima ? selectedPenerima.key : null}
-                                onChange={onChangePenerima}
+                                onChange={_onChangePenerima}
                             />
                         </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 
                                 style={{width: 200, marginTop: 16}}
                                 text="Reset" 
-                                onClick={handleResetFilter}
+                                onClick={_onHandleResetFilter}
                             />
                         </Stack.Item>
                     </Stack>

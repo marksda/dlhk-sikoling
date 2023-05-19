@@ -5,6 +5,7 @@ import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowL
 export const DashboardBackEnd: FC = () => {
     return (
         <DataListFlowLogFluentUI 
+            title="Tracking log"
             initSelectedFilters={
                 {
                     pageNumber: 1,
