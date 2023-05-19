@@ -1,5 +1,4 @@
 import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
 import { FormulirLogin } from "../components/FormulirLogin/FormulirLogin";
@@ -18,23 +17,7 @@ const stackBodyStyles: IStackStyles = {
 export const Home = () => {
     const token = useAppSelector((state) => state.token);
     const navigate = useNavigate();
-
-    // useEffect(
-    //     () => {
-    //         switch (token.hakAkses) {
-    //             case 'Umum':
-    //                 navigate("/pemrakarsa");
-    //                 break;
-    //             case 'Administrator':
-    //                 navigate("/admin");
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     },
-    //     [token]
-    // );
-        
+    
     return (<>{
         token.hakAkses == null ? 
         <Stack tokens={containerStackTokens} >

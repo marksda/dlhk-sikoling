@@ -56,17 +56,3 @@ root.render(
       <RouterProvider router={router} />  
   </Provider>
 );
-
-// root.render(
-//     <Provider store={store}>
-//       <BrowserRouter>
-//         <Routes>
-//           <Route path="/" element={<Home />}/>   
-//           <Route path="admin" element={<AdminPage />}/>    
-//           <Route path="pemrakarsa" element={<PemrakarsaPage />}/>  
-//           <Route path="registrasi" element={<UserRegistrasi />}/> 
-//           <Route path="notif_registrasi"element={<NotifikasiRegistrasi />}/> 
-//         </Routes>
-//       </BrowserRouter>
-//     </Provider>    
-// )
