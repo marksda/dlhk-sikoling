@@ -266,6 +266,37 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onSearch = useCallback(
         (newValue) => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
