@@ -32,7 +32,7 @@ const classNames = mergeStyleSets({
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
 export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({initSelectedFilters, title}) => {   
-    const handleOnColumnClick = useCallback(
+    const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
                 {
@@ -65,7 +65,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const handleButtonFilterClick = useCallback(
+    const onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
             setContextualMenuFilterProps({         
                 target: ev.currentTarget as HTMLElement,
@@ -99,7 +99,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             maxWidth: 75, 
             isRowHeader: true,
             isResizable: false,
-            onColumnClick: handleOnColumnClick,
+            onColumnClick: _onHandleColumnClick,
             isPadded: true,
             isSortedDescending: true,
             isSorted: true,
@@ -113,7 +113,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             minWidth: 100, 
             maxWidth: 200, 
             isResizable: true, 
-            onColumnClick: handleOnColumnClick,
+            onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemFlowLogPermohonan) => {
                 return (
@@ -152,7 +152,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             minWidth: 100, 
             maxWidth: 200, 
             isResizable: true, 
-            onColumnClick: handleOnColumnClick,
+            onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemFlowLogPermohonan) => {
                 if(item.kategoriFlowLog?.id === '1') {
@@ -200,7 +200,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true,
-            onColumnClick: handleOnColumnClick,
+            onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemFlowLogPermohonan) => {
                 return (
@@ -219,7 +219,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true,
-            onColumnClick: handleOnColumnClick,
+            onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemFlowLogPermohonan) => {
                 return (
                     <span>{item.penerimaBerkas?.nama}</span>
@@ -753,7 +753,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                             <Stack.Item>
                                 <ActionButton 
                                     iconProps={filterIcon} 
-                                    onClick={handleButtonFilterClick}
+                                    onClick={onHandleButtonFilterClick}
                                 > 
                                     Filter
                                 </ActionButton>       
