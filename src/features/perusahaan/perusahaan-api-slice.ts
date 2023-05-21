@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerusahaan } from "./perusahaan-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
 type daftarPerusahaan = IPerusahaan[];
 
@@ -114,6 +115,21 @@ export const PerusahaanApiSlice = createApi({
             isEksisPerusahaan: builder.query<boolean, string|null>({
                 query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,
             }),
+            getAllRegisterPerusahaan: builder.query<daftarPerusahaan, IQueryParams>({
+                query: (queryParams) => `perusahaan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'Perusahaan' as const, id: id! })
+                        ),
+                        { type: 'Perusahaan', id: 'LIST' },
+                    ]:
+                    [{type: 'Perusahaan', id: 'LIST'}],
+            }),
+            getTotalCountRegisterPerusahaan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -123,5 +139,6 @@ export const {
     useDeletePerusahaanMutation, useGetAllPerusahaanQuery, 
     useGetPerusahaanByPageQuery, useGetPerusahaanByNamaQuery, 
     useGetPerusahaanByNamaAndPageQuery, useGetPerusahaanByIdQuery,
-    useIsEksisPerusahaanQuery, useGetPerusahaanByIdPersonQuery
+    useIsEksisPerusahaanQuery, useGetPerusahaanByIdPersonQuery,
+    useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery,
 } = PerusahaanApiSlice;

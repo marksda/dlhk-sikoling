@@ -2,10 +2,10 @@ import { useBoolean } from "@fluentui/react-hooks";
 import omit from "lodash.omit";
 import { FC, useCallback, useMemo } from "react";
 import { useAppSelector } from "../../../app/hooks";
-import { DataListPerusahaanFluentUI } from "../../../components/DataList/perusahaan/DataListPerusahaanFluentUI";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
-import { useDeleteLinkKepemilikanRegisterPerusahaanMutation, useGetRegisterPerusahaanByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { useDeleteLinkKepemilikanRegisterPerusahaanMutation } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUi";
 
 // const containerDivStyles: React.CSSProperties = {    
 //     boxShadow: DefaultEffects.elevation4, 
@@ -26,26 +26,26 @@ export const KontenDashboardPerusahaan: FC = () => {
     //local state
     const [isModalAddPerusahaanOpen, { setTrue: showModalAddPerusahaan, setFalse: hideModalAddModalPerusahaan }] = useBoolean(false);    
     //rtk query perusahaan variable hook
-    const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
+    // const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanByIdLinkKepemilikanQuery(token.userId as string);
     const [deleteLinkPersonPerusahaan, { isLoading: isDeleting }] = useDeleteLinkKepemilikanRegisterPerusahaanMutation();
 
-    const dataPerusahaan: daftarItemRegisterPerusahaan = useMemo(
-        () => {
-            if(daftarRegisterPerusahaan != undefined) {
-                return [
-                    ...daftarRegisterPerusahaan.map(
-                        (t) => (
-                            {key: t.id as string, ...omit(t, ['id'])}
-                        )
-                    )
-                ];
-            }
-            else {
-                return [];
-            }
-        },
-        [daftarRegisterPerusahaan]
-    );
+    // const dataPerusahaan: daftarItemRegisterPerusahaan = useMemo(
+    //     () => {
+    //         if(daftarRegisterPerusahaan != undefined) {
+    //             return [
+    //                 ...daftarRegisterPerusahaan.map(
+    //                     (t) => (
+    //                         {key: t.id as string, ...omit(t, ['id'])}
+    //                     )
+    //                 )
+    //             ];
+    //         }
+    //         else {
+    //             return [];
+    //         }
+    //     },
+    //     [daftarRegisterPerusahaan]
+    // );
 
     const handleDeletePerusahaan = useCallback(
         (idRegisterPerusahaan) => {
@@ -57,11 +57,20 @@ export const KontenDashboardPerusahaan: FC = () => {
     return(
         <>            
         <DataListPerusahaanFluentUI 
-            showModalAddPerusahaan={showModalAddPerusahaan} 
-            hideModalAddModalPerusahaan={hideModalAddModalPerusahaan}
-            isDataLoading={isFetchingDaftarRegisterPerusahaan}
-            dataPerusahaan={dataPerusahaan}
-            deletePerusahaan={handleDeletePerusahaan}
+            initSelectedFilters={
+                {
+                    pageNumber: 1,
+                    pageSize: 50,
+                    filters: [],
+                    sortOrders: [
+                        {
+                            fieldName: 'tanggal',
+                            value: 'DESC'
+                        },
+                    ],
+                }
+            }
+            title="Pemrakarsa"
         />            
         <ModalFormulirAddPerusahaan 
             isModalOpen={isModalAddPerusahaanOpen}

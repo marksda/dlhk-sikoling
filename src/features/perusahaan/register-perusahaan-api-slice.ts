@@ -3,6 +3,7 @@ import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerson } from "../person/person-slice";
 import { IPerusahaan } from "./perusahaan-slice";
 import { IRegisterPerusahaan } from "./register-perusahaan-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
 type daftarRegisterPerusahaan = IRegisterPerusahaan[];
 
@@ -20,6 +21,14 @@ export const RegisterPerusahaanApiSlice = createApi({
                     body,
                 }),
                 invalidatesTags: [{type: 'RegisterPerusahaan', id: 'LIST'}, {type: 'RegisterPerusahaanPage', id: 'LIST'}, {type: 'RegisterPerusahaanNama', id: 'LIST'}, {type: 'RegisterPerusahaanNamaPage', id: 'LIST'}, {type: 'RegisterPerusahaanNpwp', id: 'LIST'}, {type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}, {type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST'}],
+            }),            
+            addLinkKepemilikanPerusahaan: builder.mutation<IRegisterPerusahaan, { perusahaan: Partial<IPerusahaan>, pemilik: Partial<IPerson>}>({
+                query: (item) => ({
+                    url: 'register_perusahaan/add_kepemilikan',
+                    method: 'POST',
+                    body: item,
+                }),
+                invalidatesTags: [{type: 'RegisterPerusahaan', id: 'LIST'}, {type: 'RegisterPerusahaanPage', id: 'LIST'}, {type: 'RegisterPerusahaanNama', id: 'LIST'}, {type: 'RegisterPerusahaanNamaPage', id: 'LIST'}, {type: 'RegisterPerusahaanNpwp', id: 'LIST'}, {type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}],
             }),
             updateRegisterPerusahaan: builder.mutation<void, Partial<IPerusahaan>>({
                 query: (perusahaan) => ({
@@ -55,8 +64,8 @@ export const RegisterPerusahaanApiSlice = createApi({
                     // let id = result?.id;
                     return [{type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
             }),
-            getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, void>({
-                query: () => 'register_perusahaan',
+            getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, IQueryParams>({
+                query: (queryParams) => 'register_perusahaan/filters=${JSON.stringify(queryParams)}`',
                 providesTags: (result) => 
                     result ?
                     [
@@ -67,106 +76,11 @@ export const RegisterPerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'RegisterPerusahaan', id: 'LIST'}],
             }),
-            getRegisterPerusahaanByPage: builder.query<daftarRegisterPerusahaan, {page: number; pageSize: number}>({
-                query: ({page, pageSize}) => `register_perusahaan/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanPage' as const, id: perusahaan?.id! })
-                        ),
-                        { type: 'RegisterPerusahaanPage', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanPage', id: 'LIST'}],
-            }),
-            getRegisterPerusahaanByNama: builder.query<daftarRegisterPerusahaan, string>({
-                query: (nama) => `register_perusahaan/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanNama' as const, id: perusahaan?.id!  })
-                        ),
-                        { type: 'RegisterPerusahaanNama', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanNama', id: 'LIST'}],
-            }),
-            getRegisterPerusahaanByNamaAndPage: builder.query<daftarRegisterPerusahaan, {nama: string; page: number; pageSize: number}>({
-                query: ({nama, page=1, pageSize=10}) => `register_perusahaan/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanNamaPage' as const, id: perusahaan?.id! })
-                        ),
-                        { type: 'RegisterPerusahaanNamaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanNamaPage', id: 'LIST'}],
-            }),
-            getRegisterPerusahaanByNpwp: builder.query<daftarRegisterPerusahaan, string>({
-                query: (npwp) => `register_perusahaan/${npwp}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanNpwp' as const, id: perusahaan?.id! })
-                        ),
-                        { type: 'RegisterPerusahaanNpwp', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanNpwp', id: 'LIST'}],
-            }),
-            getRegisterPerusahaanByIdKreator: builder.query<daftarRegisterPerusahaan, string>({
-                query: (idKreator) => ({
-                    url: `register_perusahaan/kreator/${idKreator}`,
-                }),                
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ perusahaan }) => ({ type: 'RegisterPerusahaanByIdPerson' as const, id: perusahaan?.id! })
-                        ),
-                        { type: 'RegisterPerusahaanByIdPerson', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}],                
+            getTotalCountRegisterPerusahaan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `register_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
             isEksisRegisterPerusahaan: builder.query<boolean, string|null>({
                 query: (idRegisterPerusahaan) => `register_perusahaan/is_eksis?id=${idRegisterPerusahaan}`,
-            }),
-            getRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikan: builder.query<daftarRegisterPerusahaan, string>({
-                query: (idLinkKepemilikan) => ({
-                    url: `register_perusahaan/kepemilikan/tanpa_dokumen/${idLinkKepemilikan}`,
-                }),
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({id}) => ({ type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan' as const, id: id as string })
-                        ),
-                        { type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanTanpaDokumenByIdLinkKepemilikan', id: 'LIST'}],                
-            }),
-            getRegisterPerusahaanByIdLinkKepemilikan: builder.query<daftarRegisterPerusahaan, string>({
-                query: (idLinkKepemilikan) => ({
-                    url: `register_perusahaan/kepemilikan/${idLinkKepemilikan}`,
-                }),
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({id}) => ({ type: 'RegisterPerusahaanByIdLinkKepemilikan' as const, id: id as string })
-                        ),
-                        { type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST' },
-                    ]:
-                    [{type: 'RegisterPerusahaanByIdLinkKepemilikan', id: 'LIST'}],                
-            }),
-            addLinkKepemilikanPerusahaan: builder.mutation<IRegisterPerusahaan, { perusahaan: Partial<IPerusahaan>, pemilik: Partial<IPerson>}>({
-                query: (item) => ({
-                    url: 'register_perusahaan/add_kepemilikan',
-                    method: 'POST',
-                    body: item,
-                }),
-                invalidatesTags: [{type: 'RegisterPerusahaan', id: 'LIST'}, {type: 'RegisterPerusahaanPage', id: 'LIST'}, {type: 'RegisterPerusahaanNama', id: 'LIST'}, {type: 'RegisterPerusahaanNamaPage', id: 'LIST'}, {type: 'RegisterPerusahaanNpwp', id: 'LIST'}, {type: 'RegisterPerusahaanByIdPerson', id: 'LIST'}],
             }),
         }
     }
@@ -175,9 +89,6 @@ export const RegisterPerusahaanApiSlice = createApi({
 export const {
     useAddRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation,
     useDeleteRegisterPerusahaanMutation, useGetAllRegisterPerusahaanQuery, 
-    useGetRegisterPerusahaanByPageQuery, useGetRegisterPerusahaanByNamaQuery, 
-    useGetRegisterPerusahaanByNamaAndPageQuery, useGetRegisterPerusahaanByNpwpQuery,
-    useIsEksisRegisterPerusahaanQuery, useGetRegisterPerusahaanByIdKreatorQuery,
-    useGetRegisterPerusahaanByIdLinkKepemilikanQuery, useDeleteLinkKepemilikanRegisterPerusahaanMutation,
-    useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery,
+    useIsEksisRegisterPerusahaanQuery, useDeleteLinkKepemilikanRegisterPerusahaanMutation,
+    useGetTotalCountRegisterPerusahaanQuery,
 } = RegisterPerusahaanApiSlice;

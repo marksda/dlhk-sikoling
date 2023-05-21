@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IRenderFunction, Link, SearchBox, Stack, Text, mergeStyleSets } from "@fluentui/react";
+import { ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, Link, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { baseRestAPIUrl } from "../../features/config/config";
@@ -11,6 +11,9 @@ import cloneDeep from "lodash.clonedeep";
 import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
 import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendirian-slice";
+import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+import omit from "lodash.omit";
+import { Pagination } from "../Pagination/pagination-fluent-ui";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -57,6 +60,7 @@ const classNames = mergeStyleSets({
         marginBottom: 4,
     },
 });
+const stackTokens = { childrenGap: 8 };
 
 export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
 
@@ -319,6 +323,18 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
 
+    // rtk hook state
+    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
+    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
+    (queryFilters);
+
+    const _getKey = useCallback(
+        (item: any, index?: number): string => {
+            return item.key;
+        },
+        []
+    );
+    
     const _onSearch = useCallback(
         (newValue) => {
             setQueryFilters(
@@ -448,6 +464,47 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
         [],
     );
 
+    const _onRenderDetailsHeader  = useCallback(
+        (props: IDetailsHeaderProps|undefined, defaultRender?: IRenderFunction<IDetailsHeaderProps>): JSX.Element => {
+            return (
+                <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true}>
+                    {defaultRender!({...props!})}
+                </Sticky>
+            );
+        },
+        []
+    );
+
+    const _onHandlePageSizeChange = useCallback(
+        (pageSize: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageSize = pageSize;   
+                    tmp.pageNumber = 1;        
+                    return tmp;
+                }
+            );
+            setCurrentPage(1);
+            setPageSize(pageSize);
+        },
+        []
+    );
+
+    const _onPageNumberChange = useCallback(
+        (pageNumber: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageNumber = pageNumber;      
+                    return tmp;
+                }
+            );
+            setCurrentPage(pageNumber);
+        },
+        []
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item>
@@ -470,8 +527,41 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                 </Stack>
             </Stack.Item>
             <Stack.Item grow>
-
+                <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
+                    <Stack.Item grow className={classNames.gridContainer}>
+                        <ScrollablePane scrollbarVisibility="auto">
+                            <DetailsList
+                                items={
+                                    postsPerusahaan != undefined ? postsPerusahaan?.map(
+                                        (t) => (
+                                            {key: t.id as string, ...omit(t, ['id'])}
+                                        )
+                                    ) : []
+                                }
+                                compact={true}
+                                columns={columns}
+                                setKey="none"
+                                getKey={_getKey}
+                                layoutMode={DetailsListLayoutMode.justified}
+                                selectionMode={SelectionMode.none}
+                                isHeaderVisible={true}
+                                onRenderDetailsHeader={_onRenderDetailsHeader}
+                            />
+                        </ScrollablePane>
+                    </Stack.Item>
+                    <Stack.Item>
+                        <Pagination 
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            siblingCount={1}
+                            totalCount={postsCountPerusahaan == undefined ? 50:postsCountPerusahaan }
+                            onPageChange={_onPageNumberChange}
+                            onPageSizeChange={_onHandlePageSizeChange}
+                        />
+                    </Stack.Item>
+                </Stack>
             </Stack.Item>
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
         </Stack>
     );
 };
