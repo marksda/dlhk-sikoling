@@ -47,12 +47,12 @@ export const KontenDashboardPerusahaan: FC = () => {
     //     [daftarRegisterPerusahaan]
     // );
 
-    const handleDeletePerusahaan = useCallback(
-        (idRegisterPerusahaan) => {
-            deleteLinkPersonPerusahaan(idRegisterPerusahaan);
-        },
-        [token]
-    );
+    // const handleDeletePerusahaan = useCallback(
+    //     (idRegisterPerusahaan) => {
+    //         deleteLinkPersonPerusahaan(idRegisterPerusahaan);
+    //     },
+    //     [token]
+    // );
     
     return(
         <>            

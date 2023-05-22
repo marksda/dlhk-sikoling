@@ -120,7 +120,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
             }
         },
         { 
-            key: 'perusahaan', 
+            key: 'nama', 
             name: 'Pemrakarsa', 
             minWidth: 100, 
             maxWidth: 200, 
@@ -194,9 +194,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                 return (
                     <>
                         <div className={classNames.dokumenMainTitle}>
-                            Jumlah Dokumen : {item.perusahaan?.daftarRegisterDokumen?.length}
+                            Jumlah Dokumen : {
+                            item.perusahaan?.daftarRegisterDokumen != undefined ?
+                            item.perusahaan?.daftarRegisterDokumen?.length : 0
+                            }
                         </div>                    
                         {
+                            item.perusahaan?.daftarRegisterDokumen != undefined ?
                             item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen, index) => {
                                 let dokumen = null;
                                 if(dataRegisterDokumen.dokumen?.id == '010401') {
@@ -313,7 +317,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                         </>                                    
                                     );
                                 }
-                            })
+                            }) : null
                         }
                     </>
                 );
@@ -341,18 +345,18 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama',
                                 value: newValue
                             })
                         }
@@ -372,18 +376,18 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama',
                                 value: newValue
                             })
                         }

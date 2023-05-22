@@ -65,7 +65,7 @@ export const RegisterPerusahaanApiSlice = createApi({
                     return [{type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
             }),
             getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, IQueryParams>({
-                query: (queryParams) => 'register_perusahaan/filters=${JSON.stringify(queryParams)}`',
+                query: (queryParams) => `register_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [

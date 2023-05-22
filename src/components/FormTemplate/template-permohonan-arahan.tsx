@@ -8,7 +8,7 @@ import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../features/pegawai
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../features/permohonan/status-wali-api-slice";
-import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+// import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { ModalFormulirAddPegawai } from "../Modal/ModalFormulirAddPegawai";
 import { TemplateDokumenSyaratArahan } from "./template-dok-syarat-arahan";
@@ -70,7 +70,7 @@ export const TemplatePermohonanArahan = () => {
     const tooltipAddPegawaiId = useId('toolTipAddPegawai');
 
     //rtk query perusahaan variable hook
-    const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
+    // const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
     const { data: daftarJenisPermohonanSuratarahan, error: errorFetchDataJenisPermohonanSuratArahan,  isFetching: isFetchingDaftarJenisPermohonanSuratarahan, isError: isErrorJenisPermohonanSuratarahan } = useGetAllJenisPermohonanSuratArahanQuery();
     const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetAllStatusWaliPermohonanQuery();
     const { data: daftarPegawai, error: errorDataPegawai} = useGetPegawaiByIdRegisterPerusahaanQuery(
