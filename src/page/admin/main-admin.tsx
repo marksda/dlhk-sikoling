@@ -8,6 +8,7 @@ import { DashboardBackEnd } from "./dashboard-backend";
 import { PermohonanBackEnd } from "./permohonan-backend";
 import { KontenDashboardPemrakarsa } from "../pemrakarsa/template-dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "../pemrakarsa/template-pelaporan-pemrakarsa";
+import { MasterBackEnd } from "./master-backend";
 
 
 const classNames = mergeStyleSets({
@@ -68,6 +69,13 @@ const navLinkGroups: INavLinkGroup[] = [
           url: '',
           icon: 'ComplianceAudit',
           key: 'key7',
+          target: '_blank',
+        },
+        {
+          name: 'Master Data',
+          url: '',
+          icon: 'Library',
+          key: 'master',
           target: '_blank',
         },
         {
@@ -145,6 +153,9 @@ const getContentPage = (idContentPage: string) => {
         case 'plp':
             konten = <KontenPelaporanPemrakarsa />;   
             break;
+        case 'master':
+        konten = <MasterBackEnd />;   
+        break;
         default:
             konten = <KontenDashboardPemrakarsa />;
             break;
