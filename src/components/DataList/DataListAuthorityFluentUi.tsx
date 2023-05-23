@@ -183,7 +183,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                 return (
                     <span>
                         {
-                            item.statusInternal != undefined ? item.statusInternal == true ? 'Petugas':'Pemrakarsa':null
+                            item.statusInternal != undefined ? item.statusInternal == true ? 'Petugas':'Pemohon':null
                         }
                     </span>
                 );
@@ -203,7 +203,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         item.verified != undefined ? 
                         item.verified == true ? 
                         <FontIcon aria-label="True" iconName="CheckMark" className={classNames.deepGreen} /> :
-                        <FontIcon aria-label="False" iconName="CompassNW" className={classNames.deepRed} /> : null 
+                        <FontIcon aria-label="False" iconName="Clear" className={classNames.deepRed} /> : null 
                     }</span>
                 );
             },
@@ -278,6 +278,8 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
 
     const _onSearch = useCallback(
         (newValue) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -335,16 +337,20 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         }
                     }
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }
             );
+            
         },
         []
     );
 
     const _onClearSearch= useCallback(
         () => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -371,6 +377,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         filters?.splice(found, 1);
                     }
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }

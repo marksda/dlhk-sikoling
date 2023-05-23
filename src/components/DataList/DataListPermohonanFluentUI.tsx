@@ -292,6 +292,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
 
     const _onSearch = useCallback(
         (newValue) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -348,7 +350,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             filters?.splice(found, 1);
                         }
                     }
-                    
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }
@@ -359,11 +361,13 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
 
     const _onClearSearch= useCallback(
         () => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -378,13 +382,14 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
                     }
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }

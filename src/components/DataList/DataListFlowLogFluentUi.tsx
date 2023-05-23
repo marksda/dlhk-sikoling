@@ -266,6 +266,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onSearch = useCallback(
         (newValue) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -323,6 +325,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         }
                     }
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }
@@ -333,11 +336,13 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onClearSearch= useCallback(
         () => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -352,13 +357,14 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
                     }
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;             
                     return tmp;
                 }
