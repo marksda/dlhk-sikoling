@@ -3,17 +3,21 @@ import { baseRestAPIUrl } from "../config/config";
 import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
 import { ICredential } from "./authentication-slice";
+import { IAuthor } from "./author-slice";
+import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../config/helper-function";
 
 export interface PostRegistrasi {
     credential: ICredential;
     person: IPerson;
 };
 
+type daftarAuthorisasi = IAuthor[];
+
 export const AuthorizationApiSlice = createApi({
     reducerPath: 'authorizationApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
+    tagTypes: ['Author'],
     endpoints(builder) {
         return {
             addRegistrasi: builder.mutation<ISimpleResponse, Partial<PostRegistrasi>>({
@@ -25,9 +29,27 @@ export const AuthorizationApiSlice = createApi({
                     },
                     body
                 }),
-            }),        
+            }),  
+            getAllAuthorisasi: builder.query<daftarAuthorisasi, IQueryParams>({
+                query: (queryParams) => `authority?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'Author' as const, id: id as string })
+                        ),
+                        { type: 'Author', id: 'LIST' },
+                    ]:
+                    [{type: 'Author', id: 'LIST'}],
+            }),
+            getTotalCountAuthorisasi: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `authority/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         };
     },
 });
 
-export const { useAddRegistrasiMutation } = AuthorizationApiSlice;
+export const { 
+    useAddRegistrasiMutation, useGetAllAuthorisasiQuery,
+    useGetTotalCountAuthorisasiQuery
+} = AuthorizationApiSlice;

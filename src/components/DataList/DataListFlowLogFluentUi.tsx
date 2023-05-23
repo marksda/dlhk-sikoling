@@ -65,7 +65,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
-    const onHandleButtonFilterClick = useCallback(
+    const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
             setContextualMenuFilterProps({         
                 target: ev.currentTarget as HTMLElement,
@@ -321,6 +321,42 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         if(found > -1) {
                             filters?.splice(found, 1);
                         }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
+    const _onClearSearch= useCallback(
+        () => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
                     }
                     
                     tmp.filters = filters;             
@@ -707,7 +743,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         },
         []
     );
-
+    
     const _onPageNumberChange = useCallback(
         (pageNumber: number) => {
             setQueryParams(
@@ -748,12 +784,13 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                     placeholder="pencarian pemrakarsa" 
                                     underlined={false} 
                                     onSearch={_onSearch}
+                                    onClear= {_onClearSearch}
                                 />
                             </Stack.Item>
                             <Stack.Item>
                                 <ActionButton 
                                     iconProps={filterIcon} 
-                                    onClick={onHandleButtonFilterClick}
+                                    onClick={_onHandleButtonFilterClick}
                                 > 
                                     Filter
                                 </ActionButton>       

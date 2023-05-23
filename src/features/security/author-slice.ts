@@ -7,7 +7,8 @@ export interface IHakAkses {
 };
 
 export interface IAuthor {
-    id: string|null,
+    id: string|null;
+    tanggal: string|null;
     hakAkses: Partial<IHakAkses>|null;
     person: Partial<IPerson>|null;
     statusInternal: boolean|null;

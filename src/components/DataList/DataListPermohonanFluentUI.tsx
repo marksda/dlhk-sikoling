@@ -357,6 +357,42 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
+    const _onClearSearch= useCallback(
+        () => {
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
     const handleSelectedDate = useCallback(
         (date) => {
             let tanggalTerpilih = onFormatDateUtc(date);
@@ -531,6 +567,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                                     placeholder="pencarian pemrakarsa" 
                                     underlined={false} 
                                     onSearch={_onSearch}
+                                    onClear= {_onClearSearch}
                                 />
                             </Stack.Item>
                             <Stack.Item>

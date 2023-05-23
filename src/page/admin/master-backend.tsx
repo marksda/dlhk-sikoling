@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
+import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
 
 
 export const MasterBackEnd: FC = () => {
     return (
-        <DataListFlowLogFluentUI 
-            title="Tracking log"
+        <DataListAuthorityFluentUI
+            title="Authority"
             initSelectedFilters={
                 {
                     pageNumber: 1,
