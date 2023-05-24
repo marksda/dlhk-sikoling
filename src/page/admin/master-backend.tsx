@@ -1,6 +1,6 @@
-import { FC, useCallback } from "react";
+import { FC, MouseEventHandler, useCallback, useState } from "react";
 import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
-import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, Link, OverflowSet, Stack } from "@fluentui/react";
+import { BaseButton, Button, CommandBarButton, IButtonProps, IButtonStyles, IOverflowSetItemProps, IconButton, Link, OverflowSet, Stack } from "@fluentui/react";
 
 const noOp = () => undefined;
 
@@ -15,6 +15,8 @@ root: {
 
 export const MasterBackEnd: FC = () => {
 
+    const [idContentPage, setIdContentPage] = useState<string>('authority');
+
     const onRenderItem = useCallback(
         (item: IOverflowSetItemProps): JSX.Element => {
         if (item.onRender) {
@@ -25,6 +27,7 @@ export const MasterBackEnd: FC = () => {
                 iconProps={{ iconName: item.icon }} 
                 menuProps={item.subMenuProps} 
                 text={item.name} 
+                onClick={() => _onHandleMasterMenu(item.key)}
             />;
         },
         []
@@ -52,6 +55,13 @@ export const MasterBackEnd: FC = () => {
         []
     );
 
+    const  _onHandleMasterMenu = useCallback( 
+        (val) => {
+            setIdContentPage(val);
+        },
+        []
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item style={{marginTop: -2, marginBottom: 4, borderBottom: '1px solid #e5e5e5'}}>
@@ -62,13 +72,13 @@ export const MasterBackEnd: FC = () => {
                         key: 'authority',
                         name: 'Authority',
                         icon: 'AuthenticatorApp',
-                        onClick: noOp,
+                        onClick: undefined,
                     },
                     {
                         key: 'identity',
                         name: 'Identitas',
                         icon: 'Album',
-                        onClick: noOp,
+                        onClick: undefined,
                     },
                     ]}
                     onRenderItem={onRenderItem}
@@ -76,6 +86,18 @@ export const MasterBackEnd: FC = () => {
                 />
             </Stack.Item>
             <Stack.Item grow>
+                {getContentPage(idContentPage)}
+            </Stack.Item>
+        </Stack>
+        
+    )
+};
+
+const getContentPage = (idContentPage: string) => {
+    let konten = null;
+    switch (idContentPage) {
+        case 'authority':
+            konten =             
                 <DataListAuthorityFluentUI
                     title="Authority"
                     initSelectedFilters={
@@ -96,9 +118,14 @@ export const MasterBackEnd: FC = () => {
                             ],
                         }
                     }
-                /> 
-            </Stack.Item>
-        </Stack>
-        
-    )
-}
+                /> ;
+            break; 
+        case 'identity':
+                konten = <span>sdfsafsad</span> ;
+                break; 
+        default:
+            konten = null;
+            break;
+    }
+    return konten;
+};
