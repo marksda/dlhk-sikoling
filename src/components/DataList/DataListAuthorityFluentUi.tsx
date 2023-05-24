@@ -1,4 +1,4 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label } from "@fluentui/react";
 import { FC, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IAuthor } from "../../features/security/author-slice";
@@ -6,7 +6,8 @@ import cloneDeep from "lodash.clonedeep";
 import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { flipFormatDate } from "../../features/config/config";
+import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
+import { useId } from "@fluentui/react-hooks";
 
 interface IDataListAuthorityUIProps {
     initSelectedFilters: IQueryParams;
@@ -71,6 +72,19 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         []
     );
+
+    const _onHandleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {  
+            setContextualMenuFilterProps({         
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomRightEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuFilterDismissed,                  
+            });
+        },
+        []
+    );
     
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -79,6 +93,8 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
+    const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined); 
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
             key: 'tanggal', 
@@ -110,7 +126,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
             }
         },
         { 
-            key: 'person', 
+            key: 'nama', 
             name: 'Identitas', 
             minWidth: 250, 
             isResizable: true, 
@@ -198,14 +214,13 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
             minWidth: 40, 
             maxWidth: 40, 
             isResizable: false,            
-            onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemAuthority) => {
                 return (
                     <span>{
                         item.verified != undefined ? 
                         item.verified == true ? 
-                        <FontIcon aria-label="True" iconName="CheckMark" className={classNames.deepGreen} /> :
-                        <FontIcon aria-label="False" iconName="Clear" className={classNames.deepRed} /> : null 
+                        <FontIcon aria-label="True" iconName="Commitments" className={classNames.deepGreen} /> :
+                        <FontIcon aria-label="False" iconName="HandsFree" className={classNames.deepRed} /> : null 
                     }</span>
                 );
             },
@@ -213,7 +228,11 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
-
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [searchNama, setSearchNama] = useState<string|undefined>(undefined);
+    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
+    const searchNamaId = useId('searchNama');
+    const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCountPosts } = useGetTotalCountAuthorisasiQuery
     (queryFilters);
@@ -276,7 +295,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
             setContextualMenuProps(undefined);
         },
         []
-    );
+    );    
 
     const _onSearch = useCallback(
         (newValue) => {
@@ -388,6 +407,242 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNama(newValue);          
+        },
+        []
+    );
+
+    const _onSearchNama = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nama',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nama',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nama',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nama',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNama= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNama(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
+    const _onChangeSearchNik = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNik(newValue);          
+        },
+        []
+    );
+
+    const _onSearchNik = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNik= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNik(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
           return (
@@ -399,15 +654,9 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         [],
     );
 
-    const _onHandleButtonFilterClick = useCallback(
-        (ev: React.MouseEvent<HTMLElement>): void => {  
-            // setContextualMenuFilterProps({         
-            //     target: ev.currentTarget as HTMLElement,
-            //     directionalHint: DirectionalHint.bottomRightEdge,
-            //     gapSpace: 2,
-            //     isBeakVisible: true,
-            //     onDismiss: _onContextualMenuFilterDismissed,                  
-            // });
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
@@ -452,6 +701,65 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         []
     );
+
+    const _onHandleSelectedDate = useCallback(
+        (date) => {
+            let tanggalTerpilih = onFormatDateUtc(date);              
+
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number; 
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'tanggal',
+                            value: tanggalTerpilih
+                        });
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedDate(date);
+        },
+        []
+    );
     
     return (
         <Stack grow verticalFill>
@@ -465,7 +773,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian user name" 
+                                    placeholder="pencarian user" 
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
@@ -519,6 +827,54 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <DatePicker
+                                label="Tanggal"
+                                firstDayOfWeek={firstDayOfWeek}
+                                placeholder="Pilih tanggal..."
+                                ariaLabel="Pilih tanggal"
+                                strings={DayPickerIndonesiaStrings}
+                                formatDate={onFormatDate}
+                                onSelectDate={_onHandleSelectedDate}
+                                value={selectedDate}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Label htmlFor={searchNamaId}>Nama</Label>
+                            <SearchBox 
+                                id={searchNamaId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nama sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNama}
+                                onSearch={_onSearchNama}
+                                onClear= {_onClearSearchNama}
+                                value={searchNama}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Label htmlFor={searchNamaId}>NIK</Label>
+                            <SearchBox 
+                                id={searchNikId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nik sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNik}
+                                onSearch={_onSearchNik}
+                                onClear= {_onClearSearchNik}
+                                value={searchNik}
+                            />
+                        </Stack.Item>
+                        
+                    </Stack>
+                </Callout>                
+            }
         </Stack>
     );
 }

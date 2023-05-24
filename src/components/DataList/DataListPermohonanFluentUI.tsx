@@ -402,6 +402,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         (date) => {
             let tanggalTerpilih = onFormatDateUtc(date);
 
+            setCurrentPage(1);
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -421,6 +423,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         });
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
@@ -433,6 +436,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
 
     const onChangeJenisPermohonan = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -452,10 +457,12 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         })
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
             );
+
             setSelectedJenisPermohonan(item);
         },
         []
@@ -463,6 +470,32 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
 
     const onChangePengirim = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'posisi_tahap_pemberkasan_pengirim'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'posisi_tahap_pemberkasan_pengirim',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -482,10 +515,12 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         })
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
             );
+
             setSelectedPengirim(item);
         },
         []

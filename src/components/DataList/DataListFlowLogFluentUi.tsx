@@ -446,6 +446,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         (date) => {
             let tanggalTerpilih = onFormatDateUtc(date);            
 
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -488,18 +490,22 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         });
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
             );
 
             setSelectedDate(date);
+            
         },
         []
     );
 
     const _onChangeKategoriLog = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -543,6 +549,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         })
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
@@ -555,6 +562,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onChangePengirim = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -578,6 +587,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     return tmp;
                 }
             );
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -597,10 +607,12 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         })
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
             );
+            
             setSelectedPengirim(item);
         },
         []
@@ -608,6 +620,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onChangePenerima = useCallback(
         (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -631,6 +645,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     return tmp;
                 }
             );
+
             setQueryParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -650,10 +665,12 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         })
                     }                    
                     
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;            
                     return tmp;
                 }
             );
+
             setSelectedPenerima(item);
         },
         []
@@ -661,6 +678,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onHandleResetFilter = useCallback(
         () => {
+            setCurrentPage(1);
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -719,6 +738,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                         filters?.splice(found, 1);  
                     }
 
+                    tmp.pageNumber = 1;
                     tmp.filters = filters;
 
                     return tmp;
