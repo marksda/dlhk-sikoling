@@ -29,7 +29,7 @@ const classNames = mergeStyleSets({
     width: 200,
     padding: 8,        
     border: '1px solid #eee',
-    background: '#f9f6f6',
+    background: 'rgb(251 251 251)',
   },
   mainKonten: {
     padding: 4,     
@@ -76,6 +76,13 @@ const navLinkGroups: INavLinkGroup[] = [
           url: '',
           icon: 'Library',
           key: 'master',
+          target: '_blank',
+        },
+        {
+          name: 'Pengaturan',
+          url: '',
+          icon: 'Settings',
+          key: 'pengaturan',
           target: '_blank',
         },
         {
@@ -154,8 +161,11 @@ const getContentPage = (idContentPage: string) => {
             konten = <KontenPelaporanPemrakarsa />;   
             break;
         case 'master':
-        konten = <MasterBackEnd />;   
-        break;
+          konten = <MasterBackEnd />;   
+          break;
+        case 'pengaturan':
+          konten = <span>Settings</span>;   
+          break;
         default:
             konten = <KontenDashboardPemrakarsa />;
             break;

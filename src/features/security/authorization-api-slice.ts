@@ -1,15 +1,24 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
 import { ICredential } from "./authentication-slice";
-import { IAuthor } from "./author-slice";
 import { IQueryParams } from "../config/query-params-slice";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IHakAkses } from "../hak-akses/hak-akses-api-slice";
 
 export interface PostRegistrasi {
     credential: ICredential;
     person: IPerson;
+};
+
+export interface IAuthor {
+    id: string|null;
+    tanggal: string|null;
+    hakAkses: Partial<IHakAkses>|null;
+    person: Partial<IPerson>|null;
+    statusInternal: boolean|null;
+    userName: string|null;
+    verified: boolean|null;
 };
 
 type daftarAuthorisasi = IAuthor[];

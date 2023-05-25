@@ -1,13 +1,13 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IAuthor } from "../../features/security/author-slice";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
+import { IAuthor, useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useId } from "@fluentui/react-hooks";
+import { useGetDaftarHakAksesQuery } from "../../features/hak-akses/hak-akses-api-slice";
 
 interface IDataListAuthorityUIProps {
     initSelectedFilters: IQueryParams;
@@ -231,12 +231,24 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [searchNama, setSearchNama] = useState<string|undefined>(undefined);
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
+    const [selectedHakAkses, setSelectedHakAkses] = useState<IDropdownOption|null|undefined>(null);
     const searchNamaId = useId('searchNama');
     const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCountPosts } = useGetTotalCountAuthorisasiQuery
     (queryFilters);
     const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = useGetAllAuthorisasiQuery(queryParams);
+    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery({
+        pageNumber: 1,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });
     
 
     const _getKey = useCallback(
@@ -760,6 +772,64 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         []
     );
+
+    const _onChangeHakAkses = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'hak_akses'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'hak_akses',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'hak_akses',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'hak_akses'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'hak_akses',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'hak_akses',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedHakAkses(item);
+        },
+        []
+    );
     
     return (
         <Stack grow verticalFill>
@@ -871,7 +941,22 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                 value={searchNik}
                             />
                         </Stack.Item>
-                        
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Hak akses"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsHakAkses != undefined ? postsHakAkses?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                                selectedKey={selectedHakAkses ? selectedHakAkses.key : null}
+                                onChange={_onChangeHakAkses}
+                            />
+                        </Stack.Item>
                     </Stack>
                 </Callout>                
             }
