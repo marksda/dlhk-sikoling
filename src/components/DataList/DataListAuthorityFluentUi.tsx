@@ -1,4 +1,4 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import cloneDeep from "lodash.clonedeep";
@@ -232,6 +232,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
     const [searchNama, setSearchNama] = useState<string|undefined>(undefined);
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
     const [selectedHakAkses, setSelectedHakAkses] = useState<IDropdownOption|null|undefined>(null);
+    const [selectedStatusUser, setSelectedStatusUser] = useState<IDropdownOption|null|undefined>(null);
     const searchNamaId = useId('searchNama');
     const searchNikId = useId('searchNik');
     // rtk hook state
@@ -830,6 +831,152 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         []
     );
+
+    const _onChangeStatusUser = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'status_internal'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'status_internal',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'status_internal',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'status_internal'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'status_internal',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'status_internal',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedStatusUser(item);
+        },
+        []
+    );
+
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'hak_akses'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'status_internal'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'hak_akses'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'status_internal'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+
+            setSelectedDate(undefined);
+            setSearchNama(undefined);
+            setSearchNik(undefined);
+            setSelectedHakAkses(null);
+            setSelectedStatusUser(null);
+        },
+        []
+    );
     
     return (
         <Stack grow verticalFill>
@@ -924,7 +1071,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                 onChange={_onChangeSearchNama}
                                 onSearch={_onSearchNama}
                                 onClear= {_onClearSearchNama}
-                                value={searchNama}
+                                value={searchNama ? searchNama:''}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -938,7 +1085,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                 onChange={_onChangeSearchNik}
                                 onSearch={_onSearchNik}
                                 onClear= {_onClearSearchNik}
-                                value={searchNik}
+                                value={searchNik ? searchNik:''}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -955,6 +1102,31 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                 }
                                 selectedKey={selectedHakAkses ? selectedHakAkses.key : null}
                                 onChange={_onChangeHakAkses}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Status user"
+                                placeholder="--Pilih--"
+                                options={[
+                                    {
+                                        key: 'true', 
+                                        text: 'Petugas'
+                                    },
+                                    {
+                                        key: 'false', 
+                                        text: 'Pemohon'
+                                    }
+                                ]}
+                                selectedKey={selectedStatusUser ? selectedStatusUser.key : null}
+                                onChange={_onChangeStatusUser}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
                             />
                         </Stack.Item>
                     </Stack>

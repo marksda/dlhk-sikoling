@@ -1,6 +1,7 @@
-import { FC, MouseEventHandler, useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
-import { BaseButton, Button, CommandBarButton, IButtonProps, IButtonStyles, IOverflowSetItemProps, IconButton, Link, OverflowSet, Stack } from "@fluentui/react";
+import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, OverflowSet, Stack } from "@fluentui/react";
+import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
 
 const noOp = () => undefined;
 
@@ -75,6 +76,12 @@ export const MasterBackEnd: FC = () => {
                         onClick: undefined,
                     },
                     {
+                        key: 'hak_akses',
+                        name: 'Hak akses',
+                        icon: 'Database',
+                        onClick: undefined,
+                    },
+                    {
                         key: 'identity',
                         name: 'Identitas',
                         icon: 'Album',
@@ -113,11 +120,29 @@ const getContentPage = (idContentPage: string) => {
                             ],
                         }
                     }
-                /> ;
+                />;
             break; 
-        case 'identity':
-                konten = <span>sdfsafsad</span> ;
+        case 'hak_akses':
+                konten = <DataListHakAksesFluentUI
+                    title="Hak akses"
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'tanggal',
+                                    value: 'DESC'
+                                },
+                            ],
+                        }
+                    }
+                />;
                 break; 
+        case 'identity':
+            konten = <span>sdfsafsad</span> ;
+            break; 
         default:
             konten = null;
             break;
