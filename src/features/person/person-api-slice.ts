@@ -1,45 +1,67 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IPerson } from "./person-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
+type daftarPerson = IPerson[];
 
 export const PersonApiSlice = createApi({
     reducerPath: 'personApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
+    tagTypes: ['Person'],
     endpoints(builder) {
-        return {
-            getAllPerson: builder.query<IPerson[], number|void>({
-                query: () => `person`,
-            }),
-            getPersonByPage: builder.query<IPerson[], number|void>({
-                query: (page = 1, pageSize = 10) => `person/page?page=${page}&pageSize=${pageSize}`,
-            }),
-            getPersonByNama: builder.query<IPerson[], string|void>({
-                query: (nama) => `person/nama?nama=${nama}`,
-            }),
-            getPersonByNamaAndPage: builder.query<IPerson[], string|void>({
-                query: (nama, page=1, pageSize=10) => `person/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-            }),
-            getPersonByNik: builder.query<IPerson, string>({
-                query: (nik) => `person/nik/${nik}`,
-            }),
-            getPersonByPemrakarsa: builder.query<IPerson[], string|void>({
-                query: (idPemrakarsa) => `person/pemrakarsa?idPemrakarsa=${idPemrakarsa}`,
-            }),
-            addPerson: builder.mutation({
+        return {            
+            addPerson: builder.mutation<IPerson, Partial<IPerson>>({
                 query: (body) => ({
                     url: 'person',
                     method: 'POST',
                     body,
-                })
+                }),
+                invalidatesTags: [{type: 'Person', id: 'LIST'}],
+            }),
+            updatePerson: builder.mutation<void, Partial<IPerson>>({
+                query: (person) => ({
+                    url: 'person',
+                    method: 'PUT',
+                    body: person,
+                }),
+                invalidatesTags: (result, error, {nik}) => {
+                    return [{type: 'Person', id: nik!}];
+                },
+            }),
+            deletePerson: builder.mutation<{ success: boolean; id: string }, string>({
+                query(nik) {
+                  return {
+                    url: `person/${nik}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result, error, nik) => {
+                    return [{type: 'Person', id: nik}]
+                },
+            }),
+            getAllPerson: builder.query<daftarPerson, IQueryParams>({
+                query: (queryParams) => `person?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ nik }) => ({ type: 'Person' as const, id: nik! })
+                        ),
+                        { type: 'Person', id: 'LIST' },
+                    ]:
+                    [{type: 'Person', id: 'LIST'}],
+            }),
+            getTotalCountPerson: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `person/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
 })
 
 export const { 
-    useGetAllPersonQuery, useGetPersonByPageQuery, useGetPersonByNamaQuery,
-    useGetPersonByNikQuery, useGetPersonByNamaAndPageQuery, useGetPersonByPemrakarsaQuery, 
-    useAddPersonMutation 
+    useAddPersonMutation, useUpdatePersonMutation,
+    useDeletePersonMutation, useGetAllPersonQuery,
+    useGetTotalCountPersonQuery
 } = PersonApiSlice;

@@ -251,9 +251,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsFlowLog, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);
-    const { data: postsCountFlowLog, isLoading: isLoadingCountPosts } = useGetTotalCountFlowLogQuery
-    (queryFilters);
+    const { data: postsCountFlowLog, isLoading: isLoadingCountPosts } = useGetTotalCountFlowLogQuery(queryFilters);
+    const { data: postsFlowLog, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);    
     const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetAllQuery();
     const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
     

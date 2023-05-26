@@ -2,8 +2,36 @@ import { FC, useCallback, useState } from "react";
 import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
 import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, OverflowSet, Stack } from "@fluentui/react";
 import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
+import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
+import { DataListPersonFluentUI } from "../../components/DataList/DataListPersonFluentUi";
 
 const noOp = () => undefined;
+const daftarMenuOverFlow = [
+    {
+        key: 'authority',
+        name: 'Authority',
+        icon: 'AuthenticatorApp',
+        onClick: undefined,
+    },
+    {
+        key: 'hak_akses',
+        name: 'Hak akses',
+        icon: 'Database',
+        onClick: undefined,
+    },
+    {
+        key: 'identity',
+        name: 'Identitas personal',
+        icon: 'Album',
+        onClick: undefined,
+    },
+    {
+        key: 'pemrakarsa',
+        name: 'Pemrakarsa',
+        icon: 'CityNext',
+        onClick: undefined,
+    },
+    ]
 
 const buttonStyles: Partial<IButtonStyles> = {
 root: {
@@ -68,26 +96,7 @@ export const MasterBackEnd: FC = () => {
             <Stack.Item style={{marginTop: -2, marginBottom: 4, borderBottom: '1px solid #e5e5e5'}}>
                 <OverflowSet
                     aria-label="Custom Example"
-                    items={[
-                    {
-                        key: 'authority',
-                        name: 'Authority',
-                        icon: 'AuthenticatorApp',
-                        onClick: undefined,
-                    },
-                    {
-                        key: 'hak_akses',
-                        name: 'Hak akses',
-                        icon: 'Database',
-                        onClick: undefined,
-                    },
-                    {
-                        key: 'identity',
-                        name: 'Identitas',
-                        icon: 'Album',
-                        onClick: undefined,
-                    },
-                    ]}
+                    items={daftarMenuOverFlow}
                     onRenderItem={onRenderItem}
                     onRenderOverflowButton={onRenderOverflowButton}
                 />
@@ -132,16 +141,49 @@ const getContentPage = (idContentPage: string) => {
                             filters: [],
                             sortOrders: [
                                 {
-                                    fieldName: 'tanggal',
-                                    value: 'DESC'
+                                    fieldName: 'id',
+                                    value: 'ASC'
                                 },
                             ],
                         }
                     }
                 />;
                 break; 
+        case 'pemrakarsa':
+            konten = <DataListPerusahaanFluentUI 
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'tanggal',
+                                    value: 'DESC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Pemrakarsa"
+                />;
+            break;
         case 'identity':
-            konten = <span>sdfsafsad</span> ;
+            konten = <DataListPersonFluentUI 
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'nik',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Identitas personal"
+                />;
             break; 
         default:
             konten = null;
