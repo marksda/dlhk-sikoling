@@ -1,10 +1,11 @@
 import { FC, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IPerson } from "../../features/person/person-slice";
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/person/person-api-slice";
-import omit from "lodash.omit";
+import { Pagination } from "../Pagination/pagination-fluent-ui";
+import { useId } from "@fluentui/react-hooks";
 
 interface IDataListPersonFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -92,6 +93,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
+    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
@@ -101,13 +103,13 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
             key: 'nik', 
             name: 'Nik', 
             fieldName: 'nik', 
-            minWidth: 100, 
-            maxWidth: 100, 
+            minWidth: 130, 
+            maxWidth: 130, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
-            isSortedDescending: true,
+            isSortedDescending: false,
             isSorted: true,
             onRender: (item: IItemPerson) => {
                 return item.nik;
@@ -138,16 +140,23 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                 return (
                     <>
                         <p className={classNames.kontakContainer}>
-                            {`Email: ${item.kontak?.email}`}<br />
+                            <span>
+                            {
+                                item.kontak?.email != undefined ?
+                                `Email: ${item.kontak?.email}`:`-`
+                            }
+                            </span><br />
                             <span style={{display: 'flex'}}>
                                 <label className={classNames.kontakLabel}>
                                     Telp: 
                                 </label>
                                 <label className={classNames.kontakCardLabel}>
-                                    {`${item.kontak!.telepone}`}
+                                {
+                                    item.kontak?.telepone != undefined ?
+                                    `${item.kontak?.telepone}`:`-`
+                                }
                                 </label>
                             </span>
-                            {`Fax: ${item.kontak!.fax}`}
                         </p>
                     </>
                 ); 
@@ -196,6 +205,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPersonQuery(queryFilters);
     const { data: postsPerson, isLoading: isLoadingPosts } = useGetAllPersonQuery(queryParams);    
@@ -395,6 +405,154 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         },
         []
     );
+
+    const _onHandlePageSizeChange = useCallback(
+        (pageSize: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageSize = pageSize;   
+                    tmp.pageNumber = 1;        
+                    return tmp;
+                }
+            );
+            setCurrentPage(1);
+            setPageSize(pageSize);
+        },
+        []
+    );
+    
+    const _onPageNumberChange = useCallback(
+        (pageNumber: number) => {
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);                    
+                    tmp.pageNumber = pageNumber;      
+                    return tmp;
+                }
+            );
+            setCurrentPage(pageNumber);
+        },
+        []
+    );
+
+    const _onChangeSearchNik = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNik(newValue);          
+        },
+        []
+    );
+
+    const _onSearchNik = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNik= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNik(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
     
     return (
         <Stack grow verticalFill>
@@ -434,7 +592,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                 items={
                                     postsPerson != undefined ? postsPerson?.map(
                                         (t) => (
-                                            {key: t.nik as string, ...omit(t, ['nik'])}
+                                            {key: t.nik as string, ...t}
                                         )
                                     ) : []
                                 }
@@ -449,8 +607,40 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                             />
                         </ScrollablePane>
                     </Stack.Item>
+                    <Stack.Item>
+                        <Pagination 
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            siblingCount={1}
+                            totalCount={postsCount == undefined ? 50:postsCount }
+                            onPageChange={_onPageNumberChange}
+                            onPageSizeChange={_onHandlePageSizeChange}
+                        />
+                    </Stack.Item>
                 </Stack>
             </Stack.Item>
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <Label htmlFor={searchNikId}>NIK</Label>
+                            <SearchBox 
+                                id={searchNikId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nik sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNik}
+                                onSearch={_onSearchNik}
+                                onClear= {_onClearSearchNik}
+                                value={searchNik ? searchNik:''}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>
+            }
         </Stack>
     );
 };

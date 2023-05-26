@@ -3,7 +3,7 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, Link, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
-import { baseRestAPIUrl } from "../../features/config/config";
+import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
 import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
 import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
@@ -104,11 +104,11 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
-            key: 'npwp', 
-            name: 'Npwp', 
-            fieldName: 'npwp', 
-            minWidth: 130, 
-            maxWidth: 130, 
+            key: 'tanggal_registrasi', 
+            name: 'Tgl. registrasi', 
+            fieldName: 'tanggal_registrasi', 
+            minWidth: 100, 
+            maxWidth: 100, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
@@ -116,7 +116,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
             isSortedDescending: true,
             isSorted: true,
             onRender: (item: IItemRegisterPerusahaan) => {
-                return item.perusahaan?.id;
+                return flipFormatDate(item.tanggalRegistrasi as string);
             }
         },
         { 
@@ -129,13 +129,21 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
             data: 'string',
             onRender: (item: IItemRegisterPerusahaan) => {
                 return (
+                    <>
                     <span>
                         {
                         item.perusahaan?.pelakuUsaha !== undefined ?
                         `${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}` :
                         `${item.perusahaan?.nama}`
                         }
-                    </span>                 
+                    </span><br />  
+                    <span>
+                        {
+                            item.perusahaan?.id != undefined ?
+                            item.perusahaan?.id : `-`
+                        }
+                    </span>
+                    </>               
                 );
             },
             isPadded: true,
@@ -171,7 +179,6 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
             key: 'alamat', 
             name: 'Alamat', 
             minWidth: 250, 
-            maxWidth: 250, 
             isResizable: true,
             data: 'string',
             onRender: (item: IItemRegisterPerusahaan) => {
@@ -188,7 +195,8 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
         { 
             key: 'dokumen', 
             name: 'Dokumen', 
-            minWidth: 100, 
+            minWidth: 200, 
+            maxWidth: 200,
             isResizable: true,
             onRender: (item: IItemRegisterPerusahaan) => {
                 return (

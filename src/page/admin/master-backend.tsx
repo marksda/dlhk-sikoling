@@ -158,7 +158,7 @@ const getContentPage = (idContentPage: string) => {
                             filters: [],
                             sortOrders: [
                                 {
-                                    fieldName: 'tanggal',
+                                    fieldName: 'tanggal_registrasi',
                                     value: 'DESC'
                                 },
                             ],

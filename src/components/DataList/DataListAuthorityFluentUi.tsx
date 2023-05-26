@@ -1075,7 +1075,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                             />
                         </Stack.Item>
                         <Stack.Item>
-                            <Label htmlFor={searchNamaId}>NIK</Label>
+                            <Label htmlFor={searchNikId}>NIK</Label>
                             <SearchBox 
                                 id={searchNikId}
                                 style={{width: 200}} 
