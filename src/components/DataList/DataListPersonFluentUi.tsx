@@ -165,7 +165,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         },
         { 
             key: 'alamat', 
-            name: 'alamat', 
+            name: 'Alamat', 
             minWidth: 100, 
             isResizable: true,
             onRender: (item: IItemPerson) => {

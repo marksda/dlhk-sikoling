@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
+import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 
 export interface IModelPerizinan {
     id: string|null;
@@ -11,12 +13,9 @@ type daftarModelPerizinan = IModelPerizinan[];
 
 export const ModelPerizinanApiSlice = createApi({
     reducerPath: 'modelPerizinanApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
-    tagTypes:['ModelPerizinan', 'ModelPerizinanPage', 'ModelPerizinanNama', 'ModelPerizinanNamaPage'],
+    tagTypes:['ModelPerizinan'],
     endpoints(builder) {
         return {
             addModelPerizinan: builder.mutation<IModelPerizinan, Partial<IModelPerizinan>>({
@@ -25,27 +24,31 @@ export const ModelPerizinanApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'ModelPerizinan', id: 'LIST'}, {type: 'ModelPerizinanPage', id: 'LIST'}, {type: 'ModelPerizinanNama', id: 'LIST'}, {type: 'ModelPerizinanNamaPage', id: 'LIST'}]
+                invalidatesTags: [{type: 'ModelPerizinan', id: 'LIST'}]
             }),
-            updateModelPerizinan: builder.mutation<void, {id: string, modelPerizinan: IModelPerizinan}>({
-                query: ({id, modelPerizinan}) => ({
+            updateModelPerizinan: builder.mutation<void, Partial<IModelPerizinan>>({
+                query: (modelPerizinan) => ({
                     url: 'model_perizinan',
                     method: 'PUT',
                     body: modelPerizinan,
                 }),
-                invalidatesTags: (result, error, { id }) => [{type: 'ModelPerizinan', id}, {type: 'ModelPerizinanPage', id}, {type: 'ModelPerizinanNama', id}, {type: 'ModelPerizinanNamaPage', id}]
+                invalidatesTags: (result, error, { id }) => {
+                    return [{type: 'ModelPerizinan', id: id!}]
+                },
             }),
             deleteModelPerizinan: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
                   return {
-                    url: `dokumen/${id}`,
+                    url: `model_perizinan/${id}`,
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{ type: 'ModelPerizinan', id }, { type: 'ModelPerizinanPage', id }, { type: 'ModelPerizinanNama', id }, { type: 'ModelPerizinanNamaPage', id }],
+                invalidatesTags: (result, error, id) =>{
+                    return [{ type: 'ModelPerizinan', id }]
+                },
             }),
-            getAllModelPerizinan: builder.query<daftarModelPerizinan, void>({
-                query: () => `model_perizinan`,
+            getAllModelPerizinan: builder.query<daftarModelPerizinan, IQueryParams>({
+                query: (queryParams) => `model_perizinan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -56,41 +59,8 @@ export const ModelPerizinanApiSlice = createApi({
                     ]:
                     [{type: 'ModelPerizinan', id: 'LIST'}],
             }),
-            getModelPerizinanByPage: builder.query<daftarModelPerizinan, {page: number; pageSize: number}>({
-                query: ({page, pageSize}) => `model_perizinan/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanPage' as const, id: id! })
-                        ),
-                        { type: 'ModelPerizinanPage', id: 'LIST' },
-                    ]:
-                    [{type: 'ModelPerizinanPage', id: 'LIST'}],
-            }),
-            getModelPerizinanByNama: builder.query<daftarModelPerizinan, string>({
-                query: (nama) => `model_perizinan/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanNama' as const, id: id! })
-                        ),
-                        { type: 'ModelPerizinanNama', id: 'LIST' },
-                    ]:
-                    [{type: 'ModelPerizinanNama', id: 'LIST'}],
-            }),
-            getModelPerizinanByNamaAndPage: builder.query<daftarModelPerizinan, {nama: string; page: number; pageSize: number}>({
-                query: ({nama, page=1, pageSize=10}) => `pemrakarsa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'ModelPerizinanNamaPage' as const, id: id! })
-                        ),
-                        { type: 'ModelPerizinanNamaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'ModelPerizinanNamaPage', id: 'LIST'}],
+            getTotalCountModelPerizinan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `model_perizinan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -99,6 +69,5 @@ export const ModelPerizinanApiSlice = createApi({
 export const {
     useAddModelPerizinanMutation, useUpdateModelPerizinanMutation,
     useDeleteModelPerizinanMutation, useGetAllModelPerizinanQuery, 
-    useGetModelPerizinanByPageQuery, useGetModelPerizinanByNamaQuery, 
-    useGetModelPerizinanByNamaAndPageQuery
+    useLazyGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery,
 } = ModelPerizinanApiSlice;

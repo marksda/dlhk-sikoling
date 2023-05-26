@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
-import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 
 export interface ISkalaUsaha {
     id: string|null;
@@ -12,12 +12,9 @@ type daftarSkalaUsaha = ISkalaUsaha[];
 
 export const SkalaUsahaApiSlice = createApi({
     reducerPath: 'skalaUsahaApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
-    tagTypes:['SkalaUsaha', 'SkalaUsahaPage', 'SkalaUsahaNama', 'SkalaUsahaNamaPage'],
+    tagTypes:['SkalaUsaha'],
     endpoints(builder) {
         return {
             addSkalaUsaha: builder.mutation<ISkalaUsaha, Partial<ISkalaUsaha>>({
@@ -26,15 +23,27 @@ export const SkalaUsahaApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'SkalaUsaha', id: 'LIST'}, {type: 'SkalaUsahaPage', id: 'LIST'}, {type: 'SkalaUsahaNama', id: 'LIST'}, {type: 'SkalaUsahaNamaPage', id: 'LIST'}],
+                invalidatesTags: [{type: 'SkalaUsaha', id: 'LIST'}],
             }),
-            updateSkalaUsaha: builder.mutation<void, {id: string; skalaUsaha: ISkalaUsaha}>({
-                query: ({id, skalaUsaha}) => ({
-                    url: `skala_usaha/${id}`,
+            updateSkalaUsaha: builder.mutation<void, Partial<ISkalaUsaha>>({
+                query: (skalaUsaha) => ({
+                    url: 'skala_usaha',
                     method: 'PUT',
                     body: skalaUsaha,
                 }),
-                invalidatesTags: (result, error, { id }) => [{type: 'SkalaUsaha', id}, {type: 'SkalaUsahaPage', id}, {type: 'SkalaUsahaNama', id}, {type: 'SkalaUsahaNamaPage', id}],
+                invalidatesTags: (result, error, { id }) => {
+                    return [{type: 'SkalaUsaha', id: id!}];
+                }
+            }),
+            updateSkalaUsahaById: builder.mutation<void, {id: string; skalaUsaha: ISkalaUsaha}>({
+                query: ({id, skalaUsaha}) => ({
+                    url: `skala_usaha/id/${id}`,
+                    method: 'PUT',
+                    body: skalaUsaha,
+                }),
+                invalidatesTags: (result, error, { id }) => {
+                    return [{type: 'SkalaUsaha', id}];
+                }
             }),
             deleteSkalaUsaha: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
@@ -43,10 +52,12 @@ export const SkalaUsahaApiSlice = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{type: 'SkalaUsaha', id}, {type: 'SkalaUsahaPage', id}, {type: 'SkalaUsahaNama', id}, {type: 'SkalaUsahaNamaPage', id}],
+                invalidatesTags: (result, error, id) => {
+                    return [{type: 'SkalaUsaha', id}];
+                }
             }),
-            getAllSkalaUsaha: builder.query<daftarSkalaUsaha, void>({
-                query: () => `skala_usaha`,
+            getAllSkalaUsaha: builder.query<daftarSkalaUsaha, IQueryParams>({
+                query: (queryParams) => `skala_usaha?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -57,49 +68,15 @@ export const SkalaUsahaApiSlice = createApi({
                     ]:
                     [{type: 'SkalaUsaha', id: 'LIST'}],
             }),
-            getSkalaUsahaByPage: builder.query<daftarSkalaUsaha, {page: number; pageSize: number}>({
-                query: ({page, pageSize}) => `skala_usaha/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaPage' as const, id: id! })
-                        ),
-                        { type: 'SkalaUsahaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'SkalaUsahaPage', id: 'LIST'}],
+            getTotalCountSkalaUsaha: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `skala_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            getSkalaUsahaByNama: builder.query<daftarSkalaUsaha, string>({
-                query: (nama) => `skala_usaha/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaNama' as const, id: id! })
-                        ),
-                        { type: 'SkalaUsahaNama', id: 'LIST' },
-                    ]:
-                    [{type: 'SkalaUsahaNama', id: 'LIST'}],
-            }),
-            getSkalaUsahaByNamaAndPage: builder.query<daftarSkalaUsaha, {nama: string; page: number; pageSize: number}>({
-                query: ({nama, page, pageSize}) => `skala_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'SkalaUsahaNamaPage' as const, id: id! })
-                        ),
-                        { type: 'SkalaUsahaNamaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'SkalaUsahaNamaPage', id: 'LIST'}],
-            })
         }
     }
 });
 
 export const { 
     useAddSkalaUsahaMutation, useUpdateSkalaUsahaMutation,
-    useDeleteSkalaUsahaMutation, useGetAllSkalaUsahaQuery, 
-    useGetSkalaUsahaByPageQuery, useGetSkalaUsahaByNamaQuery,
-    useGetSkalaUsahaByNamaAndPageQuery
+    useUpdateSkalaUsahaByIdMutation, useDeleteSkalaUsahaMutation, 
+    useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery
 } = SkalaUsahaApiSlice;

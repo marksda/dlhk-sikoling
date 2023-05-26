@@ -4,6 +4,8 @@ import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, Ove
 import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
 import { DataListPersonFluentUI } from "../../components/DataList/DataListPersonFluentUi";
+import { DataListModelPerizinanFluentUI } from "../../components/DataList/DataListModelPerizinanFluentUi";
+import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSkalaUsahaFluentUi";
 
 const noOp = () => undefined;
 const daftarMenuOverFlow = [
@@ -31,7 +33,19 @@ const daftarMenuOverFlow = [
         icon: 'CityNext',
         onClick: undefined,
     },
-    ]
+    {
+        key: 'model_perizinan',
+        name: 'Model izin usaha',
+        icon: 'FlowChart',
+        onClick: undefined,
+    },
+    {
+        key: 'skala_usaha',
+        name: 'Skala usaha',
+        icon: 'ScaleVolume',
+        onClick: undefined,
+    },
+]
 
 const buttonStyles: Partial<IButtonStyles> = {
 root: {
@@ -184,7 +198,43 @@ const getContentPage = (idContentPage: string) => {
                     }
                     title="Identitas personal"
                 />;
-            break; 
+            break;
+        case 'model_perizinan':
+            konten = <DataListModelPerizinanFluentUI 
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Model izin usaha"
+                />;
+            break;
+        case 'skala_usaha':
+                konten = <DataListSkalaUsahaFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'id',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Skala usaha"
+                    />;
+                break;
         default:
             konten = null;
             break;

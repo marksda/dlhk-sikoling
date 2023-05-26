@@ -560,7 +560,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     );
 
     return (
-        <Stack grow verticalFill>
+        <Stack grow verticalFill style={{marginTop: 2}}>
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
