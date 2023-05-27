@@ -6,6 +6,7 @@ import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPe
 import { DataListPersonFluentUI } from "../../components/DataList/DataListPersonFluentUi";
 import { DataListModelPerizinanFluentUI } from "../../components/DataList/DataListModelPerizinanFluentUi";
 import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSkalaUsahaFluentUi";
+import { DataListKategoriPelakuUsahaFluentUI } from "../../components/DataList/DataListKategoriPelakuUsahaFluentUi";
 
 const noOp = () => undefined;
 const daftarMenuOverFlow = [
@@ -43,6 +44,12 @@ const daftarMenuOverFlow = [
         key: 'skala_usaha',
         name: 'Skala usaha',
         icon: 'ScaleVolume',
+        onClick: undefined,
+    },
+    {
+        key: 'kategori_pelaku_usaha',
+        name: 'Kategori pelaku usaha',
+        icon: 'RowsGroup',
         onClick: undefined,
     },
 ]
@@ -235,6 +242,24 @@ const getContentPage = (idContentPage: string) => {
                         title="Skala usaha"
                     />;
                 break;
+        case 'kategori_pelaku_usaha':
+            konten = <DataListKategoriPelakuUsahaFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Skala usaha"
+                />;
+            break;
         default:
             konten = null;
             break;

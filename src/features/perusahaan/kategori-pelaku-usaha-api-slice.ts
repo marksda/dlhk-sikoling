@@ -1,18 +1,16 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { IKategoriDokumen } from "../dokumen/kategori-dokumen-slice";
 import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
+import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../config/helper-function";
 
 export type daftarKategoriPelakuUsaha = IKategoriPelakuUsaha[];
 
 export const KategoriPelakuUsahaApiSlice = createApi({
     reducerPath: 'kategoriPelakuUsahaApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
-    tagTypes:['KategoriPelakuUsaha', 'KategoriPelakuUsahaPage', 'KategoriPelakuUsahaNama', 'KategoriPelakuUsahaNamaPage', 'KategoriPelakuUsahaSkalaUsaha'],
+    tagTypes:['KategoriPelakuUsaha'],
     endpoints(builder) {
         return {
             addKategoriPelakuUsaha: builder.mutation<IKategoriDokumen, Partial<IKategoriPelakuUsaha>>({
@@ -21,7 +19,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'KategoriPelakuUsaha', id: 'LIST'}, {type: 'KategoriPelakuUsahaPage', id: 'LIST'}, {type: 'KategoriPelakuUsahaNama', id: 'LIST'}, {type: 'KategoriPelakuUsahaNamaPage', id: 'LIST'}, {type: 'KategoriPelakuUsahaSkalaUsaha', id: 'LIST'}],
+                invalidatesTags: [{type: 'KategoriPelakuUsaha', id: 'LIST'}],
             }),
             updateKategoriPelakuUsaha: builder.mutation<void, {id: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
                 query: ({id, kategoriPelakuUsaha}) => ({
@@ -29,7 +27,9 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     method: 'PUT',
                     body: kategoriPelakuUsaha,
                 }),
-                invalidatesTags: (result, error, { id }) => [{type: 'KategoriPelakuUsaha', id}, {type: 'KategoriPelakuUsahaPage', id}, {type: 'KategoriPelakuUsahaNama', id}, {type: 'KategoriPelakuUsahaNamaPage', id}, {type: 'KategoriPelakuUsahaSkalaUsaha', id}],
+                invalidatesTags: (result, error, { id }) => {
+                    return [{type: 'KategoriPelakuUsaha', id}];
+                }
             }),
             deleteKategoriDokumen: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
@@ -38,10 +38,12 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{ type: 'KategoriPelakuUsaha', id }, { type: 'KategoriPelakuUsahaPage', id }, { type: 'KategoriPelakuUsahaNama', id }, { type: 'KategoriPelakuUsahaNamaPage', id }, { type: 'KategoriPelakuUsahaSkalaUsaha', id }],
+                invalidatesTags: (result, error, id) => {
+                    return [{ type: 'KategoriPelakuUsaha', id }];
+                }
             }),
-            getAllKategoriPelakuUsaha: builder.query<daftarKategoriPelakuUsaha, void>({
-                query: () => `kategori_pelaku_usaha`,
+            getAllKategoriPelakuUsaha: builder.query<daftarKategoriPelakuUsaha, IQueryParams>({
+                query: (queryParams) => `kategori_pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -52,53 +54,8 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     ]:
                     [{type: 'KategoriPelakuUsaha', id: 'LIST'}],
             }),
-            getKategoriPelakuUsahaByPage: builder.query<daftarKategoriPelakuUsaha, {page: number; pageSize: number}>({
-                query: ({page = 1, pageSize = 10}) => `kategori_pelaku_usaha/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaPage' as const, id: id! })
-                        ),
-                        { type: 'KategoriPelakuUsahaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPelakuUsahaPage', id: 'LIST'}],
-            }),
-            getKategoriPelakuUsahaByNama: builder.query<daftarKategoriPelakuUsaha, string>({
-                query: (nama) => `kategori_pelaku_usaha/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaNama' as const, id: id! })
-                        ),
-                        { type: 'KategoriPelakuUsahaNama', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPelakuUsahaNama', id: 'LIST'}],
-            }),
-            getkategoriPelakuUsahaByNamaAndPage: builder.query<daftarKategoriPelakuUsaha, {nama: string; page: number; pageSize: number}>({
-                query: ({nama, page, pageSize}) => `kategori_pelaku_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaNamaPage' as const, id: id! })
-                        ),
-                        { type: 'KategoriPelakuUsahaNamaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPelakuUsahaNamaPage', id: 'LIST'}],
-            }),
-            getKategoriPelakuUsahaBySkalaUsaha: builder.query<daftarKategoriPelakuUsaha, string>({
-                query: (idSkalaUsaha) => `kategori_pelaku_usaha/skala_usaha/${idSkalaUsaha}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPelakuUsahaSkalaUsaha' as const, id: id! })
-                        ),
-                        { type: 'KategoriPelakuUsahaSkalaUsaha', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPelakuUsahaSkalaUsaha', id: 'LIST'}],
+            getTotalCountKategoriPelakuUsaha: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `kategori_pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -107,6 +64,5 @@ export const KategoriPelakuUsahaApiSlice = createApi({
 export const {
     useAddKategoriPelakuUsahaMutation, useUpdateKategoriPelakuUsahaMutation,
     useDeleteKategoriDokumenMutation, useGetAllKategoriPelakuUsahaQuery,
-    useGetKategoriPelakuUsahaByPageQuery, useGetKategoriPelakuUsahaByNamaQuery,
-    useGetkategoriPelakuUsahaByNamaAndPageQuery, useGetKategoriPelakuUsahaBySkalaUsahaQuery
+    useGetTotalCountKategoriPelakuUsahaQuery
 } = KategoriPelakuUsahaApiSlice;

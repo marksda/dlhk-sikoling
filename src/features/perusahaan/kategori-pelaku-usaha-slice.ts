@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ISkalaUsaha } from "./skala-usaha-api-slice";
 
 export interface IKategoriPelakuUsaha {
     id: string|null;
     nama: string|null;
+    skalaUsaha: Partial<ISkalaUsaha>|null;
 };
 
 const initialState: IKategoriPelakuUsaha = {
     id: null,
-    nama: null
+    nama: null,
+    skalaUsaha: null
 };
 
 export const kategoriPelakuUsahaSlice = createSlice({

@@ -3,13 +3,14 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { ISkalaUsaha, useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
+import { IKategoriPelakuUsaha } from "../../features/perusahaan/kategori-pelaku-usaha-slice";
+import { useGetAllKategoriPelakuUsahaQuery, useGetTotalCountKategoriPelakuUsahaQuery } from "../../features/perusahaan/kategori-pelaku-usaha-api-slice";
 
-interface IDataListSkalaUsahaFluentUIProps {
+interface IDataListKategoriPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemSkalaUsaha = {key: string|null;} & Partial<ISkalaUsaha>;
+type IItemKategoriPelakuUsaha = {key: string|null;} & Partial<IKategoriPelakuUsaha>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -42,7 +43,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -88,15 +89,15 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
             key: 'id', 
             name: 'Id', 
             fieldName: 'id', 
-            minWidth: 20, 
-            maxWidth: 20, 
+            minWidth: 50, 
+            maxWidth: 50, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemSkalaUsaha) => {
+            onRender: (item: IItemKategoriPelakuUsaha) => {
                 return item.id;
             }
         },
@@ -108,26 +109,27 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemSkalaUsaha) => {
+            onRender: (item: IItemKategoriPelakuUsaha) => {
                 return item.nama;
             },
             isPadded: true,
         },
         { 
-            key: 'singkatan', 
-            name: 'Singkatan', 
+            key: 'nama_skala_usaha', 
+            name: 'Skala usaha', 
             minWidth: 100, 
             isResizable: true,
-            onRender: (item: IItemSkalaUsaha) => {
-                return item.singkatan;
+            onColumnClick: _onHandleColumnClick,
+            onRender: (item: IItemKategoriPelakuUsaha) => {
+                return item.skalaUsaha != undefined ? item.skalaUsaha.singkatan:'-';
             },
             isPadded: true,
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountSkalaUsahaQuery(queryFilters);
-    const { data: postsSkalaUsaha, isLoading: isLoadingPosts } = useGetAllSkalaUsahaQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriPelakuUsahaQuery(queryFilters);
+    const { data: posts, isLoading: isLoadingPosts } = useGetAllKategoriPelakuUsahaQuery(queryParams);    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -376,7 +378,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
+                                    posts != undefined ? posts?.map(
                                         (t) => (
                                             {key: t.id as string, ...t}
                                         )
