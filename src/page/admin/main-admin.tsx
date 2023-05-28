@@ -44,16 +44,15 @@ const navLinkGroups: INavLinkGroup[] = [
           name: 'Dashboard',
           url: '',
           icon: 'Home',
-          key: 'dsb',
+          key: 'Dashboard',
           isExpanded: true,
           target: '_self',
         },
         {
           name: 'Permohonan',
           url: '',
-        //   url: 'http://localhost:3000/pemrakarsa/permohonan',
           icon: 'ChangeEntitlements',
-          key: 'pmh',
+          key: 'Permohonan',
           isExpanded: true,
           target: '_self',
         },
@@ -61,7 +60,7 @@ const navLinkGroups: INavLinkGroup[] = [
           name: 'Pelaporan',
           url: '',
           icon: 'ReportDocument',
-          key: 'plp',
+          key: 'Pelaporan',
           target: '_blank',
         },
         {
@@ -72,17 +71,17 @@ const navLinkGroups: INavLinkGroup[] = [
           target: '_blank',
         },
         {
-          name: 'Master Data',
+          name: 'Master data',
           url: '',
           icon: 'Library',
-          key: 'master',
+          key: 'Master data',
           target: '_blank',
         },
         {
           name: 'Pengaturan',
           url: '',
           icon: 'Settings',
-          key: 'pengaturan',
+          key: 'Pengaturan',
           target: '_blank',
         },
         {
@@ -126,7 +125,9 @@ export const AdminPage: FC = () => {
     {
       token.hakAkses == 'Administrator' ? 
       <Stack grow verticalFill className={classNames.container}>
-        <TopBarLayoutFluentUI />
+        <TopBarLayoutFluentUI 
+          appTitleContainer={{nama: 'SIKOLING', width: 200}}
+          subTitle={idContentPage}/>
         <Stack.Item grow className={classNames.gridContainer}>
           <Stack horizontal>
             <Stack.Item className={classNames.leftKonten}>
@@ -150,20 +151,20 @@ export const AdminPage: FC = () => {
 const getContentPage = (idContentPage: string) => {
     let konten = null;
     switch (idContentPage) {
-        case 'dsb':
+        case 'Dashboard':
             konten =             
               <DashboardBackEnd />;
             break; 
-        case 'pmh':
+        case 'Permohonan':
             konten = <PermohonanBackEnd />;   
             break;
-        case 'plp':
+        case 'Pelaporan':
             konten = <KontenPelaporanPemrakarsa />;   
             break;
-        case 'master':
+        case 'Master data':
           konten = <MasterBackEnd />;   
           break;
-        case 'pengaturan':
+        case 'Pengaturan':
           konten = <span>Settings</span>;   
           break;
         default:

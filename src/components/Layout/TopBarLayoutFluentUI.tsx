@@ -5,25 +5,35 @@ import { useAppDispatch } from "../../app/hooks";
 import { resetCredential } from "../../features/security/authentication-slice";
 import { resetToken } from "../../features/security/token-slice";
 
+
+interface ITopBarUIProps {
+    appTitleContainer: {nama: string; width: number;};
+    subTitle: string;
+};
 const theme = getTheme();
 const RootStackStyles: IStackStyles = {
     root: {
         backgroundColor: theme.palette.themePrimary,
         color: theme.palette.white,
         lineHeight: '50px',
-        padding: '0 20px',
-    },
-};
-const labelTopBarStyles: IStackItemStyles = {
-    root: {
-      fontSize: '1.2em',
-      fontWeight: 500
+        // padding: '0 20px',
     },
 };
 const calloutProps = { gapSpace: 0 };
 const userIcon: IIconProps = { iconName: 'Contact' };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const classNames = mergeStyleSets({
+    titleStyles: {
+        padding: '0 4px 0 13px',
+        fontSize: '1.2em',
+        fontWeight: 500,
+        borderRight: '1px solid rgb(159 159 159 / 61%)',
+    },
+    subTitleStyles: {
+        padding: '0 4px 0 13px',
+        fontSize: '1.2em',
+        fontWeight: 500,
+    },
     deepSkyBlue: [{ color: 'deepskyblue' }],
     greenYellow: [{ color: 'greenyellow' }],
     salmon: [{ color: 'salmon' }],
@@ -51,7 +61,7 @@ const popupStyles = mergeStyleSets({
 });
 
 
-export const TopBarLayoutFluentUI: FC = () => {
+export const TopBarLayoutFluentUI: FC<ITopBarUIProps> = ({appTitleContainer, subTitle}) => {
     const [isPopupVisible, { setTrue: showPopup, setFalse: hidePopup }] = useBoolean(false);
     const tooltipId = useId('tooltip');
 
@@ -70,8 +80,11 @@ export const TopBarLayoutFluentUI: FC = () => {
     return (
         <Stack.Item>
             <Stack horizontal styles={RootStackStyles}>
-                <Stack.Item grow align="center" styles={labelTopBarStyles}>
-                    Sikoling  
+                <Stack.Item>
+                    <div className={classNames.titleStyles} style={{width: appTitleContainer.width}}>{appTitleContainer.nama}</div>  
+                </Stack.Item>
+                <Stack.Item grow>
+                <div className={classNames.subTitleStyles}>{subTitle}</div>
                 </Stack.Item>
                 <Stack.Item align="center" >
                     <TooltipHost

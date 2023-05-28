@@ -1,10 +1,11 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Dropdown, IDropdownOption, PrimaryButton, ActionButton } from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { FC, useCallback, useState } from "react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IKategoriPelakuUsaha } from "../../features/perusahaan/kategori-pelaku-usaha-slice";
 import { useGetAllKategoriPelakuUsahaQuery, useGetTotalCountKategoriPelakuUsahaQuery } from "../../features/perusahaan/kategori-pelaku-usaha-api-slice";
+import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
 
 interface IDataListKategoriPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -76,6 +77,19 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         },
         []
     );
+
+    const _onHandleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {  
+            setContextualMenuFilterProps({         
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomRightEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuFilterDismissed,                  
+            });
+        },
+        []
+    );
     
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -127,9 +141,22 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(null);    
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriPelakuUsahaQuery(queryFilters);
     const { data: posts, isLoading: isLoadingPosts } = useGetAllKategoriPelakuUsahaQuery(queryParams);    
+    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetAllSkalaUsahaQuery({
+        pageNumber: 0,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -185,6 +212,13 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
     const _onContextualMenuDismissed = useCallback(
         () => {
             setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
@@ -350,6 +384,112 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         []
     );
 
+    const _onChangeSkalaUsaha = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'id_skala_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'id_skala_usaha',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'id_skala_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'id_skala_usaha',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedSkalaUsaha(item);
+        },
+        []
+    );
+
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'tanggal'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+
+            setSelectedSkalaUsaha(null);
+        },
+        []
+    );
+
     return (
         <Stack grow verticalFill style={{marginTop: 2}}>
             <Stack.Item>
@@ -367,6 +507,14 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
+                            </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={_onHandleButtonFilterClick}
+                                > 
+                                    Filter
+                                </ActionButton>       
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
@@ -408,6 +556,37 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Skala usaha"
+                                style={{width: 200}}
+                                placeholder="--Pilih--"
+                                options={
+                                    postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.singkatan}`
+                                        })
+                                    ) : []
+                                }
+                                selectedKey={selectedSkalaUsaha ? selectedSkalaUsaha.key : null}
+                                onChange={_onChangeSkalaUsaha}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>                
+            }
         </Stack>
     );
 }

@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
 import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, OverflowSet, Stack } from "@fluentui/react";
 import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
@@ -52,6 +52,32 @@ const daftarMenuOverFlow = [
         icon: 'RowsGroup',
         onClick: undefined,
     },
+    {
+        key: 'pelaku_usaha',
+        name: 'Pelaku usaha',
+        icon: 'RowsGroup',
+        onClick: undefined,
+    },
+    {
+        key: 'log',
+        name: 'Log',
+        icon: undefined,
+        onClick: noOp,
+        subMenuProps: {
+            items: [
+                {
+                key: 'kategori_log',
+                name: 'Kategori Log',
+                iconProps: { iconName: 'Mail' },
+                },
+                {
+                    key: 'calendarEvent',
+                    name: 'Calendar event',
+                    iconProps: { iconName: 'Calendar' },
+                },
+            ],
+        },
+    },
 ]
 
 const buttonStyles: Partial<IButtonStyles> = {
@@ -64,6 +90,145 @@ root: {
 };
 
 export const MasterBackEnd: FC = () => {
+
+    const daftarMenuOverFlow = useMemo(
+        () => {
+            return [
+                {
+                    key: 'authority',
+                    name: 'Authority',
+                    icon: 'AuthenticatorApp',
+                    onClick: undefined,
+                },
+                {
+                    key: 'hak_akses',
+                    name: 'Hak akses',
+                    icon: 'Database',
+                    onClick: undefined,
+                },
+                {
+                    key: 'identity',
+                    name: 'Identitas personal',
+                    icon: 'Album',
+                    onClick: undefined,
+                },
+                {
+                    key: 'pemrakarsa',
+                    name: 'Pemrakarsa',
+                    icon: 'CityNext',
+                    onClick: undefined,
+                },
+                {
+                    key: 'usaha',
+                    name: 'Usaha',
+                    icon: 'ExpandMenu',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'model_perizinan',
+                                name: 'Model izin usaha',
+                                iconProps: {iconName: 'ModelingView'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('model_perizinan');
+                                }
+                            },            
+                            {
+                                key: 'skala_usaha',
+                                name: 'Skala usaha',
+                                iconProps: {iconName:'ScaleVolume'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('skala_usaha');
+                                },
+                            },
+                            {
+                                key: 'kategori_pelaku_usaha',
+                                name: 'Kategori pelaku usaha',
+                                iconProps: {iconName:'RowsGroup'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_pelaku_usaha');
+                                }
+                            },
+                            {
+                                key: 'pelaku_usaha',
+                                name: 'Pelaku usaha',
+                                iconProps: {iconName:'GroupList'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('pelaku_usaha');
+                                }
+                            },
+                        ]
+                    },
+                },
+                {
+                    key: 'log',
+                    name: 'Log',
+                    icon: 'History',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                            key: 'kategori_log',
+                            name: 'Kategori Log',
+                            iconProps: { iconName: 'Mail' },
+                            onClick: () => {
+                                    _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                            {
+                            key: 'calendarEvent',
+                            name: 'Calendar event',
+                            iconProps: { iconName: 'Calendar' },
+                            },
+                        ],
+                    },
+                },
+                {
+                    key: 'alamat',
+                    name: 'Alamat',
+                    icon: 'Nav2DMapView',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'propinsi',
+                                name: 'Propinsi',
+                                iconProps: { iconName: 'Pinned' },
+                                onClick: () => {
+                                        _onHandleMasterMenu('kategori_log');
+                                    }
+                            },
+                            {
+                                key: 'kabupaten',
+                                name: 'Kabupaten',
+                                iconProps: { iconName: 'Pinned' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                            {
+                                key: 'kecamatan',
+                                name: 'Kecamatan',
+                                iconProps: { iconName: 'Pinned' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                            {
+                                key: 'desa',
+                                name: 'Desa',
+                                iconProps: { iconName: 'Pinned' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                        ],
+                    },
+                },
+            ]
+        },
+        []
+    )
 
     const [idContentPage, setIdContentPage] = useState<string>('authority');
 
@@ -107,6 +272,7 @@ export const MasterBackEnd: FC = () => {
 
     const  _onHandleMasterMenu = useCallback( 
         (val) => {
+            console.log(val);   
             setIdContentPage(val);
         },
         []
@@ -225,25 +391,7 @@ const getContentPage = (idContentPage: string) => {
                 />;
             break;
         case 'skala_usaha':
-                konten = <DataListSkalaUsahaFluentUI
-                        initSelectedFilters={
-                            {
-                                pageNumber: 1,
-                                pageSize: 50,
-                                filters: [],
-                                sortOrders: [
-                                    {
-                                        fieldName: 'id',
-                                        value: 'ASC'
-                                    },
-                                ],
-                            }
-                        }
-                        title="Skala usaha"
-                    />;
-                break;
-        case 'kategori_pelaku_usaha':
-            konten = <DataListKategoriPelakuUsahaFluentUI
+            konten = <DataListSkalaUsahaFluentUI
                     initSelectedFilters={
                         {
                             pageNumber: 1,
@@ -259,6 +407,45 @@ const getContentPage = (idContentPage: string) => {
                     }
                     title="Skala usaha"
                 />;
+            break;
+        case 'kategori_pelaku_usaha':
+            konten = <DataListKategoriPelakuUsahaFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Kategori pelaku usaha"
+                />;
+            break;
+        case 'pelaku_usaha':
+            konten = <DataListKategoriPelakuUsahaFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Pelaku usaha"
+                />;
+            break;
+        case 'kategori_log':
+            konten = <span>Kategori Log</span>
             break;
         default:
             konten = null;
