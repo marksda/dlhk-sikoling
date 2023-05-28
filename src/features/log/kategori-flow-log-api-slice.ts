@@ -13,7 +13,6 @@ export const KategoriFlowLogApiSlice = createApi({
     reducerPath: 'kategoriFlowLogApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    // keepUnusedDataFor: 30,
     tagTypes: ['KategoriFlowLog'],
     endpoints(builder) {
         return {
@@ -69,6 +68,9 @@ export const KategoriFlowLogApiSlice = createApi({
                         { type: 'KategoriFlowLog', id: 'LIST' },
                     ] : [{type: 'KategoriFlowLog', id: 'LIST'}],
             }),
+            getTotalCountKategoriLog: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `kategori_log/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -76,5 +78,5 @@ export const KategoriFlowLogApiSlice = createApi({
 export const {
     useAddKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation,
     useDeleteKategoriFlowLogMutation, useGetDaftarKategoriFlowLogByFiltersQuery,
-    useGetAllQuery
+    useGetTotalCountKategoriLogQuery,
 } = KategoriFlowLogApiSlice;

@@ -7,78 +7,10 @@ import { DataListPersonFluentUI } from "../../components/DataList/DataListPerson
 import { DataListModelPerizinanFluentUI } from "../../components/DataList/DataListModelPerizinanFluentUi";
 import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSkalaUsahaFluentUi";
 import { DataListKategoriPelakuUsahaFluentUI } from "../../components/DataList/DataListKategoriPelakuUsahaFluentUi";
+import { DataListKategoriLogFluentUI } from "../../components/DataList/DataListKategoriLogFluentUi";
 
-const noOp = () => undefined;
-const daftarMenuOverFlow = [
-    {
-        key: 'authority',
-        name: 'Authority',
-        icon: 'AuthenticatorApp',
-        onClick: undefined,
-    },
-    {
-        key: 'hak_akses',
-        name: 'Hak akses',
-        icon: 'Database',
-        onClick: undefined,
-    },
-    {
-        key: 'identity',
-        name: 'Identitas personal',
-        icon: 'Album',
-        onClick: undefined,
-    },
-    {
-        key: 'pemrakarsa',
-        name: 'Pemrakarsa',
-        icon: 'CityNext',
-        onClick: undefined,
-    },
-    {
-        key: 'model_perizinan',
-        name: 'Model izin usaha',
-        icon: 'FlowChart',
-        onClick: undefined,
-    },
-    {
-        key: 'skala_usaha',
-        name: 'Skala usaha',
-        icon: 'ScaleVolume',
-        onClick: undefined,
-    },
-    {
-        key: 'kategori_pelaku_usaha',
-        name: 'Kategori pelaku usaha',
-        icon: 'RowsGroup',
-        onClick: undefined,
-    },
-    {
-        key: 'pelaku_usaha',
-        name: 'Pelaku usaha',
-        icon: 'RowsGroup',
-        onClick: undefined,
-    },
-    {
-        key: 'log',
-        name: 'Log',
-        icon: undefined,
-        onClick: noOp,
-        subMenuProps: {
-            items: [
-                {
-                key: 'kategori_log',
-                name: 'Kategori Log',
-                iconProps: { iconName: 'Mail' },
-                },
-                {
-                    key: 'calendarEvent',
-                    name: 'Calendar event',
-                    iconProps: { iconName: 'Calendar' },
-                },
-            ],
-        },
-    },
-]
+// const noOp = () => undefined;
+
 
 const buttonStyles: Partial<IButtonStyles> = {
 root: {
@@ -168,18 +100,21 @@ export const MasterBackEnd: FC = () => {
                     subMenuProps: {
                         items: [
                             {
-                            key: 'kategori_log',
-                            name: 'Kategori Log',
-                            iconProps: { iconName: 'Mail' },
-                            onClick: () => {
-                                    _onHandleMasterMenu('kategori_log');
+                                key: 'kategori_log',
+                                name: 'Kategori Log',
+                                iconProps: { iconName: 'Backlog' },
+                                onClick: () => {
+                                        _onHandleMasterMenu('kategori_log');
                                 }
                             },
                             {
-                            key: 'calendarEvent',
-                            name: 'Calendar event',
-                            iconProps: { iconName: 'Calendar' },
-                            },
+                                key: 'status_flow_log',
+                                name: 'Status flow log',
+                                iconProps: { iconName: 'StatusCircleRing' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('status_flow_log');
+                                }
+                            },                            
                         ],
                     },
                 },
@@ -445,7 +380,40 @@ const getContentPage = (idContentPage: string) => {
                 />;
             break;
         case 'kategori_log':
-            konten = <span>Kategori Log</span>
+            konten = <DataListKategoriLogFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'id',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Kategori log"
+            />;
+            break;
+        case 'status_flow_log':
+            konten = <DataListKategoriLogFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'id',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Status flow log"
+            />;
             break;
         default:
             konten = null;
