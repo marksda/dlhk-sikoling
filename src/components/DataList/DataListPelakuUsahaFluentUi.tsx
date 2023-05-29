@@ -43,7 +43,9 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
-const filterIcon: IIconProps = { iconName: 'Filter' };
+const filterIcon: IIconProps = { iconName: 'Filter'};
+
+
 
 export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -526,7 +528,10 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                                     iconProps={filterIcon} 
                                     onClick={_onHandleButtonFilterClick}
                                 > 
-                                    Filter
+                                    {
+                                        queryFilters.filters?.length as number > 0 ?
+                                        <span style={{color: '#16cd16'}}>Filter</span> : <span>Filter</span>
+                                    }
                                 </ActionButton>       
                             </Stack.Item>
                         </Stack>
@@ -575,13 +580,14 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     <Stack>
                         <Stack.Item>
                             <Dropdown 
-                                label="Hak akses"
+                                label="Skala usaha"
+                                style={{width: 200}}
                                 placeholder="--Pilih--"
                                 options={
                                     postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
                                         (t) => ({
                                             key: t.id!, 
-                                            text: `${t.nama}`
+                                            text: `${t.singkatan}`
                                         })
                                     ) : []
                                 }

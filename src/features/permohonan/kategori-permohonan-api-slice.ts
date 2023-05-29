@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 
 export interface IKategoriPermohonan {
     id: string|null;
@@ -12,7 +13,6 @@ export const KategoriPermohonanApiSlice = createApi({
     reducerPath: 'kategoriPermohonanApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
     tagTypes: ['KategoriPermohonan'],
     endpoints(builder) {
         return {
@@ -34,30 +34,6 @@ export const KategoriPermohonanApiSlice = createApi({
                     return [{type: 'KategoriPermohonan', id: id!}];
                 },
             }),
-            getAllKategoriPermohonan: builder.query<daftarKategoriPermohonan, void>({
-                query: () => 'kategori_permohonan',
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPermohonan' as const, id: id! })
-                        ),
-                        { type: 'KategoriPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPermohonan', id: 'LIST'}],
-            }),
-            getKategoriPermohonanByNama: builder.query<daftarKategoriPermohonan, string>({
-                query: (nama) => `kategori_permohonan/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriPermohonan' as const, id: id!  })
-                        ),
-                        { type: 'KategoriPermohonan', id: 'LIST' },
-                    ]:
-                    [{type: 'KategoriPermohonan', id: 'LIST'}],
-            }),
             deleteKategoriPermohonan: builder.mutation<{ success: boolean; id: string }, string>({
                 query(idKategoriPermohonan) {
                   return {
@@ -69,12 +45,27 @@ export const KategoriPermohonanApiSlice = createApi({
                     return [{type: 'KategoriPermohonan', id: idKategoriPermohonan}]
                 },
             }),
+            getDaftarKategoriPermohonanByFilters: builder.query<daftarKategoriPermohonan, IQueryParams>({
+                query: (queryParams) => `kategori_permohonan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'KategoriPermohonan' as const, id: id! })
+                        ),
+                        { type: 'KategoriPermohonan', id: 'LIST' },
+                    ]:
+                    [{type: 'KategoriPermohonan', id: 'LIST'}],
+            }),
+            getTotalCountKategoriPermohonan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `kategori_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         };
     }
 });
 
 export const {
     useAddKategoriPermohonanMutation, useUpdateKategoriPermohonanMutation,
-    useGetAllKategoriPermohonanQuery, useGetKategoriPermohonanByNamaQuery,
-    useDeleteKategoriPermohonanMutation
+    useDeleteKategoriPermohonanMutation, useGetDaftarKategoriPermohonanByFiltersQuery,
+    useGetTotalCountKategoriPermohonanQuery
 } = KategoriPermohonanApiSlice;

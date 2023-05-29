@@ -10,6 +10,7 @@ import { DataListKategoriPelakuUsahaFluentUI } from "../../components/DataList/D
 import { DataListKategoriLogFluentUI } from "../../components/DataList/DataListKategoriLogFluentUi";
 import { DataListStatusFlowLogFluentUI } from "../../components/DataList/DataListStatusFlowLogFluentUi";
 import { DataListPelakuUsahaFluentUI } from "../../components/DataList/DataListPelakuUsahaFluentUi";
+import { DataListKategoriPermohonanFluentUI } from "../../components/DataList/DataListKategoriPermohonanFluentUI";
 
 // const noOp = () => undefined;
 
@@ -171,7 +172,7 @@ export const MasterBackEnd: FC = () => {
                         items: [
                             {
                                 key: 'kategori_permohonan',
-                                name: 'Jenis permohonan',
+                                name: 'Kategori permohonan',
                                 iconProps: { iconName: 'WebComponents' },
                                 onClick: () => {
                                         _onHandleMasterMenu('kategori_permohonan');
@@ -448,6 +449,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Status flow log"
+            />;
+            break;
+        case 'kategori_permohonan':
+            konten = <DataListKategoriPermohonanFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'id',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Kategori permohonan"
             />;
             break;
         default:

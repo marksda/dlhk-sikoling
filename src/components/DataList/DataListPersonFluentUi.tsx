@@ -577,7 +577,10 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                     iconProps={filterIcon} 
                                     onClick={_onHandleButtonFilterClick}
                                 > 
-                                    Filter
+                                    {
+                                        queryFilters.filters?.length as number > 0 ?
+                                        <span style={{color: '#16cd16'}}>Filter</span> : <span>Filter</span>
+                                    }
                                 </ActionButton>       
                             </Stack.Item>
                         </Stack>

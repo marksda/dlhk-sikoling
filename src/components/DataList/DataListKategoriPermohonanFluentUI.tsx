@@ -1,15 +1,16 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IKategoriFlowLog, useGetDaftarKategoriFlowLogByFiltersQuery, useGetTotalCountKategoriLogQuery } from "../../features/log/kategori-flow-log-api-slice";
+import { IKategoriPermohonan, useGetDaftarKategoriPermohonanByFiltersQuery, useGetTotalCountKategoriPermohonanQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
+    
 
-interface IDataListKategoriLogFluentUIProps {
+interface IDataListKategoriPermohonanFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemKategoriLog = {key: string|null;} & Partial<IKategoriFlowLog>;
+type IItemKategoriPermohonan = {key: string|null;} & Partial<IKategoriPermohonan>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -41,7 +42,7 @@ const classNames = mergeStyleSets({
     },
 });
 
-export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListKategoriPermohonanFluentUI: FC<IDataListKategoriPermohonanFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -95,7 +96,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemKategoriLog) => {
+            onRender: (item: IItemKategoriPermohonan) => {
                 return item.id;
             }
         },
@@ -106,7 +107,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemKategoriLog) => {
+            onRender: (item: IItemKategoriPermohonan) => {
                 return item.nama;
             },
             isPadded: true,
@@ -114,8 +115,8 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriLogQuery(queryFilters);
-    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarKategoriFlowLogByFiltersQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriPermohonanQuery(queryFilters);
+    const { data: postsKategoriPermohonan, isLoading: isLoadingPosts } = useGetDaftarKategoriPermohonanByFiltersQuery(queryParams);   
     
 
     const _getKey = useCallback(
@@ -365,7 +366,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsKategoriLog != undefined ? postsKategoriLog?.map(
+                                    postsKategoriPermohonan != undefined ? postsKategoriPermohonan?.map(
                                         (t) => (
                                             {key: t.id as string, ...t}
                                         )
