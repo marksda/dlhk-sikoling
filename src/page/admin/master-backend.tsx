@@ -8,6 +8,7 @@ import { DataListModelPerizinanFluentUI } from "../../components/DataList/DataLi
 import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSkalaUsahaFluentUi";
 import { DataListKategoriPelakuUsahaFluentUI } from "../../components/DataList/DataListKategoriPelakuUsahaFluentUi";
 import { DataListKategoriLogFluentUI } from "../../components/DataList/DataListKategoriLogFluentUi";
+import { DataListStatusFlowLogFluentUI } from "../../components/DataList/DataListStatusFlowLogFluentUi";
 
 // const noOp = () => undefined;
 
@@ -152,6 +153,40 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'desa',
                                 name: 'Desa',
+                                iconProps: { iconName: 'Pinned' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                        ],
+                    },
+                },
+                {
+                    key: 'permohonan',
+                    name: 'Permohonan',
+                    icon: 'PublishCourse',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'kategori_permohonan',
+                                name: 'Jenis permohonan',
+                                iconProps: { iconName: 'WebComponents' },
+                                onClick: () => {
+                                        _onHandleMasterMenu('kategori_permohonan');
+                                    }
+                            },
+                            {
+                                key: 'kategori_pengurus_permohonan',
+                                name: 'Jenis pengurus permohonan',
+                                iconProps: { iconName: 'Group' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('kategori_pengurus_permohonan');
+                                }
+                            },
+                            {
+                                key: 'tahap_pemberkasan',
+                                name: 'Tahap permohonan',
                                 iconProps: { iconName: 'Pinned' },
                                 onClick: () => {
                                     _onHandleMasterMenu('kategori_log');
@@ -398,7 +433,7 @@ const getContentPage = (idContentPage: string) => {
             />;
             break;
         case 'status_flow_log':
-            konten = <DataListKategoriLogFluentUI
+            konten = <DataListStatusFlowLogFluentUI
                 initSelectedFilters={
                     {
                         pageNumber: 1,
