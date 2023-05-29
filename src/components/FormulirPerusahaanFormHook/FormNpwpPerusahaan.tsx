@@ -2,7 +2,7 @@ import { IconButton, IDropdownOption, Label, PrimaryButton, Stack } from "@fluen
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { UseFormHandleSubmit, UseFormSetError, useWatch } from "react-hook-form";
-import { useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+// import { useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { useIsEksisRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";

@@ -1,16 +1,18 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Dropdown, Callout, PrimaryButton, IDropdownOption } from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, ActionButton, Callout, Dropdown, PrimaryButton, IDropdownOption } from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IKategoriFlowLog, useGetDaftarKategoriFlowLogByFiltersQuery, useGetTotalCountKategoriLogQuery } from "../../features/log/kategori-flow-log-api-slice";
+import { IPelakuUsaha } from "../../features/perusahaan/pelaku-usaha-slice";
+import { useGetDaftarPelakuUsahaByFiltersQuery, useGetTotalCountPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
 
-interface IDataListKategoriLogFluentUIProps {
+interface IDataListPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemKategoriLog = {key: string|null;} & Partial<IKategoriFlowLog>;
+type IItemPelakuUsaha = {key: string|null;} & Partial<IPelakuUsaha>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -41,8 +43,9 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
+const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -75,6 +78,19 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
         },
         []
     );
+
+    const _onHandleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {  
+            setContextualMenuFilterProps({         
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomRightEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuFilterDismissed,                  
+            });
+        },
+        []
+    );
     
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -88,35 +104,77 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
             key: 'id', 
             name: 'Id', 
             fieldName: 'id', 
-            minWidth: 20, 
-            maxWidth: 20, 
+            minWidth: 50, 
+            maxWidth: 50, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemKategoriLog) => {
+            onRender: (item: IItemPelakuUsaha) => {
                 return item.id;
             }
         },
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 300, 
+            minWidth: 200, 
+            maxWidth: 300,
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemKategoriLog) => {
+            onRender: (item: IItemPelakuUsaha) => {
                 return item.nama;
+            },
+            isPadded: true,
+        },
+        { 
+            key: 'singkatan', 
+            name: 'Singkatan', 
+            minWidth: 100, 
+            maxWidth: 200,
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPelakuUsaha) => {
+                return item.singkatan;
+            },
+            isPadded: true,
+        },
+        { 
+            key: 'kategori_pelaku_usaha', 
+            name: 'Kategori', 
+            minWidth: 100, 
+            maxWidth: 150,
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPelakuUsaha) => {
+                return item.kategoriPelakuUsaha?.nama;
+            },
+            isPadded: true,
+        },
+        { 
+            key: 'skala_usaha', 
+            name: 'Skala usaha', 
+            minWidth: 100, 
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPelakuUsaha) => {
+                return item.kategoriPelakuUsaha?.skalaUsaha?.singkatan;
             },
             isPadded: true,
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(null);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriLogQuery(queryFilters);
-    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarKategoriFlowLogByFiltersQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPelakuUsahaQuery(queryFilters);
+    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarPelakuUsahaByFiltersQuery(queryParams); 
+    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetAllSkalaUsahaQuery(queryParams);    
     
 
     const _getKey = useCallback(
@@ -173,6 +231,13 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
     const _onContextualMenuDismissed = useCallback(
         () => {
             setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
@@ -338,8 +403,108 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
         []
     );
 
+    const _onChangeSkalaUsaha = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'skala_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'skala_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'skala_usaha',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'skala_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'skala_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'skala_usaha',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedSkalaUsaha(item);
+        },
+        []
+    );
+
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'skala_usaha'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'skala_usaha'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+            
+            setSelectedSkalaUsaha(null);
+        },
+        []
+    );
+
     return (
-        <Stack grow verticalFill>
+        <Stack grow verticalFill style={{marginTop: 2}}>
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
@@ -355,6 +520,14 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
+                            </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={_onHandleButtonFilterClick}
+                                > 
+                                    Filter
+                                </ActionButton>       
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
@@ -395,7 +568,38 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Hak akses"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: `${t.nama}`
+                                        })
+                                    ) : []
+                                }
+                                selectedKey={selectedSkalaUsaha ? selectedSkalaUsaha.key : null}
+                                onChange={_onChangeSkalaUsaha}
+                            />
+                        </Stack.Item>
+                        
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>                
+            }
         </Stack>
     );
 }

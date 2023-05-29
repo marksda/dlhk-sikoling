@@ -1,19 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
-import { IHalamanBasePageAndPageSize, IHalamanBasePageAndPageSizeAndNama } from "../halaman/pagging";
-import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
 import { IPelakuUsaha } from "./pelaku-usaha-slice";
+import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 
 type daftarPelakuUsaha = IPelakuUsaha[];
 
 export const PelakuUsahaApiSlice = createApi({
     reducerPath: 'pelakuUsahaApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    keepUnusedDataFor: 30,
-    tagTypes:['PelakuUsaha', 'PelakuUsahaPage', 'PelakuUsahaNama', 'PelakuUsahaNamaPage', 'PelakuUsahaKategoriPelakuUsaha', 'PelakuUsahaKategoriPelakuUsahaPage'],
+    tagTypes:['PelakuUsaha'],
     endpoints(builder) {
         return {
             addPelakuUsaha: builder.mutation<IPelakuUsaha, Partial<IPelakuUsaha>>({
@@ -22,7 +18,7 @@ export const PelakuUsahaApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'PelakuUsaha', id: 'LIST'}, {type: 'PelakuUsahaPage', id: 'LIST'}, {type: 'PelakuUsahaNama', id: 'LIST'}, {type: 'PelakuUsahaNamaPage', id: 'LIST'}, {type: 'PelakuUsahaKategoriPelakuUsaha', id: 'LIST'}, {type: 'PelakuUsahaKategoriPelakuUsahaPage', id: 'LIST'}],
+                invalidatesTags: [{type: 'PelakuUsaha', id: 'LIST'}],
             }),
             updatePelakuUsaha: builder.mutation<void, {id: string, pelakuUsaha: IPelakuUsaha}>({
                 query: ({id, pelakuUsaha}) => ({
@@ -30,7 +26,7 @@ export const PelakuUsahaApiSlice = createApi({
                     method: 'PUT',
                     body: pelakuUsaha,
                 }),
-                invalidatesTags: (result, error, { id }) => [{type: 'PelakuUsaha', id: 'LIST'}, {type: 'PelakuUsahaPage', id: 'LIST'}, {type: 'PelakuUsahaNama', id: 'LIST'}, {type: 'PelakuUsahaNamaPage', id: 'LIST'}, {type: 'PelakuUsahaKategoriPelakuUsaha', id: 'LIST'}, {type: 'PelakuUsahaKategoriPelakuUsahaPage', id: 'LIST'}],
+                invalidatesTags: (result, error, { id }) => [{type: 'PelakuUsaha', id: id}],
             }),
             deletePelakuUsaha: builder.mutation<{ success: boolean; id: string }, string>({
                 query(id) {
@@ -39,10 +35,10 @@ export const PelakuUsahaApiSlice = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result, error, id) => [{ type: 'PelakuUsaha', id }, { type: 'PelakuUsahaPage', id }, { type: 'PelakuUsahaNama', id }, { type: 'PelakuUsahaNamaPage', id }, {type: 'PelakuUsahaKategoriPelakuUsaha', id}, {type: 'PelakuUsahaKategoriPelakuUsahaPage', id}]
+                invalidatesTags: (result, error, id) => [{ type: 'PelakuUsaha', id }]
             }),
-            getAllPelakuUsaha: builder.query<daftarPelakuUsaha, void>({
-                query: () => `pelaku_usaha`,
+            getDaftarPelakuUsahaByFilters: builder.query<daftarPelakuUsaha, IQueryParams>({
+                query: (queryParams) => `pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -53,61 +49,15 @@ export const PelakuUsahaApiSlice = createApi({
                     ]:
                     [{type: 'PelakuUsaha', id: 'LIST'}],
             }),
-            getPelakuUsahaByPage: builder.query<daftarPelakuUsaha, {page: number; pageSize: number}>({
-                query: ({page, pageSize}) => `pelaku_usaha/page?page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaPage' as const, id: id! })
-                        ),
-                        { type: 'PelakuUsahaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'PelakuUsahaPage', id: 'LIST'}],
+            getTotalCountPelakuUsaha: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            getPelakuUsahaByNama: builder.query<daftarPelakuUsaha, string>({
-                query: (nama) => `pelaku_usaha/nama?nama=${nama}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaNama' as const, id: id! })
-                        ),
-                        { type: 'PelakuUsahaNama', id: 'LIST' },
-                    ]:
-                    [{type: 'PelakuUsahaNama', id: 'LIST'}],
-            }),
-            getPelakuUsahaByNamaAndPage: builder.query<daftarPelakuUsaha, {nama: string; page: number; pageSize: number}>({
-                query: ({nama, page, pageSize}) => `pelaku_usaha/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaNamaPage' as const, id: id! })
-                        ),
-                        { type: 'PelakuUsahaNamaPage', id: 'LIST' },
-                    ]:
-                    [{type: 'PelakuUsahaNamaPage', id: 'LIST'}],
-            }),
-            getPelakuUsahaByKategoriPelakuUsaha: builder.query<daftarPelakuUsaha, string>({
-                query: (idKategori) => `pelaku_usaha/kategori/${idKategori}`,
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'PelakuUsahaKategoriPelakuUsaha' as const, id: id! })
-                        ),
-                        { type: 'PelakuUsahaKategoriPelakuUsaha', id: 'LIST' },
-                    ]:
-                    [{type: 'PelakuUsahaKategoriPelakuUsaha', id: 'LIST'}],
-            })
         }
     }
 });
 
 export const { 
     useAddPelakuUsahaMutation, useUpdatePelakuUsahaMutation,
-    useDeletePelakuUsahaMutation, useGetAllPelakuUsahaQuery,
-    useGetPelakuUsahaByPageQuery, useGetPelakuUsahaByNamaQuery,
-    useGetPelakuUsahaByNamaAndPageQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery
+    useDeletePelakuUsahaMutation, useGetDaftarPelakuUsahaByFiltersQuery,
+    useGetTotalCountPelakuUsahaQuery
 } = PelakuUsahaApiSlice;

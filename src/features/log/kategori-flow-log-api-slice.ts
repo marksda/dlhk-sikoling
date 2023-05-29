@@ -57,17 +57,6 @@ export const KategoriFlowLogApiSlice = createApi({
                     ]:
                     [{type: 'KategoriFlowLog', id: 'LIST'}],
             }),
-            getAll: builder.query<DaftarKategoriFlowLog, void>({
-                query: () => 'kategori_log',
-                providesTags: (result) => 
-                    result ?
-                    [
-                        ...result.map(
-                            ({ id }) => ({ type: 'KategoriFlowLog' as const, id: id! })
-                        ),
-                        { type: 'KategoriFlowLog', id: 'LIST' },
-                    ] : [{type: 'KategoriFlowLog', id: 'LIST'}],
-            }),
             getTotalCountKategoriLog: builder.query<number, Pick<IQueryParams, "filters">>({
                 query: (queryFilters) => `kategori_log/count?filters=${JSON.stringify(queryFilters)}`,
             }),

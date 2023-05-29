@@ -9,6 +9,7 @@ import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSk
 import { DataListKategoriPelakuUsahaFluentUI } from "../../components/DataList/DataListKategoriPelakuUsahaFluentUi";
 import { DataListKategoriLogFluentUI } from "../../components/DataList/DataListKategoriLogFluentUi";
 import { DataListStatusFlowLogFluentUI } from "../../components/DataList/DataListStatusFlowLogFluentUi";
+import { DataListPelakuUsahaFluentUI } from "../../components/DataList/DataListPelakuUsahaFluentUi";
 
 // const noOp = () => undefined;
 
@@ -61,7 +62,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'model_perizinan',
                                 name: 'Model izin usaha',
-                                iconProps: {iconName: 'ModelingView'},
+                                iconProps: {iconName: 'HomeGroup'},
                                 onClick: () => {
                                     _onHandleMasterMenu('model_perizinan');
                                 }
@@ -77,7 +78,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'kategori_pelaku_usaha',
                                 name: 'Kategori pelaku usaha',
-                                iconProps: {iconName:'RowsGroup'},
+                                iconProps: {iconName:'Quantity'},
                                 onClick: () => {
                                     _onHandleMasterMenu('kategori_pelaku_usaha');
                                 }
@@ -85,7 +86,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'pelaku_usaha',
                                 name: 'Pelaku usaha',
-                                iconProps: {iconName:'GroupList'},
+                                iconProps: {iconName:'ContactInfo'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pelaku_usaha');
                                 }
@@ -242,7 +243,6 @@ export const MasterBackEnd: FC = () => {
 
     const  _onHandleMasterMenu = useCallback( 
         (val) => {
-            console.log(val);   
             setIdContentPage(val);
         },
         []
@@ -397,7 +397,7 @@ const getContentPage = (idContentPage: string) => {
                 />;
             break;
         case 'pelaku_usaha':
-            konten = <DataListKategoriPelakuUsahaFluentUI
+            konten = <DataListPelakuUsahaFluentUI
                     initSelectedFilters={
                         {
                             pageNumber: 1,
