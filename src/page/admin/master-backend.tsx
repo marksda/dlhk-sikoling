@@ -180,7 +180,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'kategori_pengurus_permohonan',
-                                name: 'Jenis pengurus permohonan',
+                                name: 'Kategori pengurus permohonan',
                                 iconProps: { iconName: 'Group' },
                                 onClick: () => {
                                     _onHandleMasterMenu('kategori_pengurus_permohonan');
