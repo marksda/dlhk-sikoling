@@ -7,7 +7,7 @@ import { useAppSelector } from "../../app/hooks";
 import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../features/pegawai/pegawai-api-slice";
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { IStatusWali, useGetAllStatusWaliPermohonanQuery } from "../../features/permohonan/status-wali-api-slice";
+import { IStatusWali, useGetDaftarStatusWaliPermohonanByFiltersQuery } from "../../features/permohonan/status-wali-api-slice";
 // import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { ModalFormulirAddPegawai } from "../Modal/ModalFormulirAddPegawai";
@@ -72,7 +72,17 @@ export const TemplatePermohonanArahan = () => {
     //rtk query perusahaan variable hook
     // const { data: daftarRegisterPerusahaan, error: errorFetchDataPerusahaan,  isFetching: isFetchingDaftarRegisterPerusahaan, isError } = useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery(token.userId as string);
     const { data: daftarJenisPermohonanSuratarahan, error: errorFetchDataJenisPermohonanSuratArahan,  isFetching: isFetchingDaftarJenisPermohonanSuratarahan, isError: isErrorJenisPermohonanSuratarahan } = useGetAllJenisPermohonanSuratArahanQuery();
-    const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetAllStatusWaliPermohonanQuery();
+    const { data: daftarStatusWali, error: errorFetchDataStatusWali,  isFetching: isFetchingDaftarStatusWali, isError: isErrorDataStatusWali } = useGetDaftarStatusWaliPermohonanByFiltersQuery({
+        pageNumber: 0,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });
     const { data: daftarPegawai, error: errorDataPegawai} = useGetPegawaiByIdRegisterPerusahaanQuery(
         registerPerusahaan != undefined ? registerPerusahaan.id:null, {skip: registerPerusahaan == undefined ? true:false});
     

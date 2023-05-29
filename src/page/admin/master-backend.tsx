@@ -11,6 +11,7 @@ import { DataListKategoriLogFluentUI } from "../../components/DataList/DataListK
 import { DataListStatusFlowLogFluentUI } from "../../components/DataList/DataListStatusFlowLogFluentUi";
 import { DataListPelakuUsahaFluentUI } from "../../components/DataList/DataListPelakuUsahaFluentUi";
 import { DataListKategoriPermohonanFluentUI } from "../../components/DataList/DataListKategoriPermohonanFluentUI";
+import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataList/DataListStatusPengurusPermohonanFluentUi";
 
 // const noOp = () => undefined;
 
@@ -467,6 +468,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Kategori permohonan"
+            />;
+            break;
+        case 'kategori_pengurus_permohonan':
+            konten = <DataListStatusPengurusPermohonanFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'id',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Kategori pengurus permohonan"
             />;
             break;
         default:
