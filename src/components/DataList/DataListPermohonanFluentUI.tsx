@@ -3,11 +3,11 @@ import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
-import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarKategoriPermohonanByFiltersQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
+import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -221,7 +221,17 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
             },
         ],
     }); 
-    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();  
+    const { data: postsPosisiTahapPemberkasan } = useGetDaftarPosisiTahapPemberkasanByFiltersQuery({
+        pageNumber: 0,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });  
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {

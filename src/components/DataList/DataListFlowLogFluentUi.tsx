@@ -6,8 +6,8 @@ import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUt
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetAllPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { useGetDaftarKategoriFlowLogByFiltersQuery } from "../../features/log/kategori-flow-log-api-slice";
+import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 
 
 interface IDataListFlowLogFluentUIProps {
@@ -264,7 +264,17 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             },
         ],
     });
-    const { data: postsPosisiTahapPemberkasan } = useGetAllPosisiTahapPemberkasanQuery();
+    const { data: postsPosisiTahapPemberkasan } = useGetDaftarPosisiTahapPemberkasanByFiltersQuery({
+        pageNumber: 0,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });
     
     const _getKey = useCallback(
         (item: any, index?: number): string => {

@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
+import { IQueryParams } from "../config/query-params-slice";
 
 
 export interface IPosisiTahapPemberkasan {
@@ -46,8 +47,8 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
                     return [{type: 'PosisiTahapPemberkasan', id: idPosisiTahapPemberkasan}]
                 },
             }),
-            getAllPosisiTahapPemberkasan: builder.query<daftarPosisiTahapPenberkasan, void>({
-                query: () => 'posisi_tahap_Pemberkasan',
+            getDaftarPosisiTahapPemberkasanByFilters: builder.query<daftarPosisiTahapPenberkasan, IQueryParams>({
+                query: (queryParams) => `posisi_tahap_Pemberkasan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -55,7 +56,11 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
                             ({ id }) => ({ type: 'PosisiTahapPemberkasan' as const, id: id! })
                         ),
                         { type: 'PosisiTahapPemberkasan', id: 'LIST' },
-                    ] : [{type: 'PosisiTahapPemberkasan', id: 'LIST'}],
+                    ]:
+                    [{type: 'PosisiTahapPemberkasan', id: 'LIST'}],
+            }),
+            getTotalCountPosisiTahapPemberkasan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `posisi_tahap_Pemberkasan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -63,6 +68,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
 
 export const {
     useAddPosisiTahapPemberkasanMutation, useUpdatePosisiTahapPemberkasanMutation,
-    useDeletePosisiTahapPemberkasanMutation, useGetAllPosisiTahapPemberkasanQuery
+    useDeletePosisiTahapPemberkasanMutation, useGetDaftarPosisiTahapPemberkasanByFiltersQuery,
+    useGetTotalCountPosisiTahapPemberkasanQuery
 } = PosisiTahapPemberkasanApiSlice;
 

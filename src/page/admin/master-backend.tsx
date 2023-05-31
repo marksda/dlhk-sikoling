@@ -12,6 +12,7 @@ import { DataListStatusFlowLogFluentUI } from "../../components/DataList/DataLis
 import { DataListPelakuUsahaFluentUI } from "../../components/DataList/DataListPelakuUsahaFluentUi";
 import { DataListKategoriPermohonanFluentUI } from "../../components/DataList/DataListKategoriPermohonanFluentUI";
 import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataList/DataListStatusPengurusPermohonanFluentUi";
+import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataList/DataListPosisiTahapPemberkasanFluentUi";
 
 // const noOp = () => undefined;
 
@@ -188,9 +189,9 @@ export const MasterBackEnd: FC = () => {
                                 }
                             },
                             {
-                                key: 'tahap_pemberkasan',
-                                name: 'Tahap permohonan',
-                                iconProps: { iconName: 'Pinned' },
+                                key: 'posisi_tahap_pemberkasan',
+                                name: 'Posisi tahap permohonan',
+                                iconProps: { iconName: 'Step' },
                                 onClick: () => {
                                     _onHandleMasterMenu('kategori_log');
                                 }
@@ -263,9 +264,8 @@ export const MasterBackEnd: FC = () => {
             <Stack.Item grow>
                 {getContentPage(idContentPage)}
             </Stack.Item>
-        </Stack>
-        
-    )
+        </Stack>        
+    );
 };
 
 const getContentPage = (idContentPage: string) => {
@@ -486,6 +486,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Kategori pengurus permohonan"
+            />;
+            break;
+        case 'posisi_tahap_pemberkasan':
+            konten = <DataListPosisiTahapPemberkasanFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'id',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Posisi tahap permohonan"
             />;
             break;
         default:
