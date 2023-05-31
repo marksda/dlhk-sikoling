@@ -1,16 +1,16 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IPosisiTahapPemberkasan, useGetDaftarPosisiTahapPemberkasanByFiltersQuery, useGetTotalCountPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
+import { useGetDaftarJabatanByFiltersQuery, useGetTotalCountJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
+import { IJabatan } from "../../features/jabatan/jabatan-slice";
 
-interface IDataListPosisiTahapPemberkasanFluentUIProps {
+interface IDataListJabatanFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemPosisiTahapPemberkasan = {key: string|null;} & Partial<IPosisiTahapPemberkasan>;
+type IItemJabatan = {key: string|null;} & Partial<IJabatan>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -41,9 +41,8 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
-const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemberkasanFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -89,46 +88,36 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
             key: 'id', 
             name: 'Id', 
             fieldName: 'id', 
-            minWidth: 20, 
-            maxWidth: 20, 
+            minWidth: 30, 
+            maxWidth: 30, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
-            onRender: (item: IItemPosisiTahapPemberkasan) => {
+            onRender: (item: IItemJabatan) => {
                 return item.id;
             }
         },
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 100, 
-            maxWidth: 300, 
-            isResizable: true, 
+            minWidth: 300, 
+            isResizable: true,             
             isSortedDescending: false,
             isSorted: true,
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemPosisiTahapPemberkasan) => {
+            onRender: (item: IItemJabatan) => {
                 return item.nama;
-            },
-            isPadded: true,
-        },
-        { 
-            key: 'keterangan', 
-            name: 'Keterangan', 
-            minWidth: 100, 
-            isResizable: true,
-            onRender: (item: IItemPosisiTahapPemberkasan) => {
-                return item.keterangan;
             },
             isPadded: true,
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPosisiTahapPemberkasanQuery(queryFilters);
-    const { data: postsPosisiTahapPemberkasan, isLoading: isLoadingPosts } = useGetDaftarPosisiTahapPemberkasanByFiltersQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountJabatanQuery(queryFilters);
+    const { data: postsJabatan, isLoading: isLoadingPosts } = useGetDaftarJabatanByFiltersQuery(queryParams);   
+    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -350,8 +339,8 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
     );
 
     return (
-        <Stack grow verticalFill style={{marginTop: 2}}>
-            <Stack.Item>
+        <Stack grow verticalFill>
+            <Stack.Item style={{marginTop: 2}}>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
@@ -377,7 +366,7 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPosisiTahapPemberkasan != undefined ? postsPosisiTahapPemberkasan?.map(
+                                    postsJabatan != undefined ? postsJabatan?.map(
                                         (t) => (
                                             {key: t.id as string, ...t}
                                         )
@@ -406,7 +395,7 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
         </Stack>
     );
 }

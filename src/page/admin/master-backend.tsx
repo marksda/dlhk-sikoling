@@ -13,6 +13,7 @@ import { DataListPelakuUsahaFluentUI } from "../../components/DataList/DataListP
 import { DataListKategoriPermohonanFluentUI } from "../../components/DataList/DataListKategoriPermohonanFluentUI";
 import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataList/DataListStatusPengurusPermohonanFluentUi";
 import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataList/DataListPosisiTahapPemberkasanFluentUi";
+import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
 
 // const noOp = () => undefined;
 
@@ -32,32 +33,68 @@ export const MasterBackEnd: FC = () => {
         () => {
             return [
                 {
-                    key: 'authority',
-                    name: 'Authority',
-                    icon: 'AuthenticatorApp',
+                    key: 'keamanan',
+                    name: 'Keamanan',
+                    icon: 'Shield',
                     onClick: undefined,
-                },
+                    subMenuProps: {
+                        items: [               
+                            {
+                                key: 'hak_akses',
+                                name: 'Kategori otoritas',
+                                iconProps: {iconName:'TeamWork'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('hak_akses');
+                                }
+                            },
+                            {
+                                key: 'authority',
+                                name: 'Penerima otoritas',
+                                iconProps: { iconName: 'Certificate'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('authority');
+                                }
+                            },
+                        ]
+                    }
+                }, 
                 {
-                    key: 'hak_akses',
-                    name: 'Hak akses',
-                    icon: 'Database',
-                    onClick: undefined,
-                },
-                {
-                    key: 'identity',
-                    name: 'Identitas personal',
+                    key: 'identiras',
+                    name: 'Identitas',
                     icon: 'Album',
                     onClick: undefined,
-                },
-                {
-                    key: 'pemrakarsa',
-                    name: 'Pemrakarsa',
-                    icon: 'CityNext',
-                    onClick: undefined,
-                },
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'identitas_personal',
+                                name: 'Personal',
+                                iconProps: { iconName: 'Contact'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('identitas_personal');
+                                }
+                            },               
+                            {
+                                key: 'pemrakarsa',
+                                name: 'Pemrakarsa',
+                                iconProps: {iconName:'CityNext'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('pemrakarsa');
+                                }
+                            },
+                            {
+                                key: 'pegawai',
+                                name: 'Pegawai',
+                                iconProps: {iconName:'ManagerSelfService'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('pemrakarsa');
+                                }
+                            },
+                        ]
+                    }
+                }, 
                 {
                     key: 'usaha',
-                    name: 'Usaha',
+                    name: 'Perusahaan',
                     icon: 'ExpandMenu',
                     onClick: undefined,
                     subMenuProps: {
@@ -88,10 +125,18 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'pelaku_usaha',
-                                name: 'Pelaku usaha',
+                                name: 'Kategori badan usaha',
                                 iconProps: {iconName:'ContactInfo'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pelaku_usaha');
+                                }
+                            },
+                            {
+                                key: 'jabatan',
+                                name: 'Jabatan',
+                                iconProps: {iconName:'PartyLeader'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('jabatan');
                                 }
                             },
                         ]
@@ -193,7 +238,7 @@ export const MasterBackEnd: FC = () => {
                                 name: 'Posisi tahap permohonan',
                                 iconProps: { iconName: 'Step' },
                                 onClick: () => {
-                                    _onHandleMasterMenu('kategori_log');
+                                    _onHandleMasterMenu('posisi_tahap_pemberkasan');
                                 }
                             },
                         ],
@@ -274,7 +319,7 @@ const getContentPage = (idContentPage: string) => {
         case 'authority':
             konten =             
                 <DataListAuthorityFluentUI
-                    title="Authority"
+                    title="Penerima otoritas"
                     initSelectedFilters={
                         {
                             pageNumber: 1,
@@ -292,7 +337,7 @@ const getContentPage = (idContentPage: string) => {
             break; 
         case 'hak_akses':
                 konten = <DataListHakAksesFluentUI
-                    title="Hak akses"
+                    title="Kategori otoritas"
                     initSelectedFilters={
                         {
                             pageNumber: 1,
@@ -326,7 +371,7 @@ const getContentPage = (idContentPage: string) => {
                     title="Pemrakarsa"
                 />;
             break;
-        case 'identity':
+        case 'identitas_personal':
             konten = <DataListPersonFluentUI 
                     initSelectedFilters={
                         {
@@ -341,7 +386,7 @@ const getContentPage = (idContentPage: string) => {
                             ],
                         }
                     }
-                    title="Identitas personal"
+                    title="Personal"
                 />;
             break;
         case 'model_perizinan':
@@ -413,7 +458,7 @@ const getContentPage = (idContentPage: string) => {
                             ],
                         }
                     }
-                    title="Pelaku usaha"
+                    title="Kategori badan usaha"
                 />;
             break;
         case 'kategori_log':
@@ -497,13 +542,31 @@ const getContentPage = (idContentPage: string) => {
                         filters: [],
                         sortOrders: [
                             {
-                                fieldName: 'id',
+                                fieldName: 'nama',
                                 value: 'ASC'
                             },
                         ],
                     }
                 }
                 title="Posisi tahap permohonan"
+            />;
+            break;
+        case 'jabatan':
+            konten = <DataListJabatanFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'nama',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Jabatan"
             />;
             break;
         default:

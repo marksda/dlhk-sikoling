@@ -1,7 +1,7 @@
 import { DefaultPalette, Dropdown, IDropdownOption, IStackItemStyles, Label, Stack } from "@fluentui/react";
 import { useCallback,  useMemo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { useGetAllJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
+// import { useGetAllJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
 import { IJabatan } from "../../features/jabatan/jabatan-slice";
 import { TemplatePerson } from "./template-person";
 

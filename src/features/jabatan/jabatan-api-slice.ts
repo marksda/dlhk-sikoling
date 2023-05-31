@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IJabatan } from "./jabatan-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
 type daftarJabatan = IJabatan[];
 
@@ -11,25 +12,56 @@ export const JabatanApiSlice = createApi({
     tagTypes:['Jabatan'],
     endpoints(builder) {
         return {
-            getAllJabatan: builder.query<daftarJabatan, void>({
-                query: () => ({
+            addJabatan: builder.mutation<IJabatan, Partial<IJabatan>>({
+                query: (body) => ({
                     url: 'jabatan_perusahaan',
-                    method: 'GET'
+                    method: 'POST',
+                    body,
                 }),
+                invalidatesTags: [{type: 'Jabatan', id: 'LIST'}],
+            }),
+            updateJabatan: builder.mutation<void, Partial<IJabatan>>({
+                query: (posisiTahapPemberkasan) => ({
+                    url: 'jabatan_perusahaan',
+                    method: 'PUT',
+                    body: posisiTahapPemberkasan,
+                }),
+                invalidatesTags: (result, error, {id}) => {
+                    return [{type: 'Jabatan', id: id!}];
+                },
+            }),
+            deleteJabatan: builder.mutation<{ success: boolean; id: string }, string>({
+                query(idJabatan) {
+                  return {
+                    url: `jabatan_perusahaan/${idJabatan}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result, error, idJabatan) => {
+                    return [{type: 'Jabatan', id: idJabatan}]
+                },
+            }),
+            getDaftarJabatanByFilters: builder.query<daftarJabatan, IQueryParams>({
+                query: (queryParams) => `jabatan_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
-                result ?
-                [
-                    ...result.map(
-                        ({ id }) => ({ type: 'Jabatan' as const, id: id as string})
-                    ),
-                    { type: 'Jabatan', id: 'LIST' },
-                ] :
-                [{type: 'Jabatan', id: 'LIST'}],
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'Jabatan' as const, id: id! })
+                        ),
+                        { type: 'Jabatan', id: 'LIST' },
+                    ]:
+                    [{type: 'Jabatan', id: 'LIST'}],
+            }),
+            getTotalCountJabatan: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `jabatan_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         };
     }
 });
 
 export const {
-    useGetAllJabatanQuery
+    useAddJabatanMutation, useUpdateJabatanMutation,
+    useDeleteJabatanMutation, useGetDaftarJabatanByFiltersQuery,
+    useGetTotalCountJabatanQuery
 } = JabatanApiSlice;

@@ -20,7 +20,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
         return {
             addPosisiTahapPemberkasan: builder.mutation<IPosisiTahapPemberkasan, Partial<IPosisiTahapPemberkasan>>({
                 query: (body) => ({
-                    url: 'posisi_tahap_Pemberkasan',
+                    url: 'posisi_tahap_pemberkasan',
                     method: 'POST',
                     body,
                 }),
@@ -28,7 +28,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
             }),
             updatePosisiTahapPemberkasan: builder.mutation<void, Partial<IPosisiTahapPemberkasan>>({
                 query: (posisiTahapPemberkasan) => ({
-                    url: 'posisi_tahap_Pemberkasan',
+                    url: 'posisi_tahap_pemberkasan',
                     method: 'PUT',
                     body: posisiTahapPemberkasan,
                 }),
@@ -39,7 +39,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
             deletePosisiTahapPemberkasan: builder.mutation<{ success: boolean; id: string }, string>({
                 query(idPosisiTahapPemberkasan) {
                   return {
-                    url: `posisi_tahap_Pemberkasan/${idPosisiTahapPemberkasan}`,
+                    url: `posisi_tahap_pemberkasan/${idPosisiTahapPemberkasan}`,
                     method: 'DELETE',
                   }
                 },
@@ -48,7 +48,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
                 },
             }),
             getDaftarPosisiTahapPemberkasanByFilters: builder.query<daftarPosisiTahapPenberkasan, IQueryParams>({
-                query: (queryParams) => `posisi_tahap_Pemberkasan?filters=${JSON.stringify(queryParams)}`,
+                query: (queryParams) => `posisi_tahap_pemberkasan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
                     [
@@ -60,7 +60,7 @@ export const PosisiTahapPemberkasanApiSlice = createApi({
                     [{type: 'PosisiTahapPemberkasan', id: 'LIST'}],
             }),
             getTotalCountPosisiTahapPemberkasan: builder.query<number, Pick<IQueryParams, "filters">>({
-                query: (queryFilters) => `posisi_tahap_Pemberkasan/count?filters=${JSON.stringify(queryFilters)}`,
+                query: (queryFilters) => `posisi_tahap_pemberkasan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }

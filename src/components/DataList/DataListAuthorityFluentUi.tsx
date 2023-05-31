@@ -172,7 +172,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         { 
             key: 'hak_akses', 
-            name: 'Hak akses', 
+            name: 'Otoritas', 
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true, 
@@ -191,7 +191,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
         },
         { 
             key: 'status_internal', 
-            name: 'Status user', 
+            name: 'Tipe user', 
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true,
@@ -1093,7 +1093,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         </Stack.Item>
                         <Stack.Item>
                             <Dropdown 
-                                label="Hak akses"
+                                label="Otoritas"
                                 placeholder="--Pilih--"
                                 options={
                                     postsHakAkses != undefined ? postsHakAkses?.map(
@@ -1109,7 +1109,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         </Stack.Item>
                         <Stack.Item>
                             <Dropdown 
-                                label="Status user"
+                                label="Tipe user"
                                 placeholder="--Pilih--"
                                 options={[
                                     {
