@@ -162,10 +162,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                             {`Email: ${item.perusahaan?.kontak?.email}`}<br />
                             <span style={{display: 'flex'}}>
                                 <label className={classNames.kontakLabel}>
-                                    Telp: 
-                                </label>
-                                <label className={classNames.kontakCardLabel}>
-                                    {`${item.perusahaan?.kontak!.telepone}`}
+                                    Telp: {`${item.perusahaan?.kontak!.telepone}`}
                                 </label>
                             </span>
                             {`Fax: ${item.perusahaan?.kontak!.fax}`}
@@ -183,11 +180,34 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
             data: 'string',
             onRender: (item: IItemRegisterPerusahaan) => {
                 return (
-                    <span>
-                        {
-                            `${item.perusahaan?.alamat?.keterangan}`
-                        }
-                    </span>
+                    <>
+                        <span>
+                            {
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.alamat.keterangan:null:null
+                            }
+                            {
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.alamat.desa.nama}`:null:null
+                            }                            
+                        </span><br />
+                        <span>
+                            {
+                                item.perusahaan?.alamat != undefined ? 
+                                item.perusahaan?.alamat.kecamatan != undefined ? `${item.perusahaan?.alamat.kecamatan.nama}`:null:null
+                            }
+                            {
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.alamat.kabupaten.nama}`:null:null
+                            }
+                        </span>
+                        <span>
+                            {
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.alamat.propinsi.nama}`:null:null
+                            }
+                        </span>
+                    </>
                 );
             },
             isPadded: true,

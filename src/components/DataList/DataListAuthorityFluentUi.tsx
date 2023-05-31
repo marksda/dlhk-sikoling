@@ -140,28 +140,26 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                         <span>{item.person.nik != undefined ? item.person.nik:'-'}</span><br />
                         <span>
                             {
-                            item.person.alamat != undefined ? 
-                            item.person.alamat.keterangan != undefined ? item.person.alamat.keterangan:null:null
+                                item.person.alamat != undefined ? 
+                                item.person.alamat.keterangan != undefined ? item.person.alamat.keterangan:null:null
                             }
                             {
-                            item.person.alamat != undefined ? 
-                            item.person.alamat.desa != undefined ? `, ${item.person.alamat.desa.nama}`:null:null
-                            }
-                            {
-                            item.person.alamat != undefined ? 
-                            item.person.alamat.kecamatan != undefined ? `, Kec. ${item.person.alamat.kecamatan.nama}`:null:null
+                                item.person.alamat != undefined ? 
+                                item.person.alamat.desa != undefined ? `, ${item.person.alamat.desa.nama}`:null:null
                             }
                         </span><br />
-                        <span>
+                        <span>                            
                             {
-                            item.person.alamat != undefined ? 
-                            item.person.alamat.kabupaten != undefined ? `${item.person.alamat.kabupaten.nama}`:null:null
+                                item.person.alamat != undefined ? 
+                                item.person.alamat.kecamatan != undefined ? item.person.alamat.kecamatan.nama:null:null
                             }
-                        </span>
-                        <span>
                             {
-                            item.person.alamat != undefined ? 
-                            item.person.alamat.propinsi != undefined ? `, ${item.person.alamat.propinsi.nama}`:null:null
+                                item.person.alamat != undefined ? 
+                                item.person.alamat.kabupaten != undefined ? `, ${item.person.alamat.kabupaten.nama}`:null:null
+                            }
+                            {
+                                item.person.alamat != undefined ? 
+                                item.person.alamat.propinsi != undefined ? `, ${item.person.alamat.propinsi.nama}`:null:null
                             }
                         </span>
                     </div>

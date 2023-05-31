@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IPegawai } from "./pegawai-slice";
+import { IQueryParams } from "../config/query-params-slice";
 
 
 type daftarPegawai = IPegawai[];
@@ -28,50 +29,41 @@ export const PegawaiApiSlice = createApi({
                 }),
                 invalidatesTags: (result, error, { id }) => [{type: 'Pegawai', id: id as string}],
             }),
-            getAllPegawai: builder.query<daftarPegawai, void>({
-                query: () => ({
-                    url: 'pegawai_perusahaan',
-                    method: 'GET'
+            updatePegawaiById: builder.mutation<void, {id: string; pegawai: IPegawai}>({
+                query: ({id, pegawai}) => ({
+                    url: `pegawai_perusahaan/id/${id}`,
+                    method: 'PUT',
+                    body: pegawai,
                 }),
-                providesTags: (result) => 
-                result ?
-                [
-                    ...result.map(
-                        ({ id }) => ({ type: 'Pegawai' as const, id: id as string})
-                    ),
-                    { type: 'Pegawai', id: 'LIST' },
-                ] :
-                [{type: 'Pegawai', id: 'LIST'}],
+                invalidatesTags: (result, error, { id }) => {
+                    return [{type: 'Pegawai', id}];
+                }
             }),
-            getAllPegawaiByPage: builder.query<daftarPegawai, {page: number; pageSize: number}>({
-                query: ({page = 1, pageSize = 10}) => ({
-                    url: `pegawai_perusahaan/page?page=${page}&pageSize=${pageSize}`,
-                    method: 'GET'
-                }),
-                providesTags: (result) => 
-                result ?
-                [
-                    ...result.map(
-                        ({ id }) => ({ type: 'Pegawai' as const, id: id as string})
-                    ),
-                    { type: 'Pegawai', id: 'LIST' },
-                ] :
-                [{type: 'Pegawai', id: 'LIST'}],
+            deletePegawai: builder.mutation<{ success: boolean; id: string }, string>({
+                query(id) {
+                  return {
+                    url: `pegawai_perusahaan/${id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result, error, id) => {
+                    return [{type: 'Pegawai', id}];
+                }
             }),
-            getPegawaiByIdRegisterPerusahaan: builder.query<daftarPegawai, string>({
-                query: (idRegisterPerusahaan) => ({
-                    url: `pegawai_perusahaan/idRegisterPerusahaan/${idRegisterPerusahaan}`,
-                    method: 'GET'
-                }),
+            getAllDaftarPegawaiByFilter: builder.query<daftarPegawai, IQueryParams>({
+                query: (queryParams) => `pegawai_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
-                result ?
-                [
-                    ...result.map(
-                        ({ id }) => ({ type: 'Pegawai' as const, id: id as string})
-                    ),
-                    { type: 'Pegawai', id: 'LIST' },
-                ] :
-                [{type: 'Pegawai', id: 'LIST'}],
+                    result ?
+                    [
+                        ...result.map(
+                            ({ id }) => ({ type: 'Pegawai' as const, id: id! })
+                        ),
+                        { type: 'Pegawai', id: 'LIST' },
+                    ]:
+                    [{type: 'Pegawai', id: 'LIST'}],
+            }),
+            getTotalCountPegawai: builder.query<number, Pick<IQueryParams, "filters">>({
+                query: (queryFilters) => `pegawai_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -79,6 +71,6 @@ export const PegawaiApiSlice = createApi({
 
 export const {
     useAddPegawaiMutation, useUpdatePegawaiMutation,
-    useGetAllPegawaiQuery, useGetAllPegawaiByPageQuery,
-    useGetPegawaiByIdRegisterPerusahaanQuery
+    useUpdatePegawaiByIdMutation, useDeletePegawaiMutation,
+    useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery
 } = PegawaiApiSlice;

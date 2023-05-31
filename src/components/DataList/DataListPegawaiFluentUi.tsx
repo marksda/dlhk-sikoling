@@ -1,17 +1,16 @@
-import { FC, useCallback, useState } from "react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IPerson } from "../../features/person/person-slice";
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label } from "@fluentui/react";
+import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/person/person-api-slice";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useId } from "@fluentui/react-hooks";
+import { IPegawai } from "../../features/pegawai/pegawai-slice";
+import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
 
-interface IDataListPersonFluentUIProps {
+interface IDataListPegawaiFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemPerson = {key: string|null;} & Partial<IPerson>;
+type IItemPegawai = {key: string|null;} & Partial<IPegawai>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -42,9 +41,8 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
-const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -77,140 +75,198 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         },
         []
     );
-
-    const _onHandleButtonFilterClick = useCallback(
-        (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
-        },
-        []
-    );
+    
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
-            key: 'nik', 
-            name: 'Nik', 
-            fieldName: 'nik', 
-            minWidth: 130, 
-            maxWidth: 130, 
+            key: 'id', 
+            name: 'Id', 
+            fieldName: 'id', 
+            minWidth: 210, 
+            maxWidth: 210, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
-            isSortedDescending: false,
-            isSorted: true,
-            onRender: (item: IItemPerson) => {
-                return item.nik;
+            onRender: (item: IItemPegawai) => {
+                return item.id;
             }
         },
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 100, 
-            maxWidth: 300, 
-            isResizable: true, 
+            minWidth: 300, 
+            maxWidth: 300,
+            isResizable: true,             
+            isSortedDescending: false,
+            isSorted: true,
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemPerson) => {
-                return item.nama;
-            },
-            isPadded: true,
-        },
-        { 
-            key: 'kontak', 
-            name: 'Kontak', 
-            minWidth: 100, 
-            maxWidth: 250, 
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemPerson) => {
+            onRender: (item: IItemPegawai) => {
                 return (
                     <>
+                        <span>{item.person?.nama}</span><br />
+                        {
+                            item.person?.nik !== undefined ? 
+                            <span>{item.person?.nik}</span>:null
+                        }
                         <p className={classNames.kontakContainer}>
-                            <span>
+                            <span>Email:
                             {
-                                item.kontak?.email != undefined ?
-                                `Email: ${item.kontak?.email}`:`-`
+                                item.person?.kontak?.email != undefined ?
+                                ` ${item.person?.kontak?.email}`:' -'
                             }
                             </span><br />
                             <span style={{display: 'flex'}}>
                                 <label className={classNames.kontakLabel}>
                                     Telp: 
                                 {
-                                    item.kontak?.telepone != undefined ?
-                                    ` ${item.kontak?.telepone}`:` -`
+                                    item.person?.kontak?.telepone != undefined ?
+                                    `${item.person?.kontak?.telepone}`:`-`
                                 }
                                 </label>
                             </span>
                         </p>
-                    </>
+                    </>                    
                 ); 
             },
             isPadded: true,
         },
         { 
-            key: 'alamat', 
-            name: 'Alamat', 
+            key: 'perusahaan', 
+            name: 'Perusahaan', 
             minWidth: 100, 
-            isResizable: true,
-            onRender: (item: IItemPerson) => {
+            maxWidth: 200, 
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPegawai) => {
                 return (
                     <>
                         <span>
                             {
-                                item.alamat != undefined ? 
-                                item.alamat.keterangan != undefined ? item.alamat.keterangan:null:null
+                            item.perusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.perusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.perusahaan?.nama}` :
+                            `${item.perusahaan?.perusahaan?.nama}`
                             }
+                        </span><br />  
+                        <span>
                             {
-                                item.alamat != undefined ? 
-                                item.alamat.desa != undefined ? `, ${item.alamat.desa.nama}`:null:null
+                                item.perusahaan?.perusahaan?.id != undefined ?
+                                item.perusahaan?.perusahaan?.id : `-`
                             }
                         </span><br />
                         <span>
                             {
-                                item.alamat != undefined ? 
-                                item.alamat.kecamatan != undefined ? item.alamat.kecamatan.nama:null:null
+                            item.perusahaan?.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.perusahaan?.alamat.keterangan:null:null
                             }
                             {
-                                item.alamat != undefined ? 
-                                item.alamat.kabupaten != undefined ? `, ${item.alamat.kabupaten.nama}`:null:null
+                            item.perusahaan?.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.desa.nama}`:null:null
+                            }
+                        </span><br />
+                        <span>
+                            {
+                            item.perusahaan?.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.perusahaan?.alamat.kecamatan != undefined ? item.perusahaan?.perusahaan?.alamat.kecamatan.nama:null:null
                             }
                             {
-                                item.alamat != undefined ? 
-                                item.alamat.propinsi != undefined ? `, ${item.alamat.propinsi.nama}`:null:null
+                            item.perusahaan?.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.kabupaten.nama}`:null:null
                             }
                         </span>
-                    </>
-                ); 
+                        <span>
+                            {
+                            item.perusahaan?.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.propinsi.nama}`:null:null
+                            }
+                        </span>
+                    </>               
+                );
             },
             isPadded: true,
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
-    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
-    const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPersonQuery(queryFilters);
-    const { data: postsPerson, isLoading: isLoadingPosts } = useGetAllPersonQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPegawaiQuery(queryFilters);
+    const { data: postsPegawai, isLoading: isLoadingPosts } = useGetAllDaftarPegawaiByFilterQuery(queryParams);   
     
+
     const _getKey = useCallback(
         (item: any, index?: number): string => {
             return item.key;
         },
         []
+    );
+
+    const _onSortColumn = useCallback(
+        (key, isAsc: boolean) => {
+            let newColumns: IColumn[] = columns.slice();
+            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
+
+            newColumns.forEach((newCol: IColumn) => {
+                if (newCol === currColumn) {
+                  currColumn.isSortedDescending = !isAsc;
+                  currColumn.isSorted = true;                  
+                } else {
+                  newCol.isSortedDescending = undefined;                  
+                  newCol.isSorted = false;
+                }
+            });
+
+            setColumns(newColumns);
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let sortOrders = cloneDeep(tmp.sortOrders);
+                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
+                    
+                    if(found == -1) {
+                        sortOrders?.splice(0, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        });
+                    }
+                    else {
+                        sortOrders?.splice(found, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        })
+                    }                    
+                    
+                    tmp.sortOrders = sortOrders;            
+                    return tmp;
+                }
+            );
+        },
+        [columns]
+    );
+
+    const _onContextualMenuDismissed = useCallback(
+        () => {
+            setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _renderMenuList = useCallback(
+        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
+          return (
+            <div>
+                {defaultRender(menuListProps)}
+            </div>
+          );
+        },
+        [],
     );
 
     const _onSearch = useCallback(
@@ -322,75 +378,6 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         []
     );
 
-    const _onSortColumn = useCallback(
-        (key, isAsc: boolean) => {
-            let newColumns: IColumn[] = columns.slice();
-            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
-
-            newColumns.forEach((newCol: IColumn) => {
-                if (newCol === currColumn) {
-                  currColumn.isSortedDescending = !isAsc;
-                  currColumn.isSorted = true;                  
-                } else {
-                  newCol.isSortedDescending = undefined;                  
-                  newCol.isSorted = false;
-                }
-            });
-
-            setColumns(newColumns);
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let sortOrders = cloneDeep(tmp.sortOrders);
-                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
-                    
-                    if(found == -1) {
-                        sortOrders?.splice(0, 1, {
-                            fieldName: key,
-                            value: isAsc == true ? "ASC" : "DESC"
-                        });
-                    }
-                    else {
-                        sortOrders?.splice(found, 1, {
-                            fieldName: key,
-                            value: isAsc == true ? "ASC" : "DESC"
-                        })
-                    }                    
-                    
-                    tmp.sortOrders = sortOrders;            
-                    return tmp;
-                }
-            );
-        },
-        [columns]
-    );
-
-    const _onContextualMenuDismissed = useCallback(
-        () => {
-            setContextualMenuProps(undefined);
-        },
-        []
-    );
-
-    const _renderMenuList = useCallback(
-        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
-          return (
-            <div>
-                {defaultRender(menuListProps)}
-            </div>
-          );
-        },
-        [],
-    );
-
-    const _onContextualMenuFilterDismissed = useCallback(
-        () => {
-            setContextualMenuFilterProps(undefined);
-        },
-        []
-    );
-
     const _onRenderDetailsHeader  = useCallback(
         (props: IDetailsHeaderProps|undefined, defaultRender?: IRenderFunction<IDetailsHeaderProps>): JSX.Element => {
             return (
@@ -432,127 +419,9 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         []
     );
 
-    const _onChangeSearchNik = useCallback(
-        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNik(newValue);          
-        },
-        []
-    );
-
-    const _onSearchNik = useCallback(
-        (newValue) => {
-            setCurrentPage(1);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-            
-        },
-        []
-    );
-
-    const _onClearSearchNik= useCallback(
-        () => {
-            setCurrentPage(1);
-            setSearchNik(undefined);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
-                    
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-        },
-        []
-    );
-    
     return (
         <Stack grow verticalFill>
-            <Stack.Item>
+            <Stack.Item style={{marginTop: 2}}>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
@@ -562,22 +431,11 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama" 
+                                    placeholder="pencarian nama pegawai" 
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
-                            </Stack.Item>
-                            <Stack.Item>
-                                <ActionButton 
-                                    iconProps={filterIcon} 
-                                    onClick={_onHandleButtonFilterClick}
-                                > 
-                                    {
-                                        queryFilters.filters?.length as number > 0 ?
-                                        <span style={{color: '#16cd16'}}>Filter</span> : <span>Filter</span>
-                                    }
-                                </ActionButton>       
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
@@ -589,9 +447,9 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPerson != undefined ? postsPerson?.map(
+                                    postsPegawai != undefined ? postsPegawai?.map(
                                         (t) => (
-                                            {key: t.nik as string, ...t}
+                                            {key: t.id as string, ...t}
                                         )
                                     ) : []
                                 }
@@ -618,28 +476,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            {
-                contextualMenuFilterProps && 
-                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
-                    <Stack>
-                        <Stack.Item>
-                            <Label htmlFor={searchNikId}>NIK</Label>
-                            <SearchBox 
-                                id={searchNikId}
-                                style={{width: 200}} 
-                                disableAnimation
-                                placeholder="nik sesuai ktp" 
-                                underlined={false} 
-                                onChange={_onChangeSearchNik}
-                                onSearch={_onSearchNik}
-                                onClear= {_onClearSearchNik}
-                                value={searchNik ? searchNik:''}
-                            />
-                        </Stack.Item>
-                    </Stack>
-                </Callout>
-            }
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
         </Stack>
     );
-};
+}

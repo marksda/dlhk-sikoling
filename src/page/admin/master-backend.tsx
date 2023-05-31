@@ -14,6 +14,7 @@ import { DataListKategoriPermohonanFluentUI } from "../../components/DataList/Da
 import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataList/DataListStatusPengurusPermohonanFluentUi";
 import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataList/DataListPosisiTahapPemberkasanFluentUi";
 import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
+import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
 
 // const noOp = () => undefined;
 
@@ -86,7 +87,7 @@ export const MasterBackEnd: FC = () => {
                                 name: 'Pegawai',
                                 iconProps: {iconName:'ManagerSelfService'},
                                 onClick: () => {
-                                    _onHandleMasterMenu('pemrakarsa');
+                                    _onHandleMasterMenu('pegawai');
                                 }
                             },
                         ]
@@ -567,6 +568,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Jabatan"
+            />;
+            break;
+        case 'pegawai':
+            konten = <DataListPegawaiFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'nama',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Pegawai"
             />;
             break;
         default:
