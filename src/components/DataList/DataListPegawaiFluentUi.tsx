@@ -1,10 +1,11 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton} from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
+import { useId } from "@fluentui/react-hooks";
 
 interface IDataListPegawaiFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -41,6 +42,7 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
+const filterIcon: IIconProps = { iconName: 'Filter' };
 
 export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -71,6 +73,19 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 gapSpace: 2,
                 // isBeakVisible: true,
                 onDismiss: _onContextualMenuDismissed,                  
+            });
+        },
+        []
+    );
+
+    const _onHandleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {  
+            setContextualMenuFilterProps({         
+                target: ev.currentTarget as HTMLElement,
+                directionalHint: DirectionalHint.bottomRightEdge,
+                gapSpace: 2,
+                isBeakVisible: true,
+                onDismiss: _onContextualMenuFilterDismissed,                  
             });
         },
         []
@@ -139,6 +154,19 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             isPadded: true,
         },
         { 
+            key: 'jabatan', 
+            name: 'Jabatan', 
+            minWidth: 180, 
+            maxWidth: 180,
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPegawai) => {
+                return item.jabatan?.nama;
+            },
+            isPadded: true,
+        },
+        { 
             key: 'perusahaan', 
             name: 'Perusahaan', 
             minWidth: 100, 
@@ -195,6 +223,11 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [searchNamaPerusahaan, setSearchNamaPerusahaan] = useState<string|undefined>(undefined);
+    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
+    const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
+    const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPegawaiQuery(queryFilters);
     const { data: postsPegawai, isLoading: isLoadingPosts } = useGetAllDaftarPegawaiByFilterQuery(queryParams);   
@@ -254,6 +287,13 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
     const _onContextualMenuDismissed = useCallback(
         () => {
             setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
@@ -419,6 +459,296 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         []
     );
 
+    const _onChangeSearchNamaPerusahaan = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNamaPerusahaan(newValue);          
+        },
+        []
+    );
+
+    const _onSearchNama = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNama= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNamaPerusahaan(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
+    const _onChangeSearchNik = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNik(newValue);          
+        },
+        []
+    );
+
+    const _onSearchNik = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNik= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNik(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);          
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+
+            setSearchNamaPerusahaan(undefined);
+            setSearchNik(undefined);
+        },
+        []
+    );
+
+
     return (
         <Stack grow verticalFill>
             <Stack.Item style={{marginTop: 2}}>
@@ -436,6 +766,17 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
+                            </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={_onHandleButtonFilterClick}
+                                > 
+                                    {
+                                        queryFilters.filters?.length as number > 0 ?
+                                        <span style={{color: '#16cd16'}}>Filter</span> : <span>Filter</span>
+                                    }
+                                </ActionButton>       
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
@@ -476,7 +817,49 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}    
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <Label htmlFor={searchNamaPerusahaanId}>Nama</Label>
+                            <SearchBox 
+                                id={searchNamaPerusahaanId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nama sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNamaPerusahaan}
+                                onSearch={_onSearchNama}
+                                onClear= {_onClearSearchNama}
+                                value={searchNamaPerusahaan ? searchNamaPerusahaan:''}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Label htmlFor={searchNikId}>NIK</Label>
+                            <SearchBox 
+                                id={searchNikId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nik sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNik}
+                                onSearch={_onSearchNik}
+                                onClear= {_onClearSearchNik}
+                                value={searchNik ? searchNik:''}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>                
+            }        
         </Stack>
     );
 }
