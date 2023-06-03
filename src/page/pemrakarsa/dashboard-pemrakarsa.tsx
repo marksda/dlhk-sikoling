@@ -7,6 +7,7 @@ import cloneDeep from "lodash.clonedeep";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
+import { FormulirPemrakarsa } from "../../components/FormulirPemrakarsa/FormulirPemrakarsa";
 
 const _daftarBreadCrumb = [
     {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
@@ -37,7 +38,7 @@ export const KontenDashboardPemrakarsa = () => {
                     onClick: undefined,
                 },
                 {
-                    key: 'permohonan',
+                    key: 'pelaporan',
                     name: 'Pelaporan',
                     icon: 'AnalyticsReport',
                     onClick: undefined,
@@ -211,6 +212,9 @@ const getContentPage = (idContentPage: string) => {
                     }
                     title="Permohonan"
                 />;
+            break;
+        case 'pelaporan':
+            konten = null;
             break;
         case 'pemrakarsa':
             konten = <DataListPerusahaanFluentUI 
