@@ -1,5 +1,5 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
@@ -79,7 +79,7 @@ const navLinkGroups: INavLinkGroup[] = [
   },
 ];
 
-export const PemrakarsaPage = () => {
+export const PemrakarsaPage: FC = () => {
   //react redux hook variable
   const token = useAppSelector((state) => state.token); 
   //react local state

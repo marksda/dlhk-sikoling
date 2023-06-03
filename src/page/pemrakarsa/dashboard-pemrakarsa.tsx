@@ -1,13 +1,10 @@
-import { Breadcrumb,  CommandBarButton,  IBreadcrumbItem,  IButtonStyles,  IOverflowSetItemProps,  IconButton,  OverflowSet,  Stack } from "@fluentui/react";
-import { useCallback, useMemo, useState } from "react";
-import { DashboardDefault } from "./dashboard/dashboard-default";
-import { KontenDashboardPerusahaan } from "./dashboard/dashboard-perusahaan";
+import { CommandBarButton,  IBreadcrumbItem,  IButtonStyles,  IOverflowSetItemProps,  IconButton,  OverflowSet,  Stack } from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
 import find from "lodash.find";
 import cloneDeep from "lodash.clonedeep";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
-import { FormulirPemrakarsa } from "../../components/FormulirPemrakarsa/FormulirPemrakarsa";
 
 const _daftarBreadCrumb = [
     {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
@@ -27,7 +24,7 @@ const buttonStyles: Partial<IButtonStyles> = {
     },
 };
 
-export const KontenDashboardPemrakarsa = () => {
+export const KontenDashboardPemrakarsa: FC = () => {
     const daftarMenuOverFlow = useMemo(
         () => {
             return [

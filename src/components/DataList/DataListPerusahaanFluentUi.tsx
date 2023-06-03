@@ -15,6 +15,7 @@ import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQue
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useId } from "@fluentui/react-hooks";
+import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -250,7 +251,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                 if(dataRegisterDokumen.dokumen?.id == '010401') {
                                     dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span >Nomor: {dokumen?.noSurat}</span><br />
@@ -263,13 +264,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                     Download dokumen
                                                 </Link>
                                             </div>
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010402') {
                                     dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
@@ -282,13 +283,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 </Link>
                                             </div>
                                             
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010101') {
                                     dokumen = dataRegisterDokumen.dokumen as IDokumenAktaPendirian;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor: {dokumen?.nomor}</span><br />
@@ -301,13 +302,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                     Download dokumen
                                                 </Link>
                                             </div>
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010404') {
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor: {dokumen?.noSurat}</span><br />
@@ -320,13 +321,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                     Download dokumen
                                                 </Link>
                                             </div>
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010406') {
                                     dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor: {dokumen?.noSurat}</span><br />
@@ -339,13 +340,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                     Download dokumen
                                                 </Link>
                                             </div>
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                                 else if(dataRegisterDokumen.dokumen?.id == '010301') {
                                     dokumen = dataRegisterDokumen.dokumen as IDokumenNibOss;
                                     return (
-                                        <>
+                                        <div key={dokumen.id}>
                                             <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor: {dokumen?.nomor}</span><br />
@@ -358,7 +359,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                     Download dokumen
                                                 </Link>
                                             </div>
-                                        </>                                    
+                                        </div>                                    
                                     );
                                 }
                             }) : null
@@ -861,6 +862,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                     </Stack>
                 </Callout>                
             }
+            <FormulirPerusahaan isOpen={true}/>
         </Stack>
     );
 };
