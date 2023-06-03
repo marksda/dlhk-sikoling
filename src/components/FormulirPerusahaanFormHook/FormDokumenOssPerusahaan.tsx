@@ -4,7 +4,7 @@ import find from "lodash.find";
 import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
-import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
+// import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
 import { IDokumen } from "../../features/dokumen/dokumen-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { useUpdateRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";

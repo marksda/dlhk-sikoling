@@ -6,6 +6,7 @@ import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
 import { useId } from "@fluentui/react-hooks";
 import { IDokumen } from "../../features/dokumen/dokumen-slice";
+import { useGetDaftarDokumentByFilterQuery, useGetTotalCountDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
 
 interface IDataListDokumenFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -103,8 +104,8 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
             key: 'id', 
             name: 'Id', 
             fieldName: 'id', 
-            minWidth: 210, 
-            maxWidth: 210, 
+            minWidth: 50, 
+            maxWidth: 50, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
@@ -124,103 +125,23 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
             onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemDokumen) => {
-                return (
-                    <>
-                        <span>{item.person?.nama}</span><br />
-                        {
-                            item.person?.nik !== undefined ? 
-                            <span>{item.person?.nik}</span>:null
-                        }
-                        <p className={classNames.kontakContainer}>
-                            <span>Email:
-                            {
-                                item.person?.kontak?.email != undefined ?
-                                ` ${item.person?.kontak?.email}`:' -'
-                            }
-                            </span><br />
-                            <span style={{display: 'flex'}}>
-                                <label className={classNames.kontakLabel}>
-                                    Telp: 
-                                {
-                                    item.person?.kontak?.telepone != undefined ?
-                                    `${item.person?.kontak?.telepone}`:`-`
-                                }
-                                </label>
-                            </span>
-                        </p>
-                    </>                    
-                ); 
+                return item.nama; 
             },
             isPadded: true,
         },
         { 
-            key: 'jabatan', 
-            name: 'Jabatan', 
+            key: 'kategori', 
+            name: 'Kategori', 
             minWidth: 180, 
             maxWidth: 180,
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemDokumen) => {
-                return item.jabatan?.nama;
+                return item.kategoriDokumen?.nama;
             },
             isPadded: true,
-        },
-        { 
-            key: 'perusahaan', 
-            name: 'Perusahaan', 
-            minWidth: 100, 
-            maxWidth: 200, 
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemDokumen) => {
-                return (
-                    <>
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.perusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.perusahaan?.nama}` :
-                            `${item.perusahaan?.perusahaan?.nama}`
-                            }
-                        </span><br />  
-                        <span>
-                            {
-                                item.perusahaan?.perusahaan?.id != undefined ?
-                                item.perusahaan?.perusahaan?.id : `-`
-                            }
-                        </span><br />
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.perusahaan?.alamat.keterangan:null:null
-                            }
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.desa.nama}`:null:null
-                            }
-                        </span><br />
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kecamatan != undefined ? item.perusahaan?.perusahaan?.alamat.kecamatan.nama:null:null
-                            }
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.kabupaten.nama}`:null:null
-                            }
-                        </span>
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.propinsi.nama}`:null:null
-                            }
-                        </span>
-                    </>               
-                );
-            },
-            isPadded: true,
-        },
+        }
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
@@ -229,8 +150,8 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
     const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPegawaiQuery(queryFilters);
-    const { data: postsPegawai, isLoading: isLoadingPosts } = useGetAllDaftarPegawaiByFilterQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountDokumenQuery(queryFilters);
+    const { data: postsDokumen, isLoading: isLoadingPosts } = useGetDaftarDokumentByFilterQuery(queryParams);   
     
 
     const _getKey = useCallback(
@@ -788,7 +709,7 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPegawai != undefined ? postsPegawai?.map(
+                                    postsDokumen != undefined ? postsDokumen?.map(
                                         (t) => (
                                             {key: t.id as string, ...t}
                                         )

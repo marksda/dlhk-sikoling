@@ -15,6 +15,7 @@ import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataL
 import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataList/DataListPosisiTahapPemberkasanFluentUi";
 import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
 import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
+import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluenrUi";
 
 // const noOp = () => undefined;
 
@@ -242,6 +243,32 @@ export const MasterBackEnd: FC = () => {
                                     _onHandleMasterMenu('posisi_tahap_pemberkasan');
                                 }
                             },
+                        ],
+                    },
+                },
+                {
+                    key: 'dokumen',
+                    name: 'Dokumen',
+                    icon: 'PublishCourse',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'kategori_dokumen',
+                                name: 'Kategori dokumen',
+                                iconProps: { iconName: 'WebComponents' },
+                                onClick: () => {
+                                        _onHandleMasterMenu('kategori_dokumen');
+                                    }
+                            },
+                            {
+                                key: 'dokumen',
+                                name: 'Dokumen',
+                                iconProps: { iconName: 'Group' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('dokumen');
+                                }
+                            }
                         ],
                     },
                 },
@@ -586,6 +613,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Pegawai"
+            />;
+            break;
+        case 'dokumen':
+            konten = <DataListDokumenFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'nama',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Dokumen"
             />;
             break;
         default:
