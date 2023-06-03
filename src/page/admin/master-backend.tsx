@@ -16,6 +16,7 @@ import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataLis
 import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
 import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
 import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluenrUi";
+import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataListKategoriDokumenFluentUi";
 
 // const noOp = () => undefined;
 
@@ -617,6 +618,24 @@ const getContentPage = (idContentPage: string) => {
             break;
         case 'dokumen':
             konten = <DataListDokumenFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'nama',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Dokumen"
+            />;
+            break;
+        case 'kategori_dokumen':
+            konten = <DataListKategoriDokumenFluentUI
                 initSelectedFilters={
                     {
                         pageNumber: 1,
