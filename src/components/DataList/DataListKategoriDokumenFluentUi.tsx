@@ -106,7 +106,6 @@ export const DataListKategoriDokumenFluentUI: FC<IDataListKategoriDokumenFluentU
             key: 'nama', 
             name: 'Nama', 
             minWidth: 300, 
-            maxWidth: 300,
             isResizable: true,             
             isSortedDescending: false,
             isSorted: true,
@@ -117,19 +116,6 @@ export const DataListKategoriDokumenFluentUI: FC<IDataListKategoriDokumenFluentU
             },
             isPadded: true,
         },
-        { 
-            key: 'kategori', 
-            name: 'Kategori', 
-            minWidth: 180, 
-            maxWidth: 180,
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemKategoriDokumen) => {
-                return item.kategoriDokumen?.nama;
-            },
-            isPadded: true,
-        }
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state

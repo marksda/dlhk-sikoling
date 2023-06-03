@@ -649,7 +649,7 @@ const getContentPage = (idContentPage: string) => {
                         ],
                     }
                 }
-                title="Dokumen"
+                title="Kategori dokumen"
             />;
             break;
         default:

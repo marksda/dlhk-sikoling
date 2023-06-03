@@ -6,7 +6,7 @@ import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluent
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 import { DashboardBackEnd } from "./dashboard-backend";
 import { PermohonanBackEnd } from "./permohonan-backend";
-import { KontenDashboardPemrakarsa } from "../pemrakarsa/template-dashboard-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "../pemrakarsa/dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "../pemrakarsa/template-pelaporan-pemrakarsa";
 import { MasterBackEnd } from "./master-backend";
 
@@ -127,7 +127,8 @@ export const AdminPage: FC = () => {
       <Stack grow verticalFill className={classNames.container}>
         <TopBarLayoutFluentUI 
           appTitleContainer={{nama: 'SIKOLING', width: 200}}
-          subTitle={idContentPage}/>
+          subTitle={idContentPage}
+        />
         <Stack.Item grow className={classNames.gridContainer}>
           <Stack horizontal>
             <Stack.Item className={classNames.leftKonten}>

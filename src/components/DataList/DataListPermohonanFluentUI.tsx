@@ -1,4 +1,4 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text } from "@fluentui/react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
@@ -611,6 +611,17 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
+    const _onRenderDetailsHeader  = useCallback(
+        (props: IDetailsHeaderProps|undefined, defaultRender?: IRenderFunction<IDetailsHeaderProps>): JSX.Element => {
+            return (
+                <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced={true}>
+                    {defaultRender!({...props!})}
+                </Sticky>
+            );
+        },
+        []
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item>
@@ -660,6 +671,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                                 layoutMode={DetailsListLayoutMode.justified}
                                 selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
+                                onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
                         </ScrollablePane>
                     </Stack.Item>

@@ -1,13 +1,9 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
 import { useEffect, useState } from "react";
-import { KontenDashboardPemrakarsa } from "./template-dashboard-pemrakarsa";
+import { KontenDashboardPemrakarsa } from "./dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
-import { SideBarLayoutFluentUI } from "../../components/Layout/SideBarLayoutFluentUI";
-import { MainLayoutFluentUI } from "../../components/Layout/MainLayoutFluentUI";
-import { PageLayoutFluentUI } from "../../components/Layout/PageLayoutFluentUI";
-import { AnimatePresence, motion } from "framer-motion";
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
@@ -45,7 +41,7 @@ const navLinkGroups: INavLinkGroup[] = [
         name: 'Dashboard',
         url: '',
         icon: 'Home',
-        key: 'dsb',
+        key: 'Dashboard',
         isExpanded: true,
         target: '_self',
       },
@@ -112,7 +108,10 @@ export const PemrakarsaPage = () => {
     {
       token.hakAkses == "Umum" ? ( 
         <Stack grow verticalFill className={classNames.container}>
-          <TopBarLayoutFluentUI />
+          <TopBarLayoutFluentUI 
+            appTitleContainer={{nama: 'SIKOLING', width: 200}}
+            subTitle={idContentPage}
+          />
           <Stack.Item grow className={classNames.gridContainer}>
             <Stack horizontal>
               <Stack.Item className={classNames.leftKonten}>
@@ -137,7 +136,7 @@ export const PemrakarsaPage = () => {
 const getContentPage = (idContentPage: string) => {
   let konten = null;
   switch (idContentPage) {
-      case 'dsb':
+      case 'Dashboard':
           konten =             
             <KontenDashboardPemrakarsa />;
           break; 
