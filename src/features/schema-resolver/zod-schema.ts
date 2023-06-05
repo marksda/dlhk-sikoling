@@ -87,21 +87,21 @@ export const PelakuUsahaSchema = object({
 });
 
 export const PerusahaanSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
-    modelPerizinan: ModelPerizinanSchema.optional(),
-    skalaUsaha: SkalaUsahaSchema.optional(),
-    pelakuUsaha: PelakuUsahaSchema.optional(),
+    id: z.string().length(20, 'Format npwp salah'),
+    nama: z.string().min(1, "Harus diisi"),
+    modelPerizinan: ModelPerizinanSchema.required(),
+    skalaUsaha: SkalaUsahaSchema.required(),
+    pelakuUsaha: PelakuUsahaSchema.required(),
     alamat: AlamatSchema.optional(),
     kontak: KontakSchema.optional()
 });
 
 export const RegisterPerusahaanSchema = object({
-    id: z.string(),
-    tanggalRegistrasi: z.string(),
+    id: z.string().optional(),
+    tanggalRegistrasi: z.string().optional(),
     kreator: AuthoritySchema.optional(),
     verifikator: AuthoritySchema.optional(),
-    perusahaan: PerusahaanSchema.optional(),
+    perusahaan: PerusahaanSchema.required(),
     statusVerifikasi: z.boolean().optional()
 });
 

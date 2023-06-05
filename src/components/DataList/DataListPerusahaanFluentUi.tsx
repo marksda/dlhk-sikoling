@@ -1,6 +1,6 @@
-import { FC, useCallback, useState } from "react";
+import { FC, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { ActionButton, Callout, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
@@ -14,7 +14,7 @@ import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendi
 import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 
 interface IDataListPerusahaanFluentUIProps {
@@ -63,6 +63,7 @@ const classNames = mergeStyleSets({
     },
 });
 const stackTokens = { childrenGap: 8 };
+const barStackTokens = { childrenGap: 48 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
 export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
@@ -113,6 +114,8 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     );
 
     //local state
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
@@ -378,6 +381,39 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
     const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
     (queryFilters);
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {
+            // const CoachmarkButtonWrapper: IComponentAs<ICommandBarItemProps> = (p: IComponentAsProps<ICommandBarItemProps>) => {
+            //   return (
+            //     <CoachmarkCommandBarButton {...p} isCoachmarkVisible={isCoachmarkVisible} onDismiss={onDismissCoachmark} />
+            //   );
+            // };
+        
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add pemrakarsa');
+                        showModalFormulirPerusahaan();
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: true,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit pemrakarsa');
+                        showModalFormulirPerusahaan();
+                    }
+                },
+            ];
+        }, 
+        []
+    );
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -768,12 +804,15 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     return (
         <Stack grow verticalFill>
             <Stack.Item>
-                <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item style={{paddingLeft: 16}}>
+                <Stack horizontal grow horizontalAlign="space-between" verticalAlign="center">
+                    <Stack.Item align="center" style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
-                    </Stack.Item>
+                    </Stack.Item>                        
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                            <Stack.Item>
+                            <CommandBar items={itemsBar}/>
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
@@ -862,7 +901,12 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                     </Stack>
                 </Callout>                
             }
-            <FormulirPerusahaan isOpen={true}/>
+            <FormulirPerusahaan 
+                title={formulirTitle}
+                isModalOpen={isModalFormulirPerusahaanOpen}
+                showModal={showModalFormulirPerusahaan}
+                hideModal={hideModalFormulirPerusahaan}
+            />
         </Stack>
     );
 };

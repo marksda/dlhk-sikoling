@@ -25,9 +25,18 @@ const buttonStyles: Partial<IButtonStyles> = {
 };
 
 export const KontenDashboardPemrakarsa: FC = () => {
+    //local state    
+    const [idContentPage, setIdContentPage] = useState<string>('permohonan');
+
     const daftarMenuOverFlow = useMemo(
         () => {
             return [
+                {
+                    key: 'notifikasi',
+                    name: 'Notifikasi',
+                    icon: 'Info',
+                    onClick: undefined,
+                },
                 {
                     key: 'permohonan',
                     name: 'Permohonan',
@@ -57,7 +66,77 @@ export const KontenDashboardPemrakarsa: FC = () => {
         []
     );
 
-    const [idContentPage, setIdContentPage] = useState<string>('permohonan');
+    const kontentPage = useMemo(
+        () => {
+            let konten = null;
+            switch (idContentPage) {
+                case 'tracking_log':
+                    konten =             
+                        <DataListFlowLogFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggal',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Tracking log"
+                        /> 
+                    break; 
+                case 'permohonan':
+                    konten =
+                        <DataListPermohonanFluentUI
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggal_registrasi',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Permohonan"
+                        />;
+                    break;
+                case 'pelaporan':
+                    konten = null;
+                    break;
+                case 'pemrakarsa':
+                    konten = <DataListPerusahaanFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggal_registrasi',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Pemrakarsa"
+                        />;
+                    break;
+                default:
+                    konten = null;
+                    break;
+            }
+            return konten;
+        },
+        [idContentPage]
+    );
 
     const onRenderItem = useCallback(
         (item: IOverflowSetItemProps): JSX.Element => {
@@ -77,7 +156,6 @@ export const KontenDashboardPemrakarsa: FC = () => {
 
     const  _onHandleMasterMenu = useCallback( 
         (val) => {
-            console.log(val);
             setIdContentPage(val);
         },
         []
@@ -104,33 +182,33 @@ export const KontenDashboardPemrakarsa: FC = () => {
         },
         []
     );
-    //local state    
-    const [selectedPage, setSelectedPage] = useState<string>('default');
+    
+    // const [selectedPage, setSelectedPage] = useState<string>('default');
     // const [selectedBreadCrumb, setSelectedBreadCrumb] = useState<Array<any>>([]);
 
-    const selectedBreadCrumb: IBreadcrumbItem[] = useMemo(
-        () => {
-            let breadCrumbObject;
-            let arrayBreadCrumb: IBreadcrumbItem[];
-            switch (selectedPage) {
-                case 'default':
-                    breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
-                    arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as IBreadcrumbItem[];
-                    break;
-                case 'Perusahaan':
-                    breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
-                    arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as Array<IBreadcrumbItem> ; 
-                    arrayBreadCrumb[0].onClick = (e, i) => setSelectedPage(i?.key!);
-                    break;
-                default:
-                    arrayBreadCrumb = []
-                    break;
-            }
+    // const selectedBreadCrumb: IBreadcrumbItem[] = useMemo(
+    //     () => {
+    //         let breadCrumbObject;
+    //         let arrayBreadCrumb: IBreadcrumbItem[];
+    //         switch (selectedPage) {
+    //             case 'default':
+    //                 breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
+    //                 arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as IBreadcrumbItem[];
+    //                 break;
+    //             case 'Perusahaan':
+    //                 breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
+    //                 arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as Array<IBreadcrumbItem> ; 
+    //                 arrayBreadCrumb[0].onClick = (e, i) => setSelectedPage(i?.key!);
+    //                 break;
+    //             default:
+    //                 arrayBreadCrumb = []
+    //                 break;
+    //         }
 
-            return arrayBreadCrumb;
-        },
-        [selectedPage]
-    );
+    //         return arrayBreadCrumb;
+    //     },
+    //     [selectedPage]
+    // );
 
     // const konten = useMemo(
     //     () => {
@@ -163,77 +241,78 @@ export const KontenDashboardPemrakarsa: FC = () => {
                 />
             </Stack.Item>
             <Stack.Item grow>
-                {getContentPage(idContentPage)}
+                {kontentPage}
             </Stack.Item>
         </Stack>        
     );
 };
 
-const getContentPage = (idContentPage: string) => {
-    let konten = null;
-    switch (idContentPage) {
-        case 'tracking_log':
-            konten =             
-                <DataListFlowLogFluentUI 
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'tanggal',
-                                    value: 'DESC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Tracking log"
-                /> 
-            break; 
-        case 'permohonan':
-            konten =
-                <DataListPermohonanFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'tanggal_registrasi',
-                                    value: 'DESC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Permohonan"
-                />;
-            break;
-        case 'pelaporan':
-            konten = null;
-            break;
-        case 'pemrakarsa':
-            konten = <DataListPerusahaanFluentUI 
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'tanggal_registrasi',
-                                    value: 'DESC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Pemrakarsa"
-                />;
-            break;
-        default:
-            konten = null;
-            break;
-    }
-    return konten;
-};
+// const getContentPage = (idContentPage: string) => {
+//     let konten = null;
+//     switch (idContentPage) {
+//         case 'tracking_log':
+//             konten =             
+//                 <DataListFlowLogFluentUI 
+//                     initSelectedFilters={
+//                         {
+//                             pageNumber: 1,
+//                             pageSize: 50,
+//                             filters: [],
+//                             sortOrders: [
+//                                 {
+//                                     fieldName: 'tanggal',
+//                                     value: 'DESC'
+//                                 },
+//                             ],
+//                         }
+//                     }
+//                     title="Tracking log"
+//                 /> 
+//             break; 
+//         case 'permohonan':
+//             konten =
+//                 <DataListPermohonanFluentUI
+//                     initSelectedFilters={
+//                         {
+//                             pageNumber: 1,
+//                             pageSize: 50,
+//                             filters: [],
+//                             sortOrders: [
+//                                 {
+//                                     fieldName: 'tanggal_registrasi',
+//                                     value: 'DESC'
+//                                 },
+//                             ],
+//                         }
+//                     }
+//                     title="Permohonan"
+//                 />;
+//             break;
+//         case 'pelaporan':
+//             konten = null;
+//             break;
+//         case 'pemrakarsa':
+//             konten = <DataListPerusahaanFluentUI 
+//                     initSelectedFilters={
+//                         {
+//                             pageNumber: 1,
+//                             pageSize: 50,
+//                             filters: [],
+//                             sortOrders: [
+//                                 {
+//                                     fieldName: 'tanggal_registrasi',
+//                                     value: 'DESC'
+//                                 },
+//                             ],
+//                         }
+//                     }
+//                     title="Pemrakarsa"
+//                     toolBar={<span>Sda</span>}
+//                 />;
+//             break;
+//         default:
+//             konten = null;
+//             break;
+//     }
+//     return konten;
+// };

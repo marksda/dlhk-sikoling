@@ -58,6 +58,14 @@ export const MasterBackEnd: FC = () => {
                                     _onHandleMasterMenu('authority');
                                 }
                             },
+                            {
+                                key: 'user_perusahaan',
+                                name: 'User <-> Perusahaan',
+                                iconProps: { iconName: 'Certificate'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('user_perusahaan');
+                                }
+                            },
                         ]
                     }
                 }, 

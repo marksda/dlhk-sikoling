@@ -96,3 +96,11 @@ export const isErrorWithMessage= (error: unknown): error is {message: string} =>
         typeof (error as any).message === "string"
       );
 };
+
+export const parseNpwp = (npwp: string): string => {
+    return npwp.replace(/[_\-\.]/g, '');
+} 
+
+export const invertParseNpwp = (npwp: string): string => {
+    return npwp.replace(/[_\-\.]/g, '');
+} 
