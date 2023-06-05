@@ -87,7 +87,7 @@ export const PelakuUsahaSchema = object({
 });
 
 export const PerusahaanSchema = object({
-    id: z.string().length(20, 'Format npwp salah'),
+    id: z.string().length(15, 'Format npwp salah'),
     nama: z.string().min(1, "Harus diisi"),
     modelPerizinan: ModelPerizinanSchema.required(),
     skalaUsaha: SkalaUsahaSchema.required(),

@@ -3,13 +3,15 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { ISkalaUsaha, useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
+import { useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
+import { IKbli } from "../../features/dokumen/kbli-slice";
+import { useGetDaftarKbliByFilterQuery, useGetTotalCountKbliQuery } from "../../features/dokumen/kbli-api-slice";
 
-interface IDataListSkalaUsahaFluentUIProps {
+interface IDataListMasterKbliFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemSkalaUsaha = {key: string|null;} & Partial<ISkalaUsaha>;
+type IItemKbli = {key: string|null;} & Partial<IKbli>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -42,7 +44,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -85,49 +87,50 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
-            key: 'id', 
-            name: 'Id', 
-            fieldName: 'id', 
-            minWidth: 20, 
-            maxWidth: 20, 
+            key: 'kode', 
+            name: 'Kode', 
+            fieldName: 'kode', 
+            minWidth: 50, 
+            maxWidth: 50, 
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemSkalaUsaha) => {
-                return item.id;
+            onRender: (item: IItemKbli) => {
+                return item.kode;
             }
         },
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 100, 
-            maxWidth: 300, 
+            minWidth: 250, 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemSkalaUsaha) => {
+            onRender: (item: IItemKbli) => {
                 return item.nama;
             },
             isPadded: true,
         },
         { 
-            key: 'singkatan', 
-            name: 'Singkatan', 
-            minWidth: 100, 
+            key: 'kategori', 
+            name: 'Kategori', 
+            minWidth: 60, 
+            maxWidth: 60,
             isResizable: true,
-            onRender: (item: IItemSkalaUsaha) => {
-                return item.singkatan;
+            onColumnClick: _onHandleColumnClick,
+            onRender: (item: IItemKbli) => {
+                return item.kategori;
             },
             isPadded: true,
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountSkalaUsahaQuery(queryFilters);
-    const { data: postsSkalaUsaha, isLoading: isLoadingPosts } = useGetAllSkalaUsahaQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKbliQuery(queryFilters);
+    const { data: postsKbli, isLoading: isLoadingPosts } = useGetDaftarKbliByFilterQuery(queryParams);    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -206,18 +209,18 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kode'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'nama',
+                                fieldName: 'kode',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'nama',
+                                fieldName: 'kode',
                                 value: newValue
                             })
                         }
@@ -237,18 +240,18 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kode'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'nama',
+                                fieldName: 'kode',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'nama',
+                                fieldName: 'kode',
                                 value: newValue
                             })
                         }
@@ -276,7 +279,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kode'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -291,7 +294,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kode'}) as number;     
                     
                     
                     if(found > -1) {
@@ -360,7 +363,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama" 
+                                    placeholder="pencarian kode" 
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
@@ -376,9 +379,9 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
+                                    postsKbli != undefined ? postsKbli?.map(
                                         (t) => (
-                                            {key: t.id as string, ...t}
+                                            {key: t.kode as string, ...t}
                                         )
                                     ) : []
                                 }

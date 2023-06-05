@@ -282,7 +282,14 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
                     mask="99.999.999.9-999.999"
                     onChange={
                       (e, i) => {
-                        setNpwpTerparsing(parseNpwp(i as string));
+                        let hasil = parseNpwp(i as string);
+                        if (hasil.length == 15) {
+                          setNpwpTerparsing(hasil);
+                          onChange(hasil);
+                        }
+                        else {
+                          npwpTerparsing != undefined ? setNpwpTerparsing(undefined):null;
+                        }
                       }
                     }
                     disabled={kategoriPelakuUsaha == undefined ? true:false}
@@ -303,6 +310,7 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
                   prefix={badanUsaha == undefined ? "": `${badanUsaha}.`}
                   value={namaTFValue}
                   onChange={_onChangeNamaTF}
+                  disabled={npwpTerparsing == undefined ? true:false}
                 />
               )}
           />              

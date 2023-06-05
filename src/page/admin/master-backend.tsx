@@ -17,6 +17,7 @@ import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabat
 import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
 import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluenrUi";
 import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataListKategoriDokumenFluentUi";
+import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMasterKbliFluentUi";
 
 // const noOp = () => undefined;
 
@@ -148,6 +149,14 @@ export const MasterBackEnd: FC = () => {
                                 iconProps: {iconName:'PartyLeader'},
                                 onClick: () => {
                                     _onHandleMasterMenu('jabatan');
+                                }
+                            },
+                            {
+                                key: 'kbli',
+                                name: 'Kbli',
+                                iconProps: {iconName:'PartyLeader'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('kbli');
                                 }
                             },
                         ]
@@ -658,6 +667,24 @@ const getContentPage = (idContentPage: string) => {
                     }
                 }
                 title="Kategori dokumen"
+            />;
+            break;
+        case 'kbli':
+            konten = <DataListMasterKbliFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'kode',
+                                value: 'ASC'
+                            },
+                        ],
+                    }
+                }
+                title="Kbli"
             />;
             break;
         default:

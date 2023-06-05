@@ -8,7 +8,7 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
 import { array, object, z } from "zod";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
-import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
+// import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
 import { IKbli } from "../../features/dokumen/kbli-slice";
 import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
