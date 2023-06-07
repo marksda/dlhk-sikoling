@@ -18,6 +18,7 @@ import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegaw
 import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluenrUi";
 import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataListKategoriDokumenFluentUi";
 import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMasterKbliFluentUi";
+import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/DataListAutorisasiPerusahaanFluentUi";
 
 // const noOp = () => undefined;
 
@@ -33,6 +34,8 @@ root: {
 
 export const MasterBackEnd: FC = () => {
 
+    const [idContentPage, setIdContentPage] = useState<string>('authority');
+
     const daftarMenuOverFlow = useMemo(
         () => {
             return [
@@ -45,7 +48,7 @@ export const MasterBackEnd: FC = () => {
                         items: [               
                             {
                                 key: 'hak_akses',
-                                name: 'Kategori otoritas',
+                                name: 'Kategori akses',
                                 iconProps: {iconName:'TeamWork'},
                                 onClick: () => {
                                     _onHandleMasterMenu('hak_akses');
@@ -53,7 +56,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'authority',
-                                name: 'Penerima otoritas',
+                                name: 'Pengakses',
                                 iconProps: { iconName: 'Certificate'},
                                 onClick: () => {
                                     _onHandleMasterMenu('authority');
@@ -61,7 +64,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'user_perusahaan',
-                                name: 'User <-> Perusahaan',
+                                name: 'Perusahaan <-> Pengakses',
                                 iconProps: { iconName: 'Certificate'},
                                 onClick: () => {
                                     _onHandleMasterMenu('user_perusahaan');
@@ -295,7 +298,361 @@ export const MasterBackEnd: FC = () => {
         []
     )
 
-    const [idContentPage, setIdContentPage] = useState<string>('authority');
+    const kontentPage = useMemo(
+        () => {
+            let konten = null;
+            switch (idContentPage) {
+                case 'authority':
+                    konten =             
+                        <DataListAuthorityFluentUI
+                            title="Pengakses"
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggal',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                        />;
+                    break; 
+                case 'hak_akses':
+                        konten = <DataListHakAksesFluentUI
+                            title="Kategori akses"
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'id',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                        />;
+                        break; 
+                case 'pemrakarsa':
+                    konten = <DataListPerusahaanFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggal_registrasi',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Pemrakarsa"
+                        />;
+                    break;
+                case 'identitas_personal':
+                    konten = <DataListPersonFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'nik',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Personal"
+                        />;
+                    break;
+                case 'model_perizinan':
+                    konten = <DataListModelPerizinanFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'id',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Model izin usaha"
+                        />;
+                    break;
+                case 'skala_usaha':
+                    konten = <DataListSkalaUsahaFluentUI
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'id',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Skala usaha"
+                        />;
+                    break;
+                case 'kategori_pelaku_usaha':
+                    konten = <DataListKategoriPelakuUsahaFluentUI
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'id',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Kategori pelaku usaha"
+                        />;
+                    break;
+                case 'pelaku_usaha':
+                    konten = <DataListPelakuUsahaFluentUI
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'id',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Kategori badan usaha"
+                        />;
+                    break;
+                case 'kategori_log':
+                    konten = <DataListKategoriLogFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'id',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Kategori log"
+                    />;
+                    break;
+                case 'status_flow_log':
+                    konten = <DataListStatusFlowLogFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'id',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Status flow log"
+                    />;
+                    break;
+                case 'kategori_permohonan':
+                    konten = <DataListKategoriPermohonanFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'id',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Kategori permohonan"
+                    />;
+                    break;
+                case 'kategori_pengurus_permohonan':
+                    konten = <DataListStatusPengurusPermohonanFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'id',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Kategori pengurus permohonan"
+                    />;
+                    break;
+                case 'posisi_tahap_pemberkasan':
+                    konten = <DataListPosisiTahapPemberkasanFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'nama',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Posisi tahap permohonan"
+                    />;
+                    break;
+                case 'jabatan':
+                    konten = <DataListJabatanFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'nama',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Jabatan"
+                    />;
+                    break;
+                case 'pegawai':
+                    konten = <DataListPegawaiFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'nama',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Pegawai"
+                    />;
+                    break;
+                case 'dokumen':
+                    konten = <DataListDokumenFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'nama',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Dokumen"
+                    />;
+                    break;
+                case 'kategori_dokumen':
+                    konten = <DataListKategoriDokumenFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'nama',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Kategori dokumen"
+                    />;
+                    break;
+                case 'kbli':
+                    konten = <DataListMasterKbliFluentUI
+                        initSelectedFilters={
+                            {
+                                pageNumber: 1,
+                                pageSize: 50,
+                                filters: [],
+                                sortOrders: [
+                                    {
+                                        fieldName: 'kode',
+                                        value: 'ASC'
+                                    },
+                                ],
+                            }
+                        }
+                        title="Kbli"
+                    />;
+                    break;
+                case 'user_perusahaan':
+                    konten = <DataListAutorisasiPerusahaanFluentUI 
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'nama',
+                                            value: 'ASC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Perusahaan <-> Pengakses"
+                        />;
+                    break;    
+                default:
+                    konten = null;
+                    break;
+            }
+            return konten;
+        },
+        [idContentPage]
+    );
 
     const onRenderItem = useCallback(
         (item: IOverflowSetItemProps): JSX.Element => {
@@ -353,343 +710,8 @@ export const MasterBackEnd: FC = () => {
                 />
             </Stack.Item>
             <Stack.Item grow>
-                {getContentPage(idContentPage)}
+                {kontentPage}
             </Stack.Item>
         </Stack>        
     );
-};
-
-const getContentPage = (idContentPage: string) => {
-    let konten = null;
-    switch (idContentPage) {
-        case 'authority':
-            konten =             
-                <DataListAuthorityFluentUI
-                    title="Penerima otoritas"
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'tanggal',
-                                    value: 'DESC'
-                                },
-                            ],
-                        }
-                    }
-                />;
-            break; 
-        case 'hak_akses':
-                konten = <DataListHakAksesFluentUI
-                    title="Kategori otoritas"
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'id',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                />;
-                break; 
-        case 'pemrakarsa':
-            konten = <DataListPerusahaanFluentUI 
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'tanggal_registrasi',
-                                    value: 'DESC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Pemrakarsa"
-                />;
-            break;
-        case 'identitas_personal':
-            konten = <DataListPersonFluentUI 
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'nik',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Personal"
-                />;
-            break;
-        case 'model_perizinan':
-            konten = <DataListModelPerizinanFluentUI 
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'id',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Model izin usaha"
-                />;
-            break;
-        case 'skala_usaha':
-            konten = <DataListSkalaUsahaFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'id',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Skala usaha"
-                />;
-            break;
-        case 'kategori_pelaku_usaha':
-            konten = <DataListKategoriPelakuUsahaFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'id',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Kategori pelaku usaha"
-                />;
-            break;
-        case 'pelaku_usaha':
-            konten = <DataListPelakuUsahaFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'id',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Kategori badan usaha"
-                />;
-            break;
-        case 'kategori_log':
-            konten = <DataListKategoriLogFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'id',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Kategori log"
-            />;
-            break;
-        case 'status_flow_log':
-            konten = <DataListStatusFlowLogFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'id',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Status flow log"
-            />;
-            break;
-        case 'kategori_permohonan':
-            konten = <DataListKategoriPermohonanFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'id',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Kategori permohonan"
-            />;
-            break;
-        case 'kategori_pengurus_permohonan':
-            konten = <DataListStatusPengurusPermohonanFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'id',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Kategori pengurus permohonan"
-            />;
-            break;
-        case 'posisi_tahap_pemberkasan':
-            konten = <DataListPosisiTahapPemberkasanFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'nama',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Posisi tahap permohonan"
-            />;
-            break;
-        case 'jabatan':
-            konten = <DataListJabatanFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'nama',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Jabatan"
-            />;
-            break;
-        case 'pegawai':
-            konten = <DataListPegawaiFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'nama',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Pegawai"
-            />;
-            break;
-        case 'dokumen':
-            konten = <DataListDokumenFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'nama',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Dokumen"
-            />;
-            break;
-        case 'kategori_dokumen':
-            konten = <DataListKategoriDokumenFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'nama',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Kategori dokumen"
-            />;
-            break;
-        case 'kbli':
-            konten = <DataListMasterKbliFluentUI
-                initSelectedFilters={
-                    {
-                        pageNumber: 1,
-                        pageSize: 50,
-                        filters: [],
-                        sortOrders: [
-                            {
-                                fieldName: 'kode',
-                                value: 'ASC'
-                            },
-                        ],
-                    }
-                }
-                title="Kbli"
-            />;
-            break;
-        default:
-            konten = null;
-            break;
-    }
-    return konten;
 };

@@ -1,18 +1,27 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton} from "@fluentui/react";
+import { FC, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { FC, useCallback, useState } from "react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
+import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
+import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
+import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
+import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
+import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import cloneDeep from "lodash.clonedeep";
+import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
+import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
+import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendirian-slice";
+import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IPegawai } from "../../features/pegawai/pegawai-slice";
-import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
+import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 
-interface IDataListPegawaiFluentUIProps {
+interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParams;
     title?: string;
 };
-type IItemPegawai = {key: string|null;} & Partial<IPegawai>;
-const stackTokens = { childrenGap: 8 };
+type IItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
 const classNames = mergeStyleSets({
     container: {
         width: "100%",
@@ -41,10 +50,24 @@ const classNames = mergeStyleSets({
         display: 'block',
         color: 'white'
     },
+    dokumenMainTitle: {
+        marginBottom: 4,
+        fontWeight: 'bold',
+    },
+    dokumenTitle: {
+        fontWeight: 'bold',
+    },
+    containerItemDok: {
+        marginLeft: 12,
+        marginBottom: 4,
+    },
 });
+const stackTokens = { childrenGap: 8 };
+const barStackTokens = { childrenGap: 48 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({initSelectedFilters, title}) => {   
+export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
+
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -71,7 +94,6 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 target: ev.currentTarget as HTMLElement,
                 directionalHint: DirectionalHint.bottomLeftEdge,
                 gapSpace: 2,
-                // isBeakVisible: true,
                 onDismiss: _onContextualMenuDismissed,                  
             });
         },
@@ -90,130 +112,67 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         },
         []
     );
-    
+
     //local state
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
-    const [columns, setColumns] = useState<IColumn[]>([    
-        { 
-            key: 'id', 
-            name: 'Id', 
-            fieldName: 'id', 
-            minWidth: 220, 
-            maxWidth: 220, 
-            isRowHeader: true,
-            isResizable: false,
-            onColumnClick: _onHandleColumnClick,
-            isPadded: true,
-            onRender: (item: IItemPegawai) => {
-                return item.id;
-            }
-        },
+    const [columns, setColumns] = useState<IColumn[]>([  
         { 
             key: 'nama', 
-            name: 'Nama', 
-            minWidth: 300, 
-            maxWidth: 300,
-            isResizable: true,             
+            name: 'Perusahaan', 
+            minWidth: 500, 
+            maxWidth: 550, 
             isSortedDescending: false,
             isSorted: true,
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemPegawai) => {
-                return (
-                    <>
-                        <span>{item.person?.nama}</span><br />
-                        {
-                            item.person?.nik !== undefined ? 
-                            <span>{item.person?.nik}</span>:null
-                        }
-                        <p className={classNames.kontakContainer}>
-                            <span>Email:
-                            {
-                                item.person?.kontak?.email != undefined ?
-                                ` ${item.person?.kontak?.email}`:' -'
-                            }
-                            </span><br />
-                            <span style={{display: 'flex'}}>
-                                <label className={classNames.kontakLabel}>
-                                    Telp: 
-                                {
-                                    item.person?.kontak?.telepone != undefined ?
-                                    `${item.person?.kontak?.telepone}`:`-`
-                                }
-                                </label>
-                            </span>
-                        </p>
-                    </>                    
-                ); 
-            },
-            isPadded: true,
-        },
-        { 
-            key: 'jabatan', 
-            name: 'Jabatan', 
-            minWidth: 180, 
-            maxWidth: 180,
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemPegawai) => {
-                return item.jabatan?.nama;
-            },
-            isPadded: true,
-        },
-        { 
-            key: 'perusahaan', 
-            name: 'Perusahaan', 
-            minWidth: 100, 
-            maxWidth: 200, 
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemPegawai) => {
+            onRender: (item: IItemRegisterPerusahaan) => {
                 return (
                     <>
                         <span>
                             {
-                            item.perusahaan?.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.perusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.perusahaan?.nama}` :
-                            `${item.perusahaan?.perusahaan?.nama}`
+                            item.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}` :
+                            `${item.perusahaan?.nama}`
                             }
                         </span><br />  
                         <span>
                             {
-                                item.perusahaan?.perusahaan?.id != undefined ?
-                                item.perusahaan?.perusahaan?.id : `-`
+                                item.perusahaan?.id != undefined ?
+                                item.perusahaan?.id : `-`
                             }
                         </span><br />
                         <span>
                             {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.perusahaan?.alamat.keterangan:null:null
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.alamat.keterangan:null:null
                             }
                             {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.desa.nama}`:null:null
-                            }
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.alamat.desa.nama}`:null:null
+                            }                            
                         </span><br />
                         <span>
                             {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kecamatan != undefined ? item.perusahaan?.perusahaan?.alamat.kecamatan.nama:null:null
+                                item.perusahaan?.alamat != undefined ? 
+                                item.perusahaan?.alamat.kecamatan != undefined ? `${item.perusahaan?.alamat.kecamatan.nama}`:null:null
                             }
                             {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.kabupaten.nama}`:null:null
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.alamat.kabupaten.nama}`:null:null
                             }
                         </span>
                         <span>
                             {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.propinsi.nama}`:null:null
+                            item.perusahaan?.alamat != undefined ? 
+                            item.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.alamat.propinsi.nama}`:null:null
                             }
                         </span>
                     </>               
@@ -221,17 +180,73 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             },
             isPadded: true,
         },
-    ]);   
+        { 
+            key: 'pengakses', 
+            name: 'Pengakses', 
+            minWidth: 300, 
+            isResizable: true, 
+            onRender: (item: IItemRegisterPerusahaan) => {
+                return (
+                    <ul style={{padding: 0, margin: 0}}>
+                    {
+                        item.pengakses?.map((i) => {
+                            return (
+                                <li key={i.id}>
+                                    <span>{i.userName}</span><br />
+                                    <span>{i.person?.nama}</span><br />
+                                    <span>{i.person?.nik}</span>
+                                </li>
+                            );
+                        })
+                    }
+                    </ul>
+                ); 
+            },
+            isPadded: true,
+        },
+        
+    ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
-    const [searchNamaPerusahaan, setSearchNamaPerusahaan] = useState<string|undefined>(undefined);
-    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
-    const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
-    const searchNikId = useId('searchNik');
+    const [searchNpwp, setSearchNpwp] = useState<string|undefined>(undefined);
+    const searchNpwpId = useId('searchNpwp');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPegawaiQuery(queryFilters);
-    const { data: postsPegawai, isLoading: isLoadingPosts } = useGetAllDaftarPegawaiByFilterQuery(queryParams);   
-    
+    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
+    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
+    (queryFilters);
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {
+            // const CoachmarkButtonWrapper: IComponentAs<ICommandBarItemProps> = (p: IComponentAsProps<ICommandBarItemProps>) => {
+            //   return (
+            //     <CoachmarkCommandBarButton {...p} isCoachmarkVisible={isCoachmarkVisible} onDismiss={onDismissCoachmark} />
+            //   );
+            // };
+        
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add pemrakarsa');
+                        showModalFormulirPerusahaan();
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: true,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit pemrakarsa');
+                        showModalFormulirPerusahaan();
+                    }
+                },
+            ];
+        }, 
+        []
+    );
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -239,76 +254,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         },
         []
     );
-
-    const _onSortColumn = useCallback(
-        (key, isAsc: boolean) => {
-            let newColumns: IColumn[] = columns.slice();
-            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
-
-            newColumns.forEach((newCol: IColumn) => {
-                if (newCol === currColumn) {
-                  currColumn.isSortedDescending = !isAsc;
-                  currColumn.isSorted = true;                  
-                } else {
-                  newCol.isSortedDescending = undefined;                  
-                  newCol.isSorted = false;
-                }
-            });
-
-            setColumns(newColumns);
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let sortOrders = cloneDeep(tmp.sortOrders);
-                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
-                    
-                    if(found == -1) {
-                        sortOrders?.splice(0, 1, {
-                            fieldName: key,
-                            value: isAsc == true ? "ASC" : "DESC"
-                        });
-                    }
-                    else {
-                        sortOrders?.splice(found, 1, {
-                            fieldName: key,
-                            value: isAsc == true ? "ASC" : "DESC"
-                        })
-                    }                    
-                    
-                    tmp.sortOrders = sortOrders;            
-                    return tmp;
-                }
-            );
-        },
-        [columns]
-    );
-
-    const _onContextualMenuDismissed = useCallback(
-        () => {
-            setContextualMenuProps(undefined);
-        },
-        []
-    );
-
-    const _onContextualMenuFilterDismissed = useCallback(
-        () => {
-            setContextualMenuFilterProps(undefined);
-        },
-        []
-    );
-
-    const _renderMenuList = useCallback(
-        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
-          return (
-            <div>
-                {defaultRender(menuListProps)}
-            </div>
-          );
-        },
-        [],
-    );
-
+    
     const _onSearch = useCallback(
         (newValue) => {
             setCurrentPage(1);
@@ -387,7 +333,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -402,7 +348,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     
                     if(found > -1) {
@@ -416,6 +362,75 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             );
         },
         []
+    );
+
+    const _onSortColumn = useCallback(
+        (key, isAsc: boolean) => {
+            let newColumns: IColumn[] = columns.slice();
+            let currColumn: IColumn = newColumns.filter(currCol => key === currCol.key)[0];
+
+            newColumns.forEach((newCol: IColumn) => {
+                if (newCol === currColumn) {
+                  currColumn.isSortedDescending = !isAsc;
+                  currColumn.isSorted = true;                  
+                } else {
+                  newCol.isSortedDescending = undefined;                  
+                  newCol.isSorted = false;
+                }
+            });
+
+            setColumns(newColumns);
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let sortOrders = cloneDeep(tmp.sortOrders);
+                    let found = sortOrders?.findIndex((obj) => {return obj.fieldName == key}) as number;   
+                    
+                    if(found == -1) {
+                        sortOrders?.splice(0, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        });
+                    }
+                    else {
+                        sortOrders?.splice(found, 1, {
+                            fieldName: key,
+                            value: isAsc == true ? "ASC" : "DESC"
+                        })
+                    }                    
+                    
+                    tmp.sortOrders = sortOrders;            
+                    return tmp;
+                }
+            );
+        },
+        [columns]
+    );
+
+    const _onContextualMenuDismissed = useCallback(
+        () => {
+            setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
+        },
+        []
+    );
+
+    const _renderMenuList = useCallback(
+        (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
+          return (
+            <div>
+                {defaultRender(menuListProps)}
+            </div>
+          );
+        },
+        [],
     );
 
     const _onRenderDetailsHeader  = useCallback(
@@ -444,7 +459,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         },
         []
     );
-    
+
     const _onPageNumberChange = useCallback(
         (pageNumber: number) => {
             setQueryParams(
@@ -459,14 +474,14 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         []
     );
 
-    const _onChangeSearchNamaPerusahaan = useCallback(
+    const _onChangeSearchNpwp = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNamaPerusahaan(newValue);          
+            setSearchNpwp(newValue);          
         },
         []
     );
 
-    const _onSearchNama = useCallback(
+    const _onSearchNpwp = useCallback(
         (newValue) => {
             setCurrentPage(1);
 
@@ -474,18 +489,18 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'npwp',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'npwp',
                                 value: newValue
                             })
                         }
@@ -505,18 +520,18 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'npwp',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'npwp',
                                 value: newValue
                             })
                         }
@@ -537,16 +552,16 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         []
     );
 
-    const _onClearSearchNama= useCallback(
+    const _onClearSearchNpwp= useCallback(
         () => {
             setCurrentPage(1);
-            setSearchNamaPerusahaan(undefined);
+            setSearchNpwp(undefined);
 
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -561,125 +576,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
-                    
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-        },
-        []
-    );
-
-    const _onChangeSearchNik = useCallback(
-        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNik(newValue);          
-        },
-        []
-    );
-
-    const _onSearchNik = useCallback(
-        (newValue) => {
-            setCurrentPage(1);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-            
-        },
-        []
-    );
-
-    const _onClearSearchNik= useCallback(
-        () => {
-            setCurrentPage(1);
-            setSearchNik(undefined);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
                     
                     
                     if(found > -1) {
@@ -703,16 +600,12 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
 
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
-                    if(found != -1) {
-                        filters?.splice(found, 1);  
-                    }
                     tmp.filters = filters;
 
                     return tmp;
@@ -723,16 +616,10 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
-                    }
-                    
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
-                    
-                    if(found != -1) {
-                        filters?.splice(found, 1);          
                     }
 
                     tmp.pageNumber = 1;
@@ -742,26 +629,27 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 }
             );                
 
-            setSearchNamaPerusahaan(undefined);
-            setSearchNik(undefined);
+            setSearchNpwp(undefined);
         },
         []
     );
 
-
     return (
         <Stack grow verticalFill>
-            <Stack.Item style={{marginTop: 2}}>
-                <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item style={{paddingLeft: 16}}>
+            <Stack.Item>
+                <Stack horizontal grow horizontalAlign="space-between" verticalAlign="center">
+                    <Stack.Item align="center" style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
-                    </Stack.Item>
+                    </Stack.Item>                        
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
+                            <CommandBar items={itemsBar}/>
+                            </Stack.Item>
+                            <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama pegawai" 
+                                    placeholder="pencarian nama" 
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
@@ -780,7 +668,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
-                </Stack>                
+                </Stack>
             </Stack.Item>
             <Stack.Item grow>
                 <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
@@ -788,9 +676,9 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPegawai != undefined ? postsPegawai?.map(
+                                    postsPerusahaan != undefined ? postsPerusahaan?.map(
                                         (t) => (
-                                            {key: t.id as string, ...t}
+                                            {key: t.id as string, ...omit(t, ['id'])}
                                         )
                                     ) : []
                                 }
@@ -810,44 +698,30 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={postsCount == undefined ? 50:postsCount }
+                            totalCount={postsCountPerusahaan == undefined ? 50:postsCountPerusahaan }
                             onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}    
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
             {
                 contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
-                            <Label htmlFor={searchNamaPerusahaanId}>Nama</Label>
+                            <Label htmlFor={searchNpwpId}>Npwp perusahaan</Label>
                             <SearchBox 
-                                id={searchNamaPerusahaanId}
+                                id={searchNpwpId}
                                 style={{width: 200}} 
                                 disableAnimation
-                                placeholder="nama sesuai ktp" 
+                                placeholder="ketik npwp perusahaan" 
                                 underlined={false} 
-                                onChange={_onChangeSearchNamaPerusahaan}
-                                onSearch={_onSearchNama}
-                                onClear= {_onClearSearchNama}
-                                value={searchNamaPerusahaan ? searchNamaPerusahaan:''}
-                            />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <Label htmlFor={searchNikId}>NIK</Label>
-                            <SearchBox 
-                                id={searchNikId}
-                                style={{width: 200}} 
-                                disableAnimation
-                                placeholder="nik sesuai ktp" 
-                                underlined={false} 
-                                onChange={_onChangeSearchNik}
-                                onSearch={_onSearchNik}
-                                onClear= {_onClearSearchNik}
-                                value={searchNik ? searchNik:''}
+                                onChange={_onChangeSearchNpwp}
+                                onSearch={_onSearchNpwp}
+                                onClear= {_onClearSearchNpwp}
+                                value={searchNpwp ? searchNpwp:''}
                             />
                         </Stack.Item>
                         <Stack.Item>
@@ -859,7 +733,13 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                         </Stack.Item>
                     </Stack>
                 </Callout>                
-            }        
+            }
+            <FormulirPerusahaan 
+                title={formulirTitle}
+                isModalOpen={isModalFormulirPerusahaanOpen}
+                showModal={showModalFormulirPerusahaan}
+                hideModal={hideModalFormulirPerusahaan}
+            />
         </Stack>
     );
-}
+};

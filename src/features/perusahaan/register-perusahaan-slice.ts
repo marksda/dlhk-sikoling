@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../person/person-slice";
 import { IPerusahaan } from "./perusahaan-slice";
+import { IAuthor } from "../security/authorization-api-slice";
 
 export interface IRegisterPerusahaan {
     id: string|null,
@@ -9,6 +10,7 @@ export interface IRegisterPerusahaan {
     kreator: IPerson|null;
     verifikator: IPerson|null;
     perusahaan: IPerusahaan|null;
+    pengakses: IAuthor[]|null;
 };
 
 const initialState: IRegisterPerusahaan = {
@@ -16,7 +18,8 @@ const initialState: IRegisterPerusahaan = {
     tanggalRegistrasi: null,
     kreator: null,
     verifikator: null,
-    perusahaan: null
+    perusahaan: null,
+    pengakses: null,
 };
 
 export const registerPerusahaanSlice = createSlice({
