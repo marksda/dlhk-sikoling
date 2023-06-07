@@ -1,6 +1,6 @@
-import { FC, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
+import { FC, FormEvent, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
@@ -17,7 +17,7 @@ import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
-import { invertParseNpwp } from "../../features/config/helper-function";
+import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -120,6 +120,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     );
 
     //local state
+    const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -195,9 +196,9 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 return (
                     <ul style={{padding: 0, margin: 0}}>
                     {
-                        item.pengakses?.map((i) => {
+                        item.pengakses?.map((i, index) => {
                             return (
-                                <li key={i.id}>
+                                <li key={index}>
                                     <span className={classNames.pengaksesSpan}>user</span><span>: {i.userName}</span><br />
                                     <span className={classNames.pengaksesSpan}>nama</span><span>: {i.person?.nama}</span><br />
                                     <span className={classNames.pengaksesSpan}>nik</span><span>: {i.person?.nik}</span>
@@ -214,8 +215,6 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
-    const [searchNpwp, setSearchNpwp] = useState<string|undefined>(undefined);
-    const searchNpwpId = useId('searchNpwp');
     // rtk hook state
     const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
     const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
@@ -480,120 +479,112 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         []
     );
 
-    const _onChangeSearchNpwp = useCallback(
-        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNpwp(newValue);          
-        },
-        []
-    );
+    const _onChangeSearchNpwpMasked = useCallback(
+        (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => {
+            let hasil = parseNpwp(newValue as string);
+            setNpwpTerparsing(hasil);
+            if (hasil.length == 15) {
+                setCurrentPage(1);
 
-    const _onSearchNpwp = useCallback(
-        (newValue) => {
-            setCurrentPage(1);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'npwp',
-                                value: newValue
-                            });
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'npwp',
+                                    value: hasil
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'npwp',
+                                    value: hasil
+                                })
+                            }
                         }
                         else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'npwp',
-                                value: newValue
-                            })
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
                         }
+                        
+                        tmp.filters = filters;             
+                        return tmp;
                     }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
+                );
 
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'npwp',
-                                value: newValue
-                            });
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'npwp',
+                                    value: hasil
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'npwp',
+                                    value: hasil
+                                })
+                            }
                         }
                         else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'npwp',
-                                value: newValue
-                            })
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
                         }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
                     }
-                    else {
-                        if(found > -1) {
+                );
+            }
+            else if(hasil.length == 0) {
+                setCurrentPage(1);
+
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;
+                        
+                        if(found != -1) {
                             filters?.splice(found, 1);
                         }
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-            
-        },
-        []
-    );
 
-    const _onClearSearchNpwp= useCallback(
-        () => {
-            setCurrentPage(1);
-            setSearchNpwp(undefined);
+                        tmp.filters = filters;
 
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;  
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
+                        return tmp;
                     }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
+                ); 
 
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;     
-                    
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'npwp'}) as number;
+                        
+                        if(found != -1) {
+                            filters?.splice(found, 1);
+                        }
+
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;
+
+                        return tmp;
                     }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
+                );         
+            }
         },
         []
     );
@@ -635,7 +626,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 }
             );                
 
-            setSearchNpwp(undefined);
+            setNpwpTerparsing(undefined);
         },
         []
     );
@@ -717,18 +708,12 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
-                            <Label htmlFor={searchNpwpId}>Npwp perusahaan</Label>
-                            <SearchBox 
-                                id={searchNpwpId}
-                                style={{width: 200}} 
-                                disableAnimation
-                                placeholder="ketik npwp perusahaan" 
-                                underlined={false} 
-                                onChange={_onChangeSearchNpwp}
-                                onSearch={_onSearchNpwp}
-                                onClear= {_onClearSearchNpwp}
-                                value={searchNpwp ? searchNpwp:''}
-                            />
+                            <MaskedTextField 
+                                label="Npwp perusahaan"
+                                mask="99.999.999.9-999.999"
+                                value={npwpTerparsing}
+                                onChange={_onChangeSearchNpwpMasked}
+                            />          
                         </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 

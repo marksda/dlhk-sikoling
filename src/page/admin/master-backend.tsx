@@ -109,7 +109,7 @@ export const MasterBackEnd: FC = () => {
                 }, 
                 {
                     key: 'usaha',
-                    name: 'Perusahaan',
+                    name: 'Usaha',
                     icon: 'ExpandMenu',
                     onClick: undefined,
                     subMenuProps: {
@@ -276,7 +276,7 @@ export const MasterBackEnd: FC = () => {
                         items: [
                             {
                                 key: 'kategori_dokumen',
-                                name: 'Kategori dokumen',
+                                name: 'Kelompok dokumen',
                                 iconProps: { iconName: 'WebComponents' },
                                 onClick: () => {
                                         _onHandleMasterMenu('kategori_dokumen');
@@ -284,7 +284,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'dokumen',
-                                name: 'Dokumen',
+                                name: 'Jenis okumen',
                                 iconProps: { iconName: 'Group' },
                                 onClick: () => {
                                     _onHandleMasterMenu('dokumen');
@@ -588,7 +588,7 @@ export const MasterBackEnd: FC = () => {
                                 ],
                             }
                         }
-                        title="Dokumen"
+                        title="Jenis dokumen"
                     />;
                     break;
                 case 'kategori_dokumen':
@@ -606,7 +606,7 @@ export const MasterBackEnd: FC = () => {
                                 ],
                             }
                         }
-                        title="Kategori dokumen"
+                        title="Kelompok dokumen"
                     />;
                     break;
                 case 'kbli':
