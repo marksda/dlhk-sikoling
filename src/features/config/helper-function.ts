@@ -102,5 +102,5 @@ export const parseNpwp = (npwp: string): string => {
 } 
 
 export const invertParseNpwp = (npwp: string): string => {
-    return npwp.replace(/[_\-\.]/g, '');
+    return npwp.length == 15 ? npwp.substring(0,2)+"."+npwp.substring(2,5)+"."+npwp.substring(5,8)+"."+npwp.substring(8,9)+"-"+npwp.substring(9,12)+"."+npwp.substring(12,15):"-";
 } 

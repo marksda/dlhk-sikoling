@@ -16,6 +16,8 @@ import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
+import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
+import { invertParseNpwp } from "../../features/config/helper-function";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -61,6 +63,10 @@ const classNames = mergeStyleSets({
         marginLeft: 12,
         marginBottom: 4,
     },
+    pengaksesSpan: {
+        display: 'inline-block', 
+        width: 40,
+    }
 });
 const stackTokens = { childrenGap: 8 };
 const barStackTokens = { childrenGap: 48 };
@@ -115,7 +121,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
 
     //local state
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
-    const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
+    const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
@@ -146,7 +152,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         <span>
                             {
                                 item.perusahaan?.id != undefined ?
-                                item.perusahaan?.id : `-`
+                                invertParseNpwp(item.perusahaan?.id) : `-`
                             }
                         </span><br />
                         <span>
@@ -192,9 +198,9 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         item.pengakses?.map((i) => {
                             return (
                                 <li key={i.id}>
-                                    <span>{i.userName}</span><br />
-                                    <span>{i.person?.nama}</span><br />
-                                    <span>{i.person?.nik}</span>
+                                    <span className={classNames.pengaksesSpan}>user</span><span>: {i.userName}</span><br />
+                                    <span className={classNames.pengaksesSpan}>nama</span><span>: {i.person?.nama}</span><br />
+                                    <span className={classNames.pengaksesSpan}>nik</span><span>: {i.person?.nik}</span>
                                 </li>
                             );
                         })
@@ -229,8 +235,8 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add pemrakarsa');
-                        showModalFormulirPerusahaan();
+                        setFormulirTitle('Add pengakses perusahaan');
+                        showModalFormulirPengaksesPerusahaan();
                     }
                 },
                 { 
@@ -240,7 +246,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
                         setFormulirTitle('Edit pemrakarsa');
-                        showModalFormulirPerusahaan();
+                        showModalFormulirPengaksesPerusahaan();
                     }
                 },
             ];
@@ -649,7 +655,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama" 
+                                    placeholder="pencarian perusahaan" 
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
@@ -734,11 +740,11 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     </Stack>
                 </Callout>                
             }
-            <FormulirPerusahaan 
+            <FormulirAutorityPerusahaan 
                 title={formulirTitle}
-                isModalOpen={isModalFormulirPerusahaanOpen}
-                showModal={showModalFormulirPerusahaan}
-                hideModal={hideModalFormulirPerusahaan}
+                isModalOpen={isModalFormulirPengaksesPerusahaanOpen}
+                showModal={showModalFormulirPengaksesPerusahaan}
+                hideModal={hideModalFormulirPengaksesPerusahaan}
             />
         </Stack>
     );

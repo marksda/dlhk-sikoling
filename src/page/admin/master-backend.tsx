@@ -90,7 +90,7 @@ export const MasterBackEnd: FC = () => {
                             },               
                             {
                                 key: 'pemrakarsa',
-                                name: 'Pemrakarsa',
+                                name: 'Perusahaan',
                                 iconProps: {iconName:'CityNext'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pemrakarsa');
@@ -354,7 +354,7 @@ export const MasterBackEnd: FC = () => {
                                     ],
                                 }
                             }
-                            title="Pemrakarsa"
+                            title="Perusahaan"
                         />;
                     break;
                 case 'identitas_personal':
