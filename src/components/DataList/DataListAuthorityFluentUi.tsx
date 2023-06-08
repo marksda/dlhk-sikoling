@@ -1021,7 +1021,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

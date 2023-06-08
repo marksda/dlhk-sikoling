@@ -535,7 +535,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

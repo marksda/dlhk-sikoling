@@ -370,7 +370,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

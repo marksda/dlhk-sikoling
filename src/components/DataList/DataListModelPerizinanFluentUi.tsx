@@ -383,7 +383,7 @@ export const DataListModelPerizinanFluentUI: FC<IDataListModelPerizinanFluentUIP
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

@@ -105,6 +105,11 @@ export const RegisterPerusahaanSchema = object({
     statusVerifikasi: z.boolean().optional()
 });
 
+export const AutorityPerusahaanSchema = object({
+    autority: AuthoritySchema.required(),
+    registerPerusahaan: RegisterPerusahaanSchema.required(),
+});
+
 export const JenisPermohonanArahanSchema = object({
     id: z.string().optional(),
     keterangan: z.string().optional()

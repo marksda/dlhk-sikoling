@@ -841,7 +841,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

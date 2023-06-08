@@ -376,7 +376,7 @@ export const DataListKategoriDokumenFluentUI: FC<IDataListKategoriDokumenFluentU
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

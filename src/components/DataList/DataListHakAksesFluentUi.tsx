@@ -371,7 +371,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

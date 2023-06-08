@@ -550,7 +550,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

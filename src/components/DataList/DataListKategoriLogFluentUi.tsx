@@ -371,7 +371,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

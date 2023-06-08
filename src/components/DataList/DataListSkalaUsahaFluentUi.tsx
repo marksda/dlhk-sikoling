@@ -382,7 +382,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

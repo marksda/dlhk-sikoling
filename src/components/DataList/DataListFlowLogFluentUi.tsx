@@ -856,7 +856,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

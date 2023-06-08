@@ -194,7 +194,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             isResizable: true, 
             onRender: (item: IItemRegisterPerusahaan) => {
                 return (
-                    <ul style={{padding: 0, margin: 0}}>
+                    <ul style={{padding: 0, margin: '0px 0px 0px 4px'}}>
                     {
                         item.pengakses?.map((i, index) => {
                             return (
@@ -679,7 +679,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

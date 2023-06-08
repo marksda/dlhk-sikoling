@@ -715,7 +715,7 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

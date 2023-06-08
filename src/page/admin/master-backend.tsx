@@ -64,7 +64,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'user_perusahaan',
-                                name: 'Perusahaan <-> Pengakses',
+                                name: 'Perusahaan - Pengakses',
                                 iconProps: { iconName: 'Certificate'},
                                 onClick: () => {
                                     _onHandleMasterMenu('user_perusahaan');
@@ -642,7 +642,7 @@ export const MasterBackEnd: FC = () => {
                                     ],
                                 }
                             }
-                            title="Perusahaan <-> Pengakses"
+                            title="Perusahaan - Pengakses"
                         />;
                     break;    
                 default:

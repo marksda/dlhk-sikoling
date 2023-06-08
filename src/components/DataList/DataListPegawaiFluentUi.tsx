@@ -6,6 +6,7 @@ import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IPegawai } from "../../features/pegawai/pegawai-slice";
 import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
 import { useId } from "@fluentui/react-hooks";
+import { invertParseNpwp } from "../../features/config/helper-function";
 
 interface IDataListPegawaiFluentUIProps {
     initSelectedFilters: IQueryParams;
@@ -187,7 +188,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                         <span>
                             {
                                 item.perusahaan?.perusahaan?.id != undefined ?
-                                item.perusahaan?.perusahaan?.id : `-`
+                                invertParseNpwp(item.perusahaan?.perusahaan?.id) : `-`
                             }
                         </span><br />
                         <span>
@@ -794,7 +795,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

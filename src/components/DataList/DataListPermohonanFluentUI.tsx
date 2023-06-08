@@ -664,7 +664,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}

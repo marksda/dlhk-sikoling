@@ -383,7 +383,7 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
                                         )
                                     ) : []
                                 }
-                                compact={true}
+                                compact={false}
                                 columns={columns}
                                 setKey="none"
                                 getKey={_getKey}
