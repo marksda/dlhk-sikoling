@@ -1,21 +1,12 @@
-import { FC, FormEvent, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
-import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
-import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
-import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
-import { IDokumenNibOss } from "../../features/dokumen/dokumen-nib-oss-slice";
 import cloneDeep from "lodash.clonedeep";
-import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
-import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
-import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendirian-slice";
 import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
+import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 
@@ -69,7 +60,6 @@ const classNames = mergeStyleSets({
     }
 });
 const stackTokens = { childrenGap: 8 };
-const barStackTokens = { childrenGap: 48 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
 export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
