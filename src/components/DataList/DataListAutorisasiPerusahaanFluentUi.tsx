@@ -660,7 +660,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             <Stack.Item grow>
                 <Stack grow verticalFill tokens={stackTokens} className={classNames.container}>
                     <Stack.Item grow className={classNames.gridContainer}>
-                        <ScrollablePane scrollbarVisibility="auto">
+                        <ScrollablePane scrollbarVisibility="auto">             
                             <DetailsList
                                 items={
                                     postsPerusahaan != undefined ? postsPerusahaan?.map(
@@ -677,7 +677,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                 selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
-                            />
+                            />                    
                         </ScrollablePane>
                     </Stack.Item>
                     <Stack.Item>

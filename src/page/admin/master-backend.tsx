@@ -49,7 +49,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'hak_akses',
                                 name: 'Kategori akses',
-                                iconProps: {iconName:'TeamWork'},
+                                iconProps: {iconName:'AddLink'},
                                 onClick: () => {
                                     _onHandleMasterMenu('hak_akses');
                                 }
@@ -57,7 +57,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'authority',
                                 name: 'Pengakses',
-                                iconProps: { iconName: 'Certificate'},
+                                iconProps: { iconName: 'ContactCard'},
                                 onClick: () => {
                                     _onHandleMasterMenu('authority');
                                 }
@@ -65,7 +65,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'user_perusahaan',
                                 name: 'Perusahaan - Pengakses',
-                                iconProps: { iconName: 'Certificate'},
+                                iconProps: { iconName: 'ContactLink'},
                                 onClick: () => {
                                     _onHandleMasterMenu('user_perusahaan');
                                 }

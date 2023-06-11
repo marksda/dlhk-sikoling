@@ -1,6 +1,6 @@
 import { ComboBox, ContextualMenu, FontWeights, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { z } from "zod";
 import { AutorityPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetAllRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { useGetAllAuthorisasiQuery } from "../../features/security/authorization-api-slice";
+import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
+import cloneDeep from "lodash.clonedeep";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
@@ -69,8 +71,32 @@ const iconButtonStyles = {
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal}) => { 
-    //local state
-    const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
+  //local state
+  const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
+  const [queryPerusahaanParams, setQueryPerusahaanParams] = useState<IQueryParams>({
+    pageNumber: 1,
+    pageSize: 25,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
+  const [queryPengaksesParams, setQueryPengaksesParams] = useState<IQueryParams>({
+    pageNumber: 1,
+    pageSize: 25,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'user_name',
+            value: 'ASC'
+        },
+    ],
+  });
+  // const [queryPerusahaanFilters, setQueryPerusahaanFilters] = useState<qFilters>({filters: []}); 
+ 
     const titleId = useId('title');
     const {
       handleSubmit,
@@ -79,28 +105,8 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
       resolver: zodResolver(AutorityPerusahaanSchema),
     });
 
-    const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery({
-      pageNumber: 1,
-      pageSize: 25,
-      filters: [],
-      sortOrders: [
-          {
-              fieldName: 'nama',
-              value: 'ASC'
-          },
-      ],
-    });
-    const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = useGetAllAuthorisasiQuery({
-      pageNumber: 1,
-      pageSize: 25,
-      filters: [],
-      sortOrders: [
-          {
-              fieldName: 'nama',
-              value: 'ASC'
-          },
-      ],
-    });
+    const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryPerusahaanParams);
+    const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = useGetAllAuthorisasiQuery(queryPengaksesParams);
     
 
     const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -143,8 +149,9 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     const onSubmit: SubmitHandler<FormSchemaType> = data => console.log(data);
     const onError: SubmitErrorHandler<FormSchemaType> = error => console.log(error);
 
-    const onRenderOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
-      return <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+    const _onRenderPerusahaanOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+      return item?.data != undefined ?
+            <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
               <span><b>
                   {
                   item!.data!.perusahaan.pelakuUsaha !== undefined ?
@@ -184,11 +191,12 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   item!.data.perusahaan?.alamat.propinsi != undefined ? `, ${item!.data.perusahaan?.alamat.propinsi.nama}`:null:null
                   }
               </span>
-            </div>;      
+            </div>:null;      
     };
 
-    const onRenderOptionPengakses = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
-      return <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+    const _onRenderOptionPengakses = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+      return item?.data != undefined ?
+            <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
               <span><b>
                   {
                   item?.data.userName !== undefined ?item.data.userName:'-'
@@ -220,8 +228,144 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                       item?.data.person.alamat.propinsi != undefined ? `, ${item.data.person.alamat.propinsi.nama}`:null:null
                   }
               </span>
-            </div>;      
+            </div>:null;      
     };
+
+    const _onInputCBPerusahaanValueChange = useCallback(
+      (newValue: string) => {
+        // setQueryPerusahaanFilters(
+        //   prev => {
+        //       let tmp = cloneDeep(prev);
+        //       let filters = cloneDeep(tmp.filters);
+        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+              
+        //       if(newValue != '') {
+        //           if(found == -1) {
+        //               filters?.push({
+        //                   fieldName: 'nama',
+        //                   value: newValue
+        //               });
+        //           }
+        //           else {
+        //               filters?.splice(found, 1, {
+        //                   fieldName: 'nama',
+        //                   value: newValue
+        //               })
+        //           }
+        //       }
+        //       else {
+        //           if(found > -1) {
+        //               filters?.splice(found, 1);
+        //           }
+        //       }
+              
+        //       tmp.filters = filters;             
+        //       return tmp;
+        //   }
+        // );
+
+        setQueryPerusahaanParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      },
+      []
+    );
+
+    const _onInputCBPengaksesValueChange = useCallback(
+      (newValue: string) => {
+        // setQueryPerusahaanFilters(
+        //   prev => {
+        //       let tmp = cloneDeep(prev);
+        //       let filters = cloneDeep(tmp.filters);
+        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+              
+        //       if(newValue != '') {
+        //           if(found == -1) {
+        //               filters?.push({
+        //                   fieldName: 'nama',
+        //                   value: newValue
+        //               });
+        //           }
+        //           else {
+        //               filters?.splice(found, 1, {
+        //                   fieldName: 'nama',
+        //                   value: newValue
+        //               })
+        //           }
+        //       }
+        //       else {
+        //           if(found > -1) {
+        //               filters?.splice(found, 1);
+        //           }
+        //       }
+              
+        //       tmp.filters = filters;             
+        //       return tmp;
+        //   }
+        // );
+
+        setQueryPengaksesParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'user_name',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'user_name',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      },
+      []
+    );
     
     return (
       <Modal
@@ -253,10 +397,12 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
               }) => (
                   <ComboBox
                     label="Perusahaan"
-                    allowFreeform
+                    placeholder="ketik nama perusahaan untuk menampilkan pilihan"
+                    allowFreeform={true}
                     options={optionsPerusahaan != undefined ? optionsPerusahaan:[]}
                     useComboBoxAsMenuWidth={true}
-                    onRenderOption={onRenderOption}         
+                    onRenderOption={_onRenderPerusahaanOption}   
+                    onInputValueChange={_onInputCBPerusahaanValueChange}      
                     styles={basicStyles}           
                     errorMessage={error && 'harus diisi'}
                   />
@@ -272,10 +418,12 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
               }) => (
                   <ComboBox
                     label="Pengakses"
-                    allowFreeform
+                    placeholder="ketik user untuk menampilkan pilihan"
+                    allowFreeform={true}
                     options={optionsPengakses != undefined ? optionsPengakses:[]}
                     useComboBoxAsMenuWidth={true}
-                    onRenderOption={onRenderOptionPengakses}         
+                    onRenderOption={_onRenderOptionPengakses}  
+                    onInputValueChange={_onInputCBPengaksesValueChange}         
                     styles={basicStyles}           
                     errorMessage={error && 'harus diisi'}
                   />
