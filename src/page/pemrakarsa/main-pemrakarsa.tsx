@@ -6,7 +6,7 @@ import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
 import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
+// import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 
 const classNames = mergeStyleSets({
   container: {

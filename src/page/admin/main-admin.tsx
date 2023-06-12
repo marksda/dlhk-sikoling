@@ -3,12 +3,12 @@ import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
-import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 import { DashboardBackEnd } from "./dashboard-backend";
 import { PermohonanBackEnd } from "./permohonan-backend";
 import { KontenDashboardPemrakarsa } from "../pemrakarsa/dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "../pemrakarsa/template-pelaporan-pemrakarsa";
 import { MasterBackEnd } from "./master-backend";
+import { LeftMenuFluentUI } from "../../components/menu/LeftMenuFluentUI";
 
 
 const classNames = mergeStyleSets({
