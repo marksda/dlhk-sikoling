@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
 import { z } from "zod";
@@ -405,6 +405,11 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                     onInputValueChange={_onInputCBPerusahaanValueChange}      
                     styles={basicStyles}           
                     errorMessage={error && 'harus diisi'}
+                    onChange={
+                      (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                        console.log(index);
+                      }
+                    }
                   />
               )}
           />
