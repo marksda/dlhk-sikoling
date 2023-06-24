@@ -1,14 +1,14 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Dropdown, IDropdownOption, PrimaryButton, ActionButton } from "@fluentui/react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IKategoriPelakuUsaha } from "../../features/repository/ssot/kategori-pelaku-usaha-slice";
 import { useGetAllKategoriPelakuUsahaQuery, useGetTotalCountKategoriPelakuUsahaQuery } from "../../features/repository/service/kategori-pelaku-usaha-api-slice";
 import { useGetAllSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usaha";
 
 interface IDataListKategoriPelakuUsahaFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemKategoriPelakuUsaha = {key: string|null;} & Partial<IKategoriPelakuUsaha>;
@@ -94,7 +94,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

@@ -1,8 +1,5 @@
-import { FC, FormEvent, JSXElementConstructor, ReactElement, useCallback, useMemo, useState } from "react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
-import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
 import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
@@ -14,12 +11,15 @@ import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendi
 import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useBoolean, useId } from "@fluentui/react-hooks";
+import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 
 interface IDataListPerusahaanFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
@@ -120,7 +120,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

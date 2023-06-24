@@ -28,7 +28,8 @@ import { SkalaUsahaApiSlice } from "../features/repository/service/skala-usaha-a
 // import kategoriPelakuUsahaReducer from "../features/perusahaan/kategori-pelaku-usaha-slice";
 import { KategoriPelakuUsahaApiSlice } from "../features/repository/service/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
-import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
+// import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
+import perusahaanReducer from "../features/repository/ssot/perusahaan-slice";
 import { RegisterPerusahaanApiSlice } from "../features/repository/service/register-perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
 import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-api-slice";
@@ -40,7 +41,7 @@ import kbliReducer from "../features/dokumen/kbli-slice";
 import { KbliApiSlice } from "../features/dokumen/kbli-api-slice";
 import registerKbliReducer from "../features/dokumen/register-kbli-slice";
 import { RegisterKbliApiSlice } from "../features/dokumen/register-kbli-api-slice";
-import registerPerusahaanReducer from "../features/perusahaan/register-perusahaan-slice";
+import registerPerusahaanReducer from "../features/repository/ssot/register-perusahaan-slice";
 import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";

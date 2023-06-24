@@ -1,13 +1,14 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IModelPerizinan, useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
+import { useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IModelPerizinan } from "../../features/entity/model-perizinan";
 
 interface IDataListModelPerizinanFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemModelPerizinan = {key: string|null;} & Partial<IModelPerizinan>;
@@ -80,7 +81,7 @@ export const DataListModelPerizinanFluentUI: FC<IDataListModelPerizinanFluentUIP
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

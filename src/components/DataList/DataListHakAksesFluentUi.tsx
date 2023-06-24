@@ -1,14 +1,15 @@
 import { FC, useCallback, useState } from "react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { IHakAkses, useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
+import { useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IHakAkses } from "../../features/entity/hak-akses";
 
 
 interface IDataListHakAksesFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemHakAkses = {key: string|null;} & Partial<IHakAkses>;
@@ -64,7 +65,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
     // local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});   

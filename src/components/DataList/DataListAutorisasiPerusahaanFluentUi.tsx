@@ -1,6 +1,5 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
-import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import cloneDeep from "lodash.clonedeep";
 import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
 import omit from "lodash.omit";
@@ -9,6 +8,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -186,15 +186,15 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 return (
                     <ul style={{padding: 0, margin: '0px 0px 0px 4px'}}>
                     {
-                        item.pengakses?.map((i, index) => {
-                            return (
-                                <li key={index}>
-                                    <span className={classNames.pengaksesSpan}>user</span><span>: {i.userName}</span><br />
-                                    <span className={classNames.pengaksesSpan}>nama</span><span>: {i.person?.nama}</span><br />
-                                    <span className={classNames.pengaksesSpan}>nik</span><span>: {i.person?.nik}</span>
-                                </li>
-                            );
-                        })
+                        // item.pengakses?.map((i, index) => {
+                        //     return (
+                        //         <li key={index}>
+                        //             <span className={classNames.pengaksesSpan}>user</span><span>: {i.userName}</span><br />
+                        //             <span className={classNames.pengaksesSpan}>nama</span><span>: {i.person?.nama}</span><br />
+                        //             <span className={classNames.pengaksesSpan}>nik</span><span>: {i.person?.nik}</span>
+                        //         </li>
+                        //     );
+                        // })
                     }
                     </ul>
                 ); 

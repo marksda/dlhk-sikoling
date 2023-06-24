@@ -1,19 +1,20 @@
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import cloneDeep from "lodash.clonedeep";
-import { IAuthor, useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
+import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useId } from "@fluentui/react-hooks";
 import { useGetDaftarHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IOtoritas } from "../../features/entity/otoritas";
 
 interface IDataListAuthorityUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemAuthority = {key: string|null;} & Partial<IAuthor>;
+type IItemAuthority = {key: string|null;} & Partial<IOtoritas>;
 const stackTokens = { childrenGap: 8 };
 const iconClass = mergeStyles({
     fontSize: 16,
@@ -89,7 +90,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

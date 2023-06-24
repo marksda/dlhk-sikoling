@@ -1,13 +1,14 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarJabatanByFiltersQuery, useGetTotalCountJabatanQuery } from "../../features/repository/service/jabatan-api-slice";
-import { IJabatan } from "../../features/repository/ssot/jabatan-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IJabatan } from "../../features/entity/jabatan";
+
 
 interface IDataListJabatanFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemJabatan = {key: string|null;} & Partial<IJabatan>;
@@ -79,7 +80,7 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
