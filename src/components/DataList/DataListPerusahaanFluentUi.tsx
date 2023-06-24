@@ -11,7 +11,7 @@ import cloneDeep from "lodash.clonedeep";
 import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
 import { IDokumenAktaPendirian } from "../../features/dokumen/dokumen-akta-pendirian-slice";
-import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";

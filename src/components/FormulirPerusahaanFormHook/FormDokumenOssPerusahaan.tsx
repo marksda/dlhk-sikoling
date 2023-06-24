@@ -7,7 +7,7 @@ import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/c
 // import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
 import { IDokumen } from "../../features/dokumen/dokumen-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { useUpdateRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/register-perusahaan-api-slice";
 import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 

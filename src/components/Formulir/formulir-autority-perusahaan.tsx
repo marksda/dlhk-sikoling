@@ -5,7 +5,7 @@ import { z } from "zod";
 import { AutorityPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useGetAllRegisterPerusahaanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { useGetAllRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { useGetAllAuthorisasiQuery } from "../../features/security/authorization-api-slice";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";

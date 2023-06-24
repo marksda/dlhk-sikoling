@@ -2,7 +2,7 @@ import { IDropdownOption, Label, PrimaryButton, Stack } from "@fluentui/react";
 import { motion } from "framer-motion";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
+import { useGetAllModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { contentStyles, duration, ISubFormPerusahaanProps, labelStyle, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 

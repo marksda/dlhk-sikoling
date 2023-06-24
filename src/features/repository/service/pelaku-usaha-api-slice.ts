@@ -1,7 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IPelakuUsaha } from "./pelaku-usaha-slice";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IPelakuUsaha } from "../../entity/pelaku-usaha";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarPelakuUsaha = IPelakuUsaha[];
 
@@ -37,7 +37,7 @@ export const PelakuUsahaApiSlice = createApi({
                 },
                 invalidatesTags: (result, error, id) => [{ type: 'PelakuUsaha', id }]
             }),
-            getDaftarPelakuUsahaByFilters: builder.query<daftarPelakuUsaha, IQueryParams>({
+            getDaftarPelakuUsahaByFilters: builder.query<daftarPelakuUsaha, IQueryParamFilters>({
                 query: (queryParams) => `pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -49,7 +49,7 @@ export const PelakuUsahaApiSlice = createApi({
                     ]:
                     [{type: 'PelakuUsaha', id: 'LIST'}],
             }),
-            getTotalCountPelakuUsaha: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountPelakuUsaha: builder.query<number, qFilters>({
                 query: (queryFilters) => `pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

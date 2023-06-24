@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IModelPerizinan } from "../entity/model-perizinan";
-import { IQueryParamFilters, qFilters } from "../entity/query-param-filters";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IModelPerizinan } from "../../entity/model-perizinan";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 
 type daftarModelPerizinan = IModelPerizinan[];

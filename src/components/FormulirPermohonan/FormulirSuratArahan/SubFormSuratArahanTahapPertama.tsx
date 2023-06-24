@@ -6,7 +6,7 @@ import { useFormContext, UseFormSetError, useWatch } from "react-hook-form";
 import { Controller } from "react-hook-form/dist/controller";
 import { useAppSelector } from "../../../app/hooks";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../../features/repository/service/register-perusahaan-api-slice";
 import { IRegisterPerusahaan } from "../../../features/perusahaan/register-perusahaan-slice";
 import { contentStyles, durationAnimFormSuratArahan, labelStyle, stackTokens, subLabelStyle, variantAnimSuratArahan } from "./interfacePermohonanSuratArahan";
 

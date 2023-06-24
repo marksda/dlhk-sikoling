@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IPerson } from "../repository/ssot/person-slice";
-import { IPerusahaan } from "./perusahaan-slice";
-import { IRegisterPerusahaan } from "./register-perusahaan-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
+import { IPerson } from "../../entity/person";
+import { IPerusahaan } from "../../entity/perusahaan";
 
 type daftarRegisterPerusahaan = IRegisterPerusahaan[];
 
@@ -64,7 +64,7 @@ export const RegisterPerusahaanApiSlice = createApi({
                     // let id = result?.id;
                     return [{type: 'RegisterPerusahaanByIdLinkKepemilikan', id: id}]},
             }),
-            getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, IQueryParams>({
+            getAllRegisterPerusahaan: builder.query<daftarRegisterPerusahaan, IQueryParamFilters>({
                 query: (queryParams) => `register_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -76,7 +76,7 @@ export const RegisterPerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'RegisterPerusahaan', id: 'LIST'}],
             }),
-            getTotalCountRegisterPerusahaan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountRegisterPerusahaan: builder.query<number, qFilters>({
                 query: (queryFilters) => `register_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
             isEksisRegisterPerusahaan: builder.query<boolean, string|null>({

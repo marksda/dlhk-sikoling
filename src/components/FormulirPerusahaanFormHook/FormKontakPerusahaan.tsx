@@ -4,7 +4,7 @@ import { FC, useCallback, useState } from "react";
 import { SubmitHandler, UseFormSetError, useWatch } from "react-hook-form";
 import { regexpEmail, regexpNomorTelepone } from "../../features/config/config";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
-import { useAddRegisterPerusahaanMutation } from "../../features/perusahaan/register-perusahaan-api-slice";
+import { useAddRegisterPerusahaanMutation } from "../../features/repository/service/register-perusahaan-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, contentStyles, duration, ISubFormPerusahaanProps, labelStyle, labelTitleBack, stackTokens, subLabelStyle, variantAnimPerusahaan } from "./InterfacesPerusahaan";
 

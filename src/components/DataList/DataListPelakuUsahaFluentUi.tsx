@@ -5,8 +5,8 @@ import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IKategoriFlowLog, useGetDaftarKategoriFlowLogByFiltersQuery, useGetTotalCountKategoriLogQuery } from "../../features/log/kategori-flow-log-api-slice";
 import { IPelakuUsaha } from "../../features/perusahaan/pelaku-usaha-slice";
-import { useGetDaftarPelakuUsahaByFiltersQuery, useGetTotalCountPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
-import { useGetAllSkalaUsahaQuery } from "../../features/perusahaan/skala-usaha-api-slice";
+import { useGetDaftarPelakuUsahaByFiltersQuery, useGetTotalCountPelakuUsahaQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
+import { useGetAllSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
 
 interface IDataListPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParams;

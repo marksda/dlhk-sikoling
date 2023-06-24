@@ -2,8 +2,8 @@ import { IDropdownStyles, IStackTokens, ITextFieldStyles, Label, PrimaryButton, 
 import { FC, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
-import { IModelPerizinan, useGetAllModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
-import { IKategoriPelakuUsaha, IPelakuUsaha, useGetAllKategoriPelakuUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
+import { IModelPerizinan, useGetAllModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
+import { IKategoriPelakuUsaha, IPelakuUsaha, useGetAllKategoriPelakuUsahaQuery, useGetPelakuUsahaByKategoriPelakuUsahaQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { AktaGroup } from "../AktaGroup/AktaGroup";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";

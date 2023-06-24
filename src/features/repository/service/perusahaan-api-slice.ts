@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IPerusahaan } from "./perusahaan-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IPerusahaan } from "../../entity/perusahaan";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarPerusahaan = IPerusahaan[];
 
@@ -115,7 +115,7 @@ export const PerusahaanApiSlice = createApi({
             isEksisPerusahaan: builder.query<boolean, string|null>({
                 query: (idPerusahaan) => `perusahaan/is_eksis?id=${idPerusahaan}`,
             }),
-            getAllRegisterPerusahaan: builder.query<daftarPerusahaan, IQueryParams>({
+            getAllRegisterPerusahaan: builder.query<daftarPerusahaan, IQueryParamFilters>({
                 query: (queryParams) => `perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -127,7 +127,7 @@ export const PerusahaanApiSlice = createApi({
                     ]:
                     [{type: 'Perusahaan', id: 'LIST'}],
             }),
-            getTotalCountRegisterPerusahaan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountRegisterPerusahaan: builder.query<number, qFilters>({
                 query: (queryFilters) => `perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

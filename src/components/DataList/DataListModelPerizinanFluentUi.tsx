@@ -1,6 +1,6 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IModelPerizinan, useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/perusahaan/model-perizinan-api-slice";
+import { IModelPerizinan, useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";

@@ -4,7 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
-import { useDeleteLinkKepemilikanRegisterPerusahaanMutation } from "../../../features/perusahaan/register-perusahaan-api-slice";
+import { useDeleteLinkKepemilikanRegisterPerusahaanMutation } from "../../../features/repository/service/register-perusahaan-api-slice";
 import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUi";
 
 // const containerDivStyles: React.CSSProperties = {    

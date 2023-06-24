@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { ISkalaUsaha } from "../entity/skala-usaha";
-import { IQueryParamFilters } from "../entity/query-param-filters";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { ISkalaUsaha } from "../../entity/skala-usaha";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarSkalaUsaha = ISkalaUsaha[];
 
@@ -63,7 +63,8 @@ export const SkalaUsahaApiSlice = createApi({
                     ]:
                     [{type: 'SkalaUsaha', id: 'LIST'}],
             }),
-            getTotalCountSkalaUsaha: builder.query<number, Pick<IQueryParamFilters, "filters">>({
+            // getTotalCountSkalaUsaha: builder.query<number, Pick<IQueryParamFilters, "filters">>({
+            getTotalCountSkalaUsaha: builder.query<number, qFilters>({
                 query: (queryFilters) => `skala_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

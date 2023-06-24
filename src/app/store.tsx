@@ -23,13 +23,13 @@ import { AuthorizationApiSlice } from "../features/security/authorization-api-sl
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
-import { ModelPerizinanApiSlice } from "../features/perusahaan/model-perizinan-api-slice"; 
-import { SkalaUsahaApiSlice } from "../features/perusahaan/skala-usaha-api-slice";
+import { ModelPerizinanApiSlice } from "../features/repository/service/model-perizinan-api-slice"; 
+import { SkalaUsahaApiSlice } from "../features/repository/service/skala-usaha-api-slice";
 // import kategoriPelakuUsahaReducer from "../features/perusahaan/kategori-pelaku-usaha-slice";
 import { KategoriPelakuUsahaApiSlice } from "../features/repository/service/kategori-pelaku-usaha-api-slice";
-import { PelakuUsahaApiSlice } from "../features/perusahaan/pelaku-usaha-api-slice";
+import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
-import { RegisterPerusahaanApiSlice } from "../features/perusahaan/register-perusahaan-api-slice";
+import { RegisterPerusahaanApiSlice } from "../features/repository/service/register-perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/dokumen/kategori-dokumen-slice";
 import { KategoriDokumenApiSlice } from "../features/dokumen/kategori-dokumen-api-slice";
 import dokumenReducer from "../features/dokumen/dokumen-slice";
