@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { ISimpleResponse } from "../message/simple-response-slice";
-import { IPerson } from "../person/person-slice";
+import { IPerson } from "../repository/ssot/person-slice";
 import { IQueryParams } from "../config/query-params-slice";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { ICredential } from "../entity/credential";

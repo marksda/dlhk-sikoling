@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseRestAPIUrl, defaultKecamatan } from "../config/config";
-import { IDesa } from "./desa-slice";
+import { baseRestAPIUrl, defaultKecamatan } from "../../config/config";
+import { IDesa } from "../../entity/desa";
 
 
 export const DesaApiSlice = createApi({

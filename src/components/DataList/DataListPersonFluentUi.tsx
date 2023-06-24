@@ -1,9 +1,9 @@
 import { FC, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IPerson } from "../../features/person/person-slice";
+import { IPerson } from "../../features/repository/ssot/person-slice";
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/person/person-api-slice";
+import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/repository/service/person-api-slice";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useId } from "@fluentui/react-hooks";
 

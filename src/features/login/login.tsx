@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { setPropinsi } from '../propinsi/propinsi-slice'
-import { useGetAllPropinsiQuery } from "../propinsi/propinsi-api-slice"
+import { setPropinsi } from '../repository/ssot/propinsi-slice'
+import { useGetAllPropinsiQuery } from "../repository/service/propinsi-api-slice"
 
 import { 
     DefaultEffects, ActionButton, IIconProps, Label, PrimaryButton, TextField, Stack, IStackProps, IStackStyles 

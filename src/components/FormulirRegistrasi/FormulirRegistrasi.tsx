@@ -6,7 +6,7 @@ import {
 import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from '../../sidoarjo.svg';
-import { IPerson } from "../../features/person/person-slice";
+import { IPerson } from "../../features/repository/ssot/person-slice";
 import { useAppSelector } from "../../app/hooks";
 import {  HookMessageBarProps } from "../../app/HookFormProps";
 import { ISlideSubFormRegistrasiParam } from "./InterfaceRegistrasiForm";

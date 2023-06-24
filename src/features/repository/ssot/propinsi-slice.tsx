@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { defaultPropinsi } from "../config/config";
-import { IPropinsi } from "../entity/propinsi";
+import { defaultPropinsi } from "../../config/config";
+import { IPropinsi } from "../../entity/propinsi";
 
 const initialState: IPropinsi = defaultPropinsi;
 

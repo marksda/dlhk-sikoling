@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IPropinsi } from "./propinsi-slice";
-import { baseRestAPIUrl, defaultHalaman as halaman } from "../../features/config/config";
+import { baseRestAPIUrl, defaultHalaman as halaman } from "../../config/config";
+import { IPropinsi } from "../../entity/propinsi";
 
 // const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
 

@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IPerson } from "./person-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IPerson } from "../../entity/person";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarPerson = IPerson[];
 
@@ -41,7 +41,7 @@ export const PersonApiSlice = createApi({
                     return [{type: 'Person', id: nik}]
                 },
             }),
-            getAllPerson: builder.query<daftarPerson, IQueryParams>({
+            getAllPerson: builder.query<daftarPerson, IQueryParamFilters>({
                 query: (queryParams) => `person?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -53,7 +53,7 @@ export const PersonApiSlice = createApi({
                     ]:
                     [{type: 'Person', id: 'LIST'}],
             }),
-            getTotalCountPerson: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountPerson: builder.query<number, qFilters>({
                 query: (queryFilters) => `person/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

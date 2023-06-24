@@ -1,7 +1,7 @@
-import { IDesa } from "../desa/desa-slice";
+import { IDesa } from "../repository/ssot/desa-slice";
 import { IKabupaten } from "../kabupaten/kabupaten-slice";
 import { IKecamatan } from "../kecamatan/kecamatan-slice";
-import { IPropinsi } from "../propinsi/propinsi-slice";
+import { IPropinsi } from "../repository/ssot/propinsi-slice";
 import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
 import { IDatePickerStrings } from "@fluentui/react";

@@ -2,13 +2,13 @@ import { FC } from "react";
 import { IDropdownStyles, IStackTokens, ITextFieldStyles, PrimaryButton, Stack } from "@fluentui/react";
 import { AlamatGroup } from "../AlamatGroup/AlamatGroup";
 import { useForm } from "react-hook-form";
-import { IPerson } from "../../features/person/person-slice";
+import { IPerson } from "../../features/repository/ssot/person-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
 import { defaultDesa, defaultJenisKelamin, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { IContainerUploadStyle, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
-import { useAddPersonMutation } from "../../features/person/person-api-slice";
+import { useAddPersonMutation } from "../../features/repository/service/person-api-slice";
 
 
 const stackTokens: IStackTokens = { childrenGap: 8 };

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IDesa } from "../desa/desa-slice";
-import { IKabupaten } from "../kabupaten/kabupaten-slice";
-import { IKecamatan } from "../kecamatan/kecamatan-slice";
-import { IPropinsi } from "../propinsi/propinsi-slice";
-import { IAlamat } from "../entity/alamat";
+import { IAlamat } from "../../entity/alamat";
+import { IPropinsi } from "../../entity/propinsi";
+import { IKabupaten } from "../../entity/kabupaten";
+import { IKecamatan } from "../../entity/kecamatan";
+import { IDesa } from "../../entity/desa";
 
 const initialState: IAlamat = {
     propinsi: null,

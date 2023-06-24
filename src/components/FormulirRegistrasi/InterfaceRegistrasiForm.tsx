@@ -1,6 +1,6 @@
 import { IIconProps } from "@fluentui/react";
 import { Control, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
-import { IPerson } from "../../features/person/person-slice";
+import { IPerson } from "../../features/repository/ssot/person-slice";
 
 export const durationAnimFormRegistrasi: number = 0.5;
 

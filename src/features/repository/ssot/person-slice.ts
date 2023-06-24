@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import cloneDeep from "lodash.clonedeep";
-import { IAlamat } from "../alamat/alamat-slice";
-import { IKontak } from "../alamat/kontak-slice";
-import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
-import { IPerson } from "../entity/person";
+import { IPerson } from "../../entity/person";
+import { IJenisKelamin } from "../../entity/jenis-kelamin";
+import { IAlamat } from "../../entity/alamat";
+import { IKontak } from "../../entity/kontak";
 
 const initialState: IPerson = {
     nik: null,

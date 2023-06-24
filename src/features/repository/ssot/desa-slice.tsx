@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { defaultDesa } from "../config/config";
-import { IDesa } from "../entity/desa";
+import { defaultDesa } from "../../config/config";
+import { IDesa } from "../../entity/desa";
 
 
 const initialState: IDesa = defaultDesa;

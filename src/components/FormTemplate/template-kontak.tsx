@@ -6,8 +6,8 @@ import { array, object, TypeOf, z } from "zod";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAllJenisKelaminQuery } from "../../features/jenis-kelamin/jenis-kelamin-api-slice";
 import { IJenisKelamin } from "../../features/jenis-kelamin/jenis-kelamin-slice";
-import { useGetPersonByNikQuery } from "../../features/person/person-api-slice";
-import { setNama, setNik, setPerson, setPersonAlamat, setPersonJenisKelamin } from "../../features/person/person-slice";
+import { useGetPersonByNikQuery } from "../../features/repository/service/person-api-slice";
+import { setNama, setNik, setPerson, setPersonAlamat, setPersonJenisKelamin } from "../../features/repository/ssot/person-slice";
 import { FileUpload } from "../UploadFiles/FileUpload";
 import { TemplateAlamat } from "./template-alamat";
 
