@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { IQueryParamFilters } from "../entity/query-param-filters";
 
 export interface IKategoriPermohonan {
     id: string|null;
@@ -45,7 +45,7 @@ export const KategoriPermohonanApiSlice = createApi({
                     return [{type: 'KategoriPermohonan', id: idKategoriPermohonan}]
                 },
             }),
-            getDaftarKategoriPermohonanByFilters: builder.query<daftarKategoriPermohonan, IQueryParams>({
+            getDaftarKategoriPermohonanByFilters: builder.query<daftarKategoriPermohonan, IQueryParamFilters>({
                 query: (queryParams) => `kategori_permohonan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -57,7 +57,7 @@ export const KategoriPermohonanApiSlice = createApi({
                     ]:
                     [{type: 'KategoriPermohonan', id: 'LIST'}],
             }),
-            getTotalCountKategoriPermohonan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountKategoriPermohonan: builder.query<number, Pick<IQueryParamFilters, "filters">>({
                 query: (queryFilters) => `kategori_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         };

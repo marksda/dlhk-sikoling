@@ -1,12 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { IModelPerizinan } from "../entity/model-perizinan";
+import { IQueryParamFilters, qFilters } from "../entity/query-param-filters";
 
-export interface IModelPerizinan {
-    id: string|null;
-    nama: string|null;
-    singkatan: string|null;
-};
 
 type daftarModelPerizinan = IModelPerizinan[];
 
@@ -46,7 +42,7 @@ export const ModelPerizinanApiSlice = createApi({
                     return [{ type: 'ModelPerizinan', id }]
                 },
             }),
-            getAllModelPerizinan: builder.query<daftarModelPerizinan, IQueryParams>({
+            getAllModelPerizinan: builder.query<daftarModelPerizinan, IQueryParamFilters>({
                 query: (queryParams) => `model_perizinan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -58,7 +54,7 @@ export const ModelPerizinanApiSlice = createApi({
                     ]:
                     [{type: 'ModelPerizinan', id: 'LIST'}],
             }),
-            getTotalCountModelPerizinan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountModelPerizinan: builder.query<number, qFilters>({
                 query: (queryFilters) => `model_perizinan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

@@ -1,17 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPerson } from "../person/person-slice";
-import { IPerusahaan } from "./perusahaan-slice";
-import { IAuthor } from "../security/authorization-api-slice";
+import { IRegisterPerusahaan } from "../entity/register-perusahaan";
+import { IPerson } from "../entity/person";
+import { IPerusahaan } from "../entity/perusahaan";
 
-export interface IRegisterPerusahaan {
-    id: string|null,
-    tanggalRegistrasi: string|null;
-    kreator: IPerson|null;
-    verifikator: IPerson|null;
-    perusahaan: IPerusahaan|null;
-    pengakses: IAuthor[]|null;
-};
+
 
 const initialState: IRegisterPerusahaan = {
     id: null,
@@ -19,7 +12,6 @@ const initialState: IRegisterPerusahaan = {
     kreator: null,
     verifikator: null,
     perusahaan: null,
-    pengakses: null,
 };
 
 export const registerPerusahaanSlice = createSlice({
@@ -36,12 +28,6 @@ export const registerPerusahaanSlice = createSlice({
         setIdRegisterPerusahaan: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
         },
-        setKreatorRegisterPerusahaan: (state, action: PayloadAction<IPerson>) => {
-            state.kreator = cloneDeep(action.payload);
-        },
-        setVerifikatorRegisterPerusahaan: (state, action: PayloadAction<IPerson>) => {
-            state.verifikator = cloneDeep(action.payload);
-        },
         setPerusahaanRegisterPerusahaan: (state, action: PayloadAction<IPerusahaan>) => {
             state.perusahaan = cloneDeep(action.payload);
         },
@@ -49,8 +35,7 @@ export const registerPerusahaanSlice = createSlice({
 });
 
 export const { 
-    setIdRegisterPerusahaan, setRegisterPerusahaan, setKreatorRegisterPerusahaan, 
-    setVerifikatorRegisterPerusahaan, setPerusahaanRegisterPerusahaan,
+    setIdRegisterPerusahaan, setRegisterPerusahaan, setPerusahaanRegisterPerusahaan,
 } = registerPerusahaanSlice.actions;
 
 export default registerPerusahaanSlice.reducer;

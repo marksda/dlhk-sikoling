@@ -1,30 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPerson } from "../person/person-slice";
-import { IPerusahaan } from "../perusahaan/perusahaan-slice";
-import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
-import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
 import { IDokumen } from "./dokumen-slice";
 import { IStatusDokumen } from "./status-dokumen-slice";
+import { IRegisterDokumen } from "../entity/register-dokumen";
+import { IRegisterPerusahaan } from "../entity/register-perusahaan";
+import { IOtoritas } from "../entity/otoritas";
 
-export interface IRegisterDokumen {
-    id: string|null;
-    dokumen: any|null;
-    perusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
-    statusDokumen: Partial<IStatusDokumen>|null;
-    lokasiFile: string|null;
-    tanggalRegistrasi: string|null;
-    uploader: (Pick<IPerson, 'nik'>& Partial<IPerson>)|null;
-};
 
 const initialState: IRegisterDokumen = {
     id: null,
     dokumen: null,
     perusahaan: null,
-    statusDokumen: null,
     lokasiFile: null,
+    statusDokumen: null,
     tanggalRegistrasi: null,
-    uploader: null
+    uploader: null,
+    statusVerified: null
 };
 
 export const registerDokumenSlice = createSlice({
@@ -53,7 +44,7 @@ export const registerDokumenSlice = createSlice({
         setTanggalRegistrasiRegisterDokumen: (state, action: PayloadAction<string>) => {
             state.tanggalRegistrasi = action.payload;
         },
-        setUploaderRegisterDokumen: (state, action: PayloadAction<Pick<IPerson, 'nik'>& Partial<IPerson>>) => {
+        setUploaderRegisterDokumen: (state, action: PayloadAction<Partial<IOtoritas>>) => {
             state.uploader = cloneDeep(action.payload);
         },
     },

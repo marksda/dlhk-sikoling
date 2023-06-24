@@ -1,9 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IJabatan } from "../entity/jabatan";
 
-export interface IJabatan {
-    id: string|null;
-    nama: string|null;
-}
 
 const initialState: IJabatan = {
     id: '',
