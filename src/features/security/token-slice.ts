@@ -1,15 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IToken } from "../entity/token";
 
-
-export interface IToken {
-    userId: string|null;
-    userName: string|null;
-    userEmail: string|null;    
-    hakAkses: string|null,
-    accessToken: string|null;
-    refreshToken: string|null;
-    expireOn: string|null;
-};
 
 export interface IResponseStatusToken {
     status: string;
@@ -25,7 +16,7 @@ JSON.parse(localStorage.getItem('token') as string) :
     hakAkses: null,
     accessToken: null,
     refreshToken: null,
-    expireOn: null,
+    expireIn: null,
 };
 
 export const tokenSlice = createSlice({
@@ -38,7 +29,7 @@ export const tokenSlice = createSlice({
             state.userEmail = action.payload.userEmail;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
-            state.expireOn = action.payload.expireOn;
+            state.expireIn = action.payload.expireIn;
             state.hakAkses = action.payload.hakAkses;
         },
         setUserId: (state, action: PayloadAction<string>) => {
@@ -62,7 +53,7 @@ export const tokenSlice = createSlice({
             state.userEmail = null;
             state.accessToken = null;
             state.refreshToken = null;
-            state.expireOn = null;
+            state.expireIn = null;
             state.hakAkses = null;
         },
     },

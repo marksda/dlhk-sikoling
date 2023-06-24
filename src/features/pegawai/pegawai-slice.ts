@@ -1,15 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IJabatan } from "../jabatan/jabatan-slice";
-import { IPerson } from "../person/person-slice";
-import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
+import { IPegawai } from "../entity/pegawai";
+import { IRegisterPerusahaan } from "../entity/register-perusahaan";
+import { IPerson } from "../entity/person";
+import { IJabatan } from "../entity/jabatan";
 
-export interface IPegawai {
-    id: string|null;
-    perusahaan: Partial<IRegisterPerusahaan>|null;
-    person: Partial<IPerson>|null;
-    jabatan: Partial<IJabatan>|null;
-};
+
 
 const initialState: IPegawai = {
     id: null,

@@ -50,7 +50,7 @@ import { KategoriFlowLogApiSlice } from "../features/log/kategori-flow-log-api-s
 import { StatusWaliPermohonanApiSlice } from "../features/permohonan/status-wali-api-slice";
 import { PegawaiApiSlice } from "../features/pegawai/pegawai-api-slice";
 import { PosisiTahapPemberkasanApiSlice } from "../features/permohonan/posisi-tahap-pemberkasan-api-slice";
-import { HakAksesApiSlice } from "../features/repository/hak-akses-api-slice";
+import { HakAksesApiSlice } from "../features/repository/service/hak-akses-api-slice";
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice";
 // import { loginApi } from "../services/sikoling-api"

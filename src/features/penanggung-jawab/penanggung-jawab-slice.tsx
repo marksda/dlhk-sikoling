@@ -1,17 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IJabatan } from "../jabatan/jabatan-slice";
-import { IPerson } from "../person/person-slice";
-
-export interface IPenanggungJawab {
-    id: string|null;
-    person: IPerson|null;
-    jabatan: IJabatan|null;
-}
+import { IPenanggungJawab } from "../entity/penanggung-jawab";
+import { IPerson } from "../entity/person";
+import { IJabatan } from "../entity/jabatan";
 
 const initialState: IPenanggungJawab = {
     id: null,
     person: null,
     jabatan: null,
+    registerPerusahaan: null,
 }
 
 export const PenanggungJawabSlice = createSlice({

@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
-import { IHakAkses } from "../entity/hak-akses";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IHakAkses } from "../../entity/hak-akses";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarHakAkses = IHakAkses[];
 
@@ -40,7 +40,7 @@ export const HakAksesApiSlice = createApi({
                     return [{type: 'HakAkses', id: idHakAkses}]
                 },
             }),
-            getDaftarHakAkses: builder.query<daftarHakAkses, IQueryParams>({
+            getDaftarHakAkses: builder.query<daftarHakAkses, IQueryParamFilters>({
                 query: (queryParams) => `hak_akses?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -52,7 +52,7 @@ export const HakAksesApiSlice = createApi({
                     ]:
                     [{type: 'HakAkses', id: 'LIST'}],
             }),
-            getTotalCountHakAkses: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountHakAkses: builder.query<number, qFilters>({
                 query: (queryFilters) => `hak_akses/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         };
