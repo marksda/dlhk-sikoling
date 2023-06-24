@@ -1,27 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { ISimpleResponse } from "../message/simple-response-slice";
 import { IPerson } from "../person/person-slice";
-import { ICredential } from "./authentication-slice";
 import { IQueryParams } from "../config/query-params-slice";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IHakAkses } from "../hak-akses/hak-akses-api-slice";
+import { ICredential } from "../entity/credential";
+import { IOtoritas } from "../entity/otoritas";
 
 export interface PostRegistrasi {
     credential: ICredential;
     person: IPerson;
 };
 
-export interface IAuthor {
-    id: string|null;
-    tanggal: string|null;
-    hakAkses: Partial<IHakAkses>|null;
-    person: Partial<IPerson>|null;
-    statusInternal: boolean|null;
-    userName: string|null;
-    verified: boolean|null;
-};
-
-type daftarAuthorisasi = IAuthor[];
+type daftarAuthorisasi = IOtoritas[];
 
 export const AuthorizationApiSlice = createApi({
     reducerPath: 'authorizationApi',

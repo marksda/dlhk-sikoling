@@ -3,14 +3,7 @@ import { IDesa } from "../desa/desa-slice";
 import { IKabupaten } from "../kabupaten/kabupaten-slice";
 import { IKecamatan } from "../kecamatan/kecamatan-slice";
 import { IPropinsi } from "../propinsi/propinsi-slice";
-
-export interface IAlamat {
-    propinsi: IPropinsi|null;
-    kabupaten: IKabupaten|null;
-    kecamatan: IKecamatan|null;
-    desa: IDesa|null;
-    keterangan: string|null;
-}
+import { IAlamat } from "../entity/alamat";
 
 const initialState: IAlamat = {
     propinsi: null,

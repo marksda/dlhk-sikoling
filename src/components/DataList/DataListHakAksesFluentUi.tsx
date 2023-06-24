@@ -2,7 +2,7 @@ import { FC, useCallback, useState } from "react";
 import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { IHakAkses, useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/hak-akses/hak-akses-api-slice";
+import { IHakAkses, useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/repository/hak-akses-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 

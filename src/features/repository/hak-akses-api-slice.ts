@@ -1,12 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
 import { IQueryParams } from "../config/query-params-slice";
-
-export interface IHakAkses {
-    id: string|null;
-    nama: string|null;
-    keterangan: string|null;
-};
+import { IHakAkses } from "../entity/hak-akses";
 
 type daftarHakAkses = IHakAkses[];
 

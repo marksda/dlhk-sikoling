@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface ICredential {
-    userName: string;
-    password: string;
-};
+import { ICredential } from "../entity/credential";
 
 const initialState: ICredential = {
     userName: '',

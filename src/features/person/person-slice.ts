@@ -3,16 +3,7 @@ import cloneDeep from "lodash.clonedeep";
 import { IAlamat } from "../alamat/alamat-slice";
 import { IKontak } from "../alamat/kontak-slice";
 import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
-
-
-export interface IPerson {
-    nik: string|null;
-    nama: string|null;
-    jenisKelamin: Partial<IJenisKelamin>|null;
-    alamat: Partial<IAlamat>|null;
-    kontak: Partial<IKontak>|null;
-    scanKTP: string|null;
-};
+import { IPerson } from "../entity/person";
 
 const initialState: IPerson = {
     nik: null,

@@ -1,10 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { defaultDesa } from "../config/config";
+import { IDesa } from "../entity/desa";
 
-export interface IDesa {
-    id: string|null;
-    nama: string|null;
-}
 
 const initialState: IDesa = defaultDesa;
 

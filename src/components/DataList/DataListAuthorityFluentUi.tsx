@@ -7,7 +7,7 @@ import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useId } from "@fluentui/react-hooks";
-import { useGetDaftarHakAksesQuery } from "../../features/hak-akses/hak-akses-api-slice";
+import { useGetDaftarHakAksesQuery } from "../../features/repository/hak-akses-api-slice";
 
 interface IDataListAuthorityUIProps {
     initSelectedFilters: IQueryParams;
