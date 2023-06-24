@@ -1,12 +1,13 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { ISkalaUsaha, useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
+import { useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { ISkalaUsaha } from "../../features/entity/skala-usaha";
 
 interface IDataListSkalaUsahaFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemSkalaUsaha = {key: string|null;} & Partial<ISkalaUsaha>;
@@ -79,7 +80,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

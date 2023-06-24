@@ -1,13 +1,12 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IPosisiTahapPemberkasan, useGetDaftarPosisiTahapPemberkasanByFiltersQuery, useGetTotalCountPosisiTahapPemberkasanQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 
 interface IDataListPosisiTahapPemberkasanFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemPosisiTahapPemberkasan = {key: string|null;} & Partial<IPosisiTahapPemberkasan>;
@@ -80,7 +79,7 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
     //local state
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 

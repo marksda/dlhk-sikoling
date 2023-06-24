@@ -1,6 +1,5 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
@@ -8,9 +7,10 @@ import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarKategoriPermohonanByFiltersQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 
 interface IDataListPermohonanFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemRegisterPermohonan = {key: string|null;} & Partial<IRegisterPermohonan>;
@@ -84,7 +84,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedJenisPermohonan, setSelectedJenisPermohonan] = useState<IDropdownOption|null|undefined>(null);
     const [selectedPengirim, setSelectedPengirim] = useState<IDropdownOption|null|undefined>(null);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});

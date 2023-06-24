@@ -1,14 +1,14 @@
 import { FC, useCallback, useState } from "react";
-import { IQueryParams, qFilters } from "../../features/config/query-params-slice";
-import { IPerson } from "../../features/repository/ssot/person-slice";
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/repository/service/person-api-slice";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useId } from "@fluentui/react-hooks";
+import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IPerson } from "../../features/entity/person";
 
 interface IDataListPersonFluentUIProps {
-    initSelectedFilters: IQueryParams;
+    initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
 type IItemPerson = {key: string|null;} & Partial<IPerson>;
@@ -94,7 +94,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
-    const [queryParams, setQueryParams] = useState<IQueryParams>({
+    const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
