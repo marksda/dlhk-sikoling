@@ -1,16 +1,15 @@
 import { DefaultPalette, getTheme, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import logo from '../sidoarjo.svg';
+import { onFormatDate } from "../features/config/config";
 
 
 const theme = getTheme();
 const headerStackTokens: IStackTokens = { childrenGap: 16};
 const stackStyles: IStackStyles = {
     root: {
-    //   background: '#3c8dbc',
         backgroundColor: theme.palette.themePrimary,
-        paddingLeft: 52,
-        paddingRight: 52,
+        padding: '0px 8px',
     },
 };
 const labelStyles: IStackItemStyles = {
@@ -28,7 +27,7 @@ const dateStyles: IStackItemStyles = {
 };
 
 export const Header: FC = () => {
-    const today = new Date().toLocaleDateString();
+    const today = onFormatDate(new Date());
     return (
         <Stack horizontal styles={stackStyles} tokens={headerStackTokens}>
             <Stack.Item>

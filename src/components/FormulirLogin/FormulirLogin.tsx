@@ -2,9 +2,8 @@ import {
     DefaultEffects, DefaultPalette,   
     Image, IProgressIndicatorStyles, IStackItemStyles, IStackTokens, ProgressIndicator, Stack 
 } from "@fluentui/react";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import logo from '../../sidoarjo.svg';
-import { ISlideSubFormLoginParam } from "./InterfaceLoginForm";
 import { FormEmail } from "./FormEmail";
 import { FormPassword } from "./FormPassword";
 
@@ -33,7 +32,7 @@ const containerStyles: React.CSSProperties = {
     borderTop: '2px solid #0078D7', 
     // borderRadius: 3, 
     padding: 48,
-    width: 400,
+    width: 300,
     background: 'white',
 };
 const containerLoginStackTokens: IStackTokens = { childrenGap: 5};
@@ -48,11 +47,35 @@ const labelSikolingStyles: IStackItemStyles = {
 
 
 export const FormulirLogin: FC = () => {
-    //* local state *   
-    //* local state *   
-    const [motionKey, setMotionKey] = useState<string>('email');
-    //- digunakan untuk tracking status koneksi pemrosesan di back end
+
+    const [idContentPage, setIdContentPage] = useState<string>('email');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const kontentPage = useMemo(
+        () => {
+            let konten = null;
+            switch (idContentPage) {
+                case 'email':
+                    konten = <FormEmail
+                                setMotionKey={setIdContentPage}
+                                setIsLoading={setIsLoading}
+                                />;
+                    break; 
+                case 'password':
+                    konten = 
+                        <FormPassword
+                            setMotionKey={setIdContentPage}
+                            setIsLoading={setIsLoading}
+                        />;   
+                    break;
+                default:
+                    konten = null;
+                    break;
+            }
+            return konten;
+        },
+        [idContentPage]
+    );
     
     return(
         <div style={rootContainerStyle}>
@@ -65,7 +88,7 @@ export const FormulirLogin: FC = () => {
                 )
             }
             <div style={containerStyles}>            
-                <Stack horizontal tokens={containerLoginStackTokens}>
+                <Stack horizontal tokens={containerLoginStackTokens} style={{marginBottom: 24}}>
                     <Stack.Item>
                         <Image alt='logo' width={42} height={42} src={logo} />
                     </Stack.Item>
@@ -73,40 +96,8 @@ export const FormulirLogin: FC = () => {
                         SIKOLING   
                     </Stack.Item>  
                 </Stack>            
-                <div style={{height: 8}}></div>
-                {                
-                    getSlideSubFormLogin({
-                        motionKey, 
-                        setMotionKey,
-                        setIsLoading
-                    })
-                }             
+                {kontentPage}             
             </div>
         </div>        
     );
-};
-
-const getSlideSubFormLogin = (
-    {motionKey, setMotionKey, setIsLoading}: ISlideSubFormLoginParam) => {
-    let konten = null;
-    switch (motionKey) {
-        case 'email':
-            konten = 
-            <FormEmail
-                setMotionKey={setMotionKey}
-                setIsLoading={setIsLoading}
-            />;
-            break; 
-        case 'password':
-            konten = 
-                <FormPassword
-                    setMotionKey={setMotionKey}
-                    setIsLoading={setIsLoading}
-                />;   
-            break;
-        default:
-            konten = null;
-            break;
-    }
-    return konten;
 };

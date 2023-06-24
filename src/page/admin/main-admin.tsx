@@ -1,5 +1,5 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluentUI";
@@ -104,20 +104,49 @@ export const AdminPage: FC = () => {
   //react router hook variable
   const navigate = useNavigate();
 
-  useEffect(
-      () => {       
-        switch (token.hakAkses) {
-          case 'Administrator':
+  const kontentPage = useMemo(
+    () => {
+        let konten = null;
+        switch (idContentPage) {
+          case 'Dashboard':
+            konten =             
+              <DashboardBackEnd />;
+            break; 
+          case 'Permohonan':
+              konten = <PermohonanBackEnd />;   
               break;
-          case 'Umum':
-              navigate("/pemrakarsa");
+          case 'Pelaporan':
+              konten = <KontenPelaporanPemrakarsa />;   
               break;
-          default:
-            navigate("/"); 
+          case 'Master data':
+            konten = <MasterBackEnd />;   
             break;
-        }  
-      },
-      [token]
+          case 'Pengaturan':
+            konten = <span>Settings</span>;   
+            break;
+          default:
+              konten = <KontenDashboardPemrakarsa />;
+              break;
+        }
+        return konten;
+    },
+    [idContentPage]
+  );
+
+  useEffect(
+    () => {       
+      switch (token.hakAkses) {
+        case 'Administrator':
+            break;
+        case 'Umum':
+            navigate("/pemrakarsa");
+            break;
+        default:
+          navigate("/"); 
+          break;
+      }  
+    },
+    [token]
   );
 
   return (        
@@ -138,7 +167,7 @@ export const AdminPage: FC = () => {
               />
             </Stack.Item>
             <Stack.Item grow className={classNames.mainKonten}>
-              {getContentPage(idContentPage)}
+              {kontentPage}
             </Stack.Item>
           </Stack>
         </Stack.Item>
@@ -147,30 +176,4 @@ export const AdminPage: FC = () => {
     }
     </>
   );
-};
-
-const getContentPage = (idContentPage: string) => {
-    let konten = null;
-    switch (idContentPage) {
-        case 'Dashboard':
-            konten =             
-              <DashboardBackEnd />;
-            break; 
-        case 'Permohonan':
-            konten = <PermohonanBackEnd />;   
-            break;
-        case 'Pelaporan':
-            konten = <KontenPelaporanPemrakarsa />;   
-            break;
-        case 'Master data':
-          konten = <MasterBackEnd />;   
-          break;
-        case 'Pengaturan':
-          konten = <span>Settings</span>;   
-          break;
-        default:
-            konten = <KontenDashboardPemrakarsa />;
-            break;
-    }
-    return konten;
 };

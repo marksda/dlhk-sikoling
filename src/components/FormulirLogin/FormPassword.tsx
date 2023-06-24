@@ -33,47 +33,7 @@ export const FormPassword: FC<ISubFormLoginProps> = ({setMotionKey, setIsLoading
     const [errorPassword, setErrorPassword] = useState<string|undefined>(undefined);
 
     //rtk query
-    const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();
-    // const [getToken, { data: dataToken, isLoading: isLoadingGetToken}] = useGetTokenMutation();
-
-    // console.log(dataToken, isLoadingGetToken);
-
-    //redux action creator
-    // const dispatch = useAppDispatch();
-
-    //react router
-    // const navigate = useNavigate();
-
-    // useEffect(
-    //     () => {
-    //         if(credential.password != '') {
-    //             getToken(credential);
-    //         }
-    //     },
-    //     [credential]
-    // );
-
-    // useEffect(
-    //     () => {
-    //         setIsLoading(false); 
-    //         if(dataToken != undefined && dataToken.status == 'oke') {
-    //             localStorage.setItem('token', JSON.stringify(dataToken.token));
-    //             dispatch(resetCredential());
-    //             dispatch(setToken(dataToken.token));
-    //             switch (dataToken.token.hakAkses) {
-    //                 case 'Umum':
-    //                     navigate("/pemrakarsa");
-    //                     break;   
-    //                 case 'admin':
-    //                     navigate("/admin");
-    //                     break;                
-    //                 default:
-    //                     break;
-    //             }
-    //         }
-    //     },
-    //     [dataToken]
-    // );
+    const [getToken, {isLoading: isLoadingGetToken}] = useGetTokenMutation();    
 
     useEffect(
         () => {
