@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPelakuUsaha } from "../entity/pelaku-usaha";
-import { IKategoriPelakuUsaha } from "../entity/kategori-pelaku-usaha";
+import { IPelakuUsaha } from "../../entity/pelaku-usaha";
+import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
 
 
 const initialState: IPelakuUsaha = {

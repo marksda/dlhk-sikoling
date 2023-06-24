@@ -10,7 +10,7 @@ import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/perusahaan
 import { useGetDaftarPelakuUsahaByFiltersQuery } from "../../features/perusahaan/pelaku-usaha-api-slice";
 import find from "lodash.find";
 import { IPelakuUsaha } from "../../features/perusahaan/pelaku-usaha-slice";
-import { IKategoriPelakuUsaha } from "../../features/perusahaan/kategori-pelaku-usaha-slice";
+import { IKategoriPelakuUsaha } from "../../features/repository/ssot/kategori-pelaku-usaha-slice";
 import { parseNpwp } from "../../features/config/helper-function";
 
 

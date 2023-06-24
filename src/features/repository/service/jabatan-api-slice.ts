@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IJabatan } from "./jabatan-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IJabatan } from "../../entity/jabatan";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarJabatan = IJabatan[];
 
@@ -41,7 +41,7 @@ export const JabatanApiSlice = createApi({
                     return [{type: 'Jabatan', id: idJabatan}]
                 },
             }),
-            getDaftarJabatanByFilters: builder.query<daftarJabatan, IQueryParams>({
+            getDaftarJabatanByFilters: builder.query<daftarJabatan, IQueryParamFilters>({
                 query: (queryParams) => `jabatan_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -53,7 +53,7 @@ export const JabatanApiSlice = createApi({
                     ]:
                     [{type: 'Jabatan', id: 'LIST'}],
             }),
-            getTotalCountJabatan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountJabatan: builder.query<number, qFilters>({
                 query: (queryFilters) => `jabatan_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         };

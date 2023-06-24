@@ -1,16 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
-import { IPerusahaan } from "../entity/perusahaan";
-import { IModelPerizinan } from "../entity/model-perizinan";
-import { ISkalaUsaha } from "../entity/skala-usaha";
-import { IPelakuUsaha } from "../entity/pelaku-usaha";
-import { IAlamat } from "../entity/alamat";
-import { IKontak } from "../entity/kontak";
+import { IRegisterDokumen } from "../../entity/register-dokumen";
+import { IPerusahaan } from "../../entity/perusahaan";
+import { IModelPerizinan } from "../../entity/model-perizinan";
+import { ISkalaUsaha } from "../../entity/skala-usaha";
+import { IPelakuUsaha } from "../../entity/pelaku-usaha";
+import { IAlamat } from "../../entity/alamat";
+import { IKontak } from "../../entity/kontak";
 
 type IDaftarRegisterDokumen = Array<IRegisterDokumen>;
-
-
 
 const initialState: IPerusahaan = {
     id: null,

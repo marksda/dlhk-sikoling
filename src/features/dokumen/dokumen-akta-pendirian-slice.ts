@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPegawai } from "../pegawai/pegawai-slice";
+import { IPegawai } from "../repository/ssot/pegawai-slice";
 import { IDokumen } from "./dokumen-slice";
 
 export interface IDokumenAktaPendirian extends IDokumen {

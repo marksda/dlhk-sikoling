@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-import { baseRestAPIUrl } from "../config/config";
-import { IJenisKelamin } from "./jenis-kelamin-slice";
+import { baseRestAPIUrl } from "../../config/config";
+import { IJenisKelamin } from "../../entity/jenis-kelamin";
 
 export const JenisKelaminApiSlice = createApi({
     reducerPath: 'jenisKelaminApi',

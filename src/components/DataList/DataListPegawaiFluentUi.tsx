@@ -3,8 +3,8 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IPegawai } from "../../features/pegawai/pegawai-slice";
-import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
+import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
+import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/repository/service/pegawai-api-slice";
 import { useId } from "@fluentui/react-hooks";
 import { invertParseNpwp } from "../../features/config/helper-function";
 

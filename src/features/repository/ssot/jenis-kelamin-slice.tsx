@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IJenisKelamin } from "../entity/jenis-kelamin";
+import { IJenisKelamin } from "../../entity/jenis-kelamin";
 
 
 const initialState: IJenisKelamin = {

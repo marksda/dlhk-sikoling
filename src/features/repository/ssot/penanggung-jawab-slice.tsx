@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IPenanggungJawab } from "../entity/penanggung-jawab";
-import { IPerson } from "../entity/person";
-import { IJabatan } from "../entity/jabatan";
+import { IPenanggungJawab } from "../../entity/penanggung-jawab";
+import { IPerson } from "../../entity/person";
+import { IJabatan } from "../../entity/jabatan";
 
 const initialState: IPenanggungJawab = {
     id: null,

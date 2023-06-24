@@ -3,7 +3,7 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/pegawai/pegawai-api-slice";
+import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/repository/service/pegawai-api-slice";
 import { useId } from "@fluentui/react-hooks";
 import { IDokumen } from "../../features/dokumen/dokumen-slice";
 import { useGetDaftarDokumentByFilterQuery, useGetTotalCountDokumenQuery } from "../../features/dokumen/dokumen-api-slice";

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPegawai } from "../entity/pegawai";
-import { IRegisterPerusahaan } from "../entity/register-perusahaan";
-import { IPerson } from "../entity/person";
-import { IJabatan } from "../entity/jabatan";
+import { IPegawai } from "../../entity/pegawai";
+import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
+import { IPerson } from "../../entity/person";
+import { IJabatan } from "../../entity/jabatan";
 
 
 

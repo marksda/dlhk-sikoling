@@ -3,8 +3,8 @@ import { IQueryParams, qFilters } from "../../features/config/query-params-slice
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarJabatanByFiltersQuery, useGetTotalCountJabatanQuery } from "../../features/jabatan/jabatan-api-slice";
-import { IJabatan } from "../../features/jabatan/jabatan-slice";
+import { useGetDaftarJabatanByFiltersQuery, useGetTotalCountJabatanQuery } from "../../features/repository/service/jabatan-api-slice";
+import { IJabatan } from "../../features/repository/ssot/jabatan-slice";
 
 interface IDataListJabatanFluentUIProps {
     initSelectedFilters: IQueryParams;

@@ -3,7 +3,7 @@ import { baseQueryWithReauth } from "../config/helper-function";
 import { IQueryParams } from "../config/query-params-slice";
 import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
 import { IStatusFlowLog } from "../log/status-flow-log-api-slice";
-import { IPegawai } from "../pegawai/pegawai-slice";
+import { IPegawai } from "../repository/ssot/pegawai-slice";
 import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api-slice";
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";

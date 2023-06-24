@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IKategoriPelakuUsaha } from "../entity/kategori-pelaku-usaha";
+import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
 
 
 const initialState: IKategoriPelakuUsaha = {

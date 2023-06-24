@@ -1,9 +1,9 @@
 import { IDesa } from "../repository/ssot/desa-slice";
-import { IKabupaten } from "../kabupaten/kabupaten-slice";
-import { IKecamatan } from "../kecamatan/kecamatan-slice";
+import { IKabupaten } from "../repository/ssot/kabupaten-slice";
+import { IKecamatan } from "../repository/ssot/kecamatan-slice";
 import { IPropinsi } from "../repository/ssot/propinsi-slice";
 import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging";
-import { IJenisKelamin } from "../jenis-kelamin/jenis-kelamin-slice";
+import { IJenisKelamin } from "../repository/ssot/jenis-kelamin-slice";
 import { IDatePickerStrings } from "@fluentui/react";
 
 export const baseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';

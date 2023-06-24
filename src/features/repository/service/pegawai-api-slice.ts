@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IPegawai } from "./pegawai-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IPegawai } from "../../entity/pegawai";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 
 type daftarPegawai = IPegawai[];
@@ -50,7 +50,7 @@ export const PegawaiApiSlice = createApi({
                     return [{type: 'Pegawai', id}];
                 }
             }),
-            getAllDaftarPegawaiByFilter: builder.query<daftarPegawai, IQueryParams>({
+            getAllDaftarPegawaiByFilter: builder.query<daftarPegawai, IQueryParamFilters>({
                 query: (queryParams) => `pegawai_perusahaan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -62,7 +62,7 @@ export const PegawaiApiSlice = createApi({
                     ]:
                     [{type: 'Pegawai', id: 'LIST'}],
             }),
-            getTotalCountPegawai: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountPegawai: builder.query<number, qFilters>({
                 query: (queryFilters) => `pegawai_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

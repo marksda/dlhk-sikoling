@@ -12,7 +12,7 @@ import { IRegisterPermohonanArahan, useAddRegisterPermohonanMutation } from "../
 import cloneDeep from "lodash.clonedeep";
 import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { IPegawai } from "../../features/pegawai/pegawai-slice";
+import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
 import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 
 const theme = getTheme();

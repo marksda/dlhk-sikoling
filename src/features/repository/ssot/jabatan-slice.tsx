@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IJabatan } from "../entity/jabatan";
+import { IJabatan } from "../../entity/jabatan";
 
 
 const initialState: IJabatan = {

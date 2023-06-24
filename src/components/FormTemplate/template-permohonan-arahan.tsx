@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../app/hooks";
 // import { useGetPegawaiByIdRegisterPerusahaanQuery } from "../../features/pegawai/pegawai-api-slice";
-import { IPegawai } from "../../features/pegawai/pegawai-slice";
+import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
 import { IJenisPermohonanSuratArahan, useGetAllJenisPermohonanSuratArahanQuery } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { IStatusWali, useGetDaftarStatusWaliPermohonanByFiltersQuery } from "../../features/permohonan/status-wali-api-slice";
 // import { useGetRegisterPerusahaanTanpaRegisterDokumenByIdLinkKepemilikanQuery } from "../../features/perusahaan/register-perusahaan-api-slice";

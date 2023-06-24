@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseRestAPIUrl, defaultKabupaten } from "../config/config";
-import { IKecamatan } from "./kecamatan-slice";
+import { baseRestAPIUrl, defaultKabupaten } from "../../config/config";
+import { IKecamatan } from "../../entity/kecamatan";
 
 
 export const KecamatanApiSlice = createApi({

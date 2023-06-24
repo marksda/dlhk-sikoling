@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IKabupaten } from "../entity/kabupaten";
+import { IKabupaten } from "../../entity/kabupaten";
 
 const initialState: IKabupaten = {
     id: null,
-    nama: null
+    nama: null,
+    propinsi: null,
 };
 
 //redux busines logic

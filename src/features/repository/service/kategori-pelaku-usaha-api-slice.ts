@@ -1,8 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IKategoriDokumen } from "../dokumen/kategori-dokumen-slice";
-import { IKategoriPelakuUsaha } from "./kategori-pelaku-usaha-slice";
-import { IQueryParams } from "../config/query-params-slice";
-import { baseQueryWithReauth } from "../config/helper-function";
+import { IKategoriDokumen } from "../../dokumen/kategori-dokumen-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 export type daftarKategoriPelakuUsaha = IKategoriPelakuUsaha[];
 
@@ -42,7 +42,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     return [{ type: 'KategoriPelakuUsaha', id }];
                 }
             }),
-            getAllKategoriPelakuUsaha: builder.query<daftarKategoriPelakuUsaha, IQueryParams>({
+            getAllKategoriPelakuUsaha: builder.query<daftarKategoriPelakuUsaha, IQueryParamFilters>({
                 query: (queryParams) => `kategori_pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -54,7 +54,7 @@ export const KategoriPelakuUsahaApiSlice = createApi({
                     ]:
                     [{type: 'KategoriPelakuUsaha', id: 'LIST'}],
             }),
-            getTotalCountKategoriPelakuUsaha: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountKategoriPelakuUsaha: builder.query<number, qFilters>({
                 query: (queryFilters) => `kategori_pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

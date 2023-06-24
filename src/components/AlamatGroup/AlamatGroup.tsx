@@ -4,11 +4,11 @@ import { useGetAllPropinsiQuery } from "../../features/repository/service/propin
 import { Control } from "react-hook-form";
 import { defaultDesa, defaultKabupaten, defaultKecamatan, defaultPropinsi } from "../../features/config/config";
 import { IPropinsi } from "../../features/repository/ssot/propinsi-slice";
-import { useGetKabupatenByPropinsiQuery } from "../../features/kabupaten/kabupaten-api-slice";
-import { IKabupaten } from "../../features/kabupaten/kabupaten-slice";
+import { useGetKabupatenByPropinsiQuery } from "../../features/repository/service/kabupaten-api-slice";
+import { IKabupaten } from "../../features/repository/ssot/kabupaten-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { IKecamatan } from "../../features/kecamatan/kecamatan-slice";
-import { useGetKecamatanByKabupatenQuery } from "../../features/kecamatan/kecamatan-api-slice";
+import { IKecamatan } from "../../features/repository/ssot/kecamatan-slice";
+import { useGetKecamatanByKabupatenQuery } from "../../features/repository/service/kecamatan-api-slice";
 import { IDesa, resetDesa } from "../../features/repository/ssot/desa-slice";
 import { useGetDesaByKecamatanQuery } from "../../features/repository/service/desa-api-slice";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";

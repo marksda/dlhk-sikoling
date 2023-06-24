@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IRegisterPerusahaan } from "../entity/register-perusahaan";
-import { IPerson } from "../entity/person";
-import { IPerusahaan } from "../entity/perusahaan";
+import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
+import { IPerusahaan } from "../../entity/perusahaan";
 
 
 
@@ -12,6 +11,7 @@ const initialState: IRegisterPerusahaan = {
     kreator: null,
     verifikator: null,
     perusahaan: null,
+    statusVerifikasi: null,
 };
 
 export const registerPerusahaanSlice = createSlice({
