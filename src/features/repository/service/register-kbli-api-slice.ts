@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { IRegisterKbli } from "../../entity/register-kbli";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 import { baseQueryWithReauth } from "../../config/helper-function";
@@ -28,14 +28,14 @@ export const RegisterKbliApiSlice = createApi({
                 }),
                 invalidatesTags: (result, error, {dokumenNibOss, kbli}) => [{type: 'RegisterKbli', id: `${dokumenNibOss?.nomor}-${kbli?.kode}`},]
             }),
-            updateId: builder.mutation<void, {id: string; registerKbli: IRegisterKbli}>({
-                query: ({id, registerKbli}) => ({
-                    url: `register_kbli/id/${id}`,
+            updateId: builder.mutation<IRegisterKbli, {idNibLama: String; idKbliLama: string; registerKbli: IRegisterKbli}>({
+                query: ({idNibLama, idKbliLama, registerKbli}) => ({
+                    url: `register_kbli/${idNibLama}/${idKbliLama}`,
                     method: 'PUT',
                     body: registerKbli,
                 }),
-                invalidatesTags: (result, error, { id }) => {
-                    return [{type: 'RegisterKbli', id}];
+                invalidatesTags: (result, error, { idNibLama, idKbliLama }) => {
+                    return [{type: 'RegisterKbli', id: `${idNibLama}-${idKbliLama}`}];
                 }
             }),
             delete: builder.mutation<Partial<IRegisterKbli>, Partial<IRegisterKbli>>({
