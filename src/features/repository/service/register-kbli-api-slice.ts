@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IRegisterKbli } from "../entity/register-kbli";
-import { IQueryParamFilters, qFilters } from "../entity/query-param-filters";
-import { baseQueryWithReauth } from "../config/helper-function";
+import { IRegisterKbli } from "../../entity/register-kbli";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
+import { baseQueryWithReauth } from "../../config/helper-function";
 
 type daftarRegisterKbli = IRegisterKbli[];
 

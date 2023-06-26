@@ -40,7 +40,7 @@ import { RegisterDokumenApiSlice } from "../features/dokumen/register-dokumen-ap
 import kbliReducer from "../features/repository/ssot/kbli-slice";
 import { KbliApiSlice } from "../features/repository/service/kbli-api-slice";
 import registerKbliReducer from "../features/repository/ssot/register-kbli-slice";
-import { RegisterKbliApiSlice } from "../features/dokumen/register-kbli-api-slice";
+import { RegisterKbliApiSlice } from "../features/repository/service/register-kbli-api-slice";
 import registerPerusahaanReducer from "../features/repository/ssot/register-perusahaan-slice";
 import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
