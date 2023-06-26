@@ -9,8 +9,8 @@ import { Controller, FormProvider, useForm, useFormContext, useWatch } from "rea
 import { array, object, z } from "zod";
 import { DayPickerIndonesiaStrings, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 // import { useGetKbliByKodeQuery } from "../../features/dokumen/kbli-api-slice";
-import { IKbli } from "../../features/dokumen/kbli-slice";
-import { IRegisterKbli } from "../../features/dokumen/register-kbli-slice";
+import { IKbli } from "../../features/repository/ssot/kbli-slice";
+import { IRegisterKbli } from "../../features/repository/ssot/register-kbli-slice";
 import { DataListKbliFluentUI } from "../DataList/DataListKBLIFluentUI";
 import { FileUpload } from "../UploadFiles/FileUpload";
 

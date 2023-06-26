@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IKbli } from "./kbli-slice";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IKbli } from "../../entity/kbli";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarKbli = IKbli[];
 
@@ -47,7 +47,7 @@ export const KbliApiSlice = createApi({
                 },
                 invalidatesTags: (result, error, kode) => [{type: 'Kbli', id: kode}]
             }),
-            getDaftarKbliByFilter: builder.query<daftarKbli, IQueryParams>({
+            getDaftarKbliByFilter: builder.query<daftarKbli, IQueryParamFilters>({
                 query: (queryParams) => `kbli?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -59,7 +59,7 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'Kbli', id: 'LIST'}],
             }),
-            getTotalCountKbli: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountKbli: builder.query<number, qFilters>({
                 query: (queryFilters) => `kbli/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

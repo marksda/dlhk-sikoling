@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface IKbli {
-    kode: string|undefined;
-    nama: string|undefined;
-    kategori: string|undefined;
-};
+import { IKbli } from "../../entity/kbli";
 
 const initialState: IKbli = {
     kode: undefined,

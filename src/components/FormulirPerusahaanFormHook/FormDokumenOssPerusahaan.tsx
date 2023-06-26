@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { UseFormSetError, useWatch } from "react-hook-form";
 import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
 // import { useGetAllDokumenQuery } from "../../features/dokumen/dokumen-api-slice";
-import { IDokumen } from "../../features/dokumen/dokumen-slice";
+import { IDokumen } from "../../features/repository/ssot/dokumen-slice";
 import { IPerusahaan } from "../../features/perusahaan/perusahaan-slice";
 import { useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/register-perusahaan-api-slice";
 import { ControlledFluentUiDatePicker } from "../ControlledDatePicker/ControlledFluentUiDatePicker";

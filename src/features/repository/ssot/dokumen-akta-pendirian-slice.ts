@@ -1,14 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IPegawai } from "../repository/ssot/pegawai-slice";
-import { IDokumen } from "./dokumen-slice";
+import { IDokumenAktaPendirian } from "../../entity/dokumen-akta-pendirian";
+import { IPegawai } from "../../entity/pegawai";
 
-export interface IDokumenAktaPendirian extends IDokumen {
-    nomor: string|null;
-    tanggal: string|null;
-    namaNotaris: string|null;    
-    penanggungJawab: Partial<IPegawai>|null;
-}
 
 const initialState: IDokumenAktaPendirian = {
     id: null,

@@ -1,6 +1,6 @@
 import { BaseButton, Button, CommandBar, DefaultEffects, DetailsList, DetailsListLayoutMode, IColumn, IComboBox, IComboBoxOption, ICommandBarItemProps, IconButton, IIconProps, IObjectWithKey, IStackTokens, mergeStyles, mergeStyleSets, Selection, SelectionMode, Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
-import { IKbli } from "../../features/dokumen/kbli-slice";
+import { IKbli } from "../../features/repository/ssot/kbli-slice";
 
 const _columns = [
     { key: 'c1', name: 'Kode', fieldName: 'kode', minWidth: 45, maxWidth: 45, isResizable: false },

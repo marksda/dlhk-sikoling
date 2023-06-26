@@ -1,12 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
 import { IKategoriDokumen } from "./kategori-dokumen-slice";
+import { IDokumen } from "../../entity/dokumen";
 
-export interface IDokumen {
-    id: string|null;
-    nama: string|null;
-    kategoriDokumen: Pick<IKategoriDokumen, 'id'> & Partial<IKategoriDokumen>|null;
-};
 
 const initialState: IDokumen = {
     id: null,

@@ -2,8 +2,8 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IR
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IDokumen } from "../../features/dokumen/dokumen-slice";
-import { useGetKategoriDokumenByFilterQuery, useGetTotalCountKategoriDokumenQuery } from "../../features/dokumen/kategori-dokumen-api-slice";
+import { IDokumen } from "../../features/repository/ssot/dokumen-slice";
+import { useGetKategoriDokumenByFilterQuery, useGetTotalCountKategoriDokumenQuery } from "../../features/repository/service/kategori-dokumen-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 
 interface IDataListKategoriDokumenFluentUIProps {

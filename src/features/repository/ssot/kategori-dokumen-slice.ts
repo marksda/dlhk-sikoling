@@ -1,15 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface IKategoriDokumen {
-    id: string|undefined;
-    nama: string|undefined;
-    parent: string|undefined;
-};
+import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 
 const initialState: IKategoriDokumen = {
-    id: undefined,
-    nama: undefined,
-    parent: undefined,
+    id: null,
+    nama: null,
+    parent: null,
 };
 
 export const kategoriDokumenSlice = createSlice({

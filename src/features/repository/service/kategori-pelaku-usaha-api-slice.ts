@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IKategoriDokumen } from "../../dokumen/kategori-dokumen-slice";
+import { IKategoriDokumen } from "../ssot/kategori-dokumen-slice";
 import { baseQueryWithReauth } from "../../config/helper-function";
 import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";

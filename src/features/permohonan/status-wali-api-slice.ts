@@ -1,13 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { IStatusWaliPermohonan } from "../entity/status-wali-permohonan";
+import { IQueryParamFilters, qFilters } from "../entity/query-param-filters";
 
-export interface IStatusWali {
-    id: string|null;
-    nama: string|null;
-}
 
-type daftarStatusWaliPermohonan = IStatusWali[];
+
+type daftarStatusWaliPermohonan = IStatusWaliPermohonan[];
 
 export const StatusWaliPermohonanApiSlice = createApi({
     reducerPath: 'statusWaliPermohonanApi',
@@ -16,7 +14,7 @@ export const StatusWaliPermohonanApiSlice = createApi({
     tagTypes: ['StatusWaliPermohonan'],
     endpoints(builder) {
         return {
-            addStatusWaliPermohonan: builder.mutation<IStatusWali, Partial<IStatusWali>>({
+            addStatusWaliPermohonan: builder.mutation<IStatusWaliPermohonan, Partial<IStatusWaliPermohonan>>({
                 query: (body) => ({
                     url: 'status_pengurus_permohonan',
                     method: 'POST',
@@ -24,7 +22,7 @@ export const StatusWaliPermohonanApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'StatusWaliPermohonan', id: 'LIST'}],
             }),
-            updateStatusWaliPermohonan: builder.mutation<void, Partial<IStatusWali>>({
+            updateStatusWaliPermohonan: builder.mutation<void, Partial<IStatusWaliPermohonan>>({
                 query: (perusahaan) => ({
                     url: 'status_pengurus_permohonan',
                     method: 'PUT',
@@ -45,7 +43,7 @@ export const StatusWaliPermohonanApiSlice = createApi({
                     return [{type: 'StatusWaliPermohonan', id: idStatusWaliPermohonan}]
                 },
             }),
-            getDaftarStatusWaliPermohonanByFilters: builder.query<daftarStatusWaliPermohonan, IQueryParams>({
+            getDaftarStatusWaliPermohonanByFilters: builder.query<daftarStatusWaliPermohonan, IQueryParamFilters>({
                 query: (queryParams) => `status_pengurus_permohonan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -57,7 +55,7 @@ export const StatusWaliPermohonanApiSlice = createApi({
                     ]:
                     [{type: 'StatusWaliPermohonan', id: 'LIST'}],
             }),
-            getTotalCountStatusWaliPermohonan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountStatusWaliPermohonan: builder.query<number, qFilters>({
                 query: (queryFilters) => `status_pengurus_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl } from "../config/config";
-import { IRegisterKbli } from "./register-kbli-slice";
+import { IRegisterKbli } from "../entity/register-kbli";
 
 type daftarRegisterKbli = IRegisterKbli[];
 

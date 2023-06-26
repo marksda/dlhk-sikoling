@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IDokumen } from "./dokumen-slice";
+import { IDokumen } from "../repository/ssot/dokumen-slice";
 import { IStatusDokumen } from "./status-dokumen-slice";
 import { IRegisterDokumen } from "../entity/register-dokumen";
 import { IRegisterPerusahaan } from "../entity/register-perusahaan";

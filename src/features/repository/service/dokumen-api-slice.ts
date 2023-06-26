@@ -1,8 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IDokumenNibOss } from "./dokumen-nib-oss-slice";
-import { IDokumen } from "./dokumen-slice";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IDokumenNibOss } from "../ssot/dokumen-nib-oss-slice";
+import { IDokumen } from "../../entity/dokumen";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarDokumen = IDokumen[];
 
@@ -48,7 +48,7 @@ export const DokumenApiSlice = createApi({
                 },
                 invalidatesTags: (result, error, id) => [{ type: 'Dokumen', id }],
             }),
-            getDaftarDokumentByFilter: builder.query<daftarDokumen, IQueryParams>({
+            getDaftarDokumentByFilter: builder.query<daftarDokumen, IQueryParamFilters>({
                 query: (queryParams) => `dokumen?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -60,7 +60,7 @@ export const DokumenApiSlice = createApi({
                     ]:
                     [{type: 'Dokumen', id: 'LIST'}],
             }),
-            getTotalCountDokumen: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `dokumen/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         };

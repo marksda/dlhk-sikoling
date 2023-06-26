@@ -2,8 +2,8 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIc
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IKbli } from "../../features/dokumen/kbli-slice";
-import { useGetDaftarKbliByFilterQuery, useGetTotalCountKbliQuery } from "../../features/dokumen/kbli-api-slice";
+import { IKbli } from "../../features/repository/ssot/kbli-slice";
+import { useGetDaftarKbliByFilterQuery, useGetTotalCountKbliQuery } from "../../features/repository/service/kbli-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 
 interface IDataListMasterKbliFluentUIProps {

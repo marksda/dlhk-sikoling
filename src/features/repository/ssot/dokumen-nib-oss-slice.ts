@@ -1,15 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import cloneDeep from "lodash.clonedeep";
-import { IDokumen } from "./dokumen-slice";
-import { IRegisterKbli } from "./register-kbli-slice";
+import { IDokumenNibOss } from "../../entity/dokumen-nib-oss";
+import { IRegisterKbli } from "../../entity/register-kbli";
 
-type daftarRegisterKbli = Partial<IRegisterKbli>[];
-
-export interface IDokumenNibOss extends IDokumen {
-    nomor: string|null;
-    tanggal: string|null;
-    daftarKbli: daftarRegisterKbli|null;
-};
 
 const initialState: IDokumenNibOss = {
     id: null,
@@ -17,7 +10,7 @@ const initialState: IDokumenNibOss = {
     kategoriDokumen: null,
     nomor: null,
     tanggal: null,
-    daftarKbli: null,
+    daftarRegisterKbli: null,
 };
 
 export const DokumenNibOss = createSlice({
@@ -27,9 +20,10 @@ export const DokumenNibOss = createSlice({
         setDokumenNibOss: (state, action: PayloadAction<IDokumenNibOss>) => {
             state.id = action.payload.id;
             state.nama = action.payload.nama;
+            state.kategoriDokumen = cloneDeep(action.payload.kategoriDokumen);
             state.nomor = action.payload.nomor;
             state.tanggal = action.payload.tanggal;
-            state.daftarKbli = cloneDeep(action.payload.daftarKbli);
+            state.daftarRegisterKbli = cloneDeep(action.payload.daftarRegisterKbli);
         },
         setIdDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.id = action.payload;
@@ -43,8 +37,8 @@ export const DokumenNibOss = createSlice({
         setTanggalDokumenNibOss: (state, action: PayloadAction<string>) => {
             state.tanggal = action.payload;
         },        
-        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<daftarRegisterKbli>) => {
-            state.daftarKbli = cloneDeep(action.payload);
+        setDaftarKbliDokumenNibOss: (state, action: PayloadAction<IRegisterKbli[]>) => {
+            state.daftarRegisterKbli = cloneDeep(action.payload);
         },
     }
 });

@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { IKategoriDokumen } from "./kategori-dokumen-slice";
-import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IKategoriDokumen } from "../../entity/kategori-dokumen";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarKategoriDokumen = IKategoriDokumen[];
 
@@ -47,7 +47,7 @@ export const KategoriDokumenApiSlice = createApi({
                 },
                 invalidatesTags: (result, error, id) => [{ type: 'KategoriDokumen', id }],
             }),
-            getKategoriDokumenByFilter: builder.query<daftarKategoriDokumen, IQueryParams>({
+            getKategoriDokumenByFilter: builder.query<daftarKategoriDokumen, IQueryParamFilters>({
                 query: (queryParams) => `kategori_dokumen?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -59,7 +59,7 @@ export const KategoriDokumenApiSlice = createApi({
                     ]:
                     [{type: 'KategoriDokumen', id: 'LIST'}],
             }),
-            getTotalCountKategoriDokumen: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountKategoriDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `kategori_dokumen/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
