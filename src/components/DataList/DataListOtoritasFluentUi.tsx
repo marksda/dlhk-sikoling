@@ -1,7 +1,7 @@
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/repository/service/otoritas-api-slice";
+import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
@@ -10,7 +10,7 @@ import { useGetDaftarHakAksesQuery } from "../../features/repository/service/hak
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IOtoritas } from "../../features/entity/otoritas";
 
-interface IDataListAuthorityUIProps {
+interface IDataListOtoritasUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
@@ -39,7 +39,7 @@ const classNames = mergeStyleSets({
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSelectedFilters, title}) => { 
+export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSelectedFilters, title}) => { 
 
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -235,9 +235,8 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
     const searchNamaId = useId('searchNama');
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetTotalCountAuthorisasiQuery
-    (queryFilters);
-    const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = useGetAllAuthorisasiQuery(queryParams);
+    const { data: postsCount, isLoading: isLoadingCountPosts } = getJumlahOtoritas(queryFilters);
+    const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryParams);
     const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery({
         pageNumber: 1,
         pageSize: 0,

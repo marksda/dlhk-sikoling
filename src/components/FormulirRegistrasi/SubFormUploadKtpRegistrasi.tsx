@@ -3,10 +3,9 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { Control, SubmitHandler, UseFormHandleSubmit, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../app/hooks";
-import { IPerson } from "../../features/repository/ssot/person-slice";
-import { useAddRegistrasiMutation } from "../../features/repository/service/otoritas-api-slice";
 import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { backIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantUploadKTP } from "./InterfaceRegistrasiForm";
+import { IPerson } from "../../features/entity/person";
 
 interface ISubFormPID3RegistrasiProps extends ISubFormRegistrasiProps {
     control?: Control<any>;

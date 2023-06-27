@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState } from "react";
-import { DataListAuthorityFluentUI } from "../../components/DataList/DataListAuthorityFluentUi";
+import { DataListOtoritasFluentUI } from "../../components/DataList/DataListOtoritasFluentUi";
 import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, OverflowSet, Stack } from "@fluentui/react";
 import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
 import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
@@ -304,7 +304,7 @@ export const MasterBackEnd: FC = () => {
             switch (idContentPage) {
                 case 'authority':
                     konten =             
-                        <DataListAuthorityFluentUI
+                        <DataListOtoritasFluentUI
                             title="Pengakses"
                             initSelectedFilters={
                                 {

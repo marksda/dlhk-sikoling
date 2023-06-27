@@ -3,12 +3,10 @@ import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, Deta
 import { baseRestAPIUrl, flipFormatDate } from "../../features/config/config";
 import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
-import { IDokumenNibOss } from "../../features/repository/ssot/dokumen-nib-oss-slice";
 import cloneDeep from "lodash.clonedeep";
 import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
-import { IDokumenAktaPendirian } from "../../features/repository/ssot/dokumen-akta-pendirian-slice";
-import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
+import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan, useGetJumlahDataQuery as getJumlahDaftarRegisterPerusahaan  } from "../../features/repository/service/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
@@ -17,6 +15,8 @@ import { invertParseNpwp, parseNpwp } from "../../features/config/helper-functio
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
+import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
+import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -378,9 +378,8 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
-    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
-    (queryFilters);
+    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = getDaftarRegisterPerusahaan(queryParams);
+    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = getJumlahDaftarRegisterPerusahaan(queryFilters);
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {
