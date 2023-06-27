@@ -993,6 +993,7 @@ export const DataListAuthorityFluentUI: FC<IDataListAuthorityUIProps> = ({initSe
                                     underlined={false} 
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
+                                    disableAnimation
                                 />
                             </Stack.Item>
                             <Stack.Item>

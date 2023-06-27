@@ -1,14 +1,14 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllRegisterPerusahaanQuery, useGetTotalCountRegisterPerusahaanQuery } from "../../features/repository/service/register-perusahaan-api-slice";
-import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useBoolean } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
+import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -130,46 +130,46 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemRegisterPerusahaan) => {
+            onRender: ({registerPerusahaan: item}: IOtoritasPerusahaan) => {
                 return (
                     <>
                         <span>
                             {
-                            item.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.nama}` :
-                            `${item.perusahaan?.nama}`
+                            item?.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item?.perusahaan?.pelakuUsaha?.singkatan}. ${item?.perusahaan?.nama}` :
+                            `${item?.perusahaan?.nama}`
                             }
                         </span><br />  
                         <span>
                             {
-                                item.perusahaan?.id != undefined ?
+                                item?.perusahaan?.id != undefined ?
                                 invertParseNpwp(item.perusahaan?.id) : `-`
                             }
                         </span><br />
                         <span>
                             {
-                            item.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.alamat.keterangan:null:null
+                            item?.perusahaan?.alamat != undefined ? 
+                            item?.perusahaan?.alamat?.keterangan != undefined ? item.perusahaan?.alamat?.keterangan:null:null
                             }
                             {
-                            item.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.alamat.desa.nama}`:null:null
+                            item?.perusahaan?.alamat != undefined ? 
+                            item?.perusahaan?.alamat.desa != undefined ? `, ${item?.perusahaan?.alamat?.desa?.nama}`:null:null
                             }                            
                         </span><br />
                         <span>
                             {
-                                item.perusahaan?.alamat != undefined ? 
-                                item.perusahaan?.alamat.kecamatan != undefined ? `${item.perusahaan?.alamat.kecamatan.nama}`:null:null
+                                item?.perusahaan?.alamat != undefined ? 
+                                item?.perusahaan?.alamat?.kecamatan != undefined ? `${item.perusahaan?.alamat?.kecamatan?.nama}`:null:null
                             }
                             {
-                            item.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.alamat.kabupaten.nama}`:null:null
+                            item?.perusahaan?.alamat != undefined ? 
+                            item?.perusahaan?.alamat?.kabupaten != undefined ? `, ${item.perusahaan?.alamat?.kabupaten?.nama}`:null:null
                             }
                         </span>
                         <span>
                             {
-                            item.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.alamat.propinsi.nama}`:null:null
+                            item?.perusahaan?.alamat != undefined ? 
+                            item?.perusahaan?.alamat?.propinsi != undefined ? `, ${item.perusahaan?.alamat?.propinsi?.nama}`:null:null
                             }
                         </span>
                     </>               
@@ -182,21 +182,13 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             name: 'Pengakses', 
             minWidth: 300, 
             isResizable: true, 
-            onRender: (item: IItemRegisterPerusahaan) => {
+            onRender: ({otoritas: item}: IOtoritasPerusahaan) => {
                 return (
-                    <ul style={{padding: 0, margin: '0px 0px 0px 4px'}}>
-                    {
-                        // item.pengakses?.map((i, index) => {
-                        //     return (
-                        //         <li key={index}>
-                        //             <span className={classNames.pengaksesSpan}>user</span><span>: {i.userName}</span><br />
-                        //             <span className={classNames.pengaksesSpan}>nama</span><span>: {i.person?.nama}</span><br />
-                        //             <span className={classNames.pengaksesSpan}>nik</span><span>: {i.person?.nik}</span>
-                        //         </li>
-                        //     );
-                        // })
-                    }
-                    </ul>
+                    <>
+                        <span className={classNames.pengaksesSpan}>user</span><span>: {item?.userName}</span><br />
+                        <span className={classNames.pengaksesSpan}>nama</span><span>: {item?.person?.nama}</span><br />
+                        <span className={classNames.pengaksesSpan}>nik</span><span>: {item?.person?.nik}</span>
+                    </>
                 ); 
             },
             isPadded: true,
@@ -205,10 +197,11 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
+    const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetAllRegisterPerusahaanQuery(queryParams);
-    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetTotalCountRegisterPerusahaanQuery
-    (queryFilters);
+    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataQuery(queryParams);
+    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataQuery(queryFilters);
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {
@@ -258,18 +251,18 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'nama',
+                                fieldName: 'perusahaan',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'nama',
+                                fieldName: 'perusahaan',
                                 value: newValue
                             })
                         }
@@ -289,18 +282,18 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'nama',
+                                fieldName: 'perusahaan',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'nama',
+                                fieldName: 'perusahaan',
                                 value: newValue
                             })
                         }
@@ -328,7 +321,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -343,7 +336,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     
                     if(found > -1) {
@@ -579,6 +572,128 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         []
     );
 
+    const _onChangeSearchNik = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            setSearchNik(newValue);   
+            
+            if(newValue?.length as number >= 16) {
+                _onSearchNik(newValue);
+            }
+        },
+        []
+    );
+
+    const _onSearchNik = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'nik',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'nik',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+            
+        },
+        []
+    );
+
+    const _onClearSearchNik= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNik(undefined);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    
+                    
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
+
     const _onHandleResetFilter = useCallback(
         () => {
             setCurrentPage(1);
@@ -591,6 +706,11 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
                     }
 
                     tmp.filters = filters;
@@ -609,6 +729,11 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         filters?.splice(found, 1);
                     }
 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
                     tmp.pageNumber = 1;
                     tmp.filters = filters;
 
@@ -617,6 +742,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             );                
 
             setNpwpTerparsing(undefined);
+            setSearchNik(undefined);
         },
         []
     );
@@ -665,7 +791,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                 items={
                                     postsPerusahaan != undefined ? postsPerusahaan?.map(
                                         (t) => (
-                                            {key: t.id as string, ...omit(t, ['id'])}
+                                            {key: `${t.otoritas?.id}-${t.registerPerusahaan?.id}`, ...t}
                                         )
                                     ) : []
                                 }
@@ -704,6 +830,20 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                 value={npwpTerparsing}
                                 onChange={_onChangeSearchNpwpMasked}
                             />          
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Label htmlFor={searchNikId}>NIK</Label>
+                            <SearchBox 
+                                id={searchNikId}
+                                style={{width: 200}} 
+                                disableAnimation
+                                placeholder="nik sesuai ktp" 
+                                underlined={false} 
+                                onChange={_onChangeSearchNik}
+                                onSearch={_onSearchNik}
+                                onClear= {_onClearSearchNik}
+                                value={searchNik ? searchNik:''}
+                            />
                         </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 

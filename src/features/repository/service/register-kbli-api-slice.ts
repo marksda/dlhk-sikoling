@@ -9,7 +9,7 @@ export const RegisterKbliApiSlice = createApi({
     reducerPath: 'registerKbliApi',
     baseQuery: baseQueryWithReauth,
     refetchOnReconnect: true,
-    tagTypes:['RegisterKbli'],
+    tagTypes:['RegisterOtoritasPerusahaan'],
     endpoints(builder) {
         return {
             save: builder.mutation<IRegisterKbli, Partial<IRegisterKbli>>({
@@ -18,7 +18,7 @@ export const RegisterKbliApiSlice = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: [{type: 'RegisterKbli', id: 'LIST'}]
+                invalidatesTags: [{type: 'RegisterOtoritasPerusahaan', id: 'LIST'}]
             }),
             update: builder.mutation<void, Partial<IRegisterKbli>>({
                 query: (registerKbli) => ({
@@ -26,7 +26,7 @@ export const RegisterKbliApiSlice = createApi({
                     method: 'PUT',
                     body: registerKbli,
                 }),
-                invalidatesTags: (result, error, {dokumenNibOss, kbli}) => [{type: 'RegisterKbli', id: `${dokumenNibOss?.nomor}-${kbli?.kode}`},]
+                invalidatesTags: (result, error, {dokumenNibOss, kbli}) => [{type: 'RegisterOtoritasPerusahaan', id: `${dokumenNibOss?.nomor}-${kbli?.kode}`},]
             }),
             updateId: builder.mutation<IRegisterKbli, {idNibLama: String; idKbliLama: string; registerKbli: IRegisterKbli}>({
                 query: ({idNibLama, idKbliLama, registerKbli}) => ({
@@ -35,7 +35,7 @@ export const RegisterKbliApiSlice = createApi({
                     body: registerKbli,
                 }),
                 invalidatesTags: (result, error, { idNibLama, idKbliLama }) => {
-                    return [{type: 'RegisterKbli', id: `${idNibLama}-${idKbliLama}`}];
+                    return [{type: 'RegisterOtoritasPerusahaan', id: `${idNibLama}-${idKbliLama}`}];
                 }
             }),
             delete: builder.mutation<Partial<IRegisterKbli>, Partial<IRegisterKbli>>({
@@ -44,7 +44,7 @@ export const RegisterKbliApiSlice = createApi({
                     method: 'DELETE',
                     body: registerKbli,                
                 }),
-                invalidatesTags: (result, error, { dokumenNibOss, kbli }) => [{type: 'RegisterKbli', id: `${dokumenNibOss?.nomor}-${kbli?.kode}`},]
+                invalidatesTags: (result, error, { dokumenNibOss, kbli }) => [{type: 'RegisterOtoritasPerusahaan', id: `${dokumenNibOss?.nomor}-${kbli?.kode}`},]
             }),
             getDaftarData: builder.query<daftarRegisterKbli, IQueryParamFilters>({
                 query: (queryParams) => `register_kbli?filters=${JSON.stringify(queryParams)}`,
@@ -52,11 +52,11 @@ export const RegisterKbliApiSlice = createApi({
                     result ?
                     [
                         ...result.map(
-                            ({dokumenNibOss, kbli}) => ({ type: 'RegisterKbli' as const, id: `${dokumenNibOss?.nomor}-${kbli?.kode}`})
+                            ({dokumenNibOss, kbli}) => ({ type: 'RegisterOtoritasPerusahaan' as const, id: `${dokumenNibOss?.nomor}-${kbli?.kode}`})
                         ),
-                        { type: 'RegisterKbli', id: 'LIST' },
+                        { type: 'RegisterOtoritasPerusahaan', id: 'LIST' },
                     ]:
-                    [{type: 'RegisterKbli', id: 'LIST'}],
+                    [{type: 'RegisterOtoritasPerusahaan', id: 'LIST'}],
             }),
             getJumlahData: builder.query<number, qFilters>({
                 query: (queryFilters) => `register_kbli/count?filters=${JSON.stringify(queryFilters)}`,

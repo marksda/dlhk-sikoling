@@ -52,6 +52,9 @@ import { StatusWaliPermohonanApiSlice } from "../features/permohonan/status-wali
 import { PegawaiApiSlice } from "../features/repository/service/pegawai-api-slice";
 import { PosisiTahapPemberkasanApiSlice } from "../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { HakAksesApiSlice } from "../features/repository/service/hak-akses-api-slice";
+
+import { RegisterOtoritasPerusahaanApiSlice } from "../features/repository/service/register-otoritas-perusahaan-api-slice";
+
 // import counterReducer from "../features/counter/counter-slice"
 import loginReducer from "../features/login/login-slice";
 // import { loginApi } from "../services/sikoling-api"
@@ -109,6 +112,7 @@ export const store = configureStore({
         [StatusFlowLogApiSlice.reducerPath]: StatusFlowLogApiSlice.reducer,
         [KategoriFlowLogApiSlice.reducerPath]: KategoriFlowLogApiSlice.reducer,
         [HakAksesApiSlice.reducerPath]: HakAksesApiSlice.reducer,
+        [RegisterOtoritasPerusahaanApiSlice.reducerPath]: RegisterOtoritasPerusahaanApiSlice.reducer,
         login: loginReducer,
         // [loginApi.reducerPath]: loginApi.reducer,
     },
@@ -142,7 +146,8 @@ export const store = configureStore({
                                             .concat(JabatanApiSlice.middleware)
                                             .concat(PosisiTahapPemberkasanApiSlice.middleware)
                                             .concat(HakAksesApiSlice.middleware)
-                                            .concat(KategoriPermohonanApiSlice.middleware),
+                                            .concat(KategoriPermohonanApiSlice.middleware)
+                                            .concat(RegisterOtoritasPerusahaanApiSlice.middleware),
 });
 
 // Aliasing variable in typescript
