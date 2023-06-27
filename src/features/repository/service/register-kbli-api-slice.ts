@@ -65,8 +65,4 @@ export const RegisterKbliApiSlice = createApi({
     }
 });
 
-export const { 
-    useSaveMutation, useUpdateMutation,
-    useUpdateIdMutation, useDeleteMutation,
-    useGetDaftarDataQuery, useGetJumlahDataQuery
-} = RegisterKbliApiSlice;
+export const { useSaveMutation, useUpdateMutation, useUpdateIdMutation, useDeleteMutation, useGetDaftarDataQuery, useGetJumlahDataQuery } = RegisterKbliApiSlice;

@@ -12,7 +12,7 @@ export const KbliApiSlice = createApi({
     tagTypes:['Kbli'],
     endpoints(builder) {
         return {
-            addKbli: builder.mutation<IKbli, Partial<IKbli>>({
+            save: builder.mutation<IKbli, Partial<IKbli>>({
                 query: (body) => ({
                     url: 'kbli',
                     method: 'POST',
@@ -20,15 +20,7 @@ export const KbliApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'Kbli', id: 'LIST'}]
             }),
-            updateKbliById: builder.mutation<void, {kode: string; kbli: IKbli}>({
-                query: ({kode, kbli}) => ({
-                    url: `kbli/id/${kode}`,
-                    method: 'PUT',
-                    body: kbli,
-                }),
-                invalidatesTags: (result, error, { kode }) => [{type: 'Kbli', id: kode}]
-            }),
-            updateKbli: builder.mutation<void, Partial<IKbli>>({
+            update: builder.mutation<void, Partial<IKbli>>({
                 query: (kbli) => ({
                     url: 'kbli',
                     method: 'PUT',
@@ -38,7 +30,15 @@ export const KbliApiSlice = createApi({
                     return [{type: 'Kbli', id: kode}];
                 }
             }),
-            deleteKbli: builder.mutation<{ success: boolean; kode: string }, string>({
+            updateId: builder.mutation<void, {kode: string; kbli: IKbli}>({
+                query: ({kode, kbli}) => ({
+                    url: `kbli/id/${kode}`,
+                    method: 'PUT',
+                    body: kbli,
+                }),
+                invalidatesTags: (result, error, { kode }) => [{type: 'Kbli', id: kode}]
+            }),
+            delete: builder.mutation<{ success: boolean; kode: string }, string>({
                 query(kode) {
                   return {
                     url: `kbli/${kode}`,
@@ -47,7 +47,7 @@ export const KbliApiSlice = createApi({
                 },
                 invalidatesTags: (result, error, kode) => [{type: 'Kbli', id: kode}]
             }),
-            getDaftarKbliByFilter: builder.query<daftarKbli, IQueryParamFilters>({
+            getDaftarData: builder.query<daftarKbli, IQueryParamFilters>({
                 query: (queryParams) => `kbli?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -59,15 +59,11 @@ export const KbliApiSlice = createApi({
                     ]:
                     [{type: 'Kbli', id: 'LIST'}],
             }),
-            getTotalCountKbli: builder.query<number, qFilters>({
+            getJumlahData: builder.query<number, qFilters>({
                 query: (queryFilters) => `kbli/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
 });
 
-export const {
-    useAddKbliMutation, useUpdateKbliByIdMutation, 
-    useDeleteKbliMutation, useGetDaftarKbliByFilterQuery,
-    useUpdateKbliMutation, useGetTotalCountKbliQuery
-} = KbliApiSlice;
+export const { useSaveMutation, useUpdateMutation, useUpdateIdMutation, useDeleteMutation, useGetDaftarDataQuery,useGetJumlahDataQuery } = KbliApiSlice;
