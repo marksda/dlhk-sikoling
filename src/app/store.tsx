@@ -19,7 +19,7 @@ import pegawaiReducer from "../features/repository/ssot/pegawai-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
-import { AuthorizationApiSlice } from "../features/security/authorization-api-slice";
+import { OtoritasApiSlice } from "../features/repository/service/otoritas-api-slice";
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
@@ -81,7 +81,7 @@ export const store = configureStore({
         credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
-        [AuthorizationApiSlice.reducerPath]: AuthorizationApiSlice.reducer,
+        [OtoritasApiSlice.reducerPath]: OtoritasApiSlice.reducer,
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
@@ -124,7 +124,7 @@ export const store = configureStore({
                                             .concat(JenisKelaminApiSlice.middleware)
                                             .concat(PersonApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
-                                            .concat(AuthorizationApiSlice.middleware)
+                                            .concat(OtoritasApiSlice.middleware)
                                             .concat(TokenApiSlice.middleware)
                                             .concat(ModelPerizinanApiSlice.middleware)
                                             .concat(SkalaUsahaApiSlice.middleware)

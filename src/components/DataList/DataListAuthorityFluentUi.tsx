@@ -1,7 +1,7 @@
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/security/authorization-api-slice";
+import { useGetAllAuthorisasiQuery, useGetTotalCountAuthorisasiQuery } from "../../features/repository/service/otoritas-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
