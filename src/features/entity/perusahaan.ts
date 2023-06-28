@@ -13,5 +13,4 @@ export interface IPerusahaan {
     pelakuUsaha: Pick<IPelakuUsaha, 'id'> & Partial<IPelakuUsaha> | null;
     alamat: Partial<IAlamat>|null;
     kontak: Partial<IKontak>|null;
-    daftarRegisterDokumen: IRegisterDokumen[]|null;
 };

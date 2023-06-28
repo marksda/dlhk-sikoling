@@ -121,7 +121,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
     const [columns, setColumns] = useState<IColumn[]>([  
         { 
-            key: 'nama', 
+            key: 'perusahaan', 
             name: 'Perusahaan', 
             minWidth: 500, 
             maxWidth: 550, 
@@ -178,7 +178,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             isPadded: true,
         },
         { 
-            key: 'pengakses', 
+            key: 'user_name', 
             name: 'Pengakses', 
             minWidth: 300, 
             isResizable: true, 
@@ -192,6 +192,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 ); 
             },
             isPadded: true,
+            onColumnClick: _onHandleColumnClick,
         },
         
     ]);
