@@ -2,7 +2,7 @@ import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, ICom
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
 import { z } from "zod";
-import { AutorityPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
+import { OtoritasPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { invertParseNpwp } from "../../features/config/helper-function";
@@ -10,6 +10,7 @@ import { useGetDaftarDataQuery as getDaftarOtoritas } from "../../features/repos
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
+import { useSaveMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
@@ -18,7 +19,7 @@ interface IFormulirAutorityPerusahaanFluentUIProps {
   hideModal: () => void;
 };
 
-type FormSchemaType = z.infer<typeof AutorityPerusahaanSchema>;
+type FormSchemaType = z.infer<typeof OtoritasPerusahaanSchema>;
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -96,18 +97,16 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
         },
     ],
   });
-  // const [queryPerusahaanFilters, setQueryPerusahaanFilters] = useState<qFilters>({filters: []}); 
- 
+  const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
-  const {
-    handleSubmit,
-    control,
-    resetField} = useForm<FormSchemaType>({
-    resolver: zodResolver(AutorityPerusahaanSchema),
+  //hook-form
+  const {handleSubmit, control, resetField, watch} = useForm<FormSchemaType>({
+    resolver: zodResolver(OtoritasPerusahaanSchema),
   });
-
+  // rtk query
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = getDaftarRegisterPerusahaan(queryPerusahaanParams);
   const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryPengaksesParams);
+  const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveMutation();
   
 
   const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -147,8 +146,24 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     [keepInBounds],
   );
 
-  const onSubmit: SubmitHandler<FormSchemaType> = data => console.log(data);
-  const onError: SubmitErrorHandler<FormSchemaType> = error => console.log(error);
+  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+    setDisableForm(true);
+    console.log(data);
+    // try {
+    //   await saveOtoritasPerusahaan(data).unwrap().then((originalPromiseResult) => {
+    //     console.log(originalPromiseResult);
+    //     // setErrorPassword("");
+    //   }).catch((rejectedValueOrSerializedError) => {
+    //     console.log(rejectedValueOrSerializedError);
+    //     // setErrorPassword("Sandi tidak sesuai");
+    //   }); 
+    // } catch (error) {
+      
+    // }
+  };
+  const onError: SubmitErrorHandler<FormSchemaType> = (err) => {
+    console.log(err);
+  };
 
   const _onRenderPerusahaanOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
     return item?.data != undefined ?
@@ -367,6 +382,13 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     },
     []
   );
+
+  const _handleOnDismissed = useCallback(
+    () => {
+      setDisableForm(false);
+    },
+    []
+  );
   
   return (
     <Modal
@@ -375,6 +397,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
       isModeless={false}
       containerClassName={contentStyles.container}
       dragOptions={dragOptions}
+      onDismissed={_handleOnDismissed}
     >
       <div className={contentStyles.header}>
         <h2 className={contentStyles.heading} id={titleId}>
@@ -408,14 +431,22 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   errorMessage={error && 'harus diisi'}
                   onChange={
                     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                      console.log(index);
+                      let hasil = cloneDeep(postsRegisterPerusahaan?.at(index!));
+                      if(hasil?.kreator == undefined) {
+                        hasil!.kreator = null;
+                      }
+                      if(hasil?.verifikator == undefined) {
+                        hasil!.verifikator = null;
+                      }                      
+                      onChange(hasil);
                     }
                   }
+                  disabled={disableForm}
                 />
             )}
         />
         <Controller 
-          name="autority"
+          name="otoritas"
           control={control}
           render={
             ({
@@ -427,11 +458,17 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   placeholder="ketik user untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsPengakses != undefined ? optionsPengakses:[]}
+                  onChange={
+                    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                      onChange(postsAuthority?.at(index!));
+                    }
+                  }
                   useComboBoxAsMenuWidth={true}
                   onRenderOption={_onRenderOptionPengakses}  
                   onInputValueChange={_onInputCBPengaksesValueChange}         
                   styles={basicStyles}           
                   errorMessage={error && 'harus diisi'}
+                  disabled={disableForm}
                 />
             )}
         />
@@ -439,6 +476,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           style={{marginTop: 16, width: '100%'}}
           text="Simpan" 
           onClick={handleSubmit(onSubmit, onError)}
+          disabled={disableForm}
         />
       </div>
     </Modal>

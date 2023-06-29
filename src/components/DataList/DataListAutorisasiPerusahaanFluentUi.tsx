@@ -124,7 +124,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
             key: 'perusahaan', 
             name: 'Perusahaan', 
             minWidth: 500, 
-            maxWidth: 550, 
+            maxWidth: 600, 
             isSortedDescending: false,
             isSorted: true,
             isResizable: true, 

@@ -21,10 +21,10 @@ export const RegisterOtoritasPerusahaanApiSlice = createApi({
                 invalidatesTags: [{type: 'RegisterOtoritasPerusahaan', id: 'LIST'}]
             }),
             update: builder.mutation<void, Partial<IOtoritasPerusahaan>>({
-                query: (registerKbli) => ({
+                query: (body) => ({
                     url: 'otoritas_perusahaan',
                     method: 'PUT',
-                    body: registerKbli,
+                    body,
                 }),
                 invalidatesTags: (result, error, {otoritas, registerPerusahaan}) => [{type: 'RegisterOtoritasPerusahaan', id: `${otoritas?.id}-${registerPerusahaan?.id}`},]
             }),

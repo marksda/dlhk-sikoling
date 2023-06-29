@@ -2,10 +2,10 @@ import { ActionButton, IconButton, ILabelStyles, Label, PrimaryButton, Stack, Te
 import { motion } from "framer-motion";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../app/hooks";
-import { ICredential } from "../../features/security/authentication-slice";
 import { useGetTokenMutation } from "../../features/security/token-api-slice";
 import { backIcon, durationAnimFormLogin, ISubFormLoginProps, settingIcon, variantsPassword } from "./InterfaceLoginForm";
 import { useNavigate } from "react-router-dom";
+import { ICredential } from "../../features/entity/credential";
 
 const stackTokens = { childrenGap: 2 };
 const labelStyle: ILabelStyles  = {

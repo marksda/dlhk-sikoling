@@ -54,12 +54,14 @@ export const HakAksesSchema = object({
     keterangan: z.string().optional()
 });
 
-export const AuthoritySchema = object({
+export const OtoritasSchema = object({
+    id: z.string().optional(),
+    tanggal: z.string().optional(),
     hakAkses: HakAksesSchema.optional(),
     person: PersonSchema.optional(),
     statusInternal: z.boolean().optional(),
     userName: z.string().optional(),
-    verified: z.boolean().optional()
+    isVerified: z.boolean().optional(),
 });
 
 export const ModelPerizinanSchema = object({
@@ -88,10 +90,10 @@ export const PelakuUsahaSchema = object({
 
 export const PerusahaanSchema = object({
     id: z.string().length(15, 'Format npwp salah'),
-    nama: z.string().min(1, "Harus diisi"),
-    modelPerizinan: ModelPerizinanSchema.required(),
-    skalaUsaha: SkalaUsahaSchema.required(),
-    pelakuUsaha: PelakuUsahaSchema.required(),
+    nama: z.string().min(1, "Harus diisi"),    
+    modelPerizinan: ModelPerizinanSchema.optional(),
+    skalaUsaha: SkalaUsahaSchema.optional(),
+    pelakuUsaha: PelakuUsahaSchema.optional(),
     alamat: AlamatSchema.optional(),
     kontak: KontakSchema.optional()
 });
@@ -99,14 +101,14 @@ export const PerusahaanSchema = object({
 export const RegisterPerusahaanSchema = object({
     id: z.string().optional(),
     tanggalRegistrasi: z.string().optional(),
-    kreator: AuthoritySchema.optional(),
-    verifikator: AuthoritySchema.optional(),
-    perusahaan: PerusahaanSchema.required(),
+    kreator: OtoritasSchema.nullable(),
+    verifikator: OtoritasSchema.nullable(),
+    perusahaan: PerusahaanSchema.optional(),
     statusVerifikasi: z.boolean().optional()
 });
 
-export const AutorityPerusahaanSchema = object({
-    autority: AuthoritySchema.required(),
+export const OtoritasPerusahaanSchema = object({
+    otoritas: OtoritasSchema.required(),
     registerPerusahaan: RegisterPerusahaanSchema.required(),
 });
 
