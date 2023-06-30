@@ -1,5 +1,5 @@
-import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IObjectWithKey, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
@@ -110,6 +110,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     );
 
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
@@ -204,6 +205,26 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataQuery(queryParams);
     const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataQuery(queryFilters);
 
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                selectionMode: SelectionMode.single,
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
+        },
+        []
+    ); 
+    
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {
             // const CoachmarkButtonWrapper: IComponentAs<ICommandBarItemProps> = (p: IComponentAsProps<ICommandBarItemProps>) => {
@@ -225,7 +246,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 { 
                     key: 'editItem', 
                     text: 'Edit', 
-                    disabled: true,
+                    disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
                         setFormulirTitle('Edit pemrakarsa');
@@ -234,7 +255,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 },
             ];
         }, 
-        []
+        [isSelectedItem]
     );
 
     const _getKey = useCallback(
@@ -747,7 +768,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         },
         []
     );
-
+    
     return (
         <Stack grow verticalFill>
             <Stack.Item>
@@ -758,7 +779,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
-                            <CommandBar items={itemsBar}/>
+                                <CommandBar items={itemsBar}/>
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
@@ -796,12 +817,12 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionPreservedOnEmptyClick={false}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />                    

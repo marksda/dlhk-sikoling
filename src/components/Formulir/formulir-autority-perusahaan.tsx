@@ -11,6 +11,7 @@ import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
 import { useSaveMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
+import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
@@ -146,21 +147,22 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     [keepInBounds],
   );
 
-  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     setDisableForm(true);
-    console.log(data);
-    // try {
-    //   await saveOtoritasPerusahaan(data).unwrap().then((originalPromiseResult) => {
-    //     console.log(originalPromiseResult);
-    //     // setErrorPassword("");
-    //   }).catch((rejectedValueOrSerializedError) => {
-    //     console.log(rejectedValueOrSerializedError);
-    //     // setErrorPassword("Sandi tidak sesuai");
-    //   }); 
-    // } catch (error) {
-      
-    // }
+    // console.log(data);
+    try {
+      await saveOtoritasPerusahaan(data as IOtoritasPerusahaan).unwrap().then((originalPromiseResult) => {
+        console.log(originalPromiseResult);
+        setDisableForm(false);
+      }).catch((rejectedValueOrSerializedError) => {
+        console.log(rejectedValueOrSerializedError);
+        setDisableForm(false);
+      }); 
+    } catch (error) {
+      setDisableForm(false);
+    }
   };
+
   const onError: SubmitErrorHandler<FormSchemaType> = (err) => {
     console.log(err);
   };
