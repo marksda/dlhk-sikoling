@@ -1,6 +1,6 @@
 import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { OtoritasPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ interface IFormulirAutorityPerusahaanFluentUIProps {
   isModalOpen: boolean;
   showModal: () => void;
   hideModal: () => void;
+  dataLama?: IOtoritasPerusahaan;
 };
 
 type FormSchemaType = z.infer<typeof OtoritasPerusahaanSchema>;
@@ -73,7 +74,7 @@ const iconButtonStyles = {
 };
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
-export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal}) => { 
+export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama}) => { 
   //local state
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [queryPerusahaanParams, setQueryPerusahaanParams] = useState<IQueryParamFilters>({
@@ -390,6 +391,38 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
       setDisableForm(false);
     },
     []
+  );
+
+  useEffect(
+    () => {
+      if(dataLama != undefined) {
+        setQueryPerusahaanParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
+              
+              if(found == -1) {
+                  filters?.push({
+                      fieldName: 'nama',
+                      value: dataLama?.registerPerusahaan?.perusahaan?.nama!
+                  });
+              }
+              else {
+                  filters?.splice(found, 1, {
+                      fieldName: 'nama',
+                      value: dataLama?.registerPerusahaan?.perusahaan?.nama!
+                  })
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+        );
+      }
+    },
+    [dataLama]
   );
   
   return (

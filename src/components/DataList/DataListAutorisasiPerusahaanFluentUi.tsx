@@ -9,6 +9,7 @@ import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
+import { IOtoritas } from "../../features/entity/otoritas";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -113,6 +114,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [dataLama, setDataLama]= useState<IOtoritasPerusahaan|undefined>(undefined);
     const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
@@ -239,7 +241,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add pengakses perusahaan');
+                        setFormulirTitle('Add');
                         showModalFormulirPengaksesPerusahaan();
                     }
                 },
@@ -249,21 +251,24 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit pemrakarsa');
+                        setFormulirTitle('Edit');
                         showModalFormulirPengaksesPerusahaan();
+                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
+                        delete dataTerpilih.key;
+                        setDataLama(dataTerpilih as IOtoritasPerusahaan);
                     }
                 },
             ];
         }, 
-        [isSelectedItem]
+        [isSelectedItem, selection]
     );
 
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
-        },
-        []
-    );
+    // const _getKey = useCallback(
+    //     (item: any, index?: number): string => {
+    //         return item.key;
+    //     },
+    //     []
+    // );
     
     const _onSearch = useCallback(
         (newValue) => {
@@ -882,6 +887,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 isModalOpen={isModalFormulirPengaksesPerusahaanOpen}
                 showModal={showModalFormulirPengaksesPerusahaan}
                 hideModal={hideModalFormulirPengaksesPerusahaan}
+                dataLama={dataLama}
             />
         </Stack>
     );
