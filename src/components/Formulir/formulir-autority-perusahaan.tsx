@@ -177,8 +177,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           break;
         default:
           break;
-      }
-      
+      }      
     } catch (error) {
       setDisableForm(false);
     }
@@ -340,37 +339,6 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
 
   const _onInputCBPengaksesValueChange = useCallback(
     (newValue: string) => {
-      // setQueryPerusahaanFilters(
-      //   prev => {
-      //       let tmp = cloneDeep(prev);
-      //       let filters = cloneDeep(tmp.filters);
-      //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-            
-      //       if(newValue != '') {
-      //           if(found == -1) {
-      //               filters?.push({
-      //                   fieldName: 'nama',
-      //                   value: newValue
-      //               });
-      //           }
-      //           else {
-      //               filters?.splice(found, 1, {
-      //                   fieldName: 'nama',
-      //                   value: newValue
-      //               })
-      //           }
-      //       }
-      //       else {
-      //           if(found > -1) {
-      //               filters?.splice(found, 1);
-      //           }
-      //       }
-            
-      //       tmp.filters = filters;             
-      //       return tmp;
-      //   }
-      // );
-
       setQueryPengaksesParams(
           prev => {
               let tmp = cloneDeep(prev);
@@ -440,6 +408,31 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
               return tmp;
           }
         );
+
+        setQueryPengaksesParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+              
+              if(found == -1) {
+                  filters?.push({
+                      fieldName: 'user_name',
+                      value: dataLama.otoritas?.userName!
+                  });
+              }
+              else {
+                  filters?.splice(found, 1, {
+                      fieldName: 'user_name',
+                      value: dataLama.otoritas?.userName!
+                  })
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+      );
       }
     },
     [dataLama]
@@ -479,6 +472,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   placeholder="ketik nama perusahaan untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsPerusahaan != undefined ? optionsPerusahaan:[]}
+                  selectedKey={dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined}
                   useComboBoxAsMenuWidth={true}
                   onRenderOption={_onRenderPerusahaanOption}   
                   onInputValueChange={_onInputCBPerusahaanValueChange}      
@@ -513,6 +507,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   placeholder="ketik user untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsPengakses != undefined ? optionsPengakses:[]}
+                  selectedKey={dataLama != undefined ? dataLama.otoritas?.id!:undefined}
                   onChange={
                     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
                       onChange(postsAuthority?.at(index!));

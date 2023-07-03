@@ -10,12 +10,7 @@ export const DashboardBackEnd: FC = () => {
                 {
                     pageNumber: 1,
                     pageSize: 50,
-                    filters: [
-                        // {
-                        //     fieldName: 'posisi_tahap_pemberkasan_penerima',
-                        //     value: '2'
-                        // }
-                    ],
+                    filters: [],
                     sortOrders: [
                         {
                             fieldName: 'tanggal',

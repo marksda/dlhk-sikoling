@@ -1,12 +1,11 @@
-import { FC, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IObjectWithKey, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
-import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 
@@ -14,7 +13,7 @@ interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
+// type IItemRegisterPerusahaan = {key: string|null;} & Partial<IRegisterPerusahaan>;
 const classNames = mergeStyleSets({
     container: {
         width: "100%",
