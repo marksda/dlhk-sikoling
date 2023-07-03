@@ -8,5 +8,5 @@ export interface IOtoritas {
     person: Partial<IPerson>|null;
     statusInternal: boolean|null;
     userName: string|null;
-    verified: boolean|null;
+    isVerified: boolean|null;
 };

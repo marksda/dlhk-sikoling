@@ -30,7 +30,7 @@ export const RegisterOtoritasPerusahaanApiSlice = createApi({
             }),
             updateId: builder.mutation<IOtoritasPerusahaan, {idLamaAutority: String; idLamaRegisterPerusahaan: string; registerOtoritasPerusahaan: IOtoritasPerusahaan}>({
                 query: ({idLamaAutority, idLamaRegisterPerusahaan, registerOtoritasPerusahaan}) => ({
-                    url: `otoritas_perusahaan/${idLamaAutority}/${idLamaRegisterPerusahaan}`,
+                    url: `otoritas_perusahaan/id/${idLamaAutority}/${idLamaRegisterPerusahaan}`,
                     method: 'PUT',
                     body: registerOtoritasPerusahaan,
                 }),
@@ -39,10 +39,9 @@ export const RegisterOtoritasPerusahaanApiSlice = createApi({
                 }
             }),
             delete: builder.mutation<Partial<IOtoritasPerusahaan>, Partial<IOtoritasPerusahaan>>({
-                query: (registerKbli) => ({                  
-                    url: 'otoritas_perusahaan',
-                    method: 'DELETE',
-                    body: registerKbli,                
+                query: (otoritasPerusahaan) => ({                  
+                    url: `otoritas_perusahaan/${otoritasPerusahaan.otoritas?.id}/${otoritasPerusahaan.registerPerusahaan?.id}`,
+                    method: 'DELETE',            
                 }),
                 invalidatesTags: (result, error, { otoritas, registerPerusahaan }) => [{type: 'RegisterOtoritasPerusahaan', id: `${otoritas?.id}-${registerPerusahaan?.id}`},]
             }),

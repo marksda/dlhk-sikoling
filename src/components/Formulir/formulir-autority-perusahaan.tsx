@@ -10,7 +10,7 @@ import { useGetDaftarDataQuery as getDaftarOtoritas } from "../../features/repos
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
-import { useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
+import { useDeleteMutation, useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
@@ -22,7 +22,7 @@ interface IFormulirAutorityPerusahaanFluentUIProps {
   dataLama?: IOtoritasPerusahaan;
 };
 
-type FormSchemaType = z.infer<typeof OtoritasPerusahaanSchema>;
+// type FormSchemaType = z.infer<typeof OtoritasPerusahaanSchema>;
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -77,11 +77,16 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   //local state
+  const [selectedKeyPerusahaan, setSelectedKeyPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
+  const [selectedKeyOtoritas, setSelectedKeyOtoritas] = useState<string|undefined>(dataLama != undefined ? dataLama.otoritas?.id!:undefined);
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [queryPerusahaanParams, setQueryPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 25,
-    filters: [],
+    filters: dataLama == undefined ? []:[{
+      fieldName: 'nama',
+      value: dataLama?.registerPerusahaan?.perusahaan?.nama!
+    }],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -92,7 +97,10 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   const [queryPengaksesParams, setQueryPengaksesParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 25,
-    filters: [],
+    filters: dataLama == undefined ? []:[{
+      fieldName: 'user_name',
+      value: dataLama.otoritas?.userName!
+    }],
     sortOrders: [
         {
             fieldName: 'user_name',
@@ -103,7 +111,8 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<FormSchemaType>({
+  const {handleSubmit, control, resetField, watch} = useForm<IOtoritasPerusahaan>({
+    defaultValues:  cloneDeep(dataLama),
     resolver: zodResolver(OtoritasPerusahaanSchema),
   });
   // rtk query
@@ -111,6 +120,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryPengaksesParams);
   const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveMutation();
   const [ updateIdOtoritasPerusahaan, {isLoading: isLoadingUpdateIdOtoritasPerusahaan}] = useUpdateIdMutation();
+  const [ deleteOtoritasPerusahaan, {isLoading: isLoadingDeleteOtoritasPerusahaan}] = useDeleteMutation();
   
 
   const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -150,7 +160,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     [keepInBounds],
   );
 
-  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<IOtoritasPerusahaan> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
@@ -173,7 +183,11 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           }); 
           break;
         case 'delete':
-
+          await deleteOtoritasPerusahaan(dataLama!).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
           break;
         default:
           break;
@@ -183,7 +197,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     }
   };
 
-  const onError: SubmitErrorHandler<FormSchemaType> = (err) => {
+  const onError: SubmitErrorHandler<IOtoritasPerusahaan> = (err) => {
     console.log(err);
   };
 
@@ -381,62 +395,95 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     []
   );
 
-  useEffect(
-    () => {
-      if(dataLama != undefined) {
-        setQueryPerusahaanParams(
-          prev => {
-              let tmp = cloneDeep(prev);
-              let filters = cloneDeep(tmp.filters);
-              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
+  // useEffect(
+  //   () => {
+  //     if(dataLama != undefined) {
+  //       setQueryPerusahaanParams(
+  //         prev => {
+  //             let tmp = cloneDeep(prev);
+  //             let filters = cloneDeep(tmp.filters);
+  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
               
-              if(found == -1) {
-                  filters?.push({
-                      fieldName: 'nama',
-                      value: dataLama?.registerPerusahaan?.perusahaan?.nama!
-                  });
-              }
-              else {
-                  filters?.splice(found, 1, {
-                      fieldName: 'nama',
-                      value: dataLama?.registerPerusahaan?.perusahaan?.nama!
-                  })
-              }
+  //             if(found == -1) {
+  //                 filters?.push({
+  //                     fieldName: 'nama',
+  //                     value: dataLama?.registerPerusahaan?.perusahaan?.nama!
+  //                 });
+  //             }
+  //             else {
+  //                 filters?.splice(found, 1, {
+  //                     fieldName: 'nama',
+  //                     value: dataLama?.registerPerusahaan?.perusahaan?.nama!
+  //                 })
+  //             }
               
-              tmp.pageNumber = 1;
-              tmp.filters = filters;             
-              return tmp;
-          }
-        );
+  //             tmp.pageNumber = 1;
+  //             tmp.filters = filters;             
+  //             return tmp;
+  //         }
+  //       );
 
-        setQueryPengaksesParams(
-          prev => {
-              let tmp = cloneDeep(prev);
-              let filters = cloneDeep(tmp.filters);
-              let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+  //       setQueryPengaksesParams(
+  //         prev => {
+  //             let tmp = cloneDeep(prev);
+  //             let filters = cloneDeep(tmp.filters);
+  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
               
-              if(found == -1) {
-                  filters?.push({
-                      fieldName: 'user_name',
-                      value: dataLama.otoritas?.userName!
-                  });
-              }
-              else {
-                  filters?.splice(found, 1, {
-                      fieldName: 'user_name',
-                      value: dataLama.otoritas?.userName!
-                  })
-              }
+  //             if(found == -1) {
+  //                 filters?.push({
+  //                     fieldName: 'user_name',
+  //                     value: dataLama.otoritas?.userName!
+  //                 });
+  //             }
+  //             else {
+  //                 filters?.splice(found, 1, {
+  //                     fieldName: 'user_name',
+  //                     value: dataLama.otoritas?.userName!
+  //                 })
+  //             }
               
-              tmp.pageNumber = 1;
-              tmp.filters = filters;             
-              return tmp;
-          }
-      );
-      }
-    },
-    [dataLama]
-  );
+  //             tmp.pageNumber = 1;
+  //             tmp.filters = filters;             
+  //             return tmp;
+  //         }
+  //       );
+  //     }
+  //     else {
+  //       setQueryPerusahaanParams(
+  //         prev => {
+  //             let tmp = cloneDeep(prev);
+  //             let filters = cloneDeep(tmp.filters);
+  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
+              
+  //             if(found > -1) {
+  //               filters?.splice(found, 1);
+  //             }
+              
+  //             tmp.pageNumber = 1;
+  //             tmp.filters = filters;             
+  //             return tmp;
+  //         }
+  //       );
+
+  //       setQueryPengaksesParams(
+  //         prev => {
+  //             let tmp = cloneDeep(prev);
+  //             let filters = cloneDeep(tmp.filters);
+  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
+              
+  //             if(found > -1) {
+  //               filters?.splice(found, 1);
+  //             }
+              
+  //             tmp.pageNumber = 1;
+  //             tmp.filters = filters;             
+  //             return tmp;
+  //         }
+  //       );
+  //     }
+  //   },
+  //   [dataLama]
+  // );
   
   return (
     <Modal
@@ -472,7 +519,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   placeholder="ketik nama perusahaan untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsPerusahaan != undefined ? optionsPerusahaan:[]}
-                  selectedKey={dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined}
+                  selectedKey={selectedKeyPerusahaan}
                   useComboBoxAsMenuWidth={true}
                   onRenderOption={_onRenderPerusahaanOption}   
                   onInputValueChange={_onInputCBPerusahaanValueChange}      
@@ -488,6 +535,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                         hasil!.verifikator = null;
                       }                      
                       onChange(hasil);
+                      setSelectedKeyPerusahaan(option?.key as string);
                     }
                   }
                   disabled={disableForm}
@@ -507,10 +555,11 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   placeholder="ketik user untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsPengakses != undefined ? optionsPengakses:[]}
-                  selectedKey={dataLama != undefined ? dataLama.otoritas?.id!:undefined}
+                  selectedKey={selectedKeyOtoritas}
                   onChange={
                     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
                       onChange(postsAuthority?.at(index!));
+                      setSelectedKeyOtoritas(option?.key as string);
                     }
                   }
                   useComboBoxAsMenuWidth={true}

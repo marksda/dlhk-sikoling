@@ -252,6 +252,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         setFormulirTitle('Add');
                         setModeForm('add');
                         showModalFormulirPengaksesPerusahaan();
+                        setDataLama(undefined);
                     }
                 },
                 { 
@@ -262,6 +263,20 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     onClick: () => {
                         setFormulirTitle('Edit');
                         setModeForm('edit');
+                        showModalFormulirPengaksesPerusahaan();
+                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
+                        delete dataTerpilih.key;
+                        setDataLama(dataTerpilih as IOtoritasPerusahaan);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Delete', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Delete');
+                        setModeForm('delete');
                         showModalFormulirPengaksesPerusahaan();
                         let dataTerpilih = cloneDeep(selection.getSelection()[0]);
                         delete dataTerpilih.key;
@@ -892,14 +907,16 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     </Stack>
                 </Callout>                
             }
-            <FormulirAutorityPerusahaan 
-                title={formulirTitle}
-                isModalOpen={isModalFormulirPengaksesPerusahaanOpen}
-                showModal={showModalFormulirPengaksesPerusahaan}
-                hideModal={hideModalFormulirPengaksesPerusahaan}
-                mode={modeForm}
-                dataLama={dataLama}
-            />
+            { isModalFormulirPengaksesPerusahaanOpen == true ?
+                <FormulirAutorityPerusahaan 
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirPengaksesPerusahaanOpen}
+                    showModal={showModalFormulirPengaksesPerusahaan}
+                    hideModal={hideModalFormulirPengaksesPerusahaan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
+            }
         </Stack>
     );
 };

@@ -101,8 +101,8 @@ export const PerusahaanSchema = object({
 export const RegisterPerusahaanSchema = object({
     id: z.string().optional(),
     tanggalRegistrasi: z.string().optional(),
-    kreator: OtoritasSchema.nullable(),
-    verifikator: OtoritasSchema.nullable(),
+    kreator: OtoritasSchema.optional().nullable(),
+    verifikator: OtoritasSchema.optional().nullable(),
     perusahaan: PerusahaanSchema.optional(),
     statusVerifikasi: z.boolean().optional()
 });
