@@ -122,6 +122,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [dataLama, setDataLama]= useState<IOtoritasPerusahaan|undefined>(undefined);
     const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -250,6 +251,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
                         setFormulirTitle('Add');
+                        setModeForm('add');
                         showModalFormulirPengaksesPerusahaan();
                     }
                 },
@@ -260,6 +262,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
                         setFormulirTitle('Edit');
+                        setModeForm('edit');
                         showModalFormulirPengaksesPerusahaan();
                         let dataTerpilih = cloneDeep(selection.getSelection()[0]);
                         delete dataTerpilih.key;
@@ -895,6 +898,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 isModalOpen={isModalFormulirPengaksesPerusahaanOpen}
                 showModal={showModalFormulirPengaksesPerusahaan}
                 hideModal={hideModalFormulirPengaksesPerusahaan}
+                mode={modeForm}
                 dataLama={dataLama}
             />
         </Stack>

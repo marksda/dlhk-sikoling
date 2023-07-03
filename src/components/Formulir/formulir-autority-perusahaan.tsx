@@ -10,11 +10,12 @@ import { useGetDaftarDataQuery as getDaftarOtoritas } from "../../features/repos
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
-import { useSaveMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
+import { useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
+  mode: string|undefined;
   isModalOpen: boolean;
   showModal: () => void;
   hideModal: () => void;
@@ -74,7 +75,7 @@ const iconButtonStyles = {
 };
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
-export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama}) => { 
+export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   //local state
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [queryPerusahaanParams, setQueryPerusahaanParams] = useState<IQueryParamFilters>({
@@ -109,6 +110,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = getDaftarRegisterPerusahaan(queryPerusahaanParams);
   const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryPengaksesParams);
   const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveMutation();
+  const [ updateIdOtoritasPerusahaan, {isLoading: isLoadingUpdateIdOtoritasPerusahaan}] = useUpdateIdMutation();
   
 
   const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -150,15 +152,33 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     setDisableForm(true);
-    // console.log(data);
     try {
-      await saveOtoritasPerusahaan(data as IOtoritasPerusahaan).unwrap().then((originalPromiseResult) => {
-        console.log(originalPromiseResult);
-        setDisableForm(false);
-      }).catch((rejectedValueOrSerializedError) => {
-        console.log(rejectedValueOrSerializedError);
-        setDisableForm(false);
-      }); 
+      switch (mode) {
+        case 'add':
+          await saveOtoritasPerusahaan(data as IOtoritasPerusahaan).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          break;
+        case 'edit':
+          await updateIdOtoritasPerusahaan({
+            idLamaAutority: dataLama?.otoritas?.id!, 
+            idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
+            registerOtoritasPerusahaan: data as IOtoritasPerusahaan
+          }).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          break;
+        case 'delete':
+
+          break;
+        default:
+          break;
+      }
+      
     } catch (error) {
       setDisableForm(false);
     }
