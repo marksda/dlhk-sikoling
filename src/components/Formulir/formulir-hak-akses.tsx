@@ -70,9 +70,9 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
-  const [idTextFieldValue, setIdTextFieldValue] = useState<string>('');
-  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>('');
-  const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>('');
+  const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
+  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.keterangan!:'');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
@@ -167,29 +167,31 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
         />
       </div>
       <div className={contentStyles.body}>
-        <Controller 
-          name="id"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <TextField
-                  label="Id"
-                  value={idTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setIdTextFieldValue(newValue || '');
+        {mode == 'add' ? null:
+          <Controller 
+            name="id"
+            control={control}
+            render={
+              ({
+                field: {onChange, onBlur}, 
+                fieldState: { error }
+              }) => (
+                  <TextField
+                    label="Id"
+                    value={idTextFieldValue}
+                    onChange={
+                      (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                        onChange(newValue || '');
+                        setIdTextFieldValue(newValue || '');
+                      }
                     }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
-                />
-            )}
-        />
+                    styles={textFieldStyles}
+                    disabled={mode == 'delete'|| mode == 'edit' ? true:disableForm}
+                    errorMessage={error && 'harus diisi'}
+                  />
+              )}
+          />
+        }        
         <Controller 
           name="nama"
           control={control}

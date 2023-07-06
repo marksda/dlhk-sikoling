@@ -8,6 +8,7 @@ import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirHakAkses } from "../Formulir/formulir-hak-akses";
+import find from "lodash.find";
 
 
 interface IDataListHakAksesFluentUIProps {
@@ -112,7 +113,6 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
             name: 'Keterangan', 
             minWidth: 100, 
             isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
             data: 'string',
             isPadded: true,
             onRender: (item: IItemHakAkses) => {
@@ -168,9 +168,10 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                         setFormulirTitle('Edit');
                         setModeForm('edit');
                         showModalFormulirHakAkses();
-                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
-                        delete dataTerpilih.key;
-                        setDataLama(dataTerpilih as IHakAkses);
+                        let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
+                        // cloneDeep(selection.getSelection()[0]);
+                        // delete dataTerpilih.key;
+                        setDataLama(dataTerpilih);
                     }
                 },
                 { 
@@ -442,12 +443,12 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                // getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
