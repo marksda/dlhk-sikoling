@@ -271,11 +271,12 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                 },
                 { 
                     key: 'deleteItem', 
-                    text: 'Delete', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Delete' }, 
                     onClick: () => {
-                        setFormulirTitle('Delete');
+                        setFormulirTitle('Hapus item');
                         setModeForm('delete');
                         showModalFormulirPengaksesPerusahaan();
                         let dataTerpilih = cloneDeep(selection.getSelection()[0]);
@@ -802,18 +803,18 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     return (
         <Stack grow verticalFill>
             <Stack.Item>
-                <Stack horizontal grow horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item align="center" style={{paddingLeft: 16}}>
+                <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+                    <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>                        
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
-                                <CommandBar items={itemsBar}/>
+                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
-                                    style={{width: 300}} 
+                                    style={{width: 250}} 
                                     placeholder="pencarian perusahaan" 
                                     underlined={false} 
                                     onSearch={_onSearch}

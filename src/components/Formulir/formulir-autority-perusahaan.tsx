@@ -538,7 +538,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                       setSelectedKeyPerusahaan(option?.key as string);
                     }
                   }
-                  disabled={disableForm}
+                  disabled={mode == 'delete' ? true:disableForm}
                 />
             )}
         />
@@ -567,13 +567,13 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
                   onInputValueChange={_onInputCBPengaksesValueChange}         
                   styles={basicStyles}           
                   errorMessage={error && 'harus diisi'}
-                  disabled={disableForm}
+                  disabled={mode == 'delete' ? true:disableForm}
                 />
             )}
         />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
-          text="Simpan" 
+          text={mode == 'delete' ? 'Hapus':'Simpan'} 
           onClick={handleSubmit(onSubmit, onError)}
           disabled={disableForm}
         />
