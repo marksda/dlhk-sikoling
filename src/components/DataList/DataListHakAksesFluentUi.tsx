@@ -193,13 +193,6 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
         [isSelectedItem, selection]
     );
 
-    // const _getKey = useCallback(
-    //     (item: any, index?: number): string => {
-    //         return item.key;
-    //     },
-    //     []
-    // );
-
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
             let newColumns: IColumn[] = columns.slice();

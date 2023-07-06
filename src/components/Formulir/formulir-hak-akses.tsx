@@ -1,7 +1,7 @@
-import { ContextualMenu, FontWeights, IComboBoxStyles, IDragOptions, IIconProps, IconButton, Modal , PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ContextualMenu, FontWeights, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { OtoritasSchema } from "../../features/schema-resolver/zod-schema";
+import { HakAksesSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
@@ -53,6 +53,7 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -69,6 +70,9 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
+  const [idTextFieldValue, setIdTextFieldValue] = useState<string>('');
+  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>('');
+  const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>('');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
@@ -76,7 +80,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
   //hook-form
   const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
     defaultValues:  cloneDeep(dataLama),
-    resolver: zodResolver(OtoritasSchema),
+    resolver: zodResolver(HakAksesSchema),
   });
 
   const dragOptions = useMemo(
@@ -89,12 +93,13 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     }),
     [keepInBounds],
   );
-
+  
   const onSubmit: SubmitHandler<IHakAkses> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
+          console.log(data);
           // await saveOtoritasPerusahaan(data as IHakAkses).unwrap().then((originalPromiseResult) => {
           //   setDisableForm(false);
           // }).catch((rejectedValueOrSerializedError) => {
@@ -162,7 +167,75 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
         />
       </div>
       <div className={contentStyles.body}>
-        
+        <Controller 
+          name="id"
+          control={control}
+          render={
+            ({
+              field: {onChange, onBlur}, 
+              fieldState: { error }
+            }) => (
+                <TextField
+                  label="Id"
+                  value={idTextFieldValue}
+                  onChange={
+                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                      onChange(newValue || '');
+                      setIdTextFieldValue(newValue || '');
+                    }
+                  }
+                  styles={textFieldStyles}
+                  disabled={mode == 'delete' ? true:disableForm}
+                  errorMessage={error && 'harus diisi'}
+                />
+            )}
+        />
+        <Controller 
+          name="nama"
+          control={control}
+          render={
+            ({
+              field: {onChange, onBlur}, 
+              fieldState: { error }
+            }) => (
+                <TextField
+                  label="Nama"
+                  value={namaTextFieldValue}
+                  onChange={
+                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                      onChange(newValue || '');
+                      setNamaTextFieldValue(newValue || '');
+                    }
+                  }
+                  styles={textFieldStyles}
+                  disabled={mode == 'delete' ? true:disableForm}
+                  errorMessage={error && 'harus diisi'}
+                />
+            )}
+        />
+        <Controller 
+          name="keterangan"
+          control={control}
+          render={
+            ({
+              field: {onChange, onBlur}, 
+              fieldState: { error }
+            }) => (
+                <TextField
+                  label="Keterangan"
+                  value={keteranganTextFieldValue}
+                  onChange={
+                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                      onChange(newValue || '');
+                      setKeteranganTextFieldValue(newValue || '');
+                    }
+                  }
+                  styles={textFieldStyles}
+                  disabled={mode == 'delete' ? true:disableForm}
+                  errorMessage={error && 'harus diisi'}
+                />
+            )}
+        />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 
