@@ -7,6 +7,7 @@ import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { useBoolean } from "@fluentui/react-hooks";
+import { FormulirHakAkses } from "../Formulir/formulir-hak-akses";
 
 
 interface IDataListHakAksesFluentUIProps {
@@ -472,6 +473,16 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            { isModalFormulirHakAksesOpen == true ?
+                <FormulirHakAkses
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirHakAksesOpen}
+                    showModal={showModalFormulirHakAkses}
+                    hideModal={hideModalFormulirHakAkses}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
+            }
         </Stack>
     );
 };

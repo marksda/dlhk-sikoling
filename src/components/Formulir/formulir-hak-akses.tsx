@@ -95,32 +95,32 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     try {
       switch (mode) {
         case 'add':
-          await saveOtoritasPerusahaan(data as IHakAkses).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          // await saveOtoritasPerusahaan(data as IHakAkses).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         case 'edit':
-          await updateIdOtoritasPerusahaan({
-            idLamaAutority: dataLama?.otoritas?.id!, 
-            idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
-            registerOtoritasPerusahaan: data as IOtoritasPerusahaan
-          }).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          // await updateIdOtoritasPerusahaan({
+          //   idLamaAutority: dataLama?.otoritas?.id!, 
+          //   idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
+          //   registerOtoritasPerusahaan: data as IOtoritasPerusahaan
+          // }).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         case 'delete':
-          await deleteOtoritasPerusahaan(dataLama!).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          // await deleteOtoritasPerusahaan(dataLama!).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         default:
           break;
