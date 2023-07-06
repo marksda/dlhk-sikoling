@@ -170,6 +170,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
+          hideModal();
           break;
         case 'edit':
           await updateIdOtoritasPerusahaan({
@@ -181,6 +182,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
+          hideModal();
           break;
         case 'delete':
           await deleteOtoritasPerusahaan(dataLama!).unwrap().then((originalPromiseResult) => {
@@ -188,6 +190,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
+          hideModal();
           break;
         default:
           break;
