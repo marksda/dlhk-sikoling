@@ -1,6 +1,6 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, PrimaryButton, getTheme, mergeStyleSets, Modal } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { z } from "zod";
 import { OtoritasPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
@@ -11,15 +11,15 @@ import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
 import { useDeleteMutation, useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
-import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
+import { IOtoritasPerusahaan as IHakAkses } from "../../features/entity/otoritas-perusahaan";
 
-interface IFormulirAutorityPerusahaanFluentUIProps {
+interface IFormulirHakAksesFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   showModal: () => void;
   hideModal: () => void;
-  dataLama?: IOtoritasPerusahaan;
+  dataLama?: IHakAkses;
 };
 
 // type FormSchemaType = z.infer<typeof OtoritasPerusahaanSchema>;
@@ -75,7 +75,7 @@ const iconButtonStyles = {
 };
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
-export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   //local state
   const [selectedKeyPerusahaan, setSelectedKeyPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyOtoritas, setSelectedKeyOtoritas] = useState<string|undefined>(dataLama != undefined ? dataLama.otoritas?.id!:undefined);
@@ -111,7 +111,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IOtoritasPerusahaan>({
+  const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
     defaultValues:  cloneDeep(dataLama),
     resolver: zodResolver(OtoritasPerusahaanSchema),
   });
@@ -160,12 +160,12 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     [keepInBounds],
   );
 
-  const onSubmit: SubmitHandler<IOtoritasPerusahaan> = async (data) => {
+  const onSubmit: SubmitHandler<IHakAkses> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveOtoritasPerusahaan(data as IOtoritasPerusahaan).unwrap().then((originalPromiseResult) => {
+          await saveOtoritasPerusahaan(data as IHakAkses).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -176,7 +176,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           await updateIdOtoritasPerusahaan({
             idLamaAutority: dataLama?.otoritas?.id!, 
             idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
-            registerOtoritasPerusahaan: data as IOtoritasPerusahaan
+            registerOtoritasPerusahaan: data as IHakAkses
           }).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
@@ -200,7 +200,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     }
   };
 
-  const onError: SubmitErrorHandler<IOtoritasPerusahaan> = (err) => {
+  const onError: SubmitErrorHandler<IHakAkses> = (err) => {
     console.log(err);
   };
 
@@ -288,37 +288,6 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
 
   const _onInputCBPerusahaanValueChange = useCallback(
     (newValue: string) => {
-      // setQueryPerusahaanFilters(
-      //   prev => {
-      //       let tmp = cloneDeep(prev);
-      //       let filters = cloneDeep(tmp.filters);
-      //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-            
-      //       if(newValue != '') {
-      //           if(found == -1) {
-      //               filters?.push({
-      //                   fieldName: 'nama',
-      //                   value: newValue
-      //               });
-      //           }
-      //           else {
-      //               filters?.splice(found, 1, {
-      //                   fieldName: 'nama',
-      //                   value: newValue
-      //               })
-      //           }
-      //       }
-      //       else {
-      //           if(found > -1) {
-      //               filters?.splice(found, 1);
-      //           }
-      //       }
-            
-      //       tmp.filters = filters;             
-      //       return tmp;
-      //   }
-      // );
-
       setQueryPerusahaanParams(
           prev => {
               let tmp = cloneDeep(prev);
@@ -398,189 +367,9 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     []
   );
 
-  // useEffect(
-  //   () => {
-  //     if(dataLama != undefined) {
-  //       setQueryPerusahaanParams(
-  //         prev => {
-  //             let tmp = cloneDeep(prev);
-  //             let filters = cloneDeep(tmp.filters);
-  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
-              
-  //             if(found == -1) {
-  //                 filters?.push({
-  //                     fieldName: 'nama',
-  //                     value: dataLama?.registerPerusahaan?.perusahaan?.nama!
-  //                 });
-  //             }
-  //             else {
-  //                 filters?.splice(found, 1, {
-  //                     fieldName: 'nama',
-  //                     value: dataLama?.registerPerusahaan?.perusahaan?.nama!
-  //                 })
-  //             }
-              
-  //             tmp.pageNumber = 1;
-  //             tmp.filters = filters;             
-  //             return tmp;
-  //         }
-  //       );
-
-  //       setQueryPengaksesParams(
-  //         prev => {
-  //             let tmp = cloneDeep(prev);
-  //             let filters = cloneDeep(tmp.filters);
-  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
-              
-  //             if(found == -1) {
-  //                 filters?.push({
-  //                     fieldName: 'user_name',
-  //                     value: dataLama.otoritas?.userName!
-  //                 });
-  //             }
-  //             else {
-  //                 filters?.splice(found, 1, {
-  //                     fieldName: 'user_name',
-  //                     value: dataLama.otoritas?.userName!
-  //                 })
-  //             }
-              
-  //             tmp.pageNumber = 1;
-  //             tmp.filters = filters;             
-  //             return tmp;
-  //         }
-  //       );
-  //     }
-  //     else {
-  //       setQueryPerusahaanParams(
-  //         prev => {
-  //             let tmp = cloneDeep(prev);
-  //             let filters = cloneDeep(tmp.filters);
-  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;    
-              
-  //             if(found > -1) {
-  //               filters?.splice(found, 1);
-  //             }
-              
-  //             tmp.pageNumber = 1;
-  //             tmp.filters = filters;             
-  //             return tmp;
-  //         }
-  //       );
-
-  //       setQueryPengaksesParams(
-  //         prev => {
-  //             let tmp = cloneDeep(prev);
-  //             let filters = cloneDeep(tmp.filters);
-  //             let found = filters?.findIndex((obj) => {return obj.fieldName == 'user_name'}) as number;  
-              
-  //             if(found > -1) {
-  //               filters?.splice(found, 1);
-  //             }
-              
-  //             tmp.pageNumber = 1;
-  //             tmp.filters = filters;             
-  //             return tmp;
-  //         }
-  //       );
-  //     }
-  //   },
-  //   [dataLama]
-  // );
+  
   
   return (
-    <Modal
-      titleAriaId={titleId}
-      isOpen={isModalOpen}
-      isModeless={false}
-      containerClassName={contentStyles.container}
-      dragOptions={dragOptions}
-      onDismissed={_handleOnDismissed}
-    >
-      <div className={contentStyles.header}>
-        <h2 className={contentStyles.heading} id={titleId}>
-        {title}
-        </h2>
-        <IconButton
-            styles={iconButtonStyles}
-            iconProps={cancelIcon}
-            ariaLabel="Close popup modal"
-            onClick={hideModal}
-        />
-      </div>
-      <div className={contentStyles.body}>
-        <Controller 
-          name="registerPerusahaan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <ComboBox
-                  label="Perusahaan"
-                  placeholder="ketik nama perusahaan untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsPerusahaan != undefined ? optionsPerusahaan:[]}
-                  selectedKey={selectedKeyPerusahaan}
-                  useComboBoxAsMenuWidth={true}
-                  onRenderOption={_onRenderPerusahaanOption}   
-                  onInputValueChange={_onInputCBPerusahaanValueChange}      
-                  styles={basicStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  onChange={
-                    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                      let hasil = cloneDeep(postsRegisterPerusahaan?.at(index!));
-                      if(hasil?.kreator == undefined) {
-                        hasil!.kreator = null;
-                      }
-                      if(hasil?.verifikator == undefined) {
-                        hasil!.verifikator = null;
-                      }                      
-                      onChange(hasil);
-                      setSelectedKeyPerusahaan(option?.key as string);
-                    }
-                  }
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
-            )}
-        />
-        <Controller 
-          name="otoritas"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <ComboBox
-                  label="Pengakses"
-                  placeholder="ketik user untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsPengakses != undefined ? optionsPengakses:[]}
-                  selectedKey={selectedKeyOtoritas}
-                  onChange={
-                    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                      onChange(postsAuthority?.at(index!));
-                      setSelectedKeyOtoritas(option?.key as string);
-                    }
-                  }
-                  useComboBoxAsMenuWidth={true}
-                  onRenderOption={_onRenderOptionPengakses}  
-                  onInputValueChange={_onInputCBPengaksesValueChange}         
-                  styles={basicStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
-            )}
-        />
-        <PrimaryButton 
-          style={{marginTop: 16, width: '100%'}}
-          text={mode == 'delete' ? 'Hapus':'Simpan'} 
-          onClick={handleSubmit(onSubmit, onError)}
-          disabled={disableForm}
-        />
-      </div>
-    </Modal>
+    
   );
 };

@@ -1,11 +1,12 @@
-import { FC, useCallback, useState } from "react";
-import { ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
+import { CommandBar, ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IHakAkses } from "../../features/entity/hak-akses";
+import { useBoolean } from "@fluentui/react-hooks";
 
 
 interface IDataListHakAksesFluentUIProps {
@@ -63,6 +64,11 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
     );
 
     // local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirHakAksesOpen, { setTrue: showModalFormulirHakAkses, setFalse: hideModalFormulirHakAkses }] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IHakAkses|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -118,13 +124,80 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
     (queryFilters);
     const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery(queryParams);
 
-
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                selectionMode: SelectionMode.single,
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    ); 
+    
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add');
+                        setModeForm('add');
+                        showModalFormulirHakAkses();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit');
+                        setModeForm('edit');
+                        showModalFormulirHakAkses();
+                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
+                        delete dataTerpilih.key;
+                        setDataLama(dataTerpilih as IHakAkses);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirHakAkses();
+                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
+                        delete dataTerpilih.key;
+                        setDataLama(dataTerpilih as IHakAkses);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
+
+    // const _getKey = useCallback(
+    //     (item: any, index?: number): string => {
+    //         return item.key;
+    //     },
+    //     []
+    // );
 
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
@@ -339,7 +412,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
     );
 
     return (
-        <Stack grow verticalFill style={{marginTop: 2}}>
+        <Stack grow verticalFill>
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
@@ -348,8 +421,11 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
+                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                            </Stack.Item>
+                            <Stack.Item>
                                 <SearchBox 
-                                    style={{width: 300}} 
+                                    style={{width: 250}} 
                                     placeholder="pencarian nama hak akses" 
                                     underlined={false} 
                                     onSearch={_onSearch}
@@ -375,7 +451,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
+                                // getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
                                 selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}

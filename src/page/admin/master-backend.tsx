@@ -34,7 +34,7 @@ root: {
 
 export const MasterBackEnd: FC = () => {
 
-    const [idContentPage, setIdContentPage] = useState<string>('authority');
+    const [idContentPage, setIdContentPage] = useState<string>('hak_akses');
 
     const daftarMenuOverFlow = useMemo(
         () => {
@@ -55,11 +55,11 @@ export const MasterBackEnd: FC = () => {
                                 }
                             },
                             {
-                                key: 'authority',
+                                key: 'otoritas',
                                 name: 'Pengakses',
                                 iconProps: { iconName: 'ContactCard'},
                                 onClick: () => {
-                                    _onHandleMasterMenu('authority');
+                                    _onHandleMasterMenu('otoritas');
                                 }
                             },
                             {
@@ -302,7 +302,7 @@ export const MasterBackEnd: FC = () => {
         () => {
             let konten = null;
             switch (idContentPage) {
-                case 'authority':
+                case 'otoritas':
                     konten =             
                         <DataListOtoritasFluentUI
                             title="Pengakses"
