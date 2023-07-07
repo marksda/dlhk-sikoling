@@ -103,7 +103,6 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     try {
       switch (mode) {
         case 'add':
-          console.log(data);
           await saveHakAkses(data as IHakAkses).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
@@ -112,16 +111,16 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
           hideModal();
           break;
         case 'edit':
-          // await updateIdOtoritasPerusahaan({
-          //   idLamaAutority: dataLama?.otoritas?.id!, 
-          //   idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
-          //   registerOtoritasPerusahaan: data as IOtoritasPerusahaan
-          // }).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
-          // hideModal();
+          await updateHakAkses({
+            id: dataLama?.id, 
+            nama: namaTextFieldValue,
+            keterangan: keteranganTextFieldValue
+          }).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         case 'delete':
           await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
