@@ -11,7 +11,7 @@ export const HakAksesApiSlice = createApi({
     tagTypes: ['HakAkses'],
     endpoints(builder) {
         return {
-            addHakAkses: builder.mutation<IHakAkses, Partial<IHakAkses>>({
+            save: builder.mutation<IHakAkses, Partial<IHakAkses>>({
                 query: (body) => ({
                     url: 'hak_akses',
                     method: 'POST',
@@ -19,7 +19,7 @@ export const HakAksesApiSlice = createApi({
                 }),
                 invalidatesTags: [{type: 'HakAkses', id: 'LIST'}],
             }),
-            updateHakAkses: builder.mutation<void, Partial<IHakAkses>>({
+            update: builder.mutation<void, Partial<IHakAkses>>({
                 query: (hakAkses) => ({
                     url: 'hak_akses',
                     method: 'PUT',
@@ -29,7 +29,7 @@ export const HakAksesApiSlice = createApi({
                     return [{type: 'HakAkses', id: id!}];
                 },
             }),
-            deleteHakAkses: builder.mutation<{ success: boolean; id: string }, string>({
+            delete: builder.mutation<Partial<IHakAkses>, string>({
                 query(idHakAkses) {
                   return {
                     url: `hak_akses/${idHakAkses}`,
@@ -60,6 +60,6 @@ export const HakAksesApiSlice = createApi({
 });
 
 export const { 
-    useAddHakAksesMutation, useUpdateHakAksesMutation,
+    useSaveMutation, useUpdateMutation, useDeleteMutation,
     useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery
 } = HakAksesApiSlice;

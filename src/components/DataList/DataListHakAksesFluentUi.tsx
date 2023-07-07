@@ -169,8 +169,6 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                         setModeForm('edit');
                         showModalFormulirHakAkses();
                         let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
-                        // cloneDeep(selection.getSelection()[0]);
-                        // delete dataTerpilih.key;
                         setDataLama(dataTerpilih);
                     }
                 },
@@ -184,9 +182,8 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                         setFormulirTitle('Hapus item');
                         setModeForm('delete');
                         showModalFormulirHakAkses();
-                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
-                        delete dataTerpilih.key;
-                        setDataLama(dataTerpilih as IHakAkses);
+                        let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
+                        setDataLama(dataTerpilih);
                     }
                 },
             ];

@@ -6,6 +6,7 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
+import { useDeleteMutation, useSaveMutation, useUpdateMutation } from "../../features/repository/service/hak-akses-api-slice";
 
 interface IFormulirHakAksesFluentUIProps {
   title: string|undefined;
@@ -76,12 +77,15 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
-
   //hook-form
   const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
     defaultValues:  cloneDeep(dataLama),
     resolver: zodResolver(HakAksesSchema),
   });
+  // rtk query
+  const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
+  const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
+  const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -100,12 +104,12 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
       switch (mode) {
         case 'add':
           console.log(data);
-          // await saveOtoritasPerusahaan(data as IHakAkses).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
-          // hideModal();
+          await saveHakAkses(data as IHakAkses).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         case 'edit':
           // await updateIdOtoritasPerusahaan({
@@ -120,12 +124,12 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
           // hideModal();
           break;
         case 'delete':
-          // await deleteOtoritasPerusahaan(dataLama!).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
-          // hideModal();
+          await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         default:
           break;
