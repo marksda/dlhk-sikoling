@@ -289,13 +289,6 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         }, 
         [isSelectedItem, selection]
     );
-
-    // const _getKey = useCallback(
-    //     (item: any, index?: number): string => {
-    //         return item.key;
-    //     },
-    //     []
-    // );
     
     const _onSearch = useCallback(
         (newValue) => {

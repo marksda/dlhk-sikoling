@@ -41,14 +41,14 @@ export const MasterBackEnd: FC = () => {
             return [
                 {
                     key: 'keamanan',
-                    name: 'Keamanan',
+                    name: 'Akses',
                     icon: 'Shield',
                     onClick: undefined,
                     subMenuProps: {
                         items: [               
                             {
                                 key: 'hak_akses',
-                                name: 'Kategori akses',
+                                name: 'Hak akses',
                                 iconProps: {iconName:'AddLink'},
                                 onClick: () => {
                                     _onHandleMasterMenu('hak_akses');
@@ -64,7 +64,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'user_perusahaan',
-                                name: 'Perusahaan - Pengakses',
+                                name: 'Otoritas perusahaan',
                                 iconProps: { iconName: 'ContactLink'},
                                 onClick: () => {
                                     _onHandleMasterMenu('user_perusahaan');
@@ -323,7 +323,7 @@ export const MasterBackEnd: FC = () => {
                     break; 
                 case 'hak_akses':
                         konten = <DataListHakAksesFluentUI
-                            title="Kategori akses"
+                            title="Hak akses"
                             initSelectedFilters={
                                 {
                                     pageNumber: 1,
@@ -642,7 +642,7 @@ export const MasterBackEnd: FC = () => {
                                     ],
                                 }
                             }
-                            title="Perusahaan - Pengakses"
+                            title="Otoritas perusahaan"
                         />;
                     break;    
                 default:
@@ -703,7 +703,7 @@ export const MasterBackEnd: FC = () => {
         <Stack grow verticalFill>
             <Stack.Item style={{marginTop: -2, marginBottom: 4, borderBottom: '1px solid #e5e5e5'}}>
                 <OverflowSet
-                    aria-label="Custom Example"
+                    aria-label="menu"
                     items={daftarMenuOverFlow}
                     onRenderItem={onRenderItem}
                     onRenderOverflowButton={onRenderOverflowButton}

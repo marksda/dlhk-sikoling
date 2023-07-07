@@ -1,14 +1,16 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton } from "@fluentui/react";
-import { FC, FormEvent, useCallback, useState } from "react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { useGetDaftarHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IOtoritas } from "../../features/entity/otoritas";
+import find from "lodash.find";
+import { FormulirOtoritas } from "../Formulir/formulir-otoritas";
 
 interface IDataListOtoritasUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -88,6 +90,12 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     );
     
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirOtoritasOpen, { setTrue: showModalFormulirOtoritas, setFalse: hideModalFormulirOtoritas }] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IOtoritas|undefined>(undefined);
+    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -115,7 +123,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'user_name', 
-            name: 'User', 
+            name: 'User name', 
             fieldName: 'user_name', 
             minWidth: 200, 
             maxWidth: 200, 
@@ -216,10 +224,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             onRender: (item: IItemAuthority) => {
                 return (
                     <span>{
-                        item.verified != undefined ? 
-                        item.verified == true ? 
-                        <FontIcon aria-label="True" iconName="Commitments" className={classNames.deepGreen} /> :
-                        <FontIcon aria-label="False" iconName="HandsFree" className={classNames.deepRed} /> : null 
+                        item.isVerified != undefined ? item.isVerified == true ? 'Sudah':'Belum': null 
                     }</span>
                 );
             },
@@ -236,7 +241,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCountPosts } = getJumlahOtoritas(queryFilters);
-    const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryParams);
+    const { data: postsOtoritas, isLoading: isLoadingPostsOtoritas } = getDaftarOtoritas(queryParams);
     const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery({
         pageNumber: 1,
         pageSize: 0,
@@ -248,7 +253,73 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             },
         ],
     });
-    
+
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                selectionMode: SelectionMode.single,
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
+        },
+        []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add');
+                        setModeForm('add');
+                        showModalFormulirOtoritas();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit');
+                        setModeForm('edit');
+                        showModalFormulirOtoritas();
+                        let dataTerpilih: IOtoritas = find(postsOtoritas, (i) => i.id == selection.getSelection()[0].key) as IOtoritas;
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirOtoritas();
+                        let dataTerpilih: IOtoritas = find(postsOtoritas, (i: IOtoritas) => i.id == selection.getSelection()[0].key) as IOtoritas;
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
+    );    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
@@ -986,6 +1057,9 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
+                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                            </Stack.Item>
+                            <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian user" 
@@ -1016,7 +1090,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsAuthority != undefined ? postsAuthority?.map(
+                                    postsOtoritas != undefined ? postsOtoritas?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
@@ -1133,6 +1207,16 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                         </Stack.Item>
                     </Stack>
                 </Callout>                
+            }
+            { isModalFormulirOtoritasOpen== true ?
+                <FormulirOtoritas
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirOtoritasOpen}
+                    showModal={showModalFormulirOtoritas}
+                    hideModal={hideModalFormulirOtoritas}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
             }
         </Stack>
     );
