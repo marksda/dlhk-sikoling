@@ -212,8 +212,8 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataQuery(queryParams);
-    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataQuery(queryFilters);
+    const { data: postsOtoritasPerusahaan, isLoading: isLoadingPostsOtoritasPerusahaan } = useGetDaftarDataQuery(queryParams);
+    const { data: postsCountOtoritasPerusahaan, isLoading: isLoadingCountOtoritasPerusahaan } = useGetJumlahDataQuery(queryFilters);
 
     const selection: Selection = useMemo(
         () => {
@@ -267,6 +267,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         let dataTerpilih = cloneDeep(selection.getSelection()[0]);
                         delete dataTerpilih.key;
                         setDataLama(dataTerpilih as IOtoritasPerusahaan);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
                 },
                 { 
@@ -842,7 +843,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         <ScrollablePane scrollbarVisibility="auto">             
                             <DetailsList
                                 items={
-                                    postsPerusahaan != undefined ? postsPerusahaan?.map(
+                                    postsOtoritasPerusahaan != undefined ? postsOtoritasPerusahaan?.map(
                                         (t) => (
                                             {key: `${t.otoritas?.id}-${t.registerPerusahaan?.id}`, ...t}
                                         )
@@ -864,7 +865,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={postsCountPerusahaan == undefined ? 50:postsCountPerusahaan }
+                            totalCount={postsCountOtoritasPerusahaan == undefined ? 50:postsCountOtoritasPerusahaan }
                             onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />

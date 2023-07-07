@@ -170,6 +170,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                         showModalFormulirHakAkses();
                         let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
                         setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
                 },
                 { 
