@@ -82,7 +82,7 @@ export const MasterBackEnd: FC = () => {
                         items: [
                             {
                                 key: 'identitas_personal',
-                                name: 'Personal',
+                                name: 'Person',
                                 iconProps: { iconName: 'Contact'},
                                 onClick: () => {
                                     _onHandleMasterMenu('identitas_personal');
@@ -372,7 +372,7 @@ export const MasterBackEnd: FC = () => {
                                     ],
                                 }
                             }
-                            title="Personal"
+                            title="Person"
                         />;
                     break;
                 case 'model_perizinan':

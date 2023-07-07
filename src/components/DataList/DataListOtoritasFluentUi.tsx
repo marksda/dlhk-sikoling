@@ -94,8 +94,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirOtoritasOpen, { setTrue: showModalFormulirOtoritas, setFalse: hideModalFormulirOtoritas }] = useBoolean(false);
-    const [dataLama, setDataLama]= useState<IOtoritas|undefined>(undefined);
-    
+    const [dataLama, setDataLama]= useState<IOtoritas|undefined>(undefined);    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -136,7 +135,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'nama', 
-            name: 'Identitas', 
+            name: 'Identitas person', 
             minWidth: 250, 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
@@ -179,7 +178,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'hak_akses', 
-            name: 'Otoritas', 
+            name: 'Hak akses', 
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true, 
@@ -198,7 +197,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'status_internal', 
-            name: 'Tipe user', 
+            name: 'Tipe pengguna', 
             minWidth: 100, 
             maxWidth: 100, 
             isResizable: true,
@@ -217,7 +216,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'is_verified', 
-            name: 'Verifikasi', 
+            name: 'Approved', 
             minWidth: 40, 
             maxWidth: 40, 
             isResizable: false,            

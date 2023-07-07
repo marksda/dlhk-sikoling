@@ -1,7 +1,7 @@
 import { ContextualMenu, FontWeights, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { HakAksesSchema } from "../../features/schema-resolver/zod-schema";
+import { HakAksesSchema, OtoritasSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
@@ -73,15 +73,15 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
-//   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [userNameTextFieldValue, setUserNameTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.userName!:'');
 //   const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.keterangan!:'');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
+  const {handleSubmit, control, resetField, watch} = useForm<IOtoritas>({
     defaultValues:  cloneDeep(dataLama),
-    resolver: zodResolver(HakAksesSchema),
+    resolver: zodResolver(OtoritasSchema),
   });
   // rtk query
   const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
@@ -99,12 +99,12 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     [keepInBounds],
   );
   
-  const onSubmit: SubmitHandler<IHakAkses> = async (data) => {
+  const onSubmit: SubmitHandler<IOtoritas> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveHakAkses(data as IHakAkses).unwrap().then((originalPromiseResult) => {
+          await saveHakAkses(data as IOtoritas).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -197,7 +197,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
           />
         }        
         <Controller 
-          name="nama"
+          name="userName"
           control={control}
           render={
             ({
@@ -205,35 +205,12 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
               fieldState: { error }
             }) => (
                 <TextField
-                  label="Nama"
-                //   value={namaTextFieldValue}
+                  label="User name"
+                  value={userNameTextFieldValue}
                   onChange={
                     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
                       onChange(newValue || '');
-                    //   setNamaTextFieldValue(newValue || '');
-                    }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
-                />
-            )}
-        />
-        <Controller 
-          name="keterangan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <TextField
-                  label="Keterangan"
-                //   value={keteranganTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                    //   setKeteranganTextFieldValue(newValue || '');
+                      setUserNameTextFieldValue(newValue || '');
                     }
                   }
                   styles={textFieldStyles}
