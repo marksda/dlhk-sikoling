@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, MaskedTextField, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
 import { HakAksesSchema } from "../../features/schema-resolver/zod-schema";
@@ -56,7 +56,9 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
+const stackTokens = { childrenGap: 8 };
+const textFieldKtpStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 140 } };
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 350 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -69,12 +71,15 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const basicStyles: Partial<IComboBoxStyles> = { root: { width: 160 } };
+const basicStyles: Partial<IComboBoxStyles> = { root: { width: 140 } };
+const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.telepone!:'');
+  const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
   const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
   const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
   const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
@@ -200,62 +205,127 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         />
       </div>
       <div className={contentStyles.body}>
-        <Controller 
-            name="nik"
-            control={control}
-            render={
-              ({
-                field: {onChange, onBlur}, 
-                fieldState: { error }
-              }) => (
-                  <TextField
-                    label="Nik"
-                    value={nikTextFieldValue}
-                    onChange={
-                      (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                        onChange(newValue || '');
-                        setNikTextFieldValue(newValue || '');
-                      }
-                    }
-                    styles={textFieldStyles}
-                    disabled={mode == 'delete' ? true:disableForm}
-                    errorMessage={error && 'harus diisi'}
-                  />
-              )}
-        />
-        <Controller 
-          name="nama"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <TextField
-                  label="Nama"
-                  value={namaTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setNamaTextFieldValue(newValue || '');
-                    }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
+        <Stack horizontal tokens={stackTokens}>
+            <Stack.Item>
+                <Controller 
+                    name="nik"
+                    control={control}
+                    render={
+                    ({
+                        field: {onChange, onBlur}, 
+                        fieldState: { error }
+                    }) => (
+                        <MaskedTextField
+                            label="Nik"
+                            placeholder="Isi sesuai KTP"
+                            mask="9999999999999999"
+                            value={nikTextFieldValue}
+                            onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                onChange(newValue || '');
+                                setNikTextFieldValue(newValue || '');
+                            }
+                            }
+                            styles={textFieldKtpStyles}
+                            disabled={mode == 'delete' ? true:disableForm}
+                            errorMessage={error && 'harus diisi'}
+                        />
+                    )}
                 />
-            )}
-        />
-        <Controller 
-          name="jenisKelamin"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <ComboBox
-                  label="Jenis kelamin"
+            </Stack.Item>
+            <Stack.Item>
+                <Controller 
+                name="nama"
+                control={control}
+                render={
+                    ({
+                    field: {onChange, onBlur}, 
+                    fieldState: { error }
+                    }) => (
+                        <TextField
+                        label="Nama"
+                        placeholder="Isi sesuai KTP"
+                        value={namaTextFieldValue}
+                        onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                            onChange(newValue || '');
+                            setNamaTextFieldValue(newValue || '');
+                            }
+                        }
+                        styles={textFieldStyles}
+                        disabled={mode == 'delete' ? true:disableForm}
+                        errorMessage={error && 'harus diisi'}
+                        />
+                    )}
+                />
+            </Stack.Item>
+        </Stack>
+        <Stack horizontal tokens={stackTokens}>
+            <Stack.Item>
+                <Controller 
+                    name="kontak.telepone"
+                    control={control}
+                    render={
+                    ({
+                        field: {onChange, onBlur}, 
+                        fieldState: { error }
+                    }) => (
+                        <TextField
+                            label="Telp."
+                            placeholder="nomor telepon"
+                            value={teleponeTextFieldValue}
+                            onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                onChange(newValue || '');
+                                setTeleponeTextFieldValue(newValue || '');
+                            }
+                            }
+                            styles={textFieldKtpStyles}
+                            disabled={mode == 'delete' ? true:disableForm}
+                            errorMessage={error && 'harus diisi'}
+                        />
+                    )}
+                />
+            </Stack.Item>
+            <Stack.Item>
+                <Controller 
+                name="kontak.email"
+                control={control}
+                render={
+                    ({
+                    field: {onChange, onBlur}, 
+                    fieldState: { error }
+                    }) => (
+                      <TextField
+                        label="Email"
+                        placeholder="Isi sesuai KTP"
+                        value={emailTextFieldValue}
+                        onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                            onChange(newValue || '');
+                            setEmailTextFieldValue(newValue || '');
+                            }
+                        }
+                        styles={textFieldStyles}
+                        disabled={mode == 'delete' ? true:disableForm}
+                        errorMessage={error && 'harus diisi'}
+                      />
+                    )}
+                />
+            </Stack.Item>
+        </Stack>
+        <Stack horizontal tokens={stackTokens}>
+          <Stack.Item>
+            <Controller 
+              name="jenisKelamin"
+              control={control}
+              render={
+                ({
+                  field: {onChange, onBlur}, 
+                  fieldState: { error }
+                }) => (
+                  <ComboBox
+                    label="Jenis kelamin"
                   placeholder="Pilih"
                   allowFreeform={true}
                   options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
@@ -270,10 +340,85 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                       setSelectedKeyJenisKelamin(option?.key as string);
                     }
                   }
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
-            )}
-        />
+                    disabled={mode == 'delete' ? true:disableForm}
+                  />
+                )}
+            />
+          </Stack.Item>
+          <Stack.Item>
+            <Label>Alamat</Label>
+            <Stack style={{border: '1px solid #e1dfdf', padding: 8}} tokens={stackTokens}>
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens}>
+                  <Stack.Item>
+                    <Label style={{width: 72}}>Propinsi</Label>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="jenisKelamin"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <ComboBox
+                            placeholder="Pilih"
+                            allowFreeform={true}
+                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                            selectedKey={selectedKeyJenisKelamin}
+                            useComboBoxAsMenuWidth={true} 
+                            styles={alamatStyles}           
+                            errorMessage={error && 'harus diisi'}
+                            onChange={
+                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                onChange(hasil);
+                                setSelectedKeyJenisKelamin(option?.key as string);
+                              }
+                            }
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens}>
+                  <Stack.Item>
+                    <Label style={{width: 72}}>Kabupaten</Label>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="jenisKelamin"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <ComboBox
+                            placeholder="Pilih"
+                            allowFreeform={true}
+                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                            selectedKey={selectedKeyJenisKelamin}
+                            useComboBoxAsMenuWidth={true} 
+                            styles={alamatStyles}           
+                            errorMessage={error && 'harus diisi'}
+                            onChange={
+                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                onChange(hasil);
+                                setSelectedKeyJenisKelamin(option?.key as string);
+                              }
+                            }
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>           
+            </Stack>
+          </Stack.Item>
+        </Stack>        
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 
