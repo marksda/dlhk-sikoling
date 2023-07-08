@@ -1,36 +1,69 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseRestAPIUrl, defaultHalaman as halaman } from "../../config/config";
 import { IPropinsi } from "../../entity/propinsi";
-
-// const PROPINSI_API_KEY: string = '234a-fe23ab-8cc76d-123aed';
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarPropinsi = IPropinsi[];
 
 export const PropinsiApiSlice = createApi({
     reducerPath: 'propinsiApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-        // prepareHeaders(headers) {
-        //     headers.set('x-api-key', PROPINSI_API_KEY);
-        //     return headers;
-        // },
-    }),
+    baseQuery: baseQueryWithReauth,
+    refetchOnReconnect: true,
+    tagTypes:['Propinsi'],
     endpoints(builder) {
         return {
-            getAllPropinsi: builder.query<daftarPropinsi, void>({
-                query: () => `propinsi`,
+            save: builder.mutation<IPropinsi, Partial<IPropinsi>>({
+                query: (body) => ({
+                    url: 'propinsi',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: [{type: 'Propinsi', id: 'LIST'}]
             }),
-            getPropinsiByPage: builder.query<daftarPropinsi, number|void>({
-                query: (page = 1, pageSize = 10) => `propinsi/page?page=${page}&pageSize=${pageSize}`,
+            update: builder.mutation<void, Partial<IPropinsi>>({
+                query: (body) => ({
+                    url: 'propinsi',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: (result, error, {id}) => [{type: 'Propinsi', id: id!}]
             }),
-            getPropinsiByNama: builder.query<daftarPropinsi, string|void>({
-                query: (nama = 'jawa timur') => `propinsi/nama?nama=${nama}`,
+            updateId: builder.mutation<IPropinsi, {idLama: String; propinsi: IPropinsi}>({
+                query: ({idLama, propinsi}) => ({
+                    url: `propinsi/id/${idLama}`,
+                    method: 'PUT',
+                    body: propinsi,
+                }),
+                invalidatesTags: (result, error, {idLama}) => [{type: 'Propinsi', id: idLama as string}]
             }),
-            getPropinsiByNamaAndPage: builder.query<daftarPropinsi, string|void>({
-                query: (nama = 'jawa timur', page=halaman.page, pageSize=halaman.pageSize) => `propinsi/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            delete: builder.mutation<Partial<IPropinsi>, Partial<IPropinsi>>({
+                query: (propinsi) => ({                  
+                    url: `propinsi/${propinsi.id}`,
+                    method: 'DELETE',            
+                }),
+                invalidatesTags: (result, error, { id }) => [{type: 'Propinsi', id: id!}]
+            }),
+            getDaftarData: builder.query<daftarPropinsi, IQueryParamFilters>({
+                query: (queryParams) => `propinsi?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({id}) => ({type: 'Propinsi' as const, id: id!})
+                        ),
+                        { type: 'Propinsi', id: 'LIST' },
+                    ]:
+                    [{type: 'Propinsi', id: 'LIST'}],
+            }),
+            getJumlahData: builder.query<number, qFilters>({
+                query: (queryFilters) => `propinsi/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
 });
 
-export const { useGetAllPropinsiQuery, useGetPropinsiByPageQuery, useGetPropinsiByNamaQuery, useGetPropinsiByNamaAndPageQuery } = PropinsiApiSlice;
+export const { 
+    useSaveMutation, useUpdateMutation, useUpdateIdMutation,
+    useDeleteMutation, useGetDaftarDataQuery, useGetJumlahDataQuery
+ } = PropinsiApiSlice;

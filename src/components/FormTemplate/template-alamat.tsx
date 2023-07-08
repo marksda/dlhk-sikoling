@@ -9,8 +9,8 @@ import { setAlamatDesa, setAlamatKabupaten, setAlamatKecamatan, setAlamatKeteran
 import { useGetDesaByKecamatanQuery } from "../../features/repository/service/desa-api-slice";
 import { useGetKabupatenByPropinsiQuery } from "../../features/repository/service/kabupaten-api-slice";
 import { useGetKecamatanByKabupatenQuery } from "../../features/repository/service/kecamatan-api-slice";
-import { useGetAllPropinsiQuery } from "../../features/repository/service/propinsi-api-slice";
-import { IPropinsi } from "../../features/repository/ssot/propinsi-slice";
+// import { useGetAllPropinsiQuery } from "../../features/repository/service/propinsi-api-slice";
+// import { IPropinsi } from "../../features/repository/ssot/propinsi-slice";
 
 
 const alamatSchema = object({

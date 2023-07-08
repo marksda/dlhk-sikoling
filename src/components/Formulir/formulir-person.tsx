@@ -9,6 +9,8 @@ import { IHakAkses } from "../../features/entity/hak-akses";
 import { useDeleteMutation, useSaveMutation, useUpdateMutation } from "../../features/repository/service/hak-akses-api-slice";
 import { IPerson } from "../../features/entity/person";
 import { useGetDaftarDataQuery as getDaftarJenisKelamin } from "../../features/repository/service/jenis-kelamin-api-slice";
+import { useGetDaftarDataQuery as getDaftarPropinsi } from "../../features/repository/service/propinsi-api-slice";
+import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -85,6 +87,20 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
   const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
   const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.desa?.id!:undefined);
+  const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 200,
+    filters: dataLama == undefined ? []:[{
+      fieldName: 'nama',
+      value: dataLama.alamat?.propinsi?.nama as string
+    }],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
@@ -94,6 +110,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     resolver: zodResolver(HakAksesSchema),
   });
   // rtk query
+  const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = getDaftarPropinsi(queryPropinsiParams);
   const { data: postsJenisKelamin, isLoading: isLoadingJenisKelamin } = getDaftarJenisKelamin({
     pageNumber: 1,
     pageSize: 5,
@@ -131,6 +148,19 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
             })
     ),
     [postsJenisKelamin]
+  );
+
+  const optionsPropinsi: IComboBoxOption[]|undefined = useMemo(
+    () => (
+      postsPropinsi?.map((item):IComboBoxOption => {
+              return {
+                key: item.id!,
+                text: item.nama!,
+                data: item
+              };
+            })
+    ),
+    [postsPropinsi]
   );
   
   const onSubmit: SubmitHandler<IPerson> = async (data) => {
@@ -298,7 +328,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                     }) => (
                       <TextField
                         label="Email"
-                        placeholder="Isi sesuai KTP"
+                        placeholder="Isi sesuai penulisan format email"
                         value={emailTextFieldValue}
                         onChange={
                             (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -355,23 +385,23 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                   </Stack.Item>
                   <Stack.Item>
                     <Controller 
-                      name="jenisKelamin"
+                      name="alamat.propinsi"
                       control={control}
                       render={
                         ({field: {onChange, onBlur}, fieldState: { error }}) => (
                           <ComboBox
                             placeholder="Pilih"
                             allowFreeform={true}
-                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
-                            selectedKey={selectedKeyJenisKelamin}
+                            options={optionsPropinsi != undefined ? optionsPropinsi:[]}
+                            selectedKey={selectedKeyPropinsi}
                             useComboBoxAsMenuWidth={true} 
                             styles={alamatStyles}           
                             errorMessage={error && 'harus diisi'}
                             onChange={
                               (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                let hasil = cloneDeep(postsPropinsi?.at(index!));
                                 onChange(hasil);
-                                setSelectedKeyJenisKelamin(option?.key as string);
+                                setSelectedKeyPropinsi(option?.key as string);
                               }
                             }
                             disabled={mode == 'delete' ? true:disableForm}
@@ -415,7 +445,75 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                     />
                   </Stack.Item>
                 </Stack>
-              </Stack.Item>           
+              </Stack.Item>
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens}>
+                  <Stack.Item>
+                    <Label style={{width: 72}}>kecamatan</Label>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="jenisKelamin"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <ComboBox
+                            placeholder="Pilih"
+                            allowFreeform={true}
+                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                            selectedKey={selectedKeyJenisKelamin}
+                            useComboBoxAsMenuWidth={true} 
+                            styles={alamatStyles}           
+                            errorMessage={error && 'harus diisi'}
+                            onChange={
+                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                onChange(hasil);
+                                setSelectedKeyJenisKelamin(option?.key as string);
+                              }
+                            }
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens}>
+                  <Stack.Item>
+                    <Label style={{width: 72}}>Desa</Label>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="jenisKelamin"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <ComboBox
+                            placeholder="Pilih"
+                            allowFreeform={true}
+                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                            selectedKey={selectedKeyJenisKelamin}
+                            useComboBoxAsMenuWidth={true} 
+                            styles={alamatStyles}           
+                            errorMessage={error && 'harus diisi'}
+                            onChange={
+                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                onChange(hasil);
+                                setSelectedKeyJenisKelamin(option?.key as string);
+                              }
+                            }
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>      
             </Stack>
           </Stack.Item>
         </Stack>        
