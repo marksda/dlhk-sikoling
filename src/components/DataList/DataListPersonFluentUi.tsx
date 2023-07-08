@@ -1,11 +1,13 @@
-import { FC, useCallback, useState } from "react";
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label } from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, Selection, ICommandBarItemProps, CommandBar } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/repository/service/person-api-slice";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPerson } from "../../features/entity/person";
+import find from "lodash.find";
+import { FormulirPerson } from "../Formulir/formulir-person";
 
 interface IDataListPersonFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -91,6 +93,11 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         []
     );
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IPerson|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
@@ -206,11 +213,71 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPersonQuery(queryFilters);
     const { data: postsPerson, isLoading: isLoadingPosts } = useGetAllPersonQuery(queryParams);    
     
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                selectionMode: SelectionMode.single,
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add');
+                        setModeForm('add');
+                        showModalFormulirPerson();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit');
+                        setModeForm('edit');
+                        showModalFormulirPerson();
+                        let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirPerson();
+                        let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
 
     const _onSearch = useCallback(
@@ -560,6 +627,9 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     <Stack.Item>
                         <Stack horizontal horizontalAlign="end" verticalAlign="center">
                             <Stack.Item>
+                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                            </Stack.Item>
+                            <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
@@ -595,12 +665,12 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
@@ -639,6 +709,16 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         </Stack.Item>
                     </Stack>
                 </Callout>
+            }
+            { isModalFormulirPersonOpen == true ?
+                <FormulirPerson
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirPersonOpen}
+                    showModal={showModalFormulirPerson}
+                    hideModal={hideModalFormulirPerson}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
             }
         </Stack>
     );

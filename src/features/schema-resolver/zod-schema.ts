@@ -40,12 +40,12 @@ export const KontakSchema = object({
 })
 
 export const PersonSchema = object({
-    nik: z.string().optional(),
-    nama: z.string().optional(),
-    jenisKelamin: JenisKelaminSchema.optional(),
-    alamat: AlamatSchema.optional(),
-    kontak: KontakSchema.optional(),
-    scanKTP: z.string().optional()
+    nik: z.string().nullable(),
+    nama: z.string().nullable(),
+    jenisKelamin: JenisKelaminSchema.nullable(),
+    alamat: AlamatSchema.nullable(),
+    kontak: KontakSchema.nullable(),
+    scanKTP: z.string().nullable()
 });
 
 export const HakAksesSchema = object({
