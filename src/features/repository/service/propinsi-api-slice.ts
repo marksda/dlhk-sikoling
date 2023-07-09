@@ -29,7 +29,7 @@ export const PropinsiApiSlice = createApi({
                 }),
                 invalidatesTags: (result, error, {id}) => [{type: 'Propinsi', id: id!}]
             }),
-            updateId: builder.mutation<IPropinsi, {idLama: String; propinsi: IPropinsi}>({
+            updateId: builder.mutation<IPropinsi, {idLama: string; propinsi: IPropinsi}>({
                 query: ({idLama, propinsi}) => ({
                     url: `propinsi/id/${idLama}`,
                     method: 'PUT',

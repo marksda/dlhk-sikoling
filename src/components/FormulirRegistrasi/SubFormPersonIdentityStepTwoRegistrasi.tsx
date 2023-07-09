@@ -2,9 +2,9 @@ import { IconButton, ILabelStyles, Label, PrimaryButton, Stack } from "@fluentui
 import { motion } from "framer-motion";
 import { FC, useCallback, useMemo, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
-import { useGetDesaByKecamatanQuery } from "../../features/repository/service/desa-api-slice";
-import { useGetKabupatenByPropinsiQuery } from "../../features/repository/service/kabupaten-api-slice";
-import { useGetKecamatanByKabupatenQuery } from "../../features/repository/service/kecamatan-api-slice";
+// import { useGetDesaByKecamatanQuery } from "../../features/repository/service/desa-api-slice";
+// import { useGetKabupatenByPropinsiQuery } from "../../features/repository/service/kabupaten-api-slice";
+// import { useGetKecamatanByKabupatenQuery } from "../../features/repository/service/kecamatan-api-slice";
 // import { useGetAllPropinsiQuery } from "../../features/repository/service/propinsi-api-slice";
 import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
 import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";

@@ -26,11 +26,11 @@ export const DesaSchema = object({
 });
 
 export const AlamatSchema = object({
-    propinsi: PropinsiSchema.optional(),
-    kabupaten: KabupatenSchema.optional(),
-    kecamatan: KecamatanSchema.optional(),
-    desa: DesaSchema.optional(),
-    keterangan: z.string().optional(),
+    propinsi: PropinsiSchema.nullable(),
+    kabupaten: KabupatenSchema.nullable(),
+    kecamatan: KecamatanSchema.nullable(),
+    desa: DesaSchema.nullable(),
+    keterangan: z.string().nullable(),
 });
 
 export const KontakSchema = object({

@@ -1,33 +1,70 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { baseRestAPIUrl, defaultKecamatan } from "../../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { IDesa } from "../../entity/desa";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
+import { DecreaseIndentArrowIcon } from "@fluentui/react-icons-mdl2";
+import { deflateSync } from "zlib";
 
+type daftarDesa = IDesa[];
 
 export const DesaApiSlice = createApi({
     reducerPath: 'desaApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
+    refetchOnReconnect: true,
+    tagTypes:['Desa'],
     endpoints(builder) {
         return {
-            getAllDesa: builder.query<IDesa[], number|null>({
-                query: () => `desa`,
+            save: builder.mutation<IDesa, Partial<IDesa>>({
+                query: (body) => ({
+                    url: 'desa',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: [{type: 'Desa', id: 'LIST'}]
             }),
-            getDesaByPage: builder.query<IDesa[], {page: number, pageSize: number}>({
-                query: ({page = 1, pageSize = 10}) => `desa/page?page=${page}&pageSize=${pageSize}`,
+            update: builder.mutation<void, Partial<IDesa>>({
+                query: (body) => ({
+                    url: 'desa',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: (result, error, {id}) => [{type: 'Desa', id: id!}]
             }),
-            getDesaByNama: builder.query<IDesa[], string|null>({
-                query: (nama = 'jawa timur') => `desa/nama?nama=${nama}`,
+            updateId: builder.mutation<IDesa, {idLama: string; desa: IDesa}>({
+                query: ({idLama, desa}) => ({
+                    url: `desa/id/${idLama}`,
+                    method: 'PUT',
+                    body: desa,
+                }),
+                invalidatesTags: (result, error, {idLama}) => [{type: 'Desa', id: idLama as string}]
             }),
-            getDesaByNamaAndPage: builder.query<IDesa[], string|null>({
-                query: (nama = 'jawa timur', page=1, pageSize=10) => `desa/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            delete: builder.mutation<Partial<IDesa>, Partial<IDesa>>({
+                query: (desa) => ({                  
+                    url: `desa/${desa.id}`,
+                    method: 'DELETE',            
+                }),
+                invalidatesTags: (result, error, { id }) => [{type: 'Desa', id: id!}]
             }),
-            getDesaByKecamatan: builder.query<IDesa[], string|null>({
-                query: (idKecamatan = defaultKecamatan.id!) => `desa/kecamatan?idKecamatan=${idKecamatan}`,
+            getDaftarData: builder.query<daftarDesa, IQueryParamFilters>({
+                query: (queryParams) => `desa?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({id}) => ({type: 'Desa' as const, id: id!})
+                        ),
+                        { type: 'Desa', id: 'LIST' },
+                    ]:
+                    [{type: 'Desa', id: 'LIST'}],
+            }),
+            getJumlahData: builder.query<number, qFilters>({
+                query: (queryFilters) => `desa/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
 })
 
-export const { useGetAllDesaQuery, useGetDesaByPageQuery, useGetDesaByNamaQuery, 
-    useGetDesaByNamaAndPageQuery, useGetDesaByKecamatanQuery } = DesaApiSlice
+export const { 
+    useSaveMutation, useUpdateMutation, useUpdateIdMutation,
+    useDeleteMutation, useGetDaftarDataQuery, useGetJumlahDataQuery
+ } = DesaApiSlice

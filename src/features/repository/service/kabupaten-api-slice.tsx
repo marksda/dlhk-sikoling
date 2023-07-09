@@ -1,36 +1,67 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl, defaultPropinsi } from "../../config/config";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { IKabupaten } from "../../entity/kabupaten";
+import { baseQueryWithReauth } from "../../config/helper-function";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 type daftarKabupaten = IKabupaten[];
 export const KabupatenApiSlice = createApi({
     reducerPath: 'kabupatenApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
-    }),
+    baseQuery: baseQueryWithReauth,
+    refetchOnReconnect: true,
+    tagTypes:['Kabupaten'],
     endpoints(builder) {
         return {
-            getAllKabupaten: builder.query<daftarKabupaten, void>({
-                query: () => `kabupaten`,
+            save: builder.mutation<IKabupaten, Partial<IKabupaten>>({
+                query: (body) => ({
+                    url: 'kabupaten',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: [{type: 'Kabupaten', id: 'LIST'}]
             }),
-            getKabupatenByPage: builder.query<daftarKabupaten, number|void>({
-                query: (page = 1, pageSize = 10) => `kabupaten/page?page=${page}&pageSize=${pageSize}`,
+            update: builder.mutation<void, Partial<IKabupaten>>({
+                query: (body) => ({
+                    url: 'kabupaten',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: (result, error, {id}) => [{type: 'Kabupaten', id: id!}]
             }),
-            getKabupatenByNama: builder.query<daftarKabupaten, string|void>({
-                query: (nama = 'jawa timur') => `kabupaten/nama?nama=${nama}`,
+            updateId: builder.mutation<IKabupaten, {idLama: string; kabupaten: IKabupaten}>({
+                query: ({idLama, kabupaten}) => ({
+                    url: `Kabupaten/id/${idLama}`,
+                    method: 'PUT',
+                    body: kabupaten,
+                }),
+                invalidatesTags: (result, error, {idLama}) => [{type: 'Kabupaten', id: idLama as string}]
             }),
-            getKabupatenByNamaAndPage: builder.query<daftarKabupaten, string|void>({
-                query: (nama = 'jawa timur', page=1, pageSize=10) => `kabupaten/nama?nama=${nama}&page=${page}&pageSize=${pageSize}`,
+            delete: builder.mutation<Partial<IKabupaten>, Partial<IKabupaten>>({
+                query: (Kabupaten) => ({                  
+                    url: `kabupaten/${Kabupaten.id}`,
+                    method: 'DELETE',            
+                }),
+                invalidatesTags: (result, error, { id }) => [{type: 'Kabupaten', id: id!}]
             }),
-            getKabupatenByPropinsi: builder.query<daftarKabupaten, string|null>({
-                query: (idPropinsi = defaultPropinsi.id!) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
+            getDaftarData: builder.query<daftarKabupaten, IQueryParamFilters>({
+                query: (queryParams) => `kabupaten?filters=${JSON.stringify(queryParams)}`,
+                providesTags: (result) => 
+                    result ?
+                    [
+                        ...result.map(
+                            ({id}) => ({type: 'Kabupaten' as const, id: id!})
+                        ),
+                        { type: 'Kabupaten', id: 'LIST' },
+                    ]:
+                    [{type: 'Kabupaten', id: 'LIST'}],
             }),
-            getKabupatenByPropinsiAndPage: builder.query<daftarKabupaten, string|void>({
-                query: (idPropinsi = defaultPropinsi.id!) => `kabupaten/propinsi?idPropinsi=${idPropinsi}`,
+            getJumlahData: builder.query<number, qFilters>({
+                query: (queryFilters) => `kabupaten/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
 })
 
-export const { useGetAllKabupatenQuery, useGetKabupatenByPageQuery, useGetKabupatenByNamaQuery, 
-    useGetKabupatenByNamaAndPageQuery, useGetKabupatenByPropinsiQuery } = KabupatenApiSlice
+export const { 
+    useSaveMutation, useUpdateMutation, useUpdateIdMutation,
+    useDeleteMutation, useGetDaftarDataQuery, useGetJumlahDataQuery
+ } = KabupatenApiSlice
