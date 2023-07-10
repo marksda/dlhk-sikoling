@@ -85,11 +85,12 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
   const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.telepone!:'');
   const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
-  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
-  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
-  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
-  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
-  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined>(dataLama != undefined ? dataLama.alamat?.desa?.id!:undefined);
+  const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.alamat?.keterangan!:'');
+  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
+  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
+  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
+  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
+  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.desa?.id!:undefined);
   const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
@@ -108,8 +109,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     pageNumber: 1,
     pageSize: 100,
     filters: dataLama == undefined ? []:[{
-      fieldName: 'nama',
-      value: dataLama.alamat?.kabupaten?.nama as string
+      fieldName: 'propinsi',
+      value: dataLama.alamat?.propinsi?.id as string
     }],
     sortOrders: [
         {
@@ -156,9 +157,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   });
   // rtk query
   const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = getDaftarPropinsi(queryPropinsiParams);
-  const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = getDaftarKabupaten(queryKabupatenParams);
-  const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = getDaftarKecamatan(queryKecamatanParams);
-  const { data: postsDesa, isLoading: isLoadingPostsDesa } = getDaftarDesa(queryDesaParams);
+  const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = getDaftarKabupaten(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
+  const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = getDaftarKecamatan(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
+  const { data: postsDesa, isLoading: isLoadingPostsDesa } = getDaftarDesa(queryDesaParams, {skip: selectedKeyKecamatan == null ? true:false});
   const { data: postsJenisKelamin, isLoading: isLoadingJenisKelamin } = getDaftarJenisKelamin({
     pageNumber: 1,
     pageSize: 5,
@@ -293,7 +294,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const _resetKabupaten = useCallback(
     () => {
       setValue("alamat.kabupaten", null);
-      setSelectedKeyKabupaten(undefined);
+      setSelectedKeyKabupaten(null);
       _resetKecamatan();
     },
     []
@@ -302,6 +303,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const _resetKecamatan = useCallback(
     () => {
       setValue("alamat.kecamatan", null);
+      setSelectedKeyKecamatan(null);
       _resetDesa()
     },
     []
@@ -310,6 +312,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const _resetDesa = useCallback(
     () => {
       setValue("alamat.desa", null);
+      setSelectedKeyDesa(null);
     },
     []
   );
@@ -514,6 +517,30 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 onChange(hasil);
                                 setSelectedKeyPropinsi(option?.key as string);
                                 _resetKabupaten();
+                                setQueryKabupatenParams(
+                                  prev => {
+                                      let tmp = cloneDeep(prev);
+                                      let filters = cloneDeep(tmp.filters);
+                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
+                                                                           
+                                      if(found == -1) {
+                                          filters?.push({
+                                              fieldName: 'propinsi',
+                                              value: option?.key as string
+                                          });
+                                      }
+                                      else {
+                                          filters?.splice(found, 1, {
+                                              fieldName: 'propinsi',
+                                              value: option?.key as string
+                                          })
+                                      }
+                                      
+                                      tmp.pageNumber = 1;
+                                      tmp.filters = filters;             
+                                      return tmp;
+                                  }
+                                );
                               }
                             }
                             disabled={mode == 'delete' ? true:disableForm}
@@ -549,9 +576,33 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 onChange(hasil);
                                 setSelectedKeyKabupaten(option?.key as string);
                                 _resetKecamatan();
+                                setQueryKecamatanParams(
+                                  prev => {
+                                      let tmp = cloneDeep(prev);
+                                      let filters = cloneDeep(tmp.filters);
+                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                                           
+                                      if(found == -1) {
+                                          filters?.push({
+                                              fieldName: 'kabupaten',
+                                              value: option?.key as string
+                                          });
+                                      }
+                                      else {
+                                          filters?.splice(found, 1, {
+                                              fieldName: 'kabupaten',
+                                              value: option?.key as string
+                                          })
+                                      }
+                                      
+                                      tmp.pageNumber = 1;
+                                      tmp.filters = filters;             
+                                      return tmp;
+                                  }
+                                );
                               }
                             }
-                            disabled={mode == 'delete' ? true:disableForm}
+                            disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
                           />
                         )
                       }
@@ -580,13 +631,37 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                             errorMessage={error && 'harus diisi'}
                             onChange={
                               (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                let hasil = cloneDeep(postsKecamatan?.at(index!));
                                 onChange(hasil);
                                 setSelectedKeyKecamatan(option?.key as string);
-                                _resetKecamatan();
+                                _resetDesa();
+                                setQueryDesaParams(
+                                  prev => {
+                                      let tmp = cloneDeep(prev);
+                                      let filters = cloneDeep(tmp.filters);
+                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
+                                                                           
+                                      if(found == -1) {
+                                          filters?.push({
+                                              fieldName: 'kecamatan',
+                                              value: option?.key as string
+                                          });
+                                      }
+                                      else {
+                                          filters?.splice(found, 1, {
+                                              fieldName: 'kecamatan',
+                                              value: option?.key as string
+                                          })
+                                      }
+                                      
+                                      tmp.pageNumber = 1;
+                                      tmp.filters = filters;             
+                                      return tmp;
+                                  }
+                                );
                               }
                             }
-                            disabled={mode == 'delete' ? true:disableForm}
+                            disabled={mode == 'delete'||selectedKeyKabupaten == null ? true:disableForm}
                           />
                         )
                       }
@@ -618,10 +693,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 let hasil = cloneDeep(postsDesa?.at(index!));
                                 onChange(hasil);
                                 setSelectedKeyDesa(option?.key as string);
-                                _resetDesa();
                               }
                             }
-                            disabled={mode == 'delete' ? true:disableForm}
+                            disabled={mode == 'delete'||selectedKeyKecamatan == null ? true:disableForm}
                           />
                         )
                       }
@@ -629,6 +703,39 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                   </Stack.Item>
                 </Stack>
               </Stack.Item>      
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens}>
+                  <Stack.Item>
+                    <Label style={{width: 72}}>Detail</Label>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="alamat.keterangan"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <TextField 
+                            placeholder="isikan selain propinsi, kabupaten, kecamatan, atau desa. Seperti nama jalan, komplek, blok, rt atau rw"
+                            value={keteranganAlamatTextFieldValue}
+                            onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                onChange(newValue || '');
+                                setKeteranganAlamatTextFieldValue(newValue || '');
+                            }
+                            }
+                            multiline 
+                            rows={5}
+                            resizable={false}
+                            styles={alamatStyles}
+                            disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}
+                            errorMessage={error && 'harus diisi'}
+                          />                          
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
             </Stack>
           </Stack.Item>
         </Stack>        
