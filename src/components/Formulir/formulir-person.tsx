@@ -93,10 +93,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'nama',
-      value: dataLama.alamat?.propinsi?.nama as string
-    }],
+    filters: [],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -359,20 +356,19 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                         field: {onChange, onBlur}, 
                         fieldState: { error }
                     }) => (
-                        <MaskedTextField
+                        <TextField
                             label="Nik"
                             placeholder="Isi sesuai KTP"
-                            mask="9999999999999999"
                             value={nikTextFieldValue}
                             onChange={
                             (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                onChange(newValue || '');
-                                setNikTextFieldValue(newValue || '');
+                              onChange(newValue || '');
+                              setNikTextFieldValue(newValue || '');
                             }
                             }
                             styles={textFieldKtpStyles}
                             disabled={mode == 'delete' ? true:disableForm}
-                            errorMessage={error && 'harus diisi'}
+                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                         />
                     )}
                 />

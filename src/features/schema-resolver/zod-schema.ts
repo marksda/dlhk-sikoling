@@ -44,7 +44,7 @@ export const KontakSchema = object({
 })
 
 export const PersonSchema = object({
-    nik: z.string().nullable(),
+    nik: z.string().regex(/^\d+$/, 'format nik salah').length(16, 'nik harus 16 digit'),
     nama: z.string().nullable(),
     jenisKelamin: JenisKelaminSchema.nullable(),
     alamat: AlamatSchema.nullable(),
@@ -54,8 +54,8 @@ export const PersonSchema = object({
 
 export const HakAksesSchema = object({
     id: z.string().optional(),
-    nama: z.string().optional(),
-    keterangan: z.string().optional()
+    nama: z.string().nullable(),
+    keterangan: z.string().nullable()
 });
 
 export const OtoritasSchema = object({
