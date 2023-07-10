@@ -1,11 +1,10 @@
 import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, MaskedTextField, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { HakAksesSchema } from "../../features/schema-resolver/zod-schema";
+import { HakAksesSchema, PersonSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { IHakAkses } from "../../features/entity/hak-akses";
 import { useDeleteMutation, useSaveMutation, useUpdateMutation } from "../../features/repository/service/hak-akses-api-slice";
 import { IPerson } from "../../features/entity/person";
 import { useGetDaftarDataQuery as getDaftarJenisKelamin } from "../../features/repository/service/jenis-kelamin-api-slice";
@@ -82,7 +81,7 @@ const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
-  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
   const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.telepone!:'');
   const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
   const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.alamat?.keterangan!:'');
@@ -153,7 +152,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   //hook-form
   const {control, handleSubmit, resetField, setValue, watch} = useForm<IPerson>({
     defaultValues:  cloneDeep(dataLama),
-    resolver: zodResolver(HakAksesSchema),
+    resolver: zodResolver(PersonSchema),
   });
   // rtk query
   const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = getDaftarPropinsi(queryPropinsiParams);
@@ -256,12 +255,13 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     try {
       switch (mode) {
         case 'add':
-          await saveHakAkses(data as IPerson).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          console.log(data);
+          // await saveHakAkses(data as IPerson).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         case 'edit':
         //   await updateHakAkses({
@@ -291,6 +291,10 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     }
   };
 
+  const onError: SubmitErrorHandler<IPerson> = (err) => {
+    console.log('error', err);
+  };
+
   const _resetKabupaten = useCallback(
     () => {
       setValue("alamat.kabupaten", null);
@@ -316,10 +320,6 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     },
     []
   );
-
-  const onError: SubmitErrorHandler<IHakAkses> = (err) => {
-    console.log(err);
-  };
 
   const _handleOnDismissed = useCallback(
     () => {
@@ -426,7 +426,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                             }
                             styles={textFieldKtpStyles}
                             disabled={mode == 'delete' ? true:disableForm}
-                            errorMessage={error && 'harus diisi'}
+                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                         />
                     )}
                 />
@@ -452,7 +452,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                         }
                         styles={textFieldStyles}
                         disabled={mode == 'delete' ? true:disableForm}
-                        errorMessage={error && 'harus diisi'}
+                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                       />
                     )}
                 />

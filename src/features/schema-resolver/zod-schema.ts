@@ -1,5 +1,9 @@
 import { object, z } from "zod";
 
+const phoneRegex = new RegExp(
+    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+  );
+
 export const JenisKelaminSchema = object({
     id: z.string().optional(),
     nama: z.string().optional()
@@ -34,9 +38,9 @@ export const AlamatSchema = object({
 });
 
 export const KontakSchema = object({
-    fax: z.string().optional(),
-    telepone: z.string().optional(),
-    email: z.string().min(1, { message: "Harus diisi" }).email("bukan format email yang benar").optional(),
+    fax: z.string().nullable().optional(),
+    telepone: z.string().min(7, { message: "penulisan salah" }).regex(phoneRegex, 'penulisan salah'),
+    email: z.string().min(4, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
 })
 
 export const PersonSchema = object({
