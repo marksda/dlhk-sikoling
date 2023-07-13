@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, MaskedTextField, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Image, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets, ImageFit } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { PersonSchema } from "../../features/schema-resolver/zod-schema";
@@ -80,7 +80,18 @@ const contentStyles = mergeStyleSets({
     height: 36,
     color: '#DDDCDC',
     margin: '0 25px',
-  }
+  },
+  infoBoxContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'top',
+    alignItems: 'left',
+    border: '1px dashed rgb(231 10 10)',
+    marginTop: 16,
+    width: 400,
+    height: 135,
+    padding: 4,
+  },
 });
 const stackTokens = { childrenGap: 8 };
 const textFieldKtpStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 140 } };
@@ -168,7 +179,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
-  const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
+  const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
   const {control, handleSubmit, resetField, setValue, watch} = useForm<IPerson>({
     defaultValues:  cloneDeep(dataLama),
@@ -759,7 +770,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                           render={
                             ({field: {onChange, onBlur}, fieldState: { error }}) => (
                               <TextField 
-                                placeholder="isikan selain propinsi, kabupaten, kecamatan, atau desa. Seperti nama jalan, komplek, blok, rt atau rw"
+                                placeholder="isikan selain nama propinsi, kabupaten, kecamatan, dan desa. Seperti nama jalan, komplek, blok, rt atau rw"
                                 value={keteranganAlamatTextFieldValue}
                                 onChange={
                                 (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -797,7 +808,23 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                 </>
                 )
               }
-            </div>            
+              {
+                selectedFiles && (
+                  <Image
+                    width={400}
+                    height={226}
+                    imageFit={ImageFit.centerContain}
+                    src={selectedFiles == undefined ? undefined:URL.createObjectURL(selectedFiles[0])}
+                  />
+                )
+              }
+            </div>        
+            <div className={contentStyles.infoBoxContainer}>
+              <p style={{textAlign: 'justify',textJustify: 'inter-word'}}>
+                <span style={{display: 'inline-block', marginBottom: 6}}><b>Perhatian!!</b></span><br />
+                Harap diisi dengan data yang bisa dipertanggung jawabkan. Data isian anda akan diverifikasi oleh sistem, dan hasilnya akan diberitahukan melalui email user akun yang anda pakai.
+              </p>
+            </div>     
           </Stack.Item>
         </Stack>      
         <PrimaryButton 

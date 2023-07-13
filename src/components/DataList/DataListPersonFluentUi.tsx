@@ -241,7 +241,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add');
+                        setFormulirTitle('Add person');
                         setModeForm('add');
                         showModalFormulirPerson();
                         setDataLama(undefined);
@@ -253,7 +253,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit');
+                        setFormulirTitle('Edit person');
                         setModeForm('edit');
                         showModalFormulirPerson();
                         let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
