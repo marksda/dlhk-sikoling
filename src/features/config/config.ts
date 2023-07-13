@@ -2,7 +2,7 @@ import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging";
 import { IJenisKelamin } from "../entity/jenis-kelamin";
 import { IDatePickerStrings } from "@fluentui/react";
 
-export const sikolingBaseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api';
+export const sikolingBaseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
 // export const baseIdentityProviderUrl = 'http://localhost:8082/';
 export const defaultHalaman: IHalaman = {page: 1, pageSize: 10};
 export const defaultJenisKelamin: IJenisKelamin = {id: 'L', nama: 'Laki-Laki'};

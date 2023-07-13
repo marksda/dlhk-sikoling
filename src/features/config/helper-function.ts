@@ -21,6 +21,7 @@ const baseQuery = fetchBaseQuery({
 });
 
 
+
 export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
     await mutex.waitForUnlock();
 
@@ -30,39 +31,57 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
             try {
-                let x = args as FetchArgs;
-                const refreshToken = (api.getState() as RootState).token.refreshToken;
-                try {
-                    const refreshResult = await axios.post(
-                        `${sikolingBaseRestAPIUrl}/user/refresh_token`, 
-                        refreshToken,
-                        {
-                            headers: {
-                                'Content-Type': 'text/plain',
-                            }
-                        });
+                const refreshResult = await baseQuery(
+                'user/refresh_token',
+                api,
+                extraOptions
+                )
+                if (refreshResult.data) {
+                    // api.dispatch(tokenReceived(refreshResult.data))
+                    // retry the initial query
                     let hasil = refreshResult.data as IResponseStatusToken;
                     localStorage.removeItem('token');
                     localStorage.setItem('token', JSON.stringify(hasil.token));
                     api.dispatch(setToken(hasil.token));
                     result = await baseQuery(args, api, extraOptions);
-                }
-                catch (axiosError) {
-                    let err = axiosError as AxiosError;
-                    localStorage.removeItem('token');
+                } 
+                else {
                     api.dispatch(resetToken());
-                    result = {
-                        error: {                            
-                            status: err.response?.status as number,
-                            data: err.response?.data || err.message,
-                        },
-                    }
                 }
+                // let x = args as FetchArgs;
+                // const refreshToken = (api.getState() as RootState).token.refreshToken;
+                // try {
+                //     const refreshResult = await axios.post(
+                //         `${sikolingBaseRestAPIUrl}/user/refresh_token`, 
+                //         refreshToken,
+                //         {
+                //             headers: {
+                //                 'Content-Type': 'text/plain',
+                //             }
+                //         });
+                    let hasil = refreshResult.data as IResponseStatusToken;
+                    localStorage.removeItem('token');
+                    localStorage.setItem('token', JSON.stringify(hasil.token));
+                    api.dispatch(setToken(hasil.token));
+                //     result = await baseQuery(args, api, extraOptions);
+                // }
+                // catch (axiosError) {
+                //     let err = axiosError as AxiosError;
+                //     localStorage.removeItem('token');
+                //     api.dispatch(resetToken());
+                //     result = {
+                //         error: {                            
+                //             status: err.response?.status as number,
+                //             data: err.response?.data || err.message,
+                //         },
+                //     }
+                // }
             } finally {
                 release();
             }
         }      
         else {
+            await mutex.waitForUnlock()
             result = await baseQuery(args, api, extraOptions);
         }
     }
