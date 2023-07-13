@@ -119,8 +119,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     pageNumber: 1,
     pageSize: 100,
     filters: dataLama == undefined ? []:[{
-      fieldName: 'nama',
-      value: dataLama.alamat?.kecamatan?.nama as string
+      fieldName: 'kabupaten',
+      value: dataLama.alamat?.kabupaten?.id as string
     }],
     sortOrders: [
         {
@@ -133,8 +133,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     pageNumber: 1,
     pageSize: 100,
     filters: dataLama == undefined ? []:[{
-      fieldName: 'nama',
-      value: dataLama.alamat?.desa?.nama as string
+      fieldName: 'kecamatan',
+      value: dataLama.alamat?.kecamatan?.id as string
     }],
     sortOrders: [
         {
