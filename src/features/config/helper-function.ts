@@ -4,12 +4,12 @@ import axios, { AxiosError } from "axios";
 import { RootState } from "../../app/store";
 import { resetCredential } from "../security/authentication-slice";
 import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
-import { baseRestAPIUrl } from "./config";
+import { sikolingBaseRestAPIUrl } from "./config";
 
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({ 
-    baseUrl: baseRestAPIUrl,
+    baseUrl: sikolingBaseRestAPIUrl,
     prepareHeaders: (headers, { getState }) => {
         const accessToken = (getState() as RootState).token.accessToken;
         if(accessToken != null){
@@ -34,7 +34,7 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                 const refreshToken = (api.getState() as RootState).token.refreshToken;
                 try {
                     const refreshResult = await axios.post(
-                        `${baseRestAPIUrl}user/refresh_token`, 
+                        `${sikolingBaseRestAPIUrl}/user/refresh_token`, 
                         refreshToken,
                         {
                             headers: {

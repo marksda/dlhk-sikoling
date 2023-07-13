@@ -18,7 +18,7 @@
     "@reduxjs/toolkit": "^1.8.4",
     "@techstark/opencv-js": "*",
     "async-mutex": "^0.4.0",
-    "axios": "^0.26.1",
+    "axios": "^1.4.0",
     "crypto-js": "^4.1.1",
     "framer-motion": "^7.10.3",
     "lodash.clonedeep": "^4.5.0",

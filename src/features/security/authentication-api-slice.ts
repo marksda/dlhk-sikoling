@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl } from "../config/config";
+import { sikolingBaseRestAPIUrl } from "../config/config";
 
 export const AuthenticationApiSlice = createApi({
     reducerPath: 'authenticationApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
+        baseUrl: sikolingBaseRestAPIUrl,
     }),
     endpoints(builder) {
         return {

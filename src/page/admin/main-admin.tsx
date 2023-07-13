@@ -8,7 +8,7 @@ import { PermohonanBackEnd } from "./permohonan-backend";
 import { KontenDashboardPemrakarsa } from "../pemrakarsa/dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "../pemrakarsa/template-pelaporan-pemrakarsa";
 import { MasterBackEnd } from "./master-backend";
-import { LeftMenuFluentUI } from "../../components/menu/LeftMenuFluentUI";
+import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 
 
 const classNames = mergeStyleSets({

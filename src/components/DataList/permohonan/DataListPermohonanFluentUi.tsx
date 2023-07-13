@@ -1,6 +1,6 @@
 import { DetailsList, DetailsListLayoutMode, IColumn, IStackTokens, Link, mergeStyleSets, SelectionMode } from "@fluentui/react";
 import { FC, useCallback, useEffect, useState } from "react";
-import { baseRestAPIUrl } from "../../../features/config/config";
+import { sikolingBaseRestAPIUrl } from "../../../features/config/config";
 import { IDokumenAktaPendirian } from "../../../features/repository/ssot/dokumen-akta-pendirian-slice";
 import { IDokumenNibOss } from "../../../features/repository/ssot/dokumen-nib-oss-slice";
 import { ILampiranSuratArahan } from "../../../features/dokumen/lampiran-surat-arahan-api-slice";
@@ -82,7 +82,7 @@ const _columns: IColumn[] = [
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
                                             <span>perihal: {dokumen?.perihalSurat}</span><br />
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >
@@ -100,7 +100,7 @@ const _columns: IColumn[] = [
                                         <div className={contentStyles.contenItemDok}>
                                             <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >
@@ -119,7 +119,7 @@ const _columns: IColumn[] = [
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>notaris: {dokumen?.namaNotaris}</span><br />
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >
@@ -138,7 +138,7 @@ const _columns: IColumn[] = [
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
                                             <span>perihal: {dokumen?.perihalSurat}</span><br /> 
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >
@@ -157,7 +157,7 @@ const _columns: IColumn[] = [
                                             <span>Nomor: {dokumen?.noSurat}</span><br />
                                             <span>perihal: {dokumen?.perihalSurat}</span><br />
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >
@@ -176,7 +176,7 @@ const _columns: IColumn[] = [
                                             <span>Nomor: {dokumen?.nomor}</span><br />
                                             <span>perihal: {dokumen?.tanggal}</span><br />
                                             <Link 
-                                                href={`${baseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.registerPerusahaan?.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                 target="_blank"
                                                 underline
                                             >

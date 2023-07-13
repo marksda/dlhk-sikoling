@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl, defaultHalaman as halaman } from "../config/config";
+import { sikolingBaseRestAPIUrl, defaultHalaman as halaman } from "../config/config";
 import { IBentukUsaha } from "./bentuk-usaha-slice";
 
 
 export const BentukUsahaApiSlice = createApi({
     reducerPath: 'bentukUsahaApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: baseRestAPIUrl,
+        baseUrl: sikolingBaseRestAPIUrl,
     }),
     refetchOnReconnect: true,
     keepUnusedDataFor: 30,

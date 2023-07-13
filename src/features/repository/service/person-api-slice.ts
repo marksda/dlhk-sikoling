@@ -14,7 +14,7 @@ export const PersonApiSlice = createApi({
         return {            
             save: builder.mutation<IPerson, FormData>({
                 query: (dataForm) => ({
-                    url: 'personx',
+                    url: 'person',
                     method: 'POST',
                     headers: {'Content-Type': 'multipart/form-data'},
                     body: dataForm,

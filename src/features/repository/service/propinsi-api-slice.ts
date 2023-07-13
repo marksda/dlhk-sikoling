@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseRestAPIUrl, defaultHalaman as halaman } from "../../config/config";
+import { sikolingBaseRestAPIUrl, defaultHalaman as halaman } from "../../config/config";
 import { IPropinsi } from "../../entity/propinsi";
 import { baseQueryWithReauth } from "../../config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
