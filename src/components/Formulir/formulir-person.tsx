@@ -5,7 +5,7 @@ import { PersonSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useDeleteMutation, useSaveMutation, useUpdateMutation } from "../../features/repository/service/hak-akses-api-slice";
+import { useSaveMutation } from "../../features/repository/service/person-api-slice";
 import { IPerson } from "../../features/entity/person";
 import { useGetDaftarDataQuery as getDaftarJenisKelamin } from "../../features/repository/service/jenis-kelamin-api-slice";
 import { useGetDaftarDataQuery as getDaftarPropinsi } from "../../features/repository/service/propinsi-api-slice";
@@ -201,9 +201,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         },
     ],
   });  
-  const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
-  const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
-  const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
+  const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
+  // const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
+  // const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -287,12 +287,15 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
       switch (mode) {
         case 'add':
           console.log(data);
-          // await saveHakAkses(data as IPerson).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
-          // hideModal();
+          let formData = new FormData();
+          formData.append('gambar', selectedFiles?.item(0)!);
+          formData.append('data', JSON.stringify(data));
+          await savePerson(formData).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         case 'edit':
         //   await updateHakAkses({

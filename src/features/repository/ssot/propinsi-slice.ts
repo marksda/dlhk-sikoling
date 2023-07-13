@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { defaultPropinsi } from "../../config/config";
 import { IPropinsi } from "../../entity/propinsi";
 
-const initialState: IPropinsi = defaultPropinsi;
+const initialState: IPropinsi = {
+    id: null,
+    nama: null,
+};
 
 //redux busines logic
 export const propinsiSlice = createSlice({

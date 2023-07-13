@@ -12,12 +12,30 @@ export const PersonApiSlice = createApi({
     tagTypes: ['Person'],
     endpoints(builder) {
         return {            
-            addPerson: builder.mutation<IPerson, Partial<IPerson>>({
-                query: (body) => ({
-                    url: 'person',
+            save: builder.mutation<IPerson, FormData>({
+                query: (dataForm) => ({
+                    url: 'personx',
                     method: 'POST',
-                    body,
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    body: dataForm,
                 }),
+                // queryFn: async (data, api, extraOptions, baseQuery) => {
+                //     try {
+                //         const result =  await axios.put('sdf', data, {
+
+                //         });
+                //         return { data: result.data }
+                //     }
+                //     catch (axiosError) {
+                //         let err = axiosError;
+                //         return {
+                //             error: {
+                //             status: err.response?.status,
+                //             data: err.response?.data || err.message,
+                //             },
+                //         }
+                //     }                   
+                // },
                 invalidatesTags: [{type: 'Person', id: 'LIST'}],
             }),
             updatePerson: builder.mutation<void, Partial<IPerson>>({
@@ -61,7 +79,7 @@ export const PersonApiSlice = createApi({
 })
 
 export const { 
-    useAddPersonMutation, useUpdatePersonMutation,
+    useSaveMutation, useUpdatePersonMutation,
     useDeletePersonMutation, useGetAllPersonQuery,
     useGetTotalCountPersonQuery
 } = PersonApiSlice;

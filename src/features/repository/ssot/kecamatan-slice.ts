@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { defaultKecamatan } from "../../config/config";
 import { IKecamatan } from "../../entity/kecamatan";
 
-const initialState: IKecamatan = defaultKecamatan;
+const initialState: IKecamatan = {
+    id: null,
+    nama: null,
+    kabupaten: null,
+};
 
 export const kecamatanSlice = createSlice({
     name: 'kecamatan',
