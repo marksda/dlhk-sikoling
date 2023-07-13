@@ -1,6 +1,6 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, MaskedTextField, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, MaskedTextField, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { PersonSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { useGetDaftarDataQuery as getDaftarKabupaten } from "../../features/repo
 import { useGetDaftarDataQuery as getDaftarKecamatan } from "../../features/repository/service/kecamatan-api-slice";
 import { useGetDaftarDataQuery as getDaftarDesa } from "../../features/repository/service/desa-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
+import { getFileType } from "../../features/config/helper-function";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -59,6 +60,27 @@ const contentStyles = mergeStyleSets({
       'p:last-child': { marginBottom: 0 },
     },
   },
+  imageContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '1px solid #DDDCDC',
+    "&:hover": {
+        background: "#F4F2F2",
+        cursor: 'pointer',
+        border: '1px solid #D7D7D7'
+    },
+    width: 400,
+    height: 230,
+    padding: 2,
+  },
+  iconContainer: {
+    fontSize: 32,
+    height: 36,
+    color: '#DDDCDC',
+    margin: '0 25px',
+  }
 });
 const stackTokens = { childrenGap: 8 };
 const textFieldKtpStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 140 } };
@@ -146,6 +168,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
+  const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
   //hook-form
   const {control, handleSubmit, resetField, setValue, watch} = useForm<IPerson>({
     defaultValues:  cloneDeep(dataLama),
@@ -325,6 +348,29 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     []
   );
 
+  //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
+  const _handleFile = useCallback(
+    (event: FormEvent<HTMLInputElement>) => {            
+        if(event.currentTarget.files!.length > 0) {            
+          let fileType: string = getFileType(event.currentTarget.files![0].type);
+
+          if(fileType == 'image') {
+            setSelectedFiles(event.currentTarget.files);
+          }      
+        }
+    },
+    []
+  );
+
+  //this function is used to binding button's mouse click event to listener event of input file type Html element
+  const bindClickEventInputFile = useCallback(
+    (e) => {            
+        e.stopPropagation();
+        document.getElementById('fileUpload')!.click();
+    },
+    []
+);
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -347,394 +393,413 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
       </div>
       <div className={contentStyles.body}>
         <Stack horizontal tokens={stackTokens}>
-            <Stack.Item>
-                <Controller 
-                    name="nik"
+          <Stack.Item>
+            <Stack horizontal tokens={stackTokens}>
+                <Stack.Item>
+                    <Controller 
+                        name="nik"
+                        control={control}
+                        render={
+                        ({
+                            field: {onChange, onBlur}, 
+                            fieldState: { error }
+                        }) => (
+                            <TextField
+                                label="Nik"
+                                placeholder="Isi sesuai KTP"
+                                value={nikTextFieldValue}
+                                onChange={
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                  onChange(newValue || '');
+                                  setNikTextFieldValue(newValue || '');
+                                }
+                                }
+                                styles={textFieldKtpStyles}
+                                disabled={mode == 'delete' ? true:disableForm}
+                                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                            />
+                        )}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <Controller 
+                    name="nama"
                     control={control}
                     render={
-                    ({
+                        ({
                         field: {onChange, onBlur}, 
                         fieldState: { error }
-                    }) => (
-                        <TextField
-                            label="Nik"
+                        }) => (
+                            <TextField
+                            label="Nama"
                             placeholder="Isi sesuai KTP"
-                            value={nikTextFieldValue}
+                            value={namaTextFieldValue}
                             onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                              onChange(newValue || '');
-                              setNikTextFieldValue(newValue || '');
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                onChange(newValue || '');
+                                setNamaTextFieldValue(newValue || '');
+                                }
                             }
-                            }
-                            styles={textFieldKtpStyles}
+                            styles={textFieldStyles}
                             disabled={mode == 'delete' ? true:disableForm}
-                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                        />
-                    )}
-                />
-            </Stack.Item>
-            <Stack.Item>
-                <Controller 
-                name="nama"
-                control={control}
-                render={
-                    ({
-                    field: {onChange, onBlur}, 
-                    fieldState: { error }
-                    }) => (
-                        <TextField
-                        label="Nama"
-                        placeholder="Isi sesuai KTP"
-                        value={namaTextFieldValue}
-                        onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            onChange(newValue || '');
-                            setNamaTextFieldValue(newValue || '');
-                            }
-                        }
-                        styles={textFieldStyles}
-                        disabled={mode == 'delete' ? true:disableForm}
-                        errorMessage={error && 'harus diisi'}
-                        />
-                    )}
-                />
-            </Stack.Item>
-        </Stack>
-        <Stack horizontal tokens={stackTokens}>
-            <Stack.Item>
-                <Controller 
-                    name="kontak.telepone"
+                            errorMessage={error && 'harus diisi'}
+                            />
+                        )}
+                    />
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens}>
+                <Stack.Item>
+                    <Controller 
+                        name="kontak.telepone"
+                        control={control}
+                        render={
+                        ({
+                            field: {onChange, onBlur}, 
+                            fieldState: { error }
+                        }) => (
+                            <TextField
+                                label="Telp."
+                                placeholder="nomor telepon"
+                                value={teleponeTextFieldValue}
+                                onChange={
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                    onChange(newValue || '');
+                                    setTeleponeTextFieldValue(newValue || '');
+                                }
+                                }
+                                styles={textFieldKtpStyles}
+                                disabled={mode == 'delete' ? true:disableForm}
+                                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                            />
+                        )}
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <Controller 
+                    name="kontak.email"
                     control={control}
                     render={
-                    ({
+                        ({
                         field: {onChange, onBlur}, 
                         fieldState: { error }
-                    }) => (
-                        <TextField
-                            label="Telp."
-                            placeholder="nomor telepon"
-                            value={teleponeTextFieldValue}
+                        }) => (
+                          <TextField
+                            label="Email"
+                            placeholder="Isi sesuai penulisan format email"
+                            value={emailTextFieldValue}
                             onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
                                 onChange(newValue || '');
-                                setTeleponeTextFieldValue(newValue || '');
+                                setEmailTextFieldValue(newValue || '');
+                                }
                             }
-                            }
-                            styles={textFieldKtpStyles}
+                            styles={textFieldStyles}
                             disabled={mode == 'delete' ? true:disableForm}
                             errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                        />
-                    )}
-                />
-            </Stack.Item>
-            <Stack.Item>
+                          />
+                        )}
+                    />
+                </Stack.Item>
+            </Stack>
+            <Stack horizontal tokens={stackTokens}>
+              <Stack.Item>
                 <Controller 
-                name="kontak.email"
-                control={control}
-                render={
+                  name="jenisKelamin"
+                  control={control}
+                  render={
                     ({
-                    field: {onChange, onBlur}, 
-                    fieldState: { error }
+                      field: {onChange, onBlur}, 
+                      fieldState: { error }
                     }) => (
-                      <TextField
-                        label="Email"
-                        placeholder="Isi sesuai penulisan format email"
-                        value={emailTextFieldValue}
-                        onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            onChange(newValue || '');
-                            setEmailTextFieldValue(newValue || '');
-                            }
+                      <ComboBox
+                        label="Jenis kelamin"
+                      placeholder="Pilih"
+                      allowFreeform={true}
+                      options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                      selectedKey={selectedKeyJenisKelamin}
+                      useComboBoxAsMenuWidth={true} 
+                      styles={basicStyles}           
+                      errorMessage={error && 'harus diisi'}
+                      onChange={
+                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                          let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                          onChange(hasil);
+                          setSelectedKeyJenisKelamin(option?.key as string);
                         }
-                        styles={textFieldStyles}
+                      }
                         disabled={mode == 'delete' ? true:disableForm}
-                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                       />
                     )}
                 />
-            </Stack.Item>
-        </Stack>
-        <Stack horizontal tokens={stackTokens}>
-          <Stack.Item>
-            <Controller 
-              name="jenisKelamin"
-              control={control}
-              render={
-                ({
-                  field: {onChange, onBlur}, 
-                  fieldState: { error }
-                }) => (
-                  <ComboBox
-                    label="Jenis kelamin"
-                  placeholder="Pilih"
-                  allowFreeform={true}
-                  options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
-                  selectedKey={selectedKeyJenisKelamin}
-                  useComboBoxAsMenuWidth={true} 
-                  styles={basicStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  onChange={
-                    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                      let hasil = cloneDeep(postsJenisKelamin?.at(index!));
-                      onChange(hasil);
-                      setSelectedKeyJenisKelamin(option?.key as string);
-                    }
-                  }
-                    disabled={mode == 'delete' ? true:disableForm}
-                  />
-                )}
-            />
+              </Stack.Item>
+              <Stack.Item>
+                <Label>Alamat</Label>
+                <Stack style={{border: '1px solid #e1dfdf', padding: 8}} tokens={stackTokens}>
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens}>
+                      <Stack.Item>
+                        <Label style={{width: 72}}>Propinsi</Label>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Controller 
+                          name="alamat.propinsi"
+                          control={control}
+                          render={
+                            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                              <ComboBox
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsPropinsi != undefined ? optionsPropinsi:[]}
+                                selectedKey={selectedKeyPropinsi}
+                                useComboBoxAsMenuWidth={true} 
+                                styles={alamatStyles}           
+                                errorMessage={error && 'harus diisi'}
+                                onChange={
+                                  (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                    let hasil = cloneDeep(postsPropinsi?.at(index!));
+                                    onChange(hasil);
+                                    setSelectedKeyPropinsi(option?.key as string);
+                                    _resetKabupaten();
+                                    setQueryKabupatenParams(
+                                      prev => {
+                                          let tmp = cloneDeep(prev);
+                                          let filters = cloneDeep(tmp.filters);
+                                          let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
+                                                                              
+                                          if(found == -1) {
+                                              filters?.push({
+                                                  fieldName: 'propinsi',
+                                                  value: option?.key as string
+                                              });
+                                          }
+                                          else {
+                                              filters?.splice(found, 1, {
+                                                  fieldName: 'propinsi',
+                                                  value: option?.key as string
+                                              })
+                                          }
+                                          
+                                          tmp.pageNumber = 1;
+                                          tmp.filters = filters;             
+                                          return tmp;
+                                      }
+                                    );
+                                  }
+                                }
+                                disabled={mode == 'delete' ? true:disableForm}
+                              />
+                            )
+                          }
+                        />
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens}>
+                      <Stack.Item>
+                        <Label style={{width: 72}}>Kabupaten</Label>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Controller 
+                          name="alamat.kabupaten"
+                          control={control}
+                          render={
+                            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                              <ComboBox
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsKabupaten != undefined ? optionsKabupaten:[]}
+                                selectedKey={selectedKeyKabupaten}
+                                useComboBoxAsMenuWidth={true} 
+                                styles={alamatStyles}           
+                                errorMessage={error && 'harus diisi'}
+                                onChange={
+                                  (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                    let hasil = cloneDeep(postsKabupaten?.at(index!));
+                                    onChange(hasil);
+                                    setSelectedKeyKabupaten(option?.key as string);
+                                    _resetKecamatan();
+                                    setQueryKecamatanParams(
+                                      prev => {
+                                          let tmp = cloneDeep(prev);
+                                          let filters = cloneDeep(tmp.filters);
+                                          let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                                              
+                                          if(found == -1) {
+                                              filters?.push({
+                                                  fieldName: 'kabupaten',
+                                                  value: option?.key as string
+                                              });
+                                          }
+                                          else {
+                                              filters?.splice(found, 1, {
+                                                  fieldName: 'kabupaten',
+                                                  value: option?.key as string
+                                              })
+                                          }
+                                          
+                                          tmp.pageNumber = 1;
+                                          tmp.filters = filters;             
+                                          return tmp;
+                                      }
+                                    );
+                                  }
+                                }
+                                disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
+                              />
+                            )
+                          }
+                        />
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens}>
+                      <Stack.Item>
+                        <Label style={{width: 72}}>kecamatan</Label>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Controller 
+                          name="alamat.kecamatan"
+                          control={control}
+                          render={
+                            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                              <ComboBox
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsKecamatan != undefined ? optionsKecamatan:[]}
+                                selectedKey={selectedKeyKecamatan}
+                                useComboBoxAsMenuWidth={true} 
+                                styles={alamatStyles}           
+                                errorMessage={error && 'harus diisi'}
+                                onChange={
+                                  (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                    let hasil = cloneDeep(postsKecamatan?.at(index!));
+                                    onChange(hasil);
+                                    setSelectedKeyKecamatan(option?.key as string);
+                                    _resetDesa();
+                                    setQueryDesaParams(
+                                      prev => {
+                                          let tmp = cloneDeep(prev);
+                                          let filters = cloneDeep(tmp.filters);
+                                          let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
+                                                                              
+                                          if(found == -1) {
+                                              filters?.push({
+                                                  fieldName: 'kecamatan',
+                                                  value: option?.key as string
+                                              });
+                                          }
+                                          else {
+                                              filters?.splice(found, 1, {
+                                                  fieldName: 'kecamatan',
+                                                  value: option?.key as string
+                                              })
+                                          }
+                                          
+                                          tmp.pageNumber = 1;
+                                          tmp.filters = filters;             
+                                          return tmp;
+                                      }
+                                    );
+                                  }
+                                }
+                                disabled={mode == 'delete'||selectedKeyKabupaten == null ? true:disableForm}
+                              />
+                            )
+                          }
+                        />
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens}>
+                      <Stack.Item>
+                        <Label style={{width: 72}}>Desa</Label>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Controller 
+                          name="alamat.desa"
+                          control={control}
+                          render={
+                            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                              <ComboBox
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsDesa != undefined ? optionsDesa:[]}
+                                selectedKey={selectedKeyDesa}
+                                useComboBoxAsMenuWidth={true} 
+                                styles={alamatStyles}           
+                                errorMessage={error && 'harus diisi'}
+                                onChange={
+                                  (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                    let hasil = cloneDeep(postsDesa?.at(index!));
+                                    onChange(hasil);
+                                    setSelectedKeyDesa(option?.key as string);
+                                  }
+                                }
+                                disabled={mode == 'delete'||selectedKeyKecamatan == null ? true:disableForm}
+                              />
+                            )
+                          }
+                        />
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>      
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens}>
+                      <Stack.Item>
+                        <Label style={{width: 72}}>Detail</Label>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Controller 
+                          name="alamat.keterangan"
+                          control={control}
+                          render={
+                            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                              <TextField 
+                                placeholder="isikan selain propinsi, kabupaten, kecamatan, atau desa. Seperti nama jalan, komplek, blok, rt atau rw"
+                                value={keteranganAlamatTextFieldValue}
+                                onChange={
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                    onChange(newValue || '');
+                                    setKeteranganAlamatTextFieldValue(newValue || '');
+                                }
+                                }
+                                multiline 
+                                rows={5}
+                                resizable={false}
+                                styles={alamatStyles}
+                                disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}
+                                errorMessage={error && 'harus diisi'}
+                              />                          
+                            )
+                          }
+                        />
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
+            </Stack>  
           </Stack.Item>
           <Stack.Item>
-            <Label>Alamat</Label>
-            <Stack style={{border: '1px solid #e1dfdf', padding: 8}} tokens={stackTokens}>
-              <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                  <Stack.Item>
-                    <Label style={{width: 72}}>Propinsi</Label>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="alamat.propinsi"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <ComboBox
-                            placeholder="Pilih"
-                            allowFreeform={true}
-                            options={optionsPropinsi != undefined ? optionsPropinsi:[]}
-                            selectedKey={selectedKeyPropinsi}
-                            useComboBoxAsMenuWidth={true} 
-                            styles={alamatStyles}           
-                            errorMessage={error && 'harus diisi'}
-                            onChange={
-                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsPropinsi?.at(index!));
-                                onChange(hasil);
-                                setSelectedKeyPropinsi(option?.key as string);
-                                _resetKabupaten();
-                                setQueryKabupatenParams(
-                                  prev => {
-                                      let tmp = cloneDeep(prev);
-                                      let filters = cloneDeep(tmp.filters);
-                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
-                                                                           
-                                      if(found == -1) {
-                                          filters?.push({
-                                              fieldName: 'propinsi',
-                                              value: option?.key as string
-                                          });
-                                      }
-                                      else {
-                                          filters?.splice(found, 1, {
-                                              fieldName: 'propinsi',
-                                              value: option?.key as string
-                                          })
-                                      }
-                                      
-                                      tmp.pageNumber = 1;
-                                      tmp.filters = filters;             
-                                      return tmp;
-                                  }
-                                );
-                              }
-                            }
-                            disabled={mode == 'delete' ? true:disableForm}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                </Stack>
-              </Stack.Item>
-              <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                  <Stack.Item>
-                    <Label style={{width: 72}}>Kabupaten</Label>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="alamat.kabupaten"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <ComboBox
-                            placeholder="Pilih"
-                            allowFreeform={true}
-                            options={optionsKabupaten != undefined ? optionsKabupaten:[]}
-                            selectedKey={selectedKeyKabupaten}
-                            useComboBoxAsMenuWidth={true} 
-                            styles={alamatStyles}           
-                            errorMessage={error && 'harus diisi'}
-                            onChange={
-                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsKabupaten?.at(index!));
-                                onChange(hasil);
-                                setSelectedKeyKabupaten(option?.key as string);
-                                _resetKecamatan();
-                                setQueryKecamatanParams(
-                                  prev => {
-                                      let tmp = cloneDeep(prev);
-                                      let filters = cloneDeep(tmp.filters);
-                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
-                                                                           
-                                      if(found == -1) {
-                                          filters?.push({
-                                              fieldName: 'kabupaten',
-                                              value: option?.key as string
-                                          });
-                                      }
-                                      else {
-                                          filters?.splice(found, 1, {
-                                              fieldName: 'kabupaten',
-                                              value: option?.key as string
-                                          })
-                                      }
-                                      
-                                      tmp.pageNumber = 1;
-                                      tmp.filters = filters;             
-                                      return tmp;
-                                  }
-                                );
-                              }
-                            }
-                            disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                </Stack>
-              </Stack.Item>
-              <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                  <Stack.Item>
-                    <Label style={{width: 72}}>kecamatan</Label>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="alamat.kecamatan"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <ComboBox
-                            placeholder="Pilih"
-                            allowFreeform={true}
-                            options={optionsKecamatan != undefined ? optionsKecamatan:[]}
-                            selectedKey={selectedKeyKecamatan}
-                            useComboBoxAsMenuWidth={true} 
-                            styles={alamatStyles}           
-                            errorMessage={error && 'harus diisi'}
-                            onChange={
-                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsKecamatan?.at(index!));
-                                onChange(hasil);
-                                setSelectedKeyKecamatan(option?.key as string);
-                                _resetDesa();
-                                setQueryDesaParams(
-                                  prev => {
-                                      let tmp = cloneDeep(prev);
-                                      let filters = cloneDeep(tmp.filters);
-                                      let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
-                                                                           
-                                      if(found == -1) {
-                                          filters?.push({
-                                              fieldName: 'kecamatan',
-                                              value: option?.key as string
-                                          });
-                                      }
-                                      else {
-                                          filters?.splice(found, 1, {
-                                              fieldName: 'kecamatan',
-                                              value: option?.key as string
-                                          })
-                                      }
-                                      
-                                      tmp.pageNumber = 1;
-                                      tmp.filters = filters;             
-                                      return tmp;
-                                  }
-                                );
-                              }
-                            }
-                            disabled={mode == 'delete'||selectedKeyKabupaten == null ? true:disableForm}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                </Stack>
-              </Stack.Item>
-              <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                  <Stack.Item>
-                    <Label style={{width: 72}}>Desa</Label>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="alamat.desa"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <ComboBox
-                            placeholder="Pilih"
-                            allowFreeform={true}
-                            options={optionsDesa != undefined ? optionsDesa:[]}
-                            selectedKey={selectedKeyDesa}
-                            useComboBoxAsMenuWidth={true} 
-                            styles={alamatStyles}           
-                            errorMessage={error && 'harus diisi'}
-                            onChange={
-                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                let hasil = cloneDeep(postsDesa?.at(index!));
-                                onChange(hasil);
-                                setSelectedKeyDesa(option?.key as string);
-                              }
-                            }
-                            disabled={mode == 'delete'||selectedKeyKecamatan == null ? true:disableForm}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                </Stack>
-              </Stack.Item>      
-              <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                  <Stack.Item>
-                    <Label style={{width: 72}}>Detail</Label>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="alamat.keterangan"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <TextField 
-                            placeholder="isikan selain propinsi, kabupaten, kecamatan, atau desa. Seperti nama jalan, komplek, blok, rt atau rw"
-                            value={keteranganAlamatTextFieldValue}
-                            onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                onChange(newValue || '');
-                                setKeteranganAlamatTextFieldValue(newValue || '');
-                            }
-                            }
-                            multiline 
-                            rows={5}
-                            resizable={false}
-                            styles={alamatStyles}
-                            disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}
-                            errorMessage={error && 'harus diisi'}
-                          />                          
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                </Stack>
-              </Stack.Item>
-            </Stack>
+            <Label>Upload File gambar ktp</Label>
+            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile}/> 
+            <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
+              {
+                !selectedFiles && (
+                <>                  
+                  <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                  <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
+                  <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label>
+                </>
+                )
+              }
+            </div>            
           </Stack.Item>
-        </Stack>        
+        </Stack>      
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 

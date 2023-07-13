@@ -39,12 +39,12 @@ export const AlamatSchema = object({
 
 export const KontakSchema = object({
     fax: z.string().nullable().optional(),
-    telepone: z.string().min(7, { message: "penulisan salah" }).regex(phoneRegex, 'penulisan salah'),
+    telepone: z.string().min(7, { message: "minimal 7 digit" }).regex(phoneRegex, 'format salah'),
     email: z.string().min(4, { message: "Harus diisi" }).email("bukan format email yang benar").nullable(),
 })
 
 export const PersonSchema = object({
-    nik: z.string().regex(/^\d+$/, 'format nik salah').length(16, 'nik harus 16 digit'),
+    nik: z.string().regex(/^\d+$/, 'format salah').length(16, 'harus 16 digit'),
     nama: z.string().nullable(),
     jenisKelamin: JenisKelaminSchema.nullable(),
     alamat: AlamatSchema.nullable(),
