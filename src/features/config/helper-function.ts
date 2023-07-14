@@ -20,8 +20,6 @@ const baseQuery = fetchBaseQuery({
 
 });
 
-
-
 export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
     await mutex.waitForUnlock();
 
@@ -31,8 +29,13 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
             try {
+                const refreshToken = (api.getState() as RootState).token.refreshToken;
                 const refreshResult = await baseQuery(
-                'user/refresh_token',
+                {
+                    url: 'user/refresh_token', 
+                    method: 'POST',
+                    body: refreshToken
+                },
                 api,
                 extraOptions
                 )

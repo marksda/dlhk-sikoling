@@ -1,19 +1,17 @@
-import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Image, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets, ImageFit } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { PersonSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveMutation } from "../../features/repository/service/person-api-slice";
 import { IPerson } from "../../features/entity/person";
 import { useGetDaftarDataQuery as getDaftarJenisKelamin } from "../../features/repository/service/jenis-kelamin-api-slice";
-import { useGetDaftarDataQuery as getDaftarPropinsi } from "../../features/repository/service/propinsi-api-slice";
-import { useGetDaftarDataQuery as getDaftarKabupaten } from "../../features/repository/service/kabupaten-api-slice";
 import { useGetDaftarDataQuery as getDaftarKecamatan } from "../../features/repository/service/kecamatan-api-slice";
 import { useGetDaftarDataQuery as getDaftarDesa } from "../../features/repository/service/desa-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
+import { useGetDaftarDataKabupatenQuery, useGetDaftarDataPropinsiQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -186,8 +184,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     resolver: zodResolver(PersonSchema),
   });
   // rtk query
-  const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = getDaftarPropinsi(queryPropinsiParams);
-  const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = getDaftarKabupaten(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
+  const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams);
+  const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
   const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = getDaftarKecamatan(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
   const { data: postsDesa, isLoading: isLoadingPostsDesa } = getDaftarDesa(queryDesaParams, {skip: selectedKeyKecamatan == null ? true:false});
   const { data: postsJenisKelamin, isLoading: isLoadingJenisKelamin } = getDaftarJenisKelamin({
@@ -201,7 +199,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         },
     ],
   });  
-  const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
+  const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
   // const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
   // const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
 
@@ -288,8 +286,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         case 'add':
           console.log(data);
           let formData = new FormData();
-          formData.append('gambar', selectedFiles?.item(0)!);
-          formData.append('data', JSON.stringify(data));
+          formData.append('imageKtp', selectedFiles?.item(0)!);
+          formData.append('personData', JSON.stringify(data));
           await savePerson(formData).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
@@ -813,10 +811,11 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
               }
               {
                 selectedFiles && (
-                  <Image
+                  <img
                     width={400}
                     height={226}
-                    imageFit={ImageFit.centerContain}
+                    style={{objectFit: 'contain'}}
+                    // imageFit={ImageFit.centerContain}
                     src={selectedFiles == undefined ? undefined:URL.createObjectURL(selectedFiles[0])}
                   />
                 )

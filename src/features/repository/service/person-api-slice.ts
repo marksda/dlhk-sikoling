@@ -43,6 +43,7 @@ export const PersonApiSlice = createApi({
                     url: 'person',
                     method: 'PUT',
                     body: person,
+                    
                 }),
                 invalidatesTags: (result, error, {nik}) => {
                     return [{type: 'Person', id: nik!}];

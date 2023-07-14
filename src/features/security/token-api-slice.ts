@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { IResponseStatusToken } from "./token-slice";
-import { ICredential } from "./authentication-slice";
 import { baseQueryForToken } from "../config/helper-function";
+import { ICredential } from "../entity/credential";
 
 
 export const TokenApiSlice = createApi({
