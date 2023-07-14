@@ -6,12 +6,9 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
-import { useGetDaftarDataQuery as getDaftarJenisKelamin } from "../../features/repository/service/jenis-kelamin-api-slice";
-import { useGetDaftarDataQuery as getDaftarKecamatan } from "../../features/repository/service/kecamatan-api-slice";
-import { useGetDaftarDataQuery as getDaftarDesa } from "../../features/repository/service/desa-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useGetDaftarDataKabupatenQuery, useGetDaftarDataPropinsiQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -186,9 +183,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   // rtk query
   const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams);
   const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
-  const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = getDaftarKecamatan(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
-  const { data: postsDesa, isLoading: isLoadingPostsDesa } = getDaftarDesa(queryDesaParams, {skip: selectedKeyKecamatan == null ? true:false});
-  const { data: postsJenisKelamin, isLoading: isLoadingJenisKelamin } = getDaftarJenisKelamin({
+  const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = useGetDaftarDataKecamatanQuery(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
+  const { data: postsDesa, isLoading: isLoadingPostsDesa } = useGetDaftarDataDesaQuery(queryDesaParams, {skip: selectedKeyKecamatan == null ? true:false});
+  const { data: postsJenisKelamin, isLoading: isLoadingJenisKelamin } = useGetDaftarDataJenisKelaminQuery({
     pageNumber: 1,
     pageSize: 5,
     filters: [],

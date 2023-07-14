@@ -17,16 +17,19 @@ export const PropinsiSchema = object({
 export const KabupatenSchema = object({
     id: z.string().optional(),
     nama: z.string().optional(),
+    propinsi: PropinsiSchema.nullable(),
 });
 
 export const KecamatanSchema = object({
     id: z.string().optional(),
     nama: z.string().optional(),
+    kabupaten: KabupatenSchema.nullable(),
 });
 
 export const DesaSchema = object({
     id: z.string().optional(),
     nama: z.string().optional(),
+    kecamatan: KecamatanSchema.nullable(),
 });
 
 export const AlamatSchema = object({
