@@ -1,10 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import alamatReducer from "../features/repository/ssot/alamat-slice";
-import jabatanReducer from "../features/repository/ssot/jabatan-slice";
 import { JabatanApiSlice } from "../features/repository/service/jabatan-api-slice";
 import jenisKelaminReducer from "../features/repository/ssot/jenis-kelamin-slice";
 import personReducer from "../features/repository/ssot/person-slice";
-import { PersonApiSlice } from "../features/repository/service/person-api-slice";
 import pegawaiReducer from "../features/repository/ssot/pegawai-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
@@ -52,7 +49,6 @@ export const store = configureStore({
         [JabatanApiSlice.reducerPath]: JabatanApiSlice.reducer,
         jenisKelamin: jenisKelaminReducer,
         person: personReducer,
-        [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
         pegawai: pegawaiReducer,
         credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
@@ -94,7 +90,6 @@ export const store = configureStore({
         // [loginApi.reducerPath]: loginApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-                                            .concat(PersonApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(OtoritasApiSlice.middleware)
                                             .concat(TokenApiSlice.middleware)

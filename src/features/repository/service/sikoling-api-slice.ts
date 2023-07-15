@@ -2,11 +2,11 @@ import { createApi } from "@reduxjs/toolkit/dist/query/react";
 import { baseQueryWithReauth } from "../../config/helper-function";
 import { IPerson } from "../../entity/person";
 import { IPropinsi } from "../../entity/propinsi";
-import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 import { IKabupaten } from "../../entity/kabupaten";
 import { IKecamatan } from "../../entity/kecamatan";
 import { IDesa } from "../../entity/desa";
 import { IJenisKelamin } from "../../entity/jenis-kelamin";
+import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
