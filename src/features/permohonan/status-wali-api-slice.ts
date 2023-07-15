@@ -4,7 +4,6 @@ import { IStatusWaliPermohonan } from "../entity/status-wali-permohonan";
 import { IQueryParamFilters, qFilters } from "../entity/query-param-filters";
 
 
-
 type daftarStatusWaliPermohonan = IStatusWaliPermohonan[];
 
 export const StatusWaliPermohonanApiSlice = createApi({

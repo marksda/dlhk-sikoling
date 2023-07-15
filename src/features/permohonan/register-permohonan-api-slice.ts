@@ -1,14 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../config/helper-function";
-import { IQueryParams } from "../config/query-params-slice";
-import { IRegisterDokumen } from "../dokumen/register-dokumen-slice";
 import { IStatusFlowLog } from "../log/status-flow-log-api-slice";
-import { IPegawai } from "../repository/ssot/pegawai-slice";
-import { IRegisterPerusahaan } from "../perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "./jenis-permohonan-surat-arahan-api-slice";
 import { IKategoriPermohonan } from "./kategori-permohonan-api-slice";
 import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan-api-slice";
-import { IStatusWali } from "./status-wali-api-slice";
+import { IRegisterPerusahaan } from "../entity/register-perusahaan";
+import { IPegawai } from "../entity/pegawai";
+import { IRegisterDokumen } from "../entity/register-dokumen";
+import { IQueryParamFilters } from "../entity/query-param-filters";
+import { IStatusWaliPermohonan } from "../entity/status-wali-permohonan";
 
 export interface IRegisterPermohonan {
     id: string|null;
@@ -16,7 +16,7 @@ export interface IRegisterPermohonan {
     tanggalRegistrasi: string|null,
     registerPerusahaan: Partial<IRegisterPerusahaan>|null;
     pengurusPermohonan:any|null;
-    statusWali: Partial<IStatusWali>|null;
+    statusWali: Partial<IStatusWaliPermohonan>|null;
     penanggungJawabPermohonan: Partial<IPegawai>|null;
     pengirimBerkas: Partial<IPosisiTahapPemberkasan>|null;
     penerimaBerkas: Partial<IPosisiTahapPemberkasan>|null;
@@ -69,7 +69,7 @@ export const RegisterPermohonanApiSlice = createApi({
                     return [{type: 'RegisterPermohonan', id: idRegisterPermohonan}]
                 },
             }),
-            getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, IQueryParams>({
+            getAllRegisterPermohonan: builder.query<daftarRegisterPermohonan, IQueryParamFilters>({
                 query: (queryParams) => `register_permohonan?filters=${JSON.stringify(queryParams)}`,
                 providesTags: (result) => 
                     result ?
@@ -81,7 +81,7 @@ export const RegisterPermohonanApiSlice = createApi({
                     ]:
                     [{type: 'RegisterPermohonan', id: 'LIST'}],
             }),
-            getTotalCountRegisterPermohonan: builder.query<number, Pick<IQueryParams, "filters">>({
+            getTotalCountRegisterPermohonan: builder.query<number, Pick<IQueryParamFilters, "filters">>({
                 query: (queryFilters) => `register_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }

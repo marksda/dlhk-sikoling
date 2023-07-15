@@ -1,18 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import propinsiReducer from "../features/repository/ssot/propinsi-slice";
-import { PropinsiApiSlice } from "../features/repository/service/propinsi-api-slice";
-import kabupatenReducer from "../features/repository/ssot/kabupaten-slice";
-import { KabupatenApiSlice } from "../features/repository/service/kabupaten-api-slice";
-import kecamatanReducer from "../features/repository/ssot/kecamatan-slice";
-import { KecamatanApiSlice } from "../features/repository/service/kecamatan-api-slice";
-import desaReducer from "../features/repository/ssot/desa-slice";
-import { DesaApiSlice } from "../features/repository/service/desa-api-slice";
 import alamatReducer from "../features/repository/ssot/alamat-slice";
 import jabatanReducer from "../features/repository/ssot/jabatan-slice";
 import { JabatanApiSlice } from "../features/repository/service/jabatan-api-slice";
 import jenisKelaminReducer from "../features/repository/ssot/jenis-kelamin-slice";
-import { JenisKelaminApiSlice } from "../features/repository/service/jenis-kelamin-api-slice";
-// import penanggungJawabReducer from "../features/penanggung-jawab/penanggung-jawab-slice";
 import personReducer from "../features/repository/ssot/person-slice";
 import { PersonApiSlice } from "../features/repository/service/person-api-slice";
 import pegawaiReducer from "../features/repository/ssot/pegawai-slice";
@@ -25,10 +15,8 @@ import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
 import { ModelPerizinanApiSlice } from "../features/repository/service/model-perizinan-api-slice"; 
 import { SkalaUsahaApiSlice } from "../features/repository/service/skala-usaha-api-slice";
-// import kategoriPelakuUsahaReducer from "../features/perusahaan/kategori-pelaku-usaha-slice";
 import { KategoriPelakuUsahaApiSlice } from "../features/repository/service/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
-// import perusahaanReducer from "../features/perusahaan/perusahaan-slice";
 import perusahaanReducer from "../features/repository/ssot/perusahaan-slice";
 import { RegisterPerusahaanApiSlice } from "../features/repository/service/register-perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/repository/ssot/kategori-dokumen-slice";
@@ -61,20 +49,8 @@ import loginReducer from "../features/login/login-slice";
 
 export const store = configureStore({
     reducer: {
-        propinsi: propinsiReducer,
-        [PropinsiApiSlice.reducerPath]: PropinsiApiSlice.reducer,
-        kabupaten: kabupatenReducer,
-        [KabupatenApiSlice.reducerPath]: KabupatenApiSlice.reducer,
-        kecamatan: kecamatanReducer,
-        [KecamatanApiSlice.reducerPath]: KecamatanApiSlice.reducer,
-        desa: desaReducer,
-        [DesaApiSlice.reducerPath]: DesaApiSlice.reducer,
-        alamat: alamatReducer,
-        jabatan: jabatanReducer,
         [JabatanApiSlice.reducerPath]: JabatanApiSlice.reducer,
         jenisKelamin: jenisKelaminReducer,
-        [JenisKelaminApiSlice.reducerPath]: JenisKelaminApiSlice.reducer,
-        // penanggungJawab: penanggungJawabReducer,
         person: personReducer,
         [PersonApiSlice.reducerPath]: PersonApiSlice.reducer,
         pegawai: pegawaiReducer,
@@ -118,11 +94,6 @@ export const store = configureStore({
         // [loginApi.reducerPath]: loginApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-                                            .concat(PropinsiApiSlice.middleware)
-                                            .concat(KabupatenApiSlice.middleware)
-                                            .concat(KecamatanApiSlice.middleware)
-                                            .concat(DesaApiSlice.middleware)
-                                            .concat(JenisKelaminApiSlice.middleware)
                                             .concat(PersonApiSlice.middleware)
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(OtoritasApiSlice.middleware)
