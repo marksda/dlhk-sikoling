@@ -281,7 +281,6 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     try {
       switch (mode) {
         case 'add':
-          console.log(data);
           let formData = new FormData();
           formData.append('imageKtp', selectedFiles?.item(0)!);
           formData.append('personData', JSON.stringify(data));

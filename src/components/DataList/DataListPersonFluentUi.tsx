@@ -1,13 +1,13 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, Selection, ICommandBarItemProps, CommandBar } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetAllPersonQuery, useGetTotalCountPersonQuery } from "../../features/repository/service/person-api-slice";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPerson } from "../../features/entity/person";
 import find from "lodash.find";
 import { FormulirPerson } from "../Formulir/formulir-person";
+import { useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPersonFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -210,8 +210,8 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPersonQuery(queryFilters);
-    const { data: postsPerson, isLoading: isLoadingPosts } = useGetAllPersonQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataPersonQuery(queryFilters);
+    const { data: postsPerson, isLoading: isLoadingPosts } = useGetDaftarDataPersonQuery(queryParams);    
     
     const selection: Selection = useMemo(
         () => {
