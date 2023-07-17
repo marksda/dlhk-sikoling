@@ -196,7 +196,6 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         },
     ],
   });  
-  // const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(dataLama?.scanKTP!);
   const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
   const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(
     dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
@@ -212,13 +211,6 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     }),
     [keepInBounds],
   );
-
-  // const fileImage: File|undefined = useMemo(
-  //   () => {
-  //     return postDataImage;
-  //   },
-  //   [postDataImage]
-  // );
 
   const optionsJenisKelamin: IComboBoxOption[]|undefined = useMemo(
     () => (
