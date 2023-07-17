@@ -1,15 +1,14 @@
 import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
-import axios, { AxiosError } from "axios";
 import { RootState } from "../../app/store";
 import { resetCredential } from "../security/authentication-slice";
 import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
-import { sikolingBaseRestAPIUrl } from "./config";
+import { urlApiSikoling } from "./config";
 
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({ 
-    baseUrl: sikolingBaseRestAPIUrl,
+    baseUrl: urlApiSikoling,
     prepareHeaders: (headers, { getState }) => {
         const accessToken = (getState() as RootState).token.accessToken;
         if(accessToken != null){

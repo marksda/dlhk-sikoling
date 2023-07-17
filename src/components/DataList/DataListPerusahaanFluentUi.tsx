@@ -1,6 +1,6 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
-import { sikolingBaseRestAPIUrl, flipFormatDate } from "../../features/config/config";
+import { flipFormatDate, urlApiSikoling } from "../../features/config/config";
 import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
 import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
 import cloneDeep from "lodash.clonedeep";
@@ -262,7 +262,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 <span >Nomor: {dokumen?.noSurat}</span><br />
                                                 <span>perihal: {dokumen?.perihalSurat}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >
@@ -280,7 +280,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                             <div className={classNames.containerItemDok}>
                                                 <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >
@@ -300,7 +300,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 <span>Nomor: {dokumen?.nomor}</span><br />
                                                 <span>notaris: {dokumen?.namaNotaris}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >
@@ -319,7 +319,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 <span>Nomor: {dokumen?.noSurat}</span><br />
                                                 <span>perihal: {dokumen?.perihalSurat}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >
@@ -338,7 +338,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 <span>Nomor: {dokumen?.noSurat}</span><br />
                                                 <span>perihal: {dokumen?.perihalSurat}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >
@@ -357,7 +357,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                                                 <span>Nomor: {dokumen?.nomor}</span><br />
                                                 <span>perihal: {dokumen?.tanggal}</span><br />
                                                 <Link 
-                                                    href={`${sikolingBaseRestAPIUrl}files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
+                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
                                                     target="_blank"
                                                     underline
                                                 >

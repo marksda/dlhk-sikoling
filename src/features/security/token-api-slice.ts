@@ -11,7 +11,7 @@ export const TokenApiSlice = createApi({
         return {
             getToken: builder.mutation<IResponseStatusToken, ICredential>({
                 query: (credentialData) => ({
-                    url: `user/get_token`,
+                    url: `/user/get_token`,
                     method: 'POST',
                     header: {
                         'Content-Type': 'application/json;charset=UTF-8',
@@ -21,7 +21,7 @@ export const TokenApiSlice = createApi({
             }), 
             getRefreshToken: builder.mutation<IResponseStatusToken, string>({
                 query: (refreshToken) => ({
-                    url: `user/refresh_token`,
+                    url: `/user/refresh_token`,
                     method: 'POST',
                     header: {
                         'Content-Type': 'text/plain;charset=UTF-8',

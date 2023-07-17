@@ -11,12 +11,12 @@ import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
+    tagTypes: ['Desa', 'Image', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
     endpoints: builder => {
         return {
             saveJenisKelamin: builder.mutation<IJenisKelamin, Partial<IJenisKelamin>>({
                 query: (body) => ({
-                    url: 'sex',
+                    url: '/sex',
                     method: 'POST',
                     body,
                 }),
@@ -24,7 +24,7 @@ export const sikolingApi = createApi({
             }),
             updateJenisKelamin: builder.mutation<IJenisKelamin, Partial<IJenisKelamin>>({
                 query: (body) => ({
-                    url: 'sex',
+                    url: '/sex',
                     method: 'PUT',
                     body,
                 }),
@@ -32,7 +32,7 @@ export const sikolingApi = createApi({
             }),
             updateIdJenisKelamin: builder.mutation<IJenisKelamin, {idLama: String; sex: IJenisKelamin}>({
                 query: ({idLama, sex}) => ({
-                    url: `sex/id/${idLama}`,
+                    url: `/sex/id/${idLama}`,
                     method: 'PUT',
                     body: sex,
                 }),
@@ -40,7 +40,7 @@ export const sikolingApi = createApi({
             }),
             deleteJenisKelamin: builder.mutation<Partial<IJenisKelamin>, Partial<IJenisKelamin>>({
                 query: (sex) => ({                  
-                    url: `sex/${sex.id}`,
+                    url: `/sex/${sex.id}`,
                     method: 'DELETE',            
                 }),
                 invalidatesTags: (result) => result? ['Sex']:['Kosong']
@@ -54,7 +54,7 @@ export const sikolingApi = createApi({
             }),
             savePropinsi: builder.mutation<IPropinsi, Partial<IPropinsi>>({
                 query: (body) => ({
-                    url: 'propinsi',
+                    url: '/propinsi',
                     method: 'POST',
                     body,
                 }),
@@ -62,7 +62,7 @@ export const sikolingApi = createApi({
             }),
             updatePropinsi: builder.mutation<void, Partial<IPropinsi>>({
                 query: (body) => ({
-                    url: 'propinsi',
+                    url: '/propinsi',
                     method: 'PUT',
                     body,
                 }),
@@ -70,7 +70,7 @@ export const sikolingApi = createApi({
             }),
             updateIdPropinsi: builder.mutation<IPropinsi, {idLama: string; propinsi: IPropinsi}>({
                 query: ({idLama, propinsi}) => ({
-                    url: `propinsi/id/${idLama}`,
+                    url: `/propinsi/id/${idLama}`,
                     method: 'PUT',
                     body: propinsi,
                 }),
@@ -78,7 +78,7 @@ export const sikolingApi = createApi({
             }),
             deletePropinsi: builder.mutation<Partial<IPropinsi>, Partial<IPropinsi>>({
                 query: (propinsi) => ({                  
-                    url: `propinsi/${propinsi.id}`,
+                    url: `/propinsi/${propinsi.id}`,
                     method: 'DELETE',            
                 }),
                 invalidatesTags: (result) => result? ['Propinsi']:['Kosong']
@@ -92,7 +92,7 @@ export const sikolingApi = createApi({
             }),
             saveKabupaten: builder.mutation<IKabupaten, Partial<IKabupaten>>({
                 query: (body) => ({
-                    url: 'kabupaten',
+                    url: '/kabupaten',
                     method: 'POST',
                     body,
                 }),
@@ -100,7 +100,7 @@ export const sikolingApi = createApi({
             }),
             updateKabupaten: builder.mutation<void, Partial<IKabupaten>>({
                 query: (body) => ({
-                    url: 'kabupaten',
+                    url: '/kabupaten',
                     method: 'PUT',
                     body,
                 }),
@@ -108,7 +108,7 @@ export const sikolingApi = createApi({
             }),
             updateIdKabupaten: builder.mutation<IKabupaten, {idLama: string; kabupaten: IKabupaten}>({
                 query: ({idLama, kabupaten}) => ({
-                    url: `Kabupaten/id/${idLama}`,
+                    url: `/Kabupaten/id/${idLama}`,
                     method: 'PUT',
                     body: kabupaten,
                 }),
@@ -116,7 +116,7 @@ export const sikolingApi = createApi({
             }),
             deleteKabupaten: builder.mutation<Partial<IKabupaten>, Partial<IKabupaten>>({
                 query: (Kabupaten) => ({                  
-                    url: `kabupaten/${Kabupaten.id}`,
+                    url: `/kabupaten/${Kabupaten.id}`,
                     method: 'DELETE',            
                 }),
                 invalidatesTags: (result) => result? ['Kabupaten']:['Kosong']
@@ -130,7 +130,7 @@ export const sikolingApi = createApi({
             }),
             saveKecamatan: builder.mutation<IKecamatan, Partial<IKecamatan>>({
                 query: (body) => ({
-                    url: 'kecamatan',
+                    url: '/kecamatan',
                     method: 'POST',
                     body,
                 }),
@@ -138,7 +138,7 @@ export const sikolingApi = createApi({
             }),
             updateKecamatan: builder.mutation<void, Partial<IKecamatan>>({
                 query: (body) => ({
-                    url: 'kecamatan',
+                    url: '/kecamatan',
                     method: 'PUT',
                     body,
                 }),
@@ -146,7 +146,7 @@ export const sikolingApi = createApi({
             }),
             updateIdKecamatan: builder.mutation<IKecamatan, {idLama: string; kecamatan: IKecamatan}>({
                 query: ({idLama, kecamatan}) => ({
-                    url: `kecamatan/id/${idLama}`,
+                    url: `/kecamatan/id/${idLama}`,
                     method: 'PUT',
                     body: kecamatan,
                 }),
@@ -154,7 +154,7 @@ export const sikolingApi = createApi({
             }),
             deleteKecamatan: builder.mutation<Partial<IKecamatan>, Partial<IKecamatan>>({
                 query: (Kecamatan) => ({                  
-                    url: `kecamatan/${Kecamatan.id}`,
+                    url: `/kecamatan/${Kecamatan.id}`,
                     method: 'DELETE',            
                 }),
                 invalidatesTags: (result) => result? ['Kecamatan']:['Kosong']
@@ -168,7 +168,7 @@ export const sikolingApi = createApi({
             }),
             saveDesa: builder.mutation<IDesa, Partial<IDesa>>({
                 query: (body) => ({
-                    url: 'desa',
+                    url: '/desa',
                     method: 'POST',
                     body,
                 }),
@@ -176,7 +176,7 @@ export const sikolingApi = createApi({
             }),
             updateDesa: builder.mutation<void, Partial<IDesa>>({
                 query: (body) => ({
-                    url: 'desa',
+                    url: '/desa',
                     method: 'PUT',
                     body,
                 }),
@@ -184,7 +184,7 @@ export const sikolingApi = createApi({
             }),
             updateIdDesa: builder.mutation<IDesa, {idLama: string; desa: IDesa}>({
                 query: ({idLama, desa}) => ({
-                    url: `desa/id/${idLama}`,
+                    url: `/desa/id/${idLama}`,
                     method: 'PUT',
                     body: desa,
                 }),
@@ -192,13 +192,13 @@ export const sikolingApi = createApi({
             }),
             deleteDesa: builder.mutation<Partial<IDesa>, Partial<IDesa>>({
                 query: (desa) => ({                  
-                    url: `desa/${desa.id}`,
+                    url: `/desa/${desa.id}`,
                     method: 'DELETE',            
                 }),
                 invalidatesTags: (result) => result? ['Desa']:['Kosong']
             }),
             getDaftarDataDesa: builder.query<IDesa[], IQueryParamFilters>({
-                query: (queryParams) => `desa?filters=${JSON.stringify(queryParams)}`,
+                query: (queryParams) => `/desa?filters=${JSON.stringify(queryParams)}`,
                 providesTags: ['Desa'],
             }),
             getJumlahDataDesa: builder.query<number, qFilters>({
@@ -206,7 +206,7 @@ export const sikolingApi = createApi({
             }),
             savePerson: builder.mutation<IPerson, FormData>({
                 query: (dataForm) => ({
-                    url: 'person',
+                    url: '/person',
                     method: 'POST',
                     body: dataForm,
                 }),
@@ -214,7 +214,7 @@ export const sikolingApi = createApi({
             }),
             updatePerson: builder.mutation<IPerson, FormData>({
                 query: (dataForm) => ({
-                    url: 'person',
+                    url: '/person',
                     method: 'PUT',
                     body: dataForm,
                     
@@ -223,7 +223,7 @@ export const sikolingApi = createApi({
             }),
             updateIdPerson: builder.mutation<IPerson, {idLama: string; dataForm: FormData}>({
                 query: ({idLama, dataForm}) => ({
-                    url: `person/id/${idLama}`,
+                    url: `/person/id/${idLama}`,
                     method: 'PUT',
                     body: dataForm,
                 }),
@@ -232,18 +232,29 @@ export const sikolingApi = createApi({
             deletePerson: builder.mutation<Partial<IPerson>, Partial<IPerson>>({
                 query(person) {
                   return {
-                    url: `person/${person.nik}`,
+                    url: `/person/${person.nik}`,
                     method: 'DELETE',
                   }
                 },
                 invalidatesTags: (result) => result? ['Person']:['Kosong']
             }),
             getDaftarDataPerson: builder.query<IPerson[], IQueryParamFilters>({
-                query: (queryParams) => `person?filters=${JSON.stringify(queryParams)}`,
+                query: (queryParams) => `/person?filters=${JSON.stringify(queryParams)}`,
                 providesTags: ['Person'],
             }),
             getJumlahDataPerson: builder.query<number, qFilters>({
-                query: (queryFilters) => `person/count?filters=${JSON.stringify(queryFilters)}`,
+                query: (queryFilters) => `/person/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            getDataImage: builder.query<any, string>({
+                query: (path) => ({
+                    url:`/files${path}`,
+                    method: 'GET',
+                    responseHandler: (response) => response.blob()
+                }),
+                providesTags: ['Image'],
+                transformResponse: (response:Blob): any|null => {
+                    return URL.createObjectURL(response);
+                },                
             }),
         }
     }
@@ -262,4 +273,5 @@ export const {
     useDeleteDesaMutation,useGetDaftarDataDesaQuery, useGetJumlahDataDesaQuery,
     useSavePersonMutation, useUpdatePersonMutation, useUpdateIdPersonMutation,
     useDeletePersonMutation, useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery,
+    useGetDataImageQuery
 } = sikolingApi;

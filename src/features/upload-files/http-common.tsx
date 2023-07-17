@@ -1,8 +1,8 @@
 import axios from "axios";
-import { sikolingBaseRestAPIUrl } from "../config/config";
+import { urlApiSikoling } from "../config/config";
 
 export default axios.create({
-    baseURL: sikolingBaseRestAPIUrl,
+    baseURL: urlApiSikoling,
     headers: {
         "Content-type": "application/json",
     },

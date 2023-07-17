@@ -8,7 +8,7 @@ import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -196,9 +196,11 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         },
     ],
   });  
+  // const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(dataLama?.scanKTP!);
   const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
-  // const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
-  // const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
+  const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(
+    dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
+    {skip: dataLama == undefined ? true:dataLama.scanKTP == undefined?true:false});
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -210,6 +212,13 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     }),
     [keepInBounds],
   );
+
+  // const fileImage: File|undefined = useMemo(
+  //   () => {
+  //     return postDataImage;
+  //   },
+  //   [postDataImage]
+  // );
 
   const optionsJenisKelamin: IComboBoxOption[]|undefined = useMemo(
     () => (
@@ -797,13 +806,13 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile}/> 
             <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
               {
-                !selectedFiles && (
-                <>                  
-                  <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                  <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
-                  <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label>
-                </>
-                )
+                (selectedFiles == undefined && postDataImage == undefined ) ? (
+                  <>                  
+                    <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                    <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
+                    <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label>
+                  </>
+                  ) : null
               }
               {
                 selectedFiles && (
@@ -812,7 +821,18 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                     height={226}
                     style={{objectFit: 'contain'}}
                     // imageFit={ImageFit.centerContain}
-                    src={selectedFiles == undefined ? undefined:URL.createObjectURL(selectedFiles[0])}
+                    src={URL.createObjectURL(selectedFiles[0])}
+                  />
+                )
+              }
+              {
+                postDataImage && (
+                  <img
+                    width={400}
+                    height={226}
+                    style={{objectFit: 'contain'}}
+                    // imageFit={ImageFit.centerContain}
+                    src={postDataImage}
                   />
                 )
               }
