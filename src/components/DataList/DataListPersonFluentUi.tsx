@@ -257,6 +257,9 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         setModeForm('edit');
                         showModalFormulirPerson();
                         let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
+                        if(dataTerpilih.scanKTP == undefined) {
+                            dataTerpilih.scanKTP = '';
+                        }
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }

@@ -52,7 +52,7 @@ export const PersonSchema = object({
     jenisKelamin: JenisKelaminSchema.nullable(),
     alamat: AlamatSchema.nullable(),
     kontak: KontakSchema.nullable(),
-    scanKTP: z.string().optional()
+    scanKTP: z.string()
 });
 
 export const HakAksesSchema = object({

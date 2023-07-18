@@ -8,7 +8,8 @@ import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { exit } from "process";
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -197,6 +198,8 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     ],
   });  
   const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
+  const [ updatePerson, { isLoading: isLoadingUpdatePerson}] = useUpdatePersonMutation();
+  const [ updateIdPerson, { isLoading: isLoadingUpdateIdPerson}] = useUpdateIdPersonMutation();
   const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(
     dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
     {skip: dataLama == undefined ? true:dataLama.scanKTP == undefined?true:false});
@@ -280,9 +283,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const onSubmit: SubmitHandler<IPerson> = async (data) => {
     setDisableForm(true);
     try {
+      let formData = new FormData();
       switch (mode) {
-        case 'add':
-          let formData = new FormData();
+        case 'add':          
           formData.append('imageKtp', selectedFiles?.item(0)!);
           formData.append('personData', JSON.stringify(data));
           await savePerson(formData).unwrap().then((originalPromiseResult) => {
@@ -293,16 +296,31 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
           hideModal();
           break;
         case 'edit':
-        //   await updateHakAkses({
-        //     id: dataLama?.id, 
-        //     nama: namaTextFieldValue,
-        //     keterangan: keteranganTextFieldValue
-        //   }).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+          if(dataLama?.nik == data.nik) { //update non id
+            if(selectedFiles != undefined && selectedFiles?.length > 0) {
+              formData.append('imageKtp', selectedFiles?.item(0)!);
+              data.scanKTP = dataLama?.scanKTP!;
+            }
+            formData.append('personData', JSON.stringify(data));
+            await updatePerson(formData).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            });             
+          }
+          else { //updare id
+            if(selectedFiles != null && selectedFiles?.length > 0) {
+              formData.append('imageKtp', selectedFiles?.item(0)!);
+              data.scanKTP = dataLama?.scanKTP!;
+            }
+            formData.append('personData', JSON.stringify(data));
+            await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }     
+          hideModal();     
           break;
         case 'delete':
         //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
@@ -359,12 +377,14 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
 
   //this function is used to handle responsibility of event File change that occur on input type file HTML Element 
   const _handleFile = useCallback(
-    (event: FormEvent<HTMLInputElement>) => {            
+    (event: FormEvent<HTMLInputElement>, onChange: (s:any) => void ) => {            
         if(event.currentTarget.files!.length > 0) {            
           let fileType: string = getFileType(event.currentTarget.files![0].type);
+          let namaFile: string = event.currentTarget.files![0].name;
 
           if(fileType == 'image') {
             setSelectedFiles(event.currentTarget.files);
+            onChange(namaFile);
           }      
         }
     },
@@ -375,9 +395,11 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const bindClickEventInputFile = useCallback(
     (e) => {            
         e.stopPropagation();
-        document.getElementById('fileUpload')!.click();
+        if(!disableForm) {
+          document.getElementById('fileUpload')!.click();
+        }        
     },
-    []
+    [disableForm]
 );
 
   return (
@@ -418,10 +440,10 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 placeholder="Isi sesuai KTP"
                                 value={nikTextFieldValue}
                                 onChange={
-                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                  onChange(newValue || '');
-                                  setNikTextFieldValue(newValue || '');
-                                }
+                                  (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                    onChange(newValue || '');
+                                    setNikTextFieldValue(newValue || '');
+                                  }
                                 }
                                 styles={textFieldKtpStyles}
                                 disabled={mode == 'delete' ? true:disableForm}
@@ -794,47 +816,68 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
             </Stack>  
           </Stack.Item>
           <Stack.Item>
-            <Label>Upload File gambar ktp</Label>
-            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile}/> 
-            <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
-              {
-                (selectedFiles == undefined && postDataImage == undefined ) ? (
-                  <>                  
-                    <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                    <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
-                    <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label>
-                  </>
-                  ) : null
-              }
-              {
-                selectedFiles && (
-                  <img
-                    width={400}
-                    height={226}
-                    style={{objectFit: 'contain'}}
-                    // imageFit={ImageFit.centerContain}
-                    src={URL.createObjectURL(selectedFiles[0])}
-                  />
+            <Controller 
+              name="scanKTP"
+              control={control}
+              render={
+                ({
+                  field: {onChange, onBlur}, 
+                  fieldState: { error }
+                }) => (
+                  <>
+                    <Label>Upload File gambar ktp</Label>
+                    <input type="file" id="fileUpload" style={{display: 'none'}} onChange={
+                      (e) => {_handleFile(e, onChange);}
+                    }
+                    /> 
+                    <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
+                      {
+                        (selectedFiles == undefined && postDataImage == undefined ) ? (
+                          <>                  
+                            <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                            <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
+                            <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+                            {
+                              error && (
+                                <Label disabled style={{paddingTop: 0, color: 'red'}}>Error: Anda harus menyertakan file gambar ktp</Label>
+                              )
+                            }
+                          </>
+                          ) : null
+                      }
+                      {
+                        selectedFiles && (
+                          <img
+                            width={400}
+                            height={226}
+                            style={{objectFit: 'contain'}}
+                            // imageFit={ImageFit.centerContain}
+                            src={URL.createObjectURL(selectedFiles[0])}
+                          />
+                        )
+                      }
+                      {
+                        postDataImage && !selectedFiles && (
+                          <img
+                            width={400}
+                            height={226}
+                            style={{objectFit: 'contain'}}
+                            // imageFit={ImageFit.centerContain}
+                            src={postDataImage}
+                          />
+                        )
+                      }
+                    </div>  
+                  </>                  
                 )
               }
-              {
-                postDataImage && (
-                  <img
-                    width={400}
-                    height={226}
-                    style={{objectFit: 'contain'}}
-                    // imageFit={ImageFit.centerContain}
-                    src={postDataImage}
-                  />
-                )
-              }
-            </div>        
+            />    
             <div className={contentStyles.infoBoxContainer}>
               <p style={{textAlign: 'justify',textJustify: 'inter-word'}}>
                 <span style={{display: 'inline-block', marginBottom: 6}}><b>Perhatian!!</b></span><br />
                 Harap diisi dengan data yang bisa dipertanggung jawabkan. Data isian anda akan diverifikasi oleh sistem, dan hasilnya akan diberitahukan melalui email user akun yang anda pakai.
               </p>
-            </div>     
+            </div>   
           </Stack.Item>
         </Stack>      
         <PrimaryButton 
