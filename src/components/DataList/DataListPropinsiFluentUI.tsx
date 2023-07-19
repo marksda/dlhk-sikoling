@@ -4,18 +4,18 @@ import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
-import { IHakAkses } from "../../features/entity/hak-akses";
+import { IPropinsi } from "../../features/entity/propinsi"; 
 import { useBoolean } from "@fluentui/react-hooks";
-import { FormulirHakAkses } from "../Formulir/formulir-hak-akses";
+import { FormulirPropinsi } from "../Formulir/formulir-propinsi"; 
 import find from "lodash.find";
-import { useGetDaftarDataHakAksesQuery, useGetJumlahDataHakAksesQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataPropinsiQuery, useGetJumlahDataPropinsiQuery } from "../../features/repository/service/sikoling-api-slice";
 
 
-interface IDataListHakAksesFluentUIProps {
+interface IDataPropinsiFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemHakAkses = {key: string|null;} & Partial<IHakAkses>;
+type IItemPropinsi = {key: string|null;} & Partial<IPropinsi>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -37,7 +37,7 @@ const toggleStyles = {
     },
 };
 
-export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({initSelectedFilters, title}) => {  
+export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSelectedFilters, title}) => {  
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -75,9 +75,9 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
-    const [isModalFormulirHakAksesOpen, { setTrue: showModalFormulirHakAkses, setFalse: hideModalFormulirHakAkses }] = useBoolean(false);
+    const [isModalFormulirPropinsiOpen, { setTrue: showModalFormulirPropinsi, setFalse: hideModalFormulirPropinsi }] = useBoolean(false);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
-    const [dataLama, setDataLama]= useState<IHakAkses|undefined>(undefined);
+    const [dataLama, setDataLama]= useState<IPropinsi|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -98,38 +98,26 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemHakAkses) => {
+            onRender: (item: IItemPropinsi) => {
                 return item.key;
             }
         },
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 100, 
-            maxWidth: 200, 
+            minWidth: 250, 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
             isPadded: true,
-            onRender: (item: IItemHakAkses) => {
+            onRender: (item: IItemPropinsi) => {
                 return item.nama;
             }
-        },
-        { 
-            key: 'keterangan', 
-            name: 'Keterangan', 
-            minWidth: 100, 
-            isResizable: true, 
-            data: 'string',
-            isPadded: true,
-            onRender: (item: IItemHakAkses) => {
-                return item.keterangan;
-            }
-        },
+        }
     ]);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataHakAksesQuery(queryFilters);
-    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarDataHakAksesQuery(queryParams);
+    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataPropinsiQuery(queryFilters);
+    const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryParams);
 
     const selection: Selection = useMemo(
         () => {
@@ -160,7 +148,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     onClick: () => {
                         setFormulirTitle('Add hak akses');
                         setModeForm('add');
-                        showModalFormulirHakAkses();
+                        showModalFormulirPropinsi();
                         setDataLama(undefined);
                     }
                 },
@@ -172,8 +160,8 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     onClick: () => {
                         setFormulirTitle('Edit hak akses');
                         setModeForm('edit');
-                        showModalFormulirHakAkses();
-                        let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
+                        showModalFormulirPropinsi();
+                        let dataTerpilih: IPropinsi = find(postsPropinsi, (i: IPropinsi) => i.id == selection.getSelection()[0].key) as IPropinsi;
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -187,8 +175,8 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     onClick: () => {
                         setFormulirTitle('Hapus hak akses');
                         setModeForm('delete');
-                        showModalFormulirHakAkses();
-                        let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
+                        showModalFormulirPropinsi();
+                        let dataTerpilih: IPropinsi = find(postsPropinsi, (i: IPropinsi) => i.id == selection.getSelection()[0].key) as IPropinsi;
                         setDataLama(dataTerpilih);
                     }
                 },
@@ -471,7 +459,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsHakAkses != undefined ? postsHakAkses?.map(
+                                    postsPropinsi != undefined ? postsPropinsi?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
@@ -502,12 +490,12 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            { isModalFormulirHakAksesOpen == true ?
-                <FormulirHakAkses
+            { isModalFormulirPropinsiOpen == true ?
+                <FormulirPropinsi
                     title={formulirTitle}
-                    isModalOpen={isModalFormulirHakAksesOpen}
-                    showModal={showModalFormulirHakAkses}
-                    hideModal={hideModalFormulirHakAkses}
+                    isModalOpen={isModalFormulirPropinsiOpen}
+                    showModal={showModalFormulirPropinsi}
+                    hideModal={hideModalFormulirPropinsi}
                     mode={modeForm}
                     dataLama={dataLama}
                 />:null

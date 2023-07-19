@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState } from "react";
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, Selection, ICommandBarItemProps, CommandBar } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, IColumn, DefaultEffects, DirectionalHint, IContextualMenuListProps, IRenderFunction, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, Selection, ICommandBarItemProps, CommandBar, PrimaryButton, Toggle } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
@@ -45,6 +45,12 @@ const classNames = mergeStyleSets({
     },
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -82,13 +88,22 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
 
     const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                            }
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+            );
         },
         []
     );
@@ -97,6 +112,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [dataLama, setDataLama]= useState<IPerson|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
@@ -212,7 +228,8 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataPersonQuery(queryFilters);
     const { data: postsPerson, isLoading: isLoadingPosts } = useGetDaftarDataPersonQuery(queryParams);    
-    
+      
+
     const selection: Selection = useMemo(
         () => {
             return new Selection({
@@ -224,7 +241,6 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         setIsSelectedItem(false);
                     }
                 },           
-                selectionMode: SelectionMode.single,
                 getKey: (item, index) => {
                     return item.key as string;
                 }
@@ -271,7 +287,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Delete' }, 
                     onClick: () => {
-                        setFormulirTitle('Hapus item');
+                        setFormulirTitle('Hapus person');
                         setModeForm('delete');
                         showModalFormulirPerson();
                         let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
@@ -621,19 +637,93 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         },
         []
     );
+
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;
+                    
+                   
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;
+
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+            
+            setSearchNik(undefined);
+        },
+        []
+    );
+
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
     
     return (
         <Stack grow verticalFill>
-            <Stack.Item>
+            <Stack.Item  style={{marginRight: 16}}>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item style={{paddingLeft: 16}}>
+                    <Stack.Item style={{paddingLeft: 16}} align="center">
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
-                            <Stack.Item>
-                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
-                            </Stack.Item>
+                    <Stack.Item  align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center"  style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            }                   
+                            <Stack.Item >
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>         
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
@@ -671,6 +761,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                     ) : []
                                 }
                                 selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
                                 selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
@@ -710,6 +801,13 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                 onSearch={_onSearchNik}
                                 onClear= {_onClearSearchNik}
                                 value={searchNik ? searchNik:''}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
                             />
                         </Stack.Item>
                     </Stack>
