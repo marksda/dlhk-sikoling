@@ -6,7 +6,7 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
-import { useDeleteHakAksesMutation, useSaveHakAksesMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteHakAksesMutation, useSaveHakAksesMutation, useUpdateHakAksesMutation, useUpdateIdHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirHakAksesFluentUIProps {
   title: string|undefined;
@@ -79,12 +79,13 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
   const titleId = useId('title');
   //hook-form
   const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
-    defaultValues:  cloneDeep(dataLama),
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, keterangan: undefined},
     resolver: zodResolver(HakAksesSchema),
   });
   // rtk query
   const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveHakAksesMutation();
   const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateHakAksesMutation();
+  const [ updateIdHakAkses, {isLoading: isLoadingUpdateIdHakAkses}] = useUpdateIdHakAksesMutation();
   const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteHakAksesMutation();
 
   const dragOptions = useMemo(
@@ -111,19 +112,24 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
           hideModal();
           break;
         case 'edit':
-          await updateHakAkses({
-            id: dataLama?.id, 
-            nama: namaTextFieldValue,
-            keterangan: keteranganTextFieldValue
-          }).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
+          if(dataLama?.id == data.id) {
+            await updateHakAkses(data).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }
+          else {
+            await updateIdHakAkses({idLama: dataLama?.id!, hakAkses: data}).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }          
           hideModal();
           break;
         case 'delete':
-          await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
+          await deleteHakAkses(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -138,8 +144,18 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     }
   };
 
-  const onError: SubmitErrorHandler<IHakAkses> = (err) => {
-    console.log(err);
+  const onError: SubmitErrorHandler<IHakAkses> = async (err) => {
+    if(mode == 'delete') {
+      await deleteHakAkses(dataLama as IHakAkses).unwrap().then((originalPromiseResult) => {
+        setDisableForm(false);
+      }).catch((rejectedValueOrSerializedError) => {
+        setDisableForm(false);
+      }); 
+      hideModal();
+    }
+    else {
+      console.log('error', err);
+    }
   };
 
   const _handleOnDismissed = useCallback(
@@ -189,7 +205,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
                       }
                     }
                     styles={textFieldStyles}
-                    disabled={mode == 'delete'|| mode == 'edit' ? true:disableForm}
+                    disabled={mode == 'delete' ? true:disableForm}
                     errorMessage={error && 'harus diisi'}
                   />
               )}

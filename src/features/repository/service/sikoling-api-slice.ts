@@ -281,10 +281,10 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: ['HakAkses'],
             }),
-            deleteHakAkses: builder.mutation<Partial<IHakAkses>, string>({
-                query(idHakAkses) {
+            deleteHakAkses: builder.mutation<Partial<IHakAkses>, Partial<IHakAkses>>({
+                query(hakAkses) {
                   return {
-                    url: `/hak_akses/${idHakAkses}`,
+                    url: `/hak_akses/${hakAkses.id}`,
                     method: 'DELETE',
                   }
                 },

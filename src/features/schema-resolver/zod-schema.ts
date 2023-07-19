@@ -56,7 +56,7 @@ export const PersonSchema = object({
 });
 
 export const HakAksesSchema = object({
-    id: z.string().optional(),
+    id: z.string().nullable(),
     nama: z.string().nullable(),
     keterangan: z.string().nullable()
 });

@@ -152,7 +152,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add');
+                        setFormulirTitle('Add hak akses');
                         setModeForm('add');
                         showModalFormulirHakAkses();
                         setDataLama(undefined);
@@ -164,7 +164,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit');
+                        setFormulirTitle('Edit hak akses');
                         setModeForm('edit');
                         showModalFormulirHakAkses();
                         let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
@@ -177,9 +177,9 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                     text: 'Hapus', 
                     renderedInOverflow: false,
                     disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Delete' }, 
+                    iconProps: { iconName: 'Delete hak akses' }, 
                     onClick: () => {
-                        setFormulirTitle('Hapus item');
+                        setFormulirTitle('Hapus hak akses');
                         setModeForm('delete');
                         showModalFormulirHakAkses();
                         let dataTerpilih: IHakAkses = find(postsHakAkses, (i: IHakAkses) => i.id == selection.getSelection()[0].key) as IHakAkses;
@@ -331,7 +331,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -346,7 +346,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     
                     if(found > -1) {
@@ -417,7 +417,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
-                                    style={{width: 250}} 
+                                    style={{width: 300}} 
                                     placeholder="pencarian nama hak akses" 
                                     underlined={false} 
                                     onSearch={_onSearch}

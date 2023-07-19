@@ -107,7 +107,6 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 140 } };
 const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
-  console.log(dataLama);
   // local state
   const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
@@ -178,7 +177,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
   const {control, handleSubmit, resetField, setValue, watch} = useForm<IPerson>({
-    defaultValues:  cloneDeep(dataLama),
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
     resolver: zodResolver(PersonSchema),
   });
   // rtk query
