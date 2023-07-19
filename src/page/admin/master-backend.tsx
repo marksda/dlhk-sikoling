@@ -607,7 +607,7 @@ export const MasterBackEnd: FC = () => {
                             ],
                         }
                     }
-                    title="Skala usaha"
+                    title="Propinsi"
                 />;
                 break;   
                 case 'skala_usaha':

@@ -67,7 +67,6 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
@@ -78,7 +77,7 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
   const titleId = useId('title');
   //hook-form
   const {handleSubmit, control, resetField, watch} = useForm<IPropinsi>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined},
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: undefined, nama: undefined},
     resolver: zodResolver(PropinsiSchema),
   });
   // rtk query

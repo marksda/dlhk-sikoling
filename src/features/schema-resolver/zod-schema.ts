@@ -10,8 +10,8 @@ export const JenisKelaminSchema = object({
 });
 
 export const PropinsiSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
+    id: z.string().nullable(),
+    nama: z.string().nullable(),
 });
 
 export const KabupatenSchema = object({
