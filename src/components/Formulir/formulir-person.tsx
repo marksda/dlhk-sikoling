@@ -107,6 +107,7 @@ const basicStyles: Partial<IComboBoxStyles> = { root: { width: 140 } };
 const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+  console.log(dataLama);
   // local state
   const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
@@ -338,8 +339,18 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     }
   };
 
-  const onError: SubmitErrorHandler<IPerson> = (err) => {
-    console.log('error', err);
+  const onError: SubmitErrorHandler<IPerson> = async (err) => {
+    if(mode == 'delete') {
+      await deletePerson(dataLama as IPerson).unwrap().then((originalPromiseResult) => {
+        setDisableForm(false);
+      }).catch((rejectedValueOrSerializedError) => {
+        setDisableForm(false);
+      }); 
+      hideModal();
+    }
+    else {
+      console.log('error', err);
+    }
   };
 
   const _resetKabupaten = useCallback(

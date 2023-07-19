@@ -256,7 +256,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         setFormulirTitle('Edit person');
                         setModeForm('edit');
                         showModalFormulirPerson();
-                        let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
+                        let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
                         if(dataTerpilih.scanKTP == undefined) {
                             dataTerpilih.scanKTP = '';
                         }
@@ -274,7 +274,10 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         setFormulirTitle('Hapus item');
                         setModeForm('delete');
                         showModalFormulirPerson();
-                        let dataTerpilih: IPerson = find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson;
+                        let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
+                        if(dataTerpilih.scanKTP == undefined) {
+                            dataTerpilih.scanKTP = '';
+                        }
                         setDataLama(dataTerpilih);
                     }
                 },
@@ -361,7 +364,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -376,9 +379,8 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
-                    
-                    
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                                        
                     if(found > -1) {
                         filters?.splice(found, 1);
                     }

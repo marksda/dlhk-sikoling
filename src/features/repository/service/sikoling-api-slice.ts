@@ -243,7 +243,7 @@ export const sikolingApi = createApi({
             deletePerson: builder.mutation<Partial<IPerson>, Partial<IPerson>>({
                 query(person) {
                   return {
-                    url: `/person/${person.nik}`,
+                    url: `/person?dt=${JSON.stringify(person)}`,
                     method: 'DELETE',
                   }
                 },
