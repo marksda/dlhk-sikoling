@@ -14,6 +14,17 @@ export const sikolingApi = createApi({
     tagTypes: ['Desa', 'Image', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
     endpoints: builder => {
         return {
+            getDataImage: builder.query<any, string>({
+                query: (path) => ({
+                    url:`/files${path}`,
+                    method: 'GET',
+                    responseHandler: (response) => response.blob()
+                }),
+                providesTags: ['Image'],
+                transformResponse: (response:Blob): any|null => {
+                    return URL.createObjectURL(response);
+                },                
+            }),
             saveJenisKelamin: builder.mutation<IJenisKelamin, Partial<IJenisKelamin>>({
                 query: (body) => ({
                     url: '/sex',
@@ -245,22 +256,12 @@ export const sikolingApi = createApi({
             getJumlahDataPerson: builder.query<number, qFilters>({
                 query: (queryFilters) => `/person/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            getDataImage: builder.query<any, string>({
-                query: (path) => ({
-                    url:`/files${path}`,
-                    method: 'GET',
-                    responseHandler: (response) => response.blob()
-                }),
-                providesTags: ['Image'],
-                transformResponse: (response:Blob): any|null => {
-                    return URL.createObjectURL(response);
-                },                
-            }),
         }
     }
 });
 
 export const {
+    useGetDataImageQuery,
     useSaveJenisKelaminMutation, useUpdateJenisKelaminMutation, useUpdateIdJenisKelaminMutation,
     useDeleteJenisKelaminMutation,useGetDaftarDataJenisKelaminQuery, useGetJumlahDataJenisKelaminQuery,
     useSavePropinsiMutation, useUpdatePropinsiMutation, useUpdateIdPropinsiMutation,
@@ -273,5 +274,4 @@ export const {
     useDeleteDesaMutation,useGetDaftarDataDesaQuery, useGetJumlahDataDesaQuery,
     useSavePersonMutation, useUpdatePersonMutation, useUpdateIdPersonMutation,
     useDeletePersonMutation, useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery,
-    useGetDataImageQuery
 } = sikolingApi;

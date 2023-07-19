@@ -8,8 +8,8 @@ import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
-import { exit } from "process";
+import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+
 
 interface IFormulirPersonFluentUIProps {
   title: string|undefined;
@@ -19,7 +19,6 @@ interface IFormulirPersonFluentUIProps {
   hideModal: () => void;
   dataLama?: IPerson;
 };
-
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
   container: {
@@ -200,6 +199,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
   const [ updatePerson, { isLoading: isLoadingUpdatePerson}] = useUpdatePersonMutation();
   const [ updateIdPerson, { isLoading: isLoadingUpdateIdPerson}] = useUpdateIdPersonMutation();
+  const [ deletePerson, { isLoading: isLoadingDeletePerson}] = useDeletePersonMutation();
   const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(
     dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
     {skip: dataLama == undefined ? true:dataLama.scanKTP == undefined?true:false});
@@ -323,12 +323,12 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
           hideModal();     
           break;
         case 'delete':
-        //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+          await deletePerson(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         default:
           break;
