@@ -1,7 +1,6 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import { CommandBar, ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetDaftarHakAksesQuery, useGetTotalCountHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
@@ -9,6 +8,7 @@ import { IHakAkses } from "../../features/entity/hak-akses";
 import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirHakAkses } from "../Formulir/formulir-hak-akses";
 import find from "lodash.find";
+import { useGetDaftarDataHakAksesQuery, useGetJumlahDataHakAksesQuery } from "../../features/repository/service/sikoling-api-slice";
 
 
 interface IDataListHakAksesFluentUIProps {
@@ -121,9 +121,8 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
         },
     ]);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetTotalCountHakAksesQuery
-    (queryFilters);
-    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery(queryParams);
+    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataHakAksesQuery(queryFilters);
+    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarDataHakAksesQuery(queryParams);
 
     const selection: Selection = useMemo(
         () => {

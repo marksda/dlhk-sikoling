@@ -6,7 +6,7 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
-import { useDeleteMutation, useSaveMutation, useUpdateMutation } from "../../features/repository/service/hak-akses-api-slice";
+import { useDeleteHakAksesMutation, useSaveHakAksesMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirHakAksesFluentUIProps {
   title: string|undefined;
@@ -83,9 +83,9 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     resolver: zodResolver(HakAksesSchema),
   });
   // rtk query
-  const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveMutation();
-  const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateMutation();
-  const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteMutation();
+  const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveHakAksesMutation();
+  const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateHakAksesMutation();
+  const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteHakAksesMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({

@@ -1,4 +1,4 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, FontIcon, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
@@ -6,11 +6,11 @@ import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { useGetDaftarHakAksesQuery } from "../../features/repository/service/hak-akses-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IOtoritas } from "../../features/entity/otoritas";
 import find from "lodash.find";
 import { FormulirOtoritas } from "../Formulir/formulir-otoritas";
+import { useGetDaftarDataHakAksesQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListOtoritasUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -241,7 +241,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCountPosts } = getJumlahOtoritas(queryFilters);
     const { data: postsOtoritas, isLoading: isLoadingPostsOtoritas } = getDaftarOtoritas(queryParams);
-    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarHakAksesQuery({
+    const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarDataHakAksesQuery({
         pageNumber: 1,
         pageSize: 0,
         filters: [],

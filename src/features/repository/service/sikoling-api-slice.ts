@@ -7,11 +7,12 @@ import { IKecamatan } from "../../entity/kecamatan";
 import { IDesa } from "../../entity/desa";
 import { IJenisKelamin } from "../../entity/jenis-kelamin";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
+import { IHakAkses } from "../../entity/hak-akses";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Image', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
+    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -256,6 +257,46 @@ export const sikolingApi = createApi({
             getJumlahDataPerson: builder.query<number, qFilters>({
                 query: (queryFilters) => `/person/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveHakAkses: builder.mutation<IHakAkses, Partial<IHakAkses>>({
+                query: (body) => ({
+                    url: '/hak_akses',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: ['HakAkses'],
+            }),
+            updateHakAkses: builder.mutation<void, Partial<IHakAkses>>({
+                query: (hakAkses) => ({
+                    url: '/hak_akses',
+                    method: 'PUT',
+                    body: hakAkses,
+                }),
+                invalidatesTags: ['HakAkses'],
+            }),
+            updateIdHakAkses: builder.mutation<void, {idLama: string; hakAkses: IHakAkses}>({
+                query: ({idLama, hakAkses}) => ({
+                    url: `/hak_akses/id/${idLama}`,
+                    method: 'PUT',
+                    body: hakAkses,
+                }),
+                invalidatesTags: ['HakAkses'],
+            }),
+            deleteHakAkses: builder.mutation<Partial<IHakAkses>, string>({
+                query(idHakAkses) {
+                  return {
+                    url: `/hak_akses/${idHakAkses}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: ['HakAkses'],
+            }),
+            getDaftarDataHakAkses: builder.query<IHakAkses[], IQueryParamFilters>({
+                query: (queryParams) => `/hak_akses?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['HakAkses'],
+            }),
+            getJumlahDataHakAkses: builder.query<number, qFilters>({
+                query: (queryFilters) => `/hak_akses/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -274,4 +315,6 @@ export const {
     useDeleteDesaMutation,useGetDaftarDataDesaQuery, useGetJumlahDataDesaQuery,
     useSavePersonMutation, useUpdatePersonMutation, useUpdateIdPersonMutation,
     useDeletePersonMutation, useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery,
+    useSaveHakAksesMutation, useUpdateHakAksesMutation, useUpdateIdHakAksesMutation,
+    useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetJumlahDataHakAksesQuery,
 } = sikolingApi;
