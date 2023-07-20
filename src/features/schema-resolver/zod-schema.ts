@@ -27,8 +27,8 @@ export const KecamatanSchema = object({
 });
 
 export const DesaSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
+    id: z.string().nullable(),
+    nama: z.string().nullable(),
     kecamatan: KecamatanSchema.nullable(),
 });
 
