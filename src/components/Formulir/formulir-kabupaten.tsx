@@ -129,7 +129,7 @@ export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, i
     try {
       switch (mode) {
         case 'add':
-          await saveKabupaten(data as IKabupaten).unwrap().then((originalPromiseResult) => {
+          await saveKabupaten(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);

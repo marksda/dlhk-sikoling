@@ -73,7 +73,7 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
-  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.kabupaten?.id!:undefined);
+  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.kabupaten?.propinsi?.id!:undefined);
   const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(dataLama != undefined ? dataLama.kabupaten?.id!:undefined);
   const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
@@ -104,7 +104,7 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, setValue, resetField, watch} = useForm<IKecamatan>({
+  const {handleSubmit, control, resetField} = useForm<IKecamatan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, kabupaten: undefined},
     resolver: zodResolver(KecamatanSchema),
   });
@@ -158,7 +158,7 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
     try {
       switch (mode) {
         case 'add':
-          await saveKecamatan(data as IKecamatan).unwrap().then((originalPromiseResult) => {
+          await saveKecamatan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -221,7 +221,8 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
 
   const _resetKabupaten = useCallback(
     () => {
-      setValue("kabupaten", null);
+      // setValue("kabupaten", undefined);
+      resetField("kabupaten");
       setSelectedKeyKabupaten(null);
     },
     []
@@ -348,16 +349,17 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
                     placeholder="Pilih"
                     allowFreeform={true}
                     options={optionsKabupaten != undefined ? optionsKabupaten:[]}
-                    selectedKey={selectedKeyPropinsi}
+                    selectedKey={selectedKeyKabupaten}
                     useComboBoxAsMenuWidth={true}     
                     errorMessage={error && 'harus diisi'}
                     onChange={
                         (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
                             let hasil = cloneDeep(postsKabupaten?.at(index!));
-                            onChange(hasil);                                    
+                            onChange(hasil);     
+                            setSelectedKeyKabupaten(option?.key as string);                               
                         }
                     }
-                    disabled={mode == 'delete' ? true:disableForm}
+                    disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
                 />
             )
             }
