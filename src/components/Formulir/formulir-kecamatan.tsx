@@ -104,7 +104,7 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField} = useForm<IKecamatan>({
+  const {handleSubmit, control, setValue, resetField} = useForm<IKecamatan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, kabupaten: undefined},
     resolver: zodResolver(KecamatanSchema),
   });
@@ -221,7 +221,6 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
 
   const _resetKabupaten = useCallback(
     () => {
-      // setValue("kabupaten", undefined);
       resetField("kabupaten");
       setSelectedKeyKabupaten(null);
     },
@@ -258,7 +257,16 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
         setSelectedKeyPropinsi(option?.key as string);
     },
     []
-);
+  );
+
+  const _onHandleOnChangeKabupaten = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+      let hasil = cloneDeep(postsKabupaten?.at(index!));
+      setValue('kabupaten', hasil!);     
+      setSelectedKeyKabupaten(option?.key as string);  
+    },
+    [postsKabupaten]
+  );
 
   return (
     <Modal
@@ -345,21 +353,15 @@ export const FormulirKecamatan: FC<IFormulirKecamatanFluentUIProps> = ({title, i
             render={
             ({field: {onChange, onBlur}, fieldState: { error }}) => (
                 <ComboBox
-                    label="Kabupaten"
-                    placeholder="Pilih"
-                    allowFreeform={true}
-                    options={optionsKabupaten != undefined ? optionsKabupaten:[]}
-                    selectedKey={selectedKeyKabupaten}
-                    useComboBoxAsMenuWidth={true}     
-                    errorMessage={error && 'harus diisi'}
-                    onChange={
-                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                            let hasil = cloneDeep(postsKabupaten?.at(index!));
-                            onChange(hasil);     
-                            setSelectedKeyKabupaten(option?.key as string);                               
-                        }
-                    }
-                    disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
+                  label="Kabupaten"
+                  placeholder="Pilih"
+                  allowFreeform={true}
+                  options={optionsKabupaten != undefined ? optionsKabupaten:[]}
+                  selectedKey={selectedKeyKabupaten}
+                  useComboBoxAsMenuWidth={true}     
+                  errorMessage={error && 'harus diisi'}
+                  onChange={_onHandleOnChangeKabupaten}
+                  disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
                 />
             )
             }

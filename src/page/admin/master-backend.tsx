@@ -102,7 +102,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'pegawai',
-                                name: 'Pegawai',
+                                name: 'Pegawai perusahaan',
                                 iconProps: {iconName:'ManagerSelfService'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pegawai');
@@ -197,7 +197,7 @@ export const MasterBackEnd: FC = () => {
                 },
                 {
                     key: 'alamat',
-                    name: 'Alamat',
+                    name: 'Lokasi',
                     icon: 'Nav2DMapView',
                     onClick: undefined,
                     subMenuProps: {
@@ -274,7 +274,7 @@ export const MasterBackEnd: FC = () => {
                 {
                     key: 'dokumen',
                     name: 'Dokumen',
-                    icon: 'PublishCourse',
+                    icon: 'DocumentSet',
                     onClick: undefined,
                     subMenuProps: {
                         items: [
@@ -592,7 +592,7 @@ export const MasterBackEnd: FC = () => {
                             ],
                         }
                     }
-                    title="Pegawai"
+                    title="Pegawai perusahaan"
                 />;
                 break;
                 case 'pelaku_usaha':

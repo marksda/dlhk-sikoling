@@ -78,7 +78,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IHakAkses>({
+  const {handleSubmit, control, setValue} = useForm<IHakAkses>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, keterangan: undefined},
     resolver: zodResolver(HakAksesSchema),
   });
@@ -165,6 +165,30 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
     []
   );
 
+  const _onHandleOnChangeId = useCallback(
+    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+      setValue('id', newValue || '');
+      setIdTextFieldValue(newValue || '');
+    },
+    []
+  );
+
+  const _onHandleOnChangeNama = useCallback(
+    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+      setValue('nama', newValue || '');
+      setNamaTextFieldValue(newValue || '');
+    },
+    []
+  );
+
+  const _onHandleOnChangeKeterangan = useCallback(
+    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+      setValue('keterangan', newValue || '');
+      setKeteranganTextFieldValue(newValue || '');
+    },
+    []
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -198,12 +222,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
                   <TextField
                     label="Id"
                     value={idTextFieldValue}
-                    onChange={
-                      (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                        onChange(newValue || '');
-                        setIdTextFieldValue(newValue || '');
-                      }
-                    }
+                    onChange={_onHandleOnChangeId}
                     styles={textFieldStyles}
                     disabled={mode == 'delete' ? true:disableForm}
                     errorMessage={error && 'harus diisi'}
@@ -222,12 +241,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
                 <TextField
                   label="Nama"
                   value={namaTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setNamaTextFieldValue(newValue || '');
-                    }
-                  }
+                  onChange={_onHandleOnChangeNama}
                   styles={textFieldStyles}
                   disabled={mode == 'delete' ? true:disableForm}
                   errorMessage={error && 'harus diisi'}
@@ -245,12 +259,7 @@ export const FormulirHakAkses: FC<IFormulirHakAksesFluentUIProps> = ({title, isM
                 <TextField
                   label="Keterangan"
                   value={keteranganTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setKeteranganTextFieldValue(newValue || '');
-                    }
-                  }
+                  onChange={_onHandleOnChangeKeterangan}
                   styles={textFieldStyles}
                   disabled={mode == 'delete' ? true:disableForm}
                   errorMessage={error && 'harus diisi'}

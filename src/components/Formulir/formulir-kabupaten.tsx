@@ -89,7 +89,7 @@ export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, i
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IKabupaten>({
+  const {handleSubmit, control, setValue} = useForm<IKabupaten>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, propinsi: undefined},
     resolver: zodResolver(KabupatenSchema),
   });
@@ -190,6 +190,15 @@ export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, i
     []
   );
 
+  const _onHandleOnChangePropinsi = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+      let propinsi = cloneDeep(postsPropinsi?.at(index!));
+      setValue('propinsi', propinsi!);
+      setSelectedKeyPropinsi(option?.key as string);
+    },
+    [postsPropinsi]
+);
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -272,13 +281,7 @@ export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, i
                     selectedKey={selectedKeyPropinsi}
                     useComboBoxAsMenuWidth={true}     
                     errorMessage={error && 'harus diisi'}
-                    onChange={
-                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                            let hasil = cloneDeep(postsPropinsi?.at(index!));
-                            onChange(hasil);
-                            setSelectedKeyPropinsi(option?.key as string);
-                        }
-                    }
+                    onChange={_onHandleOnChangePropinsi}
                     disabled={mode == 'delete' ? true:disableForm}
                 />
             )

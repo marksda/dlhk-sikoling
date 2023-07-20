@@ -185,43 +185,43 @@ export const FormulirDesa: FC<IFormulirDesaFluentUIProps> = ({title, isModalOpen
     const onSubmit: SubmitHandler<IDesa> = async (data) => {
         setDisableForm(true);
         try {
-        switch (mode) {
-            case 'add':
-            await saveDesa(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
-            }); 
-            hideModal();
-            break;
-            case 'edit':
-            if(dataLama?.id == data.id) {
-                await updateDesa(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
+            switch (mode) {
+                case 'add':
+                await saveDesa(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
                 }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
+                    setDisableForm(false);
                 }); 
-            }
-            else {
-                await updateIdDesa({idLama: dataLama?.id!, desa: data}).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
+                hideModal();
+                break;
+                case 'edit':
+                if(dataLama?.id == data.id) {
+                    await updateDesa(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
+                    }).catch((rejectedValueOrSerializedError) => {
+                    setDisableForm(false);
+                    }); 
+                }
+                else {
+                    await updateIdDesa({idLama: dataLama?.id!, desa: data}).unwrap().then((originalPromiseResult) => {
+                        setDisableForm(false);
+                    }).catch((rejectedValueOrSerializedError) => {
+                        setDisableForm(false);
+                    }); 
+                }          
+                hideModal();
+                break;
+                case 'delete':
+                await deleteDesa(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
                 }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
+                    setDisableForm(false);
                 }); 
-            }          
-            hideModal();
-            break;
-            case 'delete':
-            await deleteDesa(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
-            }); 
-            hideModal();
-            break;
-            default:
-            break;
-        }      
+                hideModal();
+                break;
+                default:
+                break;
+            }      
         } catch (error) {
         setDisableForm(false);
         }

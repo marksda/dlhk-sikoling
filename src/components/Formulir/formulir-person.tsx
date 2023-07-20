@@ -176,7 +176,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const titleId = useId('title');
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
-  const {control, handleSubmit, resetField, setValue, watch} = useForm<IPerson>({
+  const {control, handleSubmit, resetField} = useForm<IPerson>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
     resolver: zodResolver(PersonSchema),
   });
@@ -354,7 +354,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
 
   const _resetKabupaten = useCallback(
     () => {
-      setValue("alamat.kabupaten", null);
+      resetField("alamat.kabupaten");
       setSelectedKeyKabupaten(null);
       _resetKecamatan();
     },
@@ -363,7 +363,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
 
   const _resetKecamatan = useCallback(
     () => {
-      setValue("alamat.kecamatan", null);
+      resetField("alamat.kecamatan");
       setSelectedKeyKecamatan(null);
       _resetDesa()
     },
@@ -372,7 +372,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
 
   const _resetDesa = useCallback(
     () => {
-      setValue("alamat.desa", null);
+      resetField("alamat.desa");
       setSelectedKeyDesa(null);
     },
     []
