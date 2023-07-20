@@ -91,7 +91,7 @@ export const sikolingApi = createApi({
             deletePropinsi: builder.mutation<Partial<IPropinsi>, Partial<IPropinsi>>({
                 query: (propinsi) => ({                  
                     url: `/propinsi/${propinsi.id}`,
-                    method: 'DELETE',            
+                    method: 'DELETE',    
                 }),
                 invalidatesTags: (result) => result? ['Propinsi']:['Kosong']
             }),
@@ -116,11 +116,11 @@ export const sikolingApi = createApi({
                     method: 'PUT',
                     body,
                 }),
-                invalidatesTags: (result, error, {id}) => [{type: 'Kabupaten', id: id!}]
+                invalidatesTags: (result) => result? ['Kabupaten']:['Kosong']
             }),
             updateIdKabupaten: builder.mutation<IKabupaten, {idLama: string; kabupaten: IKabupaten}>({
                 query: ({idLama, kabupaten}) => ({
-                    url: `/Kabupaten/id/${idLama}`,
+                    url: `/kabupaten/id/${idLama}`,
                     method: 'PUT',
                     body: kabupaten,
                 }),

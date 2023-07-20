@@ -1,21 +1,21 @@
 import { FC, useCallback, useMemo, useState } from "react";
-import { CommandBar, ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IRenderFunction, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, ComboBox, CommandBar, ContextualMenu, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, IComboBox, IComboBoxOption, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
-import { IPropinsi } from "../../features/entity/propinsi"; 
+import { IKabupaten } from "../../features/entity/kabupaten"; 
 import { useBoolean } from "@fluentui/react-hooks";
-import { FormulirPropinsi } from "../Formulir/formulir-propinsi"; 
+import { FormulirKabupaten } from "../Formulir/formulir-kabupaten"; 
 import find from "lodash.find";
-import { useGetDaftarDataPropinsiQuery, useGetJumlahDataPropinsiQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKabupatenQuery, useGetDaftarDataPropinsiQuery, useGetJumlahDataKabupatenQuery } from "../../features/repository/service/sikoling-api-slice";
 
 
-interface IDataPropinsiFluentUIProps {
+interface IDataKabupatenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemPropinsi = {key: string|null;} & Partial<IPropinsi>;
+type IItemKabupaten = {key: string|null;} & Partial<IKabupaten>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -36,8 +36,9 @@ const toggleStyles = {
         width: '80px',
     },
 };
+const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSelectedFilters, title}) => {  
+export const DataListKabupatenFluentUI: FC<IDataKabupatenFluentUIProps> = ({initSelectedFilters, title}) => {  
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -71,20 +72,55 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
         []
     );
 
+    const _onHandleButtonFilterClick = useCallback(
+        (ev: React.MouseEvent<HTMLElement>): void => {  
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                            }
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+            );
+        },
+        []
+    );
+
     // local state
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
-    const [isModalFormulirPropinsiOpen, { setTrue: showModalFormulirPropinsi, setFalse: hideModalFormulirPropinsi }] = useBoolean(false);
+    const [isModalFormulirKabupatenOpen, { setTrue: showModalFormulirKabupaten, setFalse: hideModalFormulirKabupaten }] = useBoolean(false);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
-    const [dataLama, setDataLama]= useState<IPropinsi|undefined>(undefined);
+    const [dataLama, setDataLama]= useState<IKabupaten|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});   
+    const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(undefined);
+    const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
+        pageNumber: 1,
+        pageSize: 100,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+      });
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
+    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
             key: 'id', 
@@ -98,7 +134,7 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
             isPadded: true,
             isSortedDescending: false,
             isSorted: true,
-            onRender: (item: IItemPropinsi) => {
+            onRender: (item: IItemKabupaten) => {
                 return item.key;
             }
         },
@@ -106,18 +142,30 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
             key: 'nama', 
             name: 'Nama', 
             minWidth: 250, 
+            maxWidth: 300, 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
             isPadded: true,
-            onRender: (item: IItemPropinsi) => {
+            onRender: (item: IItemKabupaten) => {
                 return item.nama;
             }
-        }
+        },
+        { 
+            key: 'propinsi', 
+            name: 'Propinsi', 
+            minWidth: 100, 
+            isResizable: true,
+            isPadded: true,
+            onRender: (item: IItemKabupaten) => {
+                return item.propinsi?.nama;
+            },
+        },
     ]);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataPropinsiQuery(queryFilters);
-    const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryParams);
+    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataKabupatenQuery(queryFilters);
+    const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryParams);
+    const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams)
 
     const selection: Selection = useMemo(
         () => {
@@ -137,6 +185,19 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
         },
         []
     ); 
+
+    const optionsPropinsi: IComboBoxOption[]|undefined = useMemo(
+        () => (
+          postsPropinsi?.map((item):IComboBoxOption => {
+                  return {
+                    key: item.id!,
+                    text: item.nama!,
+                    data: item
+                  };
+                })
+        ),
+        [postsPropinsi]
+      );
     
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
@@ -146,9 +207,9 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add propinsi');
+                        setFormulirTitle('Add kabupaten');
                         setModeForm('add');
-                        showModalFormulirPropinsi();
+                        showModalFormulirKabupaten();
                         setDataLama(undefined);
                     }
                 },
@@ -158,10 +219,10 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit propinsi');
+                        setFormulirTitle('Edit kabupaten');
                         setModeForm('edit');
-                        showModalFormulirPropinsi();
-                        let dataTerpilih: IPropinsi = find(postsPropinsi, (i: IPropinsi) => i.id == selection.getSelection()[0].key) as IPropinsi;
+                        showModalFormulirKabupaten();
+                        let dataTerpilih: IKabupaten = find(postsKabupaten, (i: IKabupaten) => i.id == selection.getSelection()[0].key) as IKabupaten;
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -173,10 +234,10 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Delete' }, 
                     onClick: () => {
-                        setFormulirTitle('Hapus propinsi');
+                        setFormulirTitle('Hapus kabupaten');
                         setModeForm('delete');
-                        showModalFormulirPropinsi();
-                        let dataTerpilih: IPropinsi = find(postsPropinsi, (i: IPropinsi) => i.id == selection.getSelection()[0].key) as IPropinsi;
+                        showModalFormulirKabupaten();
+                        let dataTerpilih: IKabupaten = find(postsKabupaten, (i: IKabupaten) => i.id == selection.getSelection()[0].key) as IKabupaten;
                         setDataLama(dataTerpilih);
                     }
                 },
@@ -232,6 +293,13 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
     const _onContextualMenuDismissed = useCallback(
         () => {
             setContextualMenuProps(undefined);
+        },
+        []
+    );
+
+    const _onContextualMenuFilterDismissed = useCallback(
+        () => {
+            setContextualMenuFilterProps(undefined);
         },
         []
     );
@@ -408,6 +476,108 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
         [selection]
     );
 
+    const _onHandleResetFilter = useCallback(
+        () => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;
+                    
+                   
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            ); 
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;
+
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
+
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;
+
+                    return tmp;
+                }
+            );                
+            
+            setSelectedKeyPropinsi(undefined);
+        },
+        [postsPropinsi]
+    );
+
+    const _onHandleOnChangePropinsi = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+            let item = cloneDeep(postsPropinsi?.at(index!));
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'propinsi',
+                            value: item?.id as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'propinsi',
+                            value: item?.id as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'propinsi',
+                            value: item?.id as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'propinsi',
+                            value: item?.id as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedKeyPropinsi(option?.key as string);
+        },
+        [postsPropinsi]
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item style={{marginRight: 16}}>
@@ -449,6 +619,17 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                                     onClear= {_onClearSearch}
                                 />
                             </Stack.Item>
+                            <Stack.Item>
+                                <ActionButton 
+                                    iconProps={filterIcon} 
+                                    onClick={_onHandleButtonFilterClick}
+                                > 
+                                    {
+                                        queryFilters.filters?.length as number > 0 ?
+                                        <span style={{color: '#16cd16'}}>Filter</span> : <span>Filter</span>
+                                    }
+                                </ActionButton>       
+                            </Stack.Item>
                         </Stack>
                     </Stack.Item>
                 </Stack>
@@ -459,7 +640,7 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPropinsi != undefined ? postsPropinsi?.map(
+                                    postsKabupaten != undefined ? postsKabupaten?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
@@ -490,12 +671,37 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            { isModalFormulirPropinsiOpen == true ?
-                <FormulirPropinsi
+            {
+                contextualMenuFilterProps && 
+                <Callout {...contextualMenuFilterProps} style={{padding: 16, width: 250}}> 
+                    <Stack>
+                        <Stack.Item>
+                            <ComboBox
+                                label="Propinsi"
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsPropinsi != undefined ? optionsPropinsi:[]}
+                                selectedKey={selectedKeyPropinsi == undefined ? null:selectedKeyPropinsi}
+                                useComboBoxAsMenuWidth={true}     
+                                onChange={_onHandleOnChangePropinsi}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text="Reset" 
+                                onClick={_onHandleResetFilter}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                </Callout>
+            }
+            { isModalFormulirKabupatenOpen == true ?
+                <FormulirKabupaten
                     title={formulirTitle}
-                    isModalOpen={isModalFormulirPropinsiOpen}
-                    showModal={showModalFormulirPropinsi}
-                    hideModal={hideModalFormulirPropinsi}
+                    isModalOpen={isModalFormulirKabupatenOpen}
+                    showModal={showModalFormulirKabupaten}
+                    hideModal={hideModalFormulirKabupaten}
                     mode={modeForm}
                     dataLama={dataLama}
                 />:null

@@ -1,20 +1,21 @@
-import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { PropinsiSchema } from "../../features/schema-resolver/zod-schema";
+import { KabupatenSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { IPropinsi } from "../../features/entity/propinsi"; 
-import { useDeletePropinsiMutation, useSavePropinsiMutation, useUpdatePropinsiMutation, useUpdateIdPropinsiMutation } from "../../features/repository/service/sikoling-api-slice";
+import { IKabupaten } from "../../features/entity/kabupaten";
+import { useDeleteKabupatenMutation, useSaveKabupatenMutation, useUpdateKabupatenMutation, useUpdateIdKabupatenMutation, useGetDaftarDataPropinsiQuery } from "../../features/repository/service/sikoling-api-slice";
+import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
-interface IFormulirPropinsiFluentUIProps {
+interface IFormulirKabupatenFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   showModal: () => void;
   hideModal: () => void;
-  dataLama?: IPropinsi;
+  dataLama?: IKabupaten;
 };
 
 const theme = getTheme();
@@ -68,23 +69,36 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.propinsi?.id!:undefined);
+  const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 100,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IPropinsi>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: undefined, nama: undefined},
-    resolver: zodResolver(PropinsiSchema),
+  const {handleSubmit, control, resetField, watch} = useForm<IKabupaten>({
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined, propinsi: undefined},
+    resolver: zodResolver(KabupatenSchema),
   });
   // rtk query
-  const [ savePropinsi, {isLoading: isLoadingSavePropinsi}] = useSavePropinsiMutation();
-  const [ updatePropinsi, {isLoading: isLoadingUpdatePropinsi}] = useUpdatePropinsiMutation();
-  const [ updateIdPropinsi, {isLoading: isLoadingUpdateIdPropinsi}] = useUpdateIdPropinsiMutation();
-  const [ deletePropinsi, {isLoading: isLoadingDeletePropinsi}] = useDeletePropinsiMutation();
+  const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams);
+  const [ saveKabupaten, {isLoading: isLoadingSaveKabupaten}] = useSaveKabupatenMutation();
+  const [ updateKabupaten, {isLoading: isLoadingUpdateKabupaten}] = useUpdateKabupatenMutation();
+  const [ updateIdKabupaten, {isLoading: isLoadingUpdateIdKabupaten}] = useUpdateIdKabupatenMutation();
+  const [ deleteKabupaten, {isLoading: isLoadingDeleteKabupaten}] = useDeleteKabupatenMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -96,13 +110,26 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
     }),
     [keepInBounds],
   );
+
+  const optionsPropinsi: IComboBoxOption[]|undefined = useMemo(
+    () => (
+      postsPropinsi?.map((item):IComboBoxOption => {
+              return {
+                key: item.id!,
+                text: item.nama!,
+                data: item
+              };
+            })
+    ),
+    [postsPropinsi]
+  );
   
-  const onSubmit: SubmitHandler<IPropinsi> = async (data) => {
+  const onSubmit: SubmitHandler<IKabupaten> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await savePropinsi(data as IPropinsi).unwrap().then((originalPromiseResult) => {
+          await saveKabupaten(data as IKabupaten).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -111,14 +138,14 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updatePropinsi(data).unwrap().then((originalPromiseResult) => {
+            await updateKabupaten(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdPropinsi({idLama: dataLama?.id!, propinsi: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdKabupaten({idLama: dataLama?.id!, kabupaten: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -127,7 +154,7 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
           hideModal();
           break;
         case 'delete':
-          await deletePropinsi(data).unwrap().then((originalPromiseResult) => {
+          await deleteKabupaten(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -142,9 +169,9 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
     }
   };
 
-  const onError: SubmitErrorHandler<IPropinsi> = async (err) => {
+  const onError: SubmitErrorHandler<IKabupaten> = async (err) => {
     if(mode == 'delete') {
-      await deletePropinsi(dataLama as IPropinsi).unwrap().then((originalPromiseResult) => {
+      await deleteKabupaten(dataLama as IKabupaten).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
@@ -183,30 +210,32 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
             onClick={hideModal}
         />
       </div>
-      <div className={contentStyles.body}>        
-        <Controller 
-            name="id"
-            control={control}
-            render={
-                ({
-                field: {onChange, onBlur}, 
-                fieldState: { error }
-                }) => (
-                    <TextField
-                        label="Id"
-                        value={idTextFieldValue}
-                        onChange={
-                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            onChange(newValue || '');
-                            setIdTextFieldValue(newValue || '');
+      <div className={contentStyles.body}>     
+        {mode == 'add' ? null:   
+            <Controller 
+                name="id"
+                control={control}
+                render={
+                    ({
+                    field: {onChange, onBlur}, 
+                    fieldState: { error }
+                    }) => (
+                        <TextField
+                            label="Id"
+                            value={idTextFieldValue}
+                            onChange={
+                                (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                onChange(newValue || '');
+                                setIdTextFieldValue(newValue || '');
+                                }
                             }
-                        }
-                        styles={textFieldStyles}
-                        disabled={mode == 'delete' ? true:disableForm}
-                        errorMessage={error && 'harus diisi'}
-                    />
-                )}
-        />   
+                            styles={textFieldStyles}
+                            disabled={mode == 'delete' ? true:disableForm}
+                            errorMessage={error && 'harus diisi'}
+                        />
+                    )}
+            />   
+        }
         <Controller 
           name="nama"
           control={control}
@@ -229,6 +258,31 @@ export const FormulirPropinsi: FC<IFormulirPropinsiFluentUIProps> = ({title, isM
                   errorMessage={error && 'harus diisi'}
                 />
             )}
+        />
+        <Controller 
+            name="propinsi"
+            control={control}
+            render={
+            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                <ComboBox
+                    label="Propinsi"
+                    placeholder="Pilih"
+                    allowFreeform={true}
+                    options={optionsPropinsi != undefined ? optionsPropinsi:[]}
+                    selectedKey={selectedKeyPropinsi}
+                    useComboBoxAsMenuWidth={true}     
+                    errorMessage={error && 'harus diisi'}
+                    onChange={
+                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                            let hasil = cloneDeep(postsPropinsi?.at(index!));
+                            onChange(hasil);
+                            setSelectedKeyPropinsi(option?.key as string);
+                        }
+                    }
+                    disabled={mode == 'delete' ? true:disableForm}
+                />
+            )
+            }
         />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}

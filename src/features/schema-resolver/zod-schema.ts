@@ -15,8 +15,8 @@ export const PropinsiSchema = object({
 });
 
 export const KabupatenSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
+    id: z.string().nullable(),
+    nama: z.string().nullable(),
     propinsi: PropinsiSchema.nullable(),
 });
 

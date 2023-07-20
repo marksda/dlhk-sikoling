@@ -20,6 +20,7 @@ import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataL
 import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMasterKbliFluentUi";
 import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/DataListAutorisasiPerusahaanFluentUi";
 import { DataListPropinsiFluentUI } from "../../components/DataList/DataListPropinsiFluentUI";
+import { DataListKabupatenFluentUI } from "../../components/DataList/DataListKabupatenFluentUI";
 
 // const noOp = () => undefined;
 
@@ -212,7 +213,7 @@ export const MasterBackEnd: FC = () => {
                                 name: 'Kabupaten',
                                 iconProps: { iconName: 'Pinned' },
                                 onClick: () => {
-                                    _onHandleMasterMenu('kategori_log');
+                                    _onHandleMasterMenu('kabupaten');
                                 }
                             },
                             {
@@ -356,6 +357,24 @@ export const MasterBackEnd: FC = () => {
                         }
                         title="Person"
                     />;
+                break;
+                case 'kabupaten':
+                konten = <DataListKabupatenFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Kabupaten"
+                />;
                 break;
                 case 'kategori_dokumen':
                 konten = <DataListKategoriDokumenFluentUI
