@@ -567,7 +567,6 @@ export const DataListKecamatanFluentUI: FC<IDataKecamatanFluentUIProps> = ({init
             );                
             
             setSelectedKeyPropinsi(undefined);
-            setSelectedKeyKabupaten(undefined);
         },
         [postsPropinsi]
     );

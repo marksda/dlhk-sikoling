@@ -22,6 +22,7 @@ import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/
 import { DataListPropinsiFluentUI } from "../../components/DataList/DataListPropinsiFluentUI";
 import { DataListKabupatenFluentUI } from "../../components/DataList/DataListKabupatenFluentUI";
 import { DataListKecamatanFluentUI } from "../../components/DataList/DataListKecamatanFluentUI";
+import { DataListDesaFluentUI } from "../../components/DataList/DataListDesaFluentUI";
 
 // const noOp = () => undefined;
 
@@ -230,7 +231,7 @@ export const MasterBackEnd: FC = () => {
                                 name: 'Desa',
                                 iconProps: { iconName: 'Pinned' },
                                 onClick: () => {
-                                    _onHandleMasterMenu('kategori_log');
+                                    _onHandleMasterMenu('desa');
                                 }
                             },
                         ],
@@ -305,6 +306,24 @@ export const MasterBackEnd: FC = () => {
         () => {
             let konten = null;
             switch (idContentPage) { 
+                case 'desa':
+                konten = <DataListDesaFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Desa"
+                />;
+                break;
                 case 'dokumen':
                 konten = <DataListDokumenFluentUI
                     initSelectedFilters={

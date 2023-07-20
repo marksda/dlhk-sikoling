@@ -8,7 +8,7 @@ import { IDesa } from "../../features/entity/desa";
 import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirDesa } from "../Formulir/formulir-desa"; 
 import find from "lodash.find";
-import { useGetDaftarDataKabupatenQuery, useGetDaftarDataDesaQuery, useGetDaftarDataPropinsiQuery, useGetJumlahDataDesaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKabupatenQuery, useGetDaftarDataDesaQuery, useGetDaftarDataPropinsiQuery, useGetJumlahDataDesaQuery, useGetDaftarDataKecamatanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 
 interface IDataDesaFluentUIProps {
@@ -109,6 +109,7 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters});   
     const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(undefined);
     const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(undefined);
+    const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(undefined);
     const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
         pageNumber: 1,
         pageSize: 100,
@@ -131,6 +132,17 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
             },
         ],
     });
+    const [queryKecamatanParams, setQueryKecamatanParams] = useState<IQueryParamFilters>({
+        pageNumber: 1,
+        pageSize: 100,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+      });
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [columns, setColumns] = useState<IColumn[]>([    
@@ -205,6 +217,7 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
     const { data: postsDesa, isLoading: isLoadingPostsDesa } = useGetDaftarDataDesaQuery(queryParams);
     const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams)
     const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
+    const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = useGetDaftarDataKecamatanQuery(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
 
     const selection: Selection = useMemo(
         () => {
@@ -250,6 +263,19 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
         ),
         [postsKabupaten]
     );
+
+    const optionsKecamatan: IComboBoxOption[]|undefined = useMemo(
+        () => (
+          postsKecamatan?.map((item):IComboBoxOption => {
+                  return {
+                    key: item.id!,
+                    text: item.nama!,
+                    data: item
+                  };
+                })
+        ),
+        [postsKecamatan]
+      );
     
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
@@ -531,21 +557,25 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
     const _onHandleResetFilter = useCallback(
         () => {
             _resetKabupaten();
+            _resetKecamatan();
             setCurrentPage(1);
 
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
+
                     let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;
-                    
-                   
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
 
                     found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
@@ -560,17 +590,21 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
+
                     let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;
-
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;                    
                     if(found != -1) {
                         filters?.splice(found, 1);  
                     }
 
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);  
+                    }
 
                     tmp.pageNumber = 1;
                     tmp.filters = filters;
@@ -580,13 +614,14 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
             );                
             
             setSelectedKeyPropinsi(undefined);
-            setSelectedKeyKabupaten(undefined);
         },
         [postsPropinsi]
     );
 
     const _resetKabupaten = useCallback(
         () => {
+            _resetKecamatan();
+            
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -644,7 +679,7 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;   
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;   
                     
                     if(found != -1) {                        
                         filters?.splice(found, 1); 
@@ -656,7 +691,7 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
                 }
             );
 
-            setSelectedKeyKabupaten(undefined);
+            setSelectedKeyKecamatan(undefined);
         },
         []
     );
@@ -756,6 +791,31 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
 
             setCurrentPage(1);
 
+            setQueryKecamatanParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                        
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kabupaten',
+                            value: option?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kabupaten',
+                            value: option?.key as string
+                        })
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -808,7 +868,67 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
             setSelectedKeyKabupaten(option?.key as string);
         },
         [postsKabupaten]
-    );   
+    );
+    
+    const _onHandleOnChangeKecamatan = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+            let item = cloneDeep(postsKecamatan?.at(index!));
+
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kecamatan',
+                            value: item?.id as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kecamatan',
+                            value: item?.id as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kecamatan',
+                            value: item?.id as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kecamatan',
+                            value: item?.id as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedKeyKecamatan(option?.key as string);
+        },
+        [postsKecamatan]
+    );
 
     return (
         <Stack grow verticalFill>
@@ -928,6 +1048,18 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
                                 useComboBoxAsMenuWidth={true}     
                                 onChange={_onHandleOnChangeKabupaten}
                                 disabled={selectedKeyPropinsi == undefined ? true:false}
+                            />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <ComboBox
+                                label="Kecamatan"
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsKecamatan != undefined ? optionsKecamatan:[]}
+                                selectedKey={selectedKeyKecamatan == undefined ? null:selectedKeyKecamatan}
+                                useComboBoxAsMenuWidth={true}     
+                                onChange={_onHandleOnChangeKecamatan}
+                                disabled={selectedKeyKabupaten == undefined ? true:false}
                             />
                         </Stack.Item>
                         <Stack.Item>

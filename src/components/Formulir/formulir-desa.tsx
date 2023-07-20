@@ -250,6 +250,7 @@ export const FormulirDesa: FC<IFormulirDesaFluentUIProps> = ({title, isModalOpen
 
     const _resetKabupaten = useCallback(
         () => {
+            _resetKecamatan()
             setSelectedKeyKabupaten(null);
         },
         []
@@ -266,7 +267,6 @@ export const FormulirDesa: FC<IFormulirDesaFluentUIProps> = ({title, isModalOpen
     const _onHandleOnChangePropinsi = useCallback(
         (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
             _resetKabupaten();
-            _resetKecamatan();
             setQueryKabupatenParams(
                 prev => {
                     let tmp = cloneDeep(prev);
@@ -299,7 +299,7 @@ export const FormulirDesa: FC<IFormulirDesaFluentUIProps> = ({title, isModalOpen
     const _onHandleOnChangeKabupaten = useCallback(
         (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
             _resetKecamatan();
-            setQueryKabupatenParams(
+            setQueryKecamatanParams(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
