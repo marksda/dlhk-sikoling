@@ -21,6 +21,7 @@ import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMa
 import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/DataListAutorisasiPerusahaanFluentUi";
 import { DataListPropinsiFluentUI } from "../../components/DataList/DataListPropinsiFluentUI";
 import { DataListKabupatenFluentUI } from "../../components/DataList/DataListKabupatenFluentUI";
+import { DataListKecamatanFluentUI } from "../../components/DataList/DataListKecamatanFluentUI";
 
 // const noOp = () => undefined;
 
@@ -221,7 +222,7 @@ export const MasterBackEnd: FC = () => {
                                 name: 'Kecamatan',
                                 iconProps: { iconName: 'Pinned' },
                                 onClick: () => {
-                                    _onHandleMasterMenu('kategori_log');
+                                    _onHandleMasterMenu('kecamatan');
                                 }
                             },
                             {
@@ -482,6 +483,24 @@ export const MasterBackEnd: FC = () => {
                         }
                     }
                     title="Kbli"
+                />;
+                break;
+                case 'kecamatan':
+                konten = <DataListKecamatanFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'id',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Kecamatan"
                 />;
                 break;
                 case 'jabatan':

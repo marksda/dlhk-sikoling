@@ -21,8 +21,8 @@ export const KabupatenSchema = object({
 });
 
 export const KecamatanSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
+    id: z.string().nullable(),
+    nama: z.string().nullable(),
     kabupaten: KabupatenSchema.nullable(),
 });
 
