@@ -11,8 +11,8 @@ import { object, z, array, TypeOf } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppSelector } from "../../app/hooks";
 import { TemplatePegawai } from "../FormTemplate/template-pegawai";
-import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
-import { useAddPegawaiMutation } from "../../features/repository/service/pegawai-api-slice";
+// import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
+// import { useAddPegawaiMutation } from "../../features/repository/service/pegawai-api-slice";
 
 interface IModalFormulirPegawaiProps {
     isModalOpen: boolean;

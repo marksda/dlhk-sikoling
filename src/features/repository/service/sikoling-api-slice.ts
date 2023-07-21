@@ -9,11 +9,12 @@ import { IJenisKelamin } from "../../entity/jenis-kelamin";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 import { IHakAkses } from "../../entity/hak-akses";
 import { IPegawai } from "../../entity/pegawai";
+import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'Sex'],
+    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -223,7 +224,7 @@ export const sikolingApi = createApi({
                     method: 'POST',
                     body: dataForm,
                 }),
-                invalidatesTags: (result) => result? ['Person']:['Kosong']
+                invalidatesTags: (result) => result ? ['Person']:['Kosong']
             }),
             updatePerson: builder.mutation<IPerson, FormData>({
                 query: (dataForm) => ({
@@ -264,7 +265,7 @@ export const sikolingApi = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: ['HakAkses'],
+                invalidatesTags:  (result) => result ? ['HakAkses']:['Kosong'],
             }),
             updateHakAkses: builder.mutation<void, Partial<IHakAkses>>({
                 query: (hakAkses) => ({
@@ -272,7 +273,7 @@ export const sikolingApi = createApi({
                     method: 'PUT',
                     body: hakAkses,
                 }),
-                invalidatesTags: ['HakAkses'],
+                invalidatesTags: (result) => result ? ['HakAkses']:['Kosong'],
             }),
             updateIdHakAkses: builder.mutation<void, {idLama: string; hakAkses: IHakAkses}>({
                 query: ({idLama, hakAkses}) => ({
@@ -280,7 +281,7 @@ export const sikolingApi = createApi({
                     method: 'PUT',
                     body: hakAkses,
                 }),
-                invalidatesTags: ['HakAkses'],
+                invalidatesTags: (result) => result ? ['HakAkses']:['Kosong'],
             }),
             deleteHakAkses: builder.mutation<Partial<IHakAkses>, Partial<IHakAkses>>({
                 query(hakAkses) {
@@ -289,7 +290,7 @@ export const sikolingApi = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: ['HakAkses'],
+                invalidatesTags: (result) => result ? ['HakAkses']:['Kosong'],
             }),
             getDaftarDataHakAkses: builder.query<IHakAkses[], IQueryParamFilters>({
                 query: (queryParams) => `/hak_akses?filters=${JSON.stringify(queryParams)}`,
@@ -304,7 +305,7 @@ export const sikolingApi = createApi({
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: ['Pegawai'],
+                invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
             updatePegawai: builder.mutation<void, Partial<IPegawai>>({
                 query: (body) => ({
@@ -312,7 +313,7 @@ export const sikolingApi = createApi({
                     method: 'PUT',
                     body,
                 }),
-                invalidatesTags: ['Pegawai'],
+                invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
             updateIdPegawai: builder.mutation<void, {idLama: string; pegawai: IPegawai}>({
                 query: ({idLama, pegawai}) => ({
@@ -320,7 +321,7 @@ export const sikolingApi = createApi({
                     method: 'PUT',
                     body: pegawai,
                 }),
-                invalidatesTags: ['Pegawai']
+                invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
             deletePegawai: builder.mutation<Partial<IPegawai>, Partial<IPegawai>>({
                 query(pegawai) {
@@ -329,7 +330,7 @@ export const sikolingApi = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: ['Pegawai'],
+                invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
             getDaftarDataPegawai: builder.query<IPegawai[], IQueryParamFilters>({
                 query: (queryParams) => `/pegawai_perusahaan?filters=${JSON.stringify(queryParams)}`,
@@ -337,6 +338,46 @@ export const sikolingApi = createApi({
             }),
             getJumlahDataPegawai: builder.query<number, qFilters>({
                 query: (queryFilters) => `/pegawai_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            saveRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, Partial<IRegisterPerusahaan>>({
+                query: (registerPerusahaan) => ({
+                    url: '/register_perusahaan',
+                    method: 'POST',
+                    body: registerPerusahaan,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
+            }), 
+            updateRegisterPerusahaan: builder.mutation<void, Partial<IRegisterPerusahaan>>({
+                query: (registerPerusahaan) => ({
+                    url: '/register_perusahaan',
+                    method: 'PUT',
+                    body: registerPerusahaan,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
+            }),
+            updateIdRegisterPerusahaan: builder.mutation<void, {idLama: string; registerPerusahaan: IRegisterPerusahaan}>({
+                query: ({idLama, registerPerusahaan}) => ({
+                    url: `/register_perusahaan/id/${idLama}`,
+                    method: 'PUT',
+                    body: registerPerusahaan,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
+            }),
+            deleteRegisterPerusahaan: builder.mutation<Partial<IRegisterPerusahaan>, Partial<IRegisterPerusahaan>>({
+                query(registerPerusahaan) {
+                  return {
+                    url: `/register_perusahaan/${registerPerusahaan.id}`,
+                    method: 'DELETE'
+                  }
+                },
+                invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
+            }),
+            getDaftarDataRegisterPerusahaan: builder.query<IRegisterPerusahaan[], IQueryParamFilters>({
+                query: (queryParams) => `/register_perusahaan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['RegisterPerusahaan'],
+            }),
+            getJumlahDataRegisterPerusahaan: builder.query<number, qFilters>({
+                query: (queryFilters) => `/register_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -360,4 +401,6 @@ export const {
     useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetJumlahDataHakAksesQuery,
     useSavePegawaiMutation, useUpdatePegawaiMutation, useUpdateIdPegawaiMutation,
     useDeletePegawaiMutation, useGetDaftarDataPegawaiQuery, useGetJumlahDataPegawaiQuery,
+    useSaveRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation,
+    useDeleteRegisterPerusahaanMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery,
 } = sikolingApi;

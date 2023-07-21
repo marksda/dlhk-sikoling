@@ -181,3 +181,10 @@ export const DokumenNibSchema = DokumenSchema.extend({
     tanggal:z.string(),
     daftarKbli: DaftarKbliSchema
 });
+
+export const PegawaiSchema = DokumenSchema.extend({
+    id: z.string().nullable(),
+    perusahaan: PerusahaanSchema.nullable(),
+    person: PersonSchema.nullable(),
+    jabatan: JabatanSchema.nullable()
+});

@@ -1,12 +1,14 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton} from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle} from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetAllDaftarPegawaiByFilterQuery, useGetTotalCountPegawaiQuery } from "../../features/repository/service/pegawai-api-slice";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean, useId } from "@fluentui/react-hooks";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
+import { useGetDaftarDataPegawaiQuery, useGetJumlahDataPegawaiQuery } from "../../features/repository/service/sikoling-api-slice";
+import find from "lodash.find";
+import { FormulirPegawai } from "../Formulir/formulir-pegawai";
 
 interface IDataListPegawaiFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -44,6 +46,12 @@ const classNames = mergeStyleSets({
     },
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -99,26 +107,13 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
-    const [columns, setColumns] = useState<IColumn[]>([    
-        { 
-            key: 'id', 
-            name: 'Id', 
-            fieldName: 'id', 
-            minWidth: 220, 
-            maxWidth: 220, 
-            isRowHeader: true,
-            isResizable: false,
-            onColumnClick: _onHandleColumnClick,
-            isPadded: true,
-            onRender: (item: IItemPegawai) => {
-                return item.id;
-            }
-        },
+    const [columns, setColumns] = useState<IColumn[]>([  
         { 
             key: 'nama', 
             name: 'Nama', 
             minWidth: 300, 
             maxWidth: 300,
+            isRowHeader: true,
             isResizable: true,             
             isSortedDescending: false,
             isSorted: true,
@@ -222,7 +217,13 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             },
             isPadded: true,
         },
-    ]);   
+    ]);  
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false); 
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirPegawaiOpen, {setTrue: showModalFormulirPegawai, setFalse: hideModalFormulirPegawai}] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IPegawai|undefined>(undefined);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [searchNamaPerusahaan, setSearchNamaPerusahaan] = useState<string|undefined>(undefined);
@@ -230,15 +231,73 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
     const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPegawaiQuery(queryFilters);
-    const { data: postsPegawai, isLoading: isLoadingPosts } = useGetAllDaftarPegawaiByFilterQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataPegawaiQuery(queryFilters);
+    const { data: postsPegawai, isLoading: isLoadingPosts } = useGetDaftarDataPegawaiQuery(queryParams);  
     
-
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add pegawai');
+                        setModeForm('add');
+                        showModalFormulirPegawai();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit person');
+                        setModeForm('edit');
+                        showModalFormulirPegawai();
+                        let dataTerpilih = cloneDeep(find(postsPegawai, (i) => i.id == selection.getSelection()[0].key));
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus person');
+                        setModeForm('delete');
+                        showModalFormulirPegawai();
+                        let dataTerpilih = cloneDeep(find(postsPegawai, (i) => i.id == selection.getSelection()[0].key));
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
 
     const _onSortColumn = useCallback(
@@ -749,16 +808,49 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
 
     return (
         <Stack grow verticalFill>
-            <Stack.Item style={{marginTop: 2}}>
+            <Stack.Item style={{marginTop: 16}}>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            }  
+                            <Stack.Item >
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
@@ -798,7 +890,6 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
                                 selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
@@ -819,8 +910,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}    
-            {
-                contextualMenuFilterProps && 
+            {contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
@@ -860,7 +950,17 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                         </Stack.Item>
                     </Stack>
                 </Callout>                
-            }        
+            }       
+            { isModalFormulirPegawaiOpen == true ?
+                <FormulirPegawai
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirPegawaiOpen}
+                    showModal={showModalFormulirPegawai}
+                    hideModal={hideModalFormulirPegawai}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
+            } 
         </Stack>
     );
 }
