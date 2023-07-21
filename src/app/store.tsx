@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { JabatanApiSlice } from "../features/repository/service/jabatan-api-slice";
 import jenisKelaminReducer from "../features/repository/ssot/jenis-kelamin-slice";
 import personReducer from "../features/repository/ssot/person-slice";
 import authenticationReducer from "../features/security/authentication-slice";
@@ -43,7 +42,6 @@ import loginReducer from "../features/login/login-slice";
 
 export const store = configureStore({
     reducer: {
-        [JabatanApiSlice.reducerPath]: JabatanApiSlice.reducer,
         jenisKelamin: jenisKelaminReducer,
         person: personReducer,
         credential: authenticationReducer,
@@ -103,7 +101,6 @@ export const store = configureStore({
                                             .concat(KategoriFlowLogApiSlice.middleware)
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
                                             .concat(StatusWaliPermohonanApiSlice.middleware)
-                                            .concat(JabatanApiSlice.middleware)
                                             .concat(PosisiTahapPemberkasanApiSlice.middleware)
                                             .concat(KategoriPermohonanApiSlice.middleware)
                                             .concat(sikolingApi.middleware)

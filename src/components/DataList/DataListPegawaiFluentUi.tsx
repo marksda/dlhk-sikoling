@@ -111,7 +111,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 300, 
+            minWidth: 250, 
             maxWidth: 300,
             isRowHeader: true,
             isResizable: true,             
@@ -150,6 +150,60 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             isPadded: true,
         },
         { 
+            key: 'perusahaan', 
+            name: 'Perusahaan', 
+            minWidth: 250, 
+            isResizable: true, 
+            onColumnClick: _onHandleColumnClick,
+            data: 'string',
+            onRender: (item: IItemPegawai) => {
+                return (
+                    <>
+                        <span>
+                            {
+                            item.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPerusahaan?.perusahaan?.nama}` :
+                            `${item.registerPerusahaan?.perusahaan?.nama}`
+                            }
+                        </span><br />  
+                        <span>
+                            {
+                                item.registerPerusahaan?.perusahaan?.id != undefined ?
+                                invertParseNpwp(item.registerPerusahaan?.perusahaan?.id) : `-`
+                            }
+                        </span><br />
+                        <span>
+                            {
+                            item.registerPerusahaan?.perusahaan?.alamat != undefined ? 
+                            item.registerPerusahaan?.perusahaan?.alamat.keterangan != undefined ? item.registerPerusahaan?.perusahaan?.alamat.keterangan:null:null
+                            }
+                            {
+                            item.registerPerusahaan?.perusahaan?.alamat != undefined ? 
+                            item.registerPerusahaan?.perusahaan?.alamat.desa != undefined ? `, ${item.registerPerusahaan?.perusahaan?.alamat.desa.nama}`:null:null
+                            }
+                        </span><br />
+                        <span>
+                            {
+                            item.registerPerusahaan?.perusahaan?.alamat != undefined ? 
+                            item.registerPerusahaan?.perusahaan?.alamat.kecamatan != undefined ? item.registerPerusahaan?.perusahaan?.alamat.kecamatan.nama:null:null
+                            }
+                            {
+                            item.registerPerusahaan?.perusahaan?.alamat != undefined ? 
+                            item.registerPerusahaan?.perusahaan?.alamat.kabupaten != undefined ? `, ${item.registerPerusahaan?.perusahaan?.alamat.kabupaten.nama}`:null:null
+                            }
+                        </span>
+                        <span>
+                            {
+                            item.registerPerusahaan?.perusahaan?.alamat != undefined ? 
+                            item.registerPerusahaan?.perusahaan?.alamat.propinsi != undefined ? `, ${item.registerPerusahaan?.perusahaan?.alamat.propinsi.nama}`:null:null
+                            }
+                        </span>
+                    </>               
+                );
+            },
+            isPadded: true,
+        },
+        { 
             key: 'jabatan', 
             name: 'Jabatan', 
             minWidth: 180, 
@@ -159,61 +213,6 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             data: 'string',
             onRender: (item: IItemPegawai) => {
                 return item.jabatan?.nama;
-            },
-            isPadded: true,
-        },
-        { 
-            key: 'perusahaan', 
-            name: 'Perusahaan', 
-            minWidth: 100, 
-            maxWidth: 200, 
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemPegawai) => {
-                return (
-                    <>
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.perusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.perusahaan?.perusahaan?.nama}` :
-                            `${item.perusahaan?.perusahaan?.nama}`
-                            }
-                        </span><br />  
-                        <span>
-                            {
-                                item.perusahaan?.perusahaan?.id != undefined ?
-                                invertParseNpwp(item.perusahaan?.perusahaan?.id) : `-`
-                            }
-                        </span><br />
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.keterangan != undefined ? item.perusahaan?.perusahaan?.alamat.keterangan:null:null
-                            }
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.desa != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.desa.nama}`:null:null
-                            }
-                        </span><br />
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kecamatan != undefined ? item.perusahaan?.perusahaan?.alamat.kecamatan.nama:null:null
-                            }
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.kabupaten != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.kabupaten.nama}`:null:null
-                            }
-                        </span>
-                        <span>
-                            {
-                            item.perusahaan?.perusahaan?.alamat != undefined ? 
-                            item.perusahaan?.perusahaan?.alamat.propinsi != undefined ? `, ${item.perusahaan?.perusahaan?.alamat.propinsi.nama}`:null:null
-                            }
-                        </span>
-                    </>               
-                );
             },
             isPadded: true,
         },

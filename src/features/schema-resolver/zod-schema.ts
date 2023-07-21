@@ -106,12 +106,12 @@ export const PerusahaanSchema = object({
 });
 
 export const RegisterPerusahaanSchema = object({
-    id: z.string().optional(),
-    tanggalRegistrasi: z.string().optional(),
-    kreator: OtoritasSchema.optional().nullable(),
-    verifikator: OtoritasSchema.optional().nullable(),
-    perusahaan: PerusahaanSchema.optional(),
-    statusVerifikasi: z.boolean().optional()
+    id: z.string().nullable(),
+    tanggalRegistrasi: z.string().nullable(),
+    kreator: OtoritasSchema.nullable(),
+    verifikator: OtoritasSchema.nullable(),
+    perusahaan: PerusahaanSchema.nullable(),
+    statusVerifikasi: z.boolean().nullable()
 });
 
 export const OtoritasPerusahaanSchema = object({
@@ -184,7 +184,7 @@ export const DokumenNibSchema = DokumenSchema.extend({
 
 export const PegawaiSchema = DokumenSchema.extend({
     id: z.string().nullable(),
-    perusahaan: PerusahaanSchema.nullable(),
+    registerPerusahaan: RegisterPerusahaanSchema.nullable(),
     person: PersonSchema.nullable(),
     jabatan: JabatanSchema.nullable()
 });

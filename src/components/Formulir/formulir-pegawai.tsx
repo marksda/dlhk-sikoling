@@ -6,7 +6,7 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IPegawai } from "../../features/entity/pegawai";
-import { useDeletePegawaiMutation, useSavePegawaiMutation, useUpdatePegawaiMutation, useUpdateIdPegawaiMutation, useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useDeletePegawaiMutation, useSavePegawaiMutation, useUpdatePegawaiMutation, useUpdateIdPegawaiMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataJabatanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { invertParseNpwp } from "../../features/config/helper-function";
 
@@ -73,12 +73,34 @@ const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
-  const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(undefined);
-//   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
-//   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
+  const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
+  const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
+  const [selectedKeyJabatan, setSelectedKeyJabatan] = useState<string|undefined>(dataLama != undefined ? dataLama.jabatan?.id!:undefined);
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 50,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
+  const [queryPersonParams, setQueryPersonParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 50,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
+  const [queryJabatanParams, setQueryJabatanParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 100,
     filters: [],
     sortOrders: [
         {
@@ -100,7 +122,9 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
   const [ updatePegawai, {isLoading: isLoadingUpdatePegawai}] = useUpdatePegawaiMutation();
   const [ updateIdPegawai, {isLoading: isLoadingUpdateIdPegawai}] = useUpdateIdPegawaiMutation();
   const [ deletePegawai, {isLoading: isLoadingDeletePegawai}] = useDeletePegawaiMutation();
-  const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
+  const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
+  const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
+  const { data: postsJabatan, isLoading: isLoadingPostsJabatan } = useGetDaftarDataJabatanQuery(queryJabatanParams);
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -113,7 +137,7 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
     [keepInBounds],
   );
 
-  const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
+  const optionsRegisterPerusahaan: IComboBoxOption[]|undefined = useMemo(
     () => (
       postsRegisterPerusahaan?.map((item):IComboBoxOption => {
               return {
@@ -124,6 +148,31 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
             })
     ),
     [postsRegisterPerusahaan]
+  );
+
+  const optionsPerson: IComboBoxOption[]|undefined = useMemo(
+    () => (
+        postsPerson?.map((item):IComboBoxOption => {
+              return {
+                key: item.nik!,
+                text: item.nama!,
+                data: item
+              };
+            })
+    ),
+    [postsPerson]
+  );
+
+  const optionsJabatan: IComboBoxOption[]|undefined = useMemo(
+    () => (
+        postsJabatan?.map((item):IComboBoxOption => {
+              return {
+                key: item.id!,
+                text: item.nama!,
+              };
+            })
+    ),
+    [postsJabatan]
   );
   
   const onSubmit: SubmitHandler<IPegawai> = async (data) => {
@@ -275,7 +324,7 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
     []
   );
 
-  const _onHandleOnChangeComboBox = useCallback(
+  const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
         let registerPerusahaan = cloneDeep(postsRegisterPerusahaan?.at(index!));
         if(registerPerusahaan?.kreator == undefined) {
@@ -284,10 +333,152 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
         if(registerPerusahaan?.verifikator == undefined) {
             registerPerusahaan!.verifikator = null;
         }                      
-        setValue('perusahaan', registerPerusahaan!);
+        setValue('registerPerusahaan', registerPerusahaan!);
         setSelectedKeyRegisterPerusahaan(option?.key as string);
       },
-      []
+      [postsRegisterPerusahaan]
+  );
+
+  const _onRenderPersonOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+    return item?.data != undefined ?
+          <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+            <span>{item?.data.nama != undefined ? item.data.nama:'-'}</span><br />
+            <span>{item?.data.nik != undefined ? item.data.nik:'-'}</span><br />
+            <span>
+                {
+                    item?.data.alamat != undefined ? 
+                    item?.data.alamat.keterangan != undefined ? item.data.alamat.keterangan:null:null
+                }
+                {
+                    item?.data.alamat != undefined ? 
+                    item.data.alamat.desa != undefined ? `, ${item.data.alamat.desa.nama}`:null:null
+                }
+            </span><br />
+            <span>                            
+                {
+                    item?.data.alamat != undefined ? 
+                    item?.data.alamat.kecamatan != undefined ? item.data.alamat.kecamatan.nama:null:null
+                }
+                {
+                    item?.data.alamat != undefined ? 
+                    item?.data.alamat.kabupaten != undefined ? `, ${item.data.alamat.kabupaten.nama}`:null:null
+                }
+                {
+                    item?.data.alamat != undefined ? 
+                    item?.data.alamat.propinsi != undefined ? `, ${item.data.alamat.propinsi.nama}`:null:null
+                }
+            </span>
+          </div>:null;      
+  };
+
+  const _onInputComboBoxPersonValueChange = useCallback(
+    (newValue: string) => {
+
+      setQueryPersonParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+              
+              if(newValue != '') {
+                  if(found == -1) {
+                      filters?.push({
+                          fieldName: 'nama',
+                          value: newValue
+                      });
+                  }
+                  else {
+                      filters?.splice(found, 1, {
+                          fieldName: 'nama',
+                          value: newValue
+                      })
+                  }
+              }
+              else {
+                  if(found > -1) {
+                      filters?.splice(found, 1);
+                  }
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+      );
+    },
+    []
+  );
+
+  const _onHandleOnChangePersonComboBox = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+        let person = cloneDeep(postsPerson?.at(index!));
+        if(person?.nik == undefined) {
+            person!.nik = null;
+        }
+        if(person?.jenisKelamin == undefined) {
+            person!.jenisKelamin = null;
+        } 
+        if(person?.alamat == undefined) {
+            person!.alamat = null;
+        } 
+        if(person?.kontak == undefined) {
+            person!.kontak = null;
+        }  
+        if(person?.scanKTP == undefined) {
+            person!.scanKTP = null;
+        }          
+
+        setValue('person', person!);
+        setSelectedKeyPerson(option?.key as string);
+      },
+      [postsPerson]
+  );
+
+  const _onInputComboBoxJabatanValueChange = useCallback(
+    (newValue: string) => {
+
+      setQueryJabatanParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+              
+              if(newValue != '') {
+                  if(found == -1) {
+                      filters?.push({
+                          fieldName: 'nama',
+                          value: newValue
+                      });
+                  }
+                  else {
+                      filters?.splice(found, 1, {
+                          fieldName: 'nama',
+                          value: newValue
+                      })
+                  }
+              }
+              else {
+                  if(found > -1) {
+                      filters?.splice(found, 1);
+                  }
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+      );
+    },
+    []
+  );
+
+  const _onHandleOnChangeJabatanComboBox = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+        let jabatan = cloneDeep(postsJabatan?.at(index!));
+        setValue('jabatan', jabatan!);
+        setSelectedKeyJabatan(option?.key as string);
+      },
+      [postsJabatan]
   );
 
   return (
@@ -311,8 +502,8 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
         />
       </div>
       <div className={contentStyles.body}>        
-      <Controller 
-          name="perusahaan"
+        <Controller 
+          name="registerPerusahaan"
           control={control}
           render={
             ({
@@ -323,14 +514,61 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
                   label="Perusahaan"
                   placeholder="ketik nama perusahaan untuk menampilkan pilihan"
                   allowFreeform={true}
-                  options={optionsPerusahaan != undefined ? optionsPerusahaan:[]}
+                  options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
                   selectedKey={selectedKeyRegisterPerusahaan}
                   useComboBoxAsMenuWidth={true}
                   onRenderOption={_onRenderRegisterPerusahaanOption}   
                   onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
                   styles={basicComboBoxStyles}           
                   errorMessage={error && 'harus diisi'}
-                  onChange={_onHandleOnChangeComboBox}
+                  onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                  disabled={mode == 'delete' ? true:disableForm}
+                />
+            )}
+        />
+        <Controller 
+          name="person"
+          control={control}
+          render={
+            ({
+              field: {onChange, onBlur}, 
+              fieldState: { error }
+            }) => (
+            <ComboBox
+                  label="Person"
+                  placeholder="ketik nama person untuk menampilkan pilihan"
+                  allowFreeform={true}
+                  options={optionsPerson != undefined ? optionsPerson:[]}
+                  selectedKey={selectedKeyPerson}
+                  useComboBoxAsMenuWidth={true}
+                  onRenderOption={_onRenderPersonOption}   
+                  onInputValueChange={_onInputComboBoxPersonValueChange}      
+                  styles={basicComboBoxStyles}           
+                  errorMessage={error && 'harus diisi'}
+                  onChange={_onHandleOnChangePersonComboBox}
+                  disabled={mode == 'delete' ? true:disableForm}
+                />
+            )}
+        />
+        <Controller 
+          name="jabatan"
+          control={control}
+          render={
+            ({
+              field: {onChange, onBlur}, 
+              fieldState: { error }
+            }) => (
+            <ComboBox
+                  label="Jabatan"
+                  placeholder="ketik jabatan untuk menampilkan pilihan"
+                  allowFreeform={true}
+                  options={optionsJabatan != undefined ? optionsJabatan:[]}
+                  selectedKey={selectedKeyPerson}
+                  useComboBoxAsMenuWidth={true}
+                  onInputValueChange={_onInputComboBoxJabatanValueChange}      
+                  styles={basicComboBoxStyles}           
+                  errorMessage={error && 'harus diisi'}
+                  onChange={_onHandleOnChangeJabatanComboBox}
                   disabled={mode == 'delete' ? true:disableForm}
                 />
             )}

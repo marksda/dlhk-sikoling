@@ -10,11 +10,12 @@ import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 import { IHakAkses } from "../../entity/hak-akses";
 import { IPegawai } from "../../entity/pegawai";
 import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
+import { IJabatan } from "../../entity/jabatan";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex'],
+    tagTypes: ['Desa', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -379,6 +380,46 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterPerusahaan: builder.query<number, qFilters>({
                 query: (queryFilters) => `/register_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveJabatan: builder.mutation<IJabatan, Partial<IJabatan>>({
+                query: (jabatan) => ({
+                    url: '/jabatan_perusahaan',
+                    method: 'POST',
+                    body: jabatan,
+                }),
+                invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
+            }),
+            updateJabatan: builder.mutation<void, Partial<IJabatan>>({
+                query: (jabatan) => ({
+                    url: '/jabatan_perusahaan',
+                    method: 'PUT',
+                    body: jabatan,
+                }),
+                invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
+            }),
+            updateIdJabatan: builder.mutation<void, {idLama: string; jabatan: IJabatan}>({
+                query: ({idLama, jabatan}) => ({
+                    url: `/jabatan_perusahaan/id/${idLama}`,
+                    method: 'PUT',
+                    body: jabatan,
+                }),
+                invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
+            }),
+            deleteJabatan: builder.mutation<Partial<IJabatan>,Partial<IJabatan>> ({
+                query(jabatan) {
+                  return {
+                    url: `/jabatan_perusahaan/${jabatan.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
+            }),
+            getDaftarDataJabatan: builder.query<IJabatan[], IQueryParamFilters>({
+                query: (queryParams) => `/jabatan_perusahaan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['Jabatan'],
+            }),
+            getJumlahDataJabatan: builder.query<number, qFilters>({
+                query: (queryFilters) => `/jabatan_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -403,4 +444,6 @@ export const {
     useDeletePegawaiMutation, useGetDaftarDataPegawaiQuery, useGetJumlahDataPegawaiQuery,
     useSaveRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation,
     useDeleteRegisterPerusahaanMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery,
+    useSaveJabatanMutation, useUpdateJabatanMutation, useUpdateIdJabatanMutation,
+    useDeleteJabatanMutation, useGetDaftarDataJabatanQuery, useGetJumlahDataJabatanQuery,
 } = sikolingApi;

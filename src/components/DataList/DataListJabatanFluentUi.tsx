@@ -2,9 +2,9 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IR
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarJabatanByFiltersQuery, useGetTotalCountJabatanQuery } from "../../features/repository/service/jabatan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IJabatan } from "../../features/entity/jabatan";
+import { useGetDaftarDataJabatanQuery, useGetJumlahDataJabatanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 
 interface IDataListJabatanFluentUIProps {
@@ -116,8 +116,8 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountJabatanQuery(queryFilters);
-    const { data: postsJabatan, isLoading: isLoadingPosts } = useGetDaftarJabatanByFiltersQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataJabatanQuery(queryFilters);
+    const { data: postsJabatan, isLoading: isLoadingPosts } = useGetDaftarDataJabatanQuery(queryParams);   
     
 
     const _getKey = useCallback(
