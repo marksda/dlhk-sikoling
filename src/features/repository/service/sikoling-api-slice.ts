@@ -8,11 +8,12 @@ import { IDesa } from "../../entity/desa";
 import { IJenisKelamin } from "../../entity/jenis-kelamin";
 import { IQueryParamFilters, qFilters } from "../../entity/query-param-filters";
 import { IHakAkses } from "../../entity/hak-akses";
+import { IPegawai } from "../../entity/pegawai";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Person', 'Propinsi', 'Sex'],
+    tagTypes: ['Desa', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'Sex'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -297,6 +298,46 @@ export const sikolingApi = createApi({
             getJumlahDataHakAkses: builder.query<number, qFilters>({
                 query: (queryFilters) => `/hak_akses/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            savePegawai: builder.mutation<IPegawai, Partial<IPegawai>>({
+                query: (body) => ({
+                    url: '/pegawai_perusahaan',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: ['Pegawai'],
+            }),
+            updatePegawai: builder.mutation<void, Partial<IPegawai>>({
+                query: (body) => ({
+                    url: '/pegawai_perusahaan',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: ['Pegawai'],
+            }),
+            updateIdPegawai: builder.mutation<void, {idLama: string; pegawai: IPegawai}>({
+                query: ({idLama, pegawai}) => ({
+                    url: `/pegawai_perusahaan/id/${idLama}`,
+                    method: 'PUT',
+                    body: pegawai,
+                }),
+                invalidatesTags: ['Pegawai']
+            }),
+            deletePegawai: builder.mutation<Partial<IPegawai>, Partial<IPegawai>>({
+                query(pegawai) {
+                  return {
+                    url: `/pegawai_perusahaan/${pegawai.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: ['Pegawai'],
+            }),
+            getDaftarDataPegawai: builder.query<IPegawai[], IQueryParamFilters>({
+                query: (queryParams) => `/pegawai_perusahaan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['Pegawai'],
+            }),
+            getJumlahDataPegawai: builder.query<number, qFilters>({
+                query: (queryFilters) => `/pegawai_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -317,4 +358,6 @@ export const {
     useDeletePersonMutation, useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery,
     useSaveHakAksesMutation, useUpdateHakAksesMutation, useUpdateIdHakAksesMutation,
     useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetJumlahDataHakAksesQuery,
+    useSavePegawaiMutation, useUpdatePegawaiMutation, useUpdateIdPegawaiMutation,
+    useDeletePegawaiMutation, useGetDaftarDataPegawaiQuery, useGetJumlahDataPegawaiQuery,
 } = sikolingApi;

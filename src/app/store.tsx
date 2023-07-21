@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import { JabatanApiSlice } from "../features/repository/service/jabatan-api-slice";
 import jenisKelaminReducer from "../features/repository/ssot/jenis-kelamin-slice";
 import personReducer from "../features/repository/ssot/person-slice";
-import pegawaiReducer from "../features/repository/ssot/pegawai-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
@@ -34,7 +33,6 @@ import { FlowLogApiSlice } from "../features/log/flow-log-api-slice";
 import { StatusFlowLogApiSlice } from "../features/log/status-flow-log-api-slice";
 import { KategoriFlowLogApiSlice } from "../features/log/kategori-flow-log-api-slice";
 import { StatusWaliPermohonanApiSlice } from "../features/permohonan/status-wali-api-slice";
-import { PegawaiApiSlice } from "../features/repository/service/pegawai-api-slice";
 import { PosisiTahapPemberkasanApiSlice } from "../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { RegisterOtoritasPerusahaanApiSlice } from "../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { sikolingApi } from "../features/repository/service/sikoling-api-slice";
@@ -48,7 +46,6 @@ export const store = configureStore({
         [JabatanApiSlice.reducerPath]: JabatanApiSlice.reducer,
         jenisKelamin: jenisKelaminReducer,
         person: personReducer,
-        pegawai: pegawaiReducer,
         credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
@@ -78,7 +75,6 @@ export const store = configureStore({
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
         [StatusWaliPermohonanApiSlice.reducerPath]: StatusWaliPermohonanApiSlice.reducer,
         [PosisiTahapPemberkasanApiSlice.reducerPath]: PosisiTahapPemberkasanApiSlice.reducer,
-        [PegawaiApiSlice.reducerPath]: PegawaiApiSlice.reducer,
         [FlowLogApiSlice.reducerPath]: FlowLogApiSlice.reducer,
         [StatusFlowLogApiSlice.reducerPath]: StatusFlowLogApiSlice.reducer,
         [KategoriFlowLogApiSlice.reducerPath]: KategoriFlowLogApiSlice.reducer,
@@ -107,7 +103,6 @@ export const store = configureStore({
                                             .concat(KategoriFlowLogApiSlice.middleware)
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
                                             .concat(StatusWaliPermohonanApiSlice.middleware)
-                                            .concat(PegawaiApiSlice.middleware)
                                             .concat(JabatanApiSlice.middleware)
                                             .concat(PosisiTahapPemberkasanApiSlice.middleware)
                                             .concat(KategoriPermohonanApiSlice.middleware)
