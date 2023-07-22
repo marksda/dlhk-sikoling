@@ -708,7 +708,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                     </Stack.Item>
                                 )
                             }                   
-                            <Stack.Item >
+                            <Stack.Item>
                                 <Stack horizontal tokens={stackTokens}>
                                     <Stack.Item>
                                         <span style={{width: 60}}>Mode edit</span>

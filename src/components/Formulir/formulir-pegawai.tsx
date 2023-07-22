@@ -79,18 +79,24 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 50,
-    filters: [],
+    filters: dataLama != undefined ? [{
+      fieldName: 'nama',
+      value: dataLama.registerPerusahaan?.perusahaan?.nama!
+    }]:[],
     sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
+      {
+          fieldName: 'nama',
+          value: 'ASC'
+      },
     ],
   });
   const [queryPersonParams, setQueryPersonParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 50,
-    filters: [],
+    filters: dataLama != undefined ? [{
+      fieldName: 'nama',
+      value: dataLama.person?.nama!
+    }]:[],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -342,7 +348,7 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
   const _onRenderPersonOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
     return item?.data != undefined ?
           <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
-            <span>{item?.data.nama != undefined ? item.data.nama:'-'}</span><br />
+            <span><b>{item?.data.nama != undefined ? item.data.nama:'-'}</b></span><br />
             <span>{item?.data.nik != undefined ? item.data.nik:'-'}</span><br />
             <span>
                 {
@@ -563,7 +569,7 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
                   placeholder="ketik jabatan untuk menampilkan pilihan"
                   allowFreeform={true}
                   options={optionsJabatan != undefined ? optionsJabatan:[]}
-                  selectedKey={selectedKeyPerson}
+                  selectedKey={selectedKeyJabatan}
                   useComboBoxAsMenuWidth={true}
                   onInputValueChange={_onInputComboBoxJabatanValueChange}      
                   styles={basicComboBoxStyles}           
