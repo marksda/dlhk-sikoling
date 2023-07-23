@@ -62,13 +62,13 @@ export const HakAksesSchema = object({
 });
 
 export const OtoritasSchema = object({
-    id: z.string().optional(),
-    tanggal: z.string().optional(),
+    id: z.string().nullable(),
+    tanggal: z.string().nullable(),
     hakAkses: HakAksesSchema.optional(),
     person: PersonSchema.optional(),
-    statusInternal: z.boolean().optional(),
+    statusInternal: z.boolean().nullable(),
     userName: z.string().optional(),
-    isVerified: z.boolean().optional(),
+    isVerified: z.boolean().nullable(),
 });
 
 export const ModelPerizinanSchema = object({
@@ -108,8 +108,8 @@ export const PerusahaanSchema = object({
 export const RegisterPerusahaanSchema = object({
     id: z.string().nullable(),
     tanggalRegistrasi: z.string().nullable(),
-    kreator: OtoritasSchema.nullable(),
-    verifikator: OtoritasSchema.nullable(),
+    kreator: OtoritasSchema.pick({id: true}),
+    verifikator: OtoritasSchema.pick({id: true}),
     perusahaan: PerusahaanSchema.nullable(),
     statusVerifikasi: z.boolean().nullable()
 });

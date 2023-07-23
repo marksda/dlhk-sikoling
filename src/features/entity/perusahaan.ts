@@ -2,7 +2,6 @@ import { IAlamat } from "./alamat";
 import { IKontak } from "./kontak";
 import { IModelPerizinan } from "./model-perizinan";
 import { IPelakuUsaha } from "./pelaku-usaha";
-import { IRegisterDokumen } from "./register-dokumen";
 import { ISkalaUsaha } from "./skala-usaha";
 
 export interface IPerusahaan {

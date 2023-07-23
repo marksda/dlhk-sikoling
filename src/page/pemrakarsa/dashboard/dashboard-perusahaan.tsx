@@ -5,7 +5,7 @@ import { useAppSelector } from "../../../app/hooks";
 import { IListItemRegisterPerusahaan } from "../../../components/DataList/perusahaan/InterfaceDataListPerusahaan";
 import { ModalFormulirAddPerusahaan } from "../../../components/Modal/ModalFormulirAddPerusahaan";
 import { useDeleteLinkKepemilikanRegisterPerusahaanMutation } from "../../../features/repository/service/register-perusahaan-api-slice";
-import { DataListPerusahaanFluentUI } from "../../../components/DataList/DataListPerusahaanFluentUi";
+import { DataListRegisterPerusahaanFluentUI } from "../../../components/DataList/DataListRegisterPerusahaanFluentUi";
 
 // const containerDivStyles: React.CSSProperties = {    
 //     boxShadow: DefaultEffects.elevation4, 
@@ -56,7 +56,7 @@ export const KontenDashboardPerusahaan: FC = () => {
     
     return(
         <>            
-        <DataListPerusahaanFluentUI 
+        <DataListRegisterPerusahaanFluentUI 
             initSelectedFilters={
                 {
                     pageNumber: 1,

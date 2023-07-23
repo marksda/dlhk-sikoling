@@ -13,7 +13,6 @@ import { SkalaUsahaApiSlice } from "../features/repository/service/skala-usaha-a
 import { KategoriPelakuUsahaApiSlice } from "../features/repository/service/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/repository/ssot/perusahaan-slice";
-import { RegisterPerusahaanApiSlice } from "../features/repository/service/register-perusahaan-api-slice";
 import kategoriDokumenReducer from "../features/repository/ssot/kategori-dokumen-slice";
 import { KategoriDokumenApiSlice } from "../features/repository/service/kategori-dokumen-api-slice";
 import dokumenReducer from "../features/repository/ssot/dokumen-slice";
@@ -56,7 +55,6 @@ export const store = configureStore({
         [KategoriPelakuUsahaApiSlice.reducerPath]: KategoriPelakuUsahaApiSlice.reducer,   
         [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
-        [RegisterPerusahaanApiSlice.reducerPath]: RegisterPerusahaanApiSlice.reducer,
         kategoriDokumen: kategoriDokumenReducer,
         [KategoriDokumenApiSlice.reducerPath]: KategoriDokumenApiSlice.reducer,
         dokumen: dokumenReducer,
@@ -89,7 +87,6 @@ export const store = configureStore({
                                             .concat(SkalaUsahaApiSlice.middleware)
                                             .concat(KategoriPelakuUsahaApiSlice.middleware)
                                             .concat(PelakuUsahaApiSlice.middleware)
-                                            .concat(RegisterPerusahaanApiSlice.middleware)
                                             .concat(KategoriDokumenApiSlice.middleware)
                                             .concat(DokumenApiSlice.middleware)
                                             .concat(RegisterDokumenApiSlice.middleware)

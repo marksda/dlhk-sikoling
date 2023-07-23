@@ -6,7 +6,6 @@ import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-a
 import cloneDeep from "lodash.clonedeep";
 import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
 import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
-import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan, useGetJumlahDataQuery as getJumlahDaftarRegisterPerusahaan  } from "../../features/repository/service/register-perusahaan-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
@@ -17,8 +16,9 @@ import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
+import { useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 
-interface IDataListPerusahaanFluentUIProps {
+interface IDataListRegisterPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
@@ -67,7 +67,7 @@ const stackTokens = { childrenGap: 8 };
 const barStackTokens = { childrenGap: 48 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
 
-export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
+export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
 
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -233,153 +233,13 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                 );
             },
             isPadded: true,
-        },
-        { 
-            key: 'dokumen', 
-            name: 'Dokumen', 
-            minWidth: 200, 
-            maxWidth: 200,
-            isResizable: true,
-            onRender: (item: IItemRegisterPerusahaan) => {
-                return (
-                    <>
-                        <div className={classNames.dokumenMainTitle}>
-                            Jumlah Dokumen : {
-                            item.perusahaan?.daftarRegisterDokumen != undefined ?
-                            item.perusahaan?.daftarRegisterDokumen?.length : 0
-                            }
-                        </div>                    
-                        {
-                            item.perusahaan?.daftarRegisterDokumen != undefined ?
-                            item.perusahaan?.daftarRegisterDokumen!.map((dataRegisterDokumen:IRegisterDokumen, index) => {
-                                let dokumen = null;
-                                if(dataRegisterDokumen.dokumen?.id == '010401') {
-                                    dokumen = dataRegisterDokumen.dokumen as ISuratArahan;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span >Nomor: {dokumen?.noSurat}</span><br />
-                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                        </div>                                    
-                                    );
-                                }
-                                else if(dataRegisterDokumen.dokumen?.id == '010402') {
-                                    dokumen = dataRegisterDokumen.dokumen as ILampiranSuratArahan;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span>Nomor surat arahan: {dokumen?.noSuratArahan}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                            
-                                        </div>                                    
-                                    );
-                                }
-                                else if(dataRegisterDokumen.dokumen?.id == '010101') {
-                                    dokumen = dataRegisterDokumen.dokumen as IDokumenAktaPendirian;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span>Nomor: {dokumen?.nomor}</span><br />
-                                                <span>notaris: {dokumen?.namaNotaris}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                        </div>                                    
-                                    );
-                                }
-                                else if(dataRegisterDokumen.dokumen?.id == '010404') {
-                                    dokumen = dataRegisterDokumen.dokumen as IRekomendasiUKLUPL;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span>Nomor: {dokumen?.noSurat}</span><br />
-                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                        </div>                                    
-                                    );
-                                }
-                                else if(dataRegisterDokumen.dokumen?.id == '010406') {
-                                    dokumen = dataRegisterDokumen.dokumen as IRekomendasiDPLH;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span>Nomor: {dokumen?.noSurat}</span><br />
-                                                <span>perihal: {dokumen?.perihalSurat}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                        </div>                                    
-                                    );
-                                }
-                                else if(dataRegisterDokumen.dokumen?.id == '010301') {
-                                    dokumen = dataRegisterDokumen.dokumen as IDokumenNibOss;
-                                    return (
-                                        <div key={dokumen.id}>
-                                            <div className={classNames.dokumenTitle}>{index+1}. {dokumen?.nama}</div>
-                                            <div className={classNames.containerItemDok}>
-                                                <span>Nomor: {dokumen?.nomor}</span><br />
-                                                <span>perihal: {dokumen?.tanggal}</span><br />
-                                                <Link 
-                                                    href={`${urlApiSikoling}/files/nosecure/dok/${item.perusahaan?.id}/${dataRegisterDokumen.lokasiFile}`}
-                                                    target="_blank"
-                                                    underline
-                                                >
-                                                    Download dokumen
-                                                </Link>
-                                            </div>
-                                        </div>                                    
-                                    );
-                                }
-                            }) : null
-                        }
-                    </>
-                );
-            },
-            isPadded: true,
-        },
+        }
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsPerusahaan, isLoading: isLoadingPostsPerusahaan } = getDaftarRegisterPerusahaan(queryParams);
-    const { data: postsCountPerusahaan, isLoading: isLoadingCountPosts } = getJumlahDaftarRegisterPerusahaan(queryFilters);
+    const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryParams);
+    const { data: postsJumlahDataRegisterPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataRegisterPerusahaanQuery(queryFilters);
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {
@@ -834,7 +694,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsPerusahaan != undefined ? postsPerusahaan?.map(
+                                    postsRegisterPerusahaan != undefined ? postsRegisterPerusahaan?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
@@ -856,7 +716,7 @@ export const DataListPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = 
                             currentPage={currentPage}
                             pageSize={pageSize}
                             siblingCount={1}
-                            totalCount={postsCountPerusahaan == undefined ? 50:postsCountPerusahaan }
+                            totalCount={postsJumlahDataRegisterPerusahaan == undefined ? 50:postsJumlahDataRegisterPerusahaan }
                             onPageChange={_onPageNumberChange}
                             onPageSizeChange={_onHandlePageSizeChange}
                         />

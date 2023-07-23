@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { DataListOtoritasFluentUI } from "../../components/DataList/DataListOtoritasFluentUi";
 import { CommandBarButton, IButtonStyles, IOverflowSetItemProps, IconButton, OverflowSet, Stack } from "@fluentui/react";
 import { DataListHakAksesFluentUI } from "../../components/DataList/DataListHakAksesFluentUi";
-import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
+import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 import { DataListPersonFluentUI } from "../../components/DataList/DataListPersonFluentUi";
 import { DataListModelPerizinanFluentUI } from "../../components/DataList/DataListModelPerizinanFluentUi";
 import { DataListSkalaUsahaFluentUI } from "../../components/DataList/DataListSkalaUsahaFluentUi";
@@ -614,7 +614,7 @@ export const MasterBackEnd: FC = () => {
                     />;
                 break;
                 case 'pemrakarsa':
-                konten = <DataListPerusahaanFluentUI 
+                konten = <DataListRegisterPerusahaanFluentUI 
                         initSelectedFilters={
                             {
                                 pageNumber: 1,

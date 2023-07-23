@@ -4,7 +4,7 @@ import find from "lodash.find";
 import cloneDeep from "lodash.clonedeep";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
-import { DataListPerusahaanFluentUI } from "../../components/DataList/DataListPerusahaanFluentUi";
+import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 
 const _daftarBreadCrumb = [
     {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
@@ -112,7 +112,7 @@ export const KontenDashboardPemrakarsa: FC = () => {
                     konten = null;
                     break;
                 case 'pemrakarsa':
-                    konten = <DataListPerusahaanFluentUI 
+                    konten = <DataListRegisterPerusahaanFluentUI 
                             initSelectedFilters={
                                 {
                                     pageNumber: 1,
