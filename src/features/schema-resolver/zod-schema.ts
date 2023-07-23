@@ -98,11 +98,11 @@ export const PelakuUsahaSchema = object({
 export const PerusahaanSchema = object({
     id: z.string().length(15, 'Format npwp salah'),
     nama: z.string().min(1, "Harus diisi"),    
-    modelPerizinan: ModelPerizinanSchema.optional(),
-    skalaUsaha: SkalaUsahaSchema.optional(),
-    pelakuUsaha: PelakuUsahaSchema.optional(),
-    alamat: AlamatSchema.optional(),
-    kontak: KontakSchema.optional()
+    modelPerizinan: ModelPerizinanSchema.pick({id: true}),
+    skalaUsaha: SkalaUsahaSchema.pick({id: true}),
+    pelakuUsaha: PelakuUsahaSchema.pick({id: true}),
+    alamat: AlamatSchema.nullable(),
+    kontak: KontakSchema.nullable()
 });
 
 export const RegisterPerusahaanSchema = object({

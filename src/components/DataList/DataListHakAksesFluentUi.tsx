@@ -194,7 +194,7 @@ export const DataListHakAksesFluentUI: FC<IDataListHakAksesFluentUIProps> = ({in
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsHakAkses]
     );
 
     const _onSortColumn = useCallback(

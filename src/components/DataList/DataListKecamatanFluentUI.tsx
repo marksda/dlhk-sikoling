@@ -282,7 +282,7 @@ export const DataListKecamatanFluentUI: FC<IDataKecamatanFluentUIProps> = ({init
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsKecamatan]
     );
 
     const _onSortColumn = useCallback(

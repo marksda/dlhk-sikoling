@@ -182,7 +182,7 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsPropinsi]
     );
 
     const _onSortColumn = useCallback(

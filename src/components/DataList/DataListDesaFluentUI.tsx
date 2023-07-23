@@ -321,7 +321,7 @@ export const DataListDesaFluentUI: FC<IDataDesaFluentUIProps> = ({initSelectedFi
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsDesa]
     );
 
     const _onSortColumn = useCallback(

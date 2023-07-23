@@ -1,11 +1,7 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, Link, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
-import { flipFormatDate, urlApiSikoling } from "../../features/config/config";
-import { ISuratArahan } from "../../features/dokumen/surat-arahan-api-slice";
-import { IRekomendasiUKLUPL } from "../../features/dokumen/rekomendasi-ukl-upl-api-slice";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Selection, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
+import { flipFormatDate } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
-import { ILampiranSuratArahan } from "../../features/dokumen/lampiran-surat-arahan-api-slice";
-import { IRekomendasiDPLH } from "../../features/dokumen/rekomendasi-dplh-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
@@ -13,10 +9,8 @@ import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
-import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
-import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
+import find from "lodash.find";
 
 interface IDataListRegisterPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -64,8 +58,13 @@ const classNames = mergeStyleSets({
     },
 });
 const stackTokens = { childrenGap: 8 };
-const barStackTokens = { childrenGap: 48 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
 
@@ -115,6 +114,11 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
     );
 
     //local state
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirRegisterPerusahaanOpen, {setTrue: showModalFormulirRegisterPerusahaan, setFalse: hideModalFormulirRegisterPerusahaan}] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IRegisterPerusahaan|undefined>(undefined);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
@@ -144,8 +148,8 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         { 
             key: 'nama', 
             name: 'Nama', 
-            minWidth: 100, 
-            maxWidth: 200, 
+            minWidth: 250, 
+            maxWidth: 300, 
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
@@ -173,8 +177,8 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         { 
             key: 'kontak', 
             name: 'Kontak', 
-            minWidth: 100, 
-            maxWidth: 200, 
+            minWidth: 200, 
+            maxWidth: 250, 
             isResizable: true, 
             data: 'string',
             onRender: (item: IItemRegisterPerusahaan) => {
@@ -241,37 +245,70 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
     const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryParams);
     const { data: postsJumlahDataRegisterPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataRegisterPerusahaanQuery(queryFilters);
 
-    const itemsBar: ICommandBarItemProps[] = useMemo(
+    const selection: Selection = useMemo(
         () => {
-            // const CoachmarkButtonWrapper: IComponentAs<ICommandBarItemProps> = (p: IComponentAsProps<ICommandBarItemProps>) => {
-            //   return (
-            //     <CoachmarkCommandBarButton {...p} isCoachmarkVisible={isCoachmarkVisible} onDismiss={onDismissCoachmark} />
-            //   );
-            // };
-        
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
+        },
+        []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
             return [
                 { 
                     key: 'newItem', 
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add pemrakarsa');
-                        showModalFormulirPerusahaan();
+                        setFormulirTitle('Add register perusahaan');
+                        setModeForm('add');
+                        showModalFormulirRegisterPerusahaan();
+                        setDataLama(undefined);
                     }
                 },
                 { 
                     key: 'editItem', 
                     text: 'Edit', 
-                    disabled: true,
+                    disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit pemrakarsa');
-                        showModalFormulirPerusahaan();
+                        setFormulirTitle('Edit pegawai');
+                        setModeForm('edit');
+                        showModalFormulirRegisterPerusahaan();
+                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key));
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus pegawai');
+                        setModeForm('delete');
+                        showModalFormulirRegisterPerusahaan();
+                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key));
+                        setDataLama(dataTerpilih);
                     }
                 },
             ];
         }, 
-        []
+        [isSelectedItem, selection, postsRegisterPerusahaan]
     );
 
     const _getKey = useCallback(
@@ -652,17 +689,48 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill>
-            <Stack.Item>
+            <Stack.Item style={{marginRight: 16}}>
                 <Stack horizontal grow horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item align="center" style={{paddingLeft: 16}}>
+                    <Stack.Item style={{paddingLeft: 16}}align="center" >
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>                        
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar}/>
+                                    </Stack.Item>
+                                )
+                            } 
                             <Stack.Item>
-                                <CommandBar items={itemsBar}/>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 

@@ -305,7 +305,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsPegawai]
     );
 
     const _onSortColumn = useCallback(

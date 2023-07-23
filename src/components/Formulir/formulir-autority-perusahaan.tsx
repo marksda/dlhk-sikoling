@@ -9,9 +9,9 @@ import { invertParseNpwp } from "../../features/config/helper-function";
 import { useGetDaftarDataQuery as getDaftarOtoritas } from "../../features/repository/service/otoritas-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
-import { useGetDaftarDataQuery as getDaftarRegisterPerusahaan } from "../../features/repository/service/register-perusahaan-api-slice";
 import { useDeleteMutation, useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
+import { useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
@@ -116,7 +116,7 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
     resolver: zodResolver(OtoritasPerusahaanSchema),
   });
   // rtk query
-  const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = getDaftarRegisterPerusahaan(queryPerusahaanParams);
+  const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryPerusahaanParams);
   const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = getDaftarOtoritas(queryPengaksesParams);
   const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveMutation();
   const [ updateIdOtoritasPerusahaan, {isLoading: isLoadingUpdateIdOtoritasPerusahaan}] = useUpdateIdMutation();
