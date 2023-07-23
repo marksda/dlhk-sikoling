@@ -285,7 +285,6 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                         setModeForm('edit');
                         showModalFormulirPegawai();
                         let dataTerpilih = cloneDeep(find(postsPegawai, (i) => i.id == selection.getSelection()[0].key));
-                        console.log(dataTerpilih);
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -376,6 +375,80 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
           );
         },
         [],
+    );
+
+    const _onChangeSearchNamaPegawai = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {            
+            if(newValue!.length > 2) {
+                setCurrentPage(1);
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'pegawai',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'pegawai',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+    
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'pegawai',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'pegawai',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+            } 
+            else if(newValue!.length == 0) {
+                _onClearSearchNamaPegawai();
+            }
+        },
+        []
     );
 
     const _onSearchNamaPegawai = useCallback(
@@ -531,124 +604,195 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
     const _onChangeSearchNamaPerusahaan = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
             setSearchNamaPerusahaan(newValue);          
+            if(newValue!.length > 2) {
+                setCurrentPage(1);
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'perusahaan',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'perusahaan',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+    
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'perusahaan',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'perusahaan',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+            }
+            else if(newValue!.length == 0) {
+                _onClearSearchNamaPerusahaan();
+            }
         },
         []
     );
 
-    // const _onSearchNamaPegawai = useCallback(
-    //     (newValue) => {
-    //         setCurrentPage(1);
+    const _onSearchNamaPerusahaan = useCallback(
+        (newValue) => {
+            setCurrentPage(1);
 
-    //         setQueryFilters(
-    //             prev => {
-    //                 let tmp = cloneDeep(prev);
-    //                 let filters = cloneDeep(tmp.filters);
-    //                 let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
-    //                 if(newValue != '') {
-    //                     if(found == -1) {
-    //                         filters?.push({
-    //                             fieldName: 'perusahaan',
-    //                             value: newValue
-    //                         });
-    //                     }
-    //                     else {
-    //                         filters?.splice(found, 1, {
-    //                             fieldName: 'perusahaan',
-    //                             value: newValue
-    //                         })
-    //                     }
-    //                 }
-    //                 else {
-    //                     if(found > -1) {
-    //                         filters?.splice(found, 1);
-    //                     }
-    //                 }
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
                     
-    //                 tmp.filters = filters;             
-    //                 return tmp;
-    //             }
-    //         );
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
 
-    //         setQueryParams(
-    //             prev => {
-    //                 let tmp = cloneDeep(prev);
-    //                 let filters = cloneDeep(tmp.filters);
-    //                 let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
-    //                 if(newValue != '') {
-    //                     if(found == -1) {
-    //                         filters?.push({
-    //                             fieldName: 'perusahaan',
-    //                             value: newValue
-    //                         });
-    //                     }
-    //                     else {
-    //                         filters?.splice(found, 1, {
-    //                             fieldName: 'perusahaan',
-    //                             value: newValue
-    //                         })
-    //                     }
-    //                 }
-    //                 else {
-    //                     if(found > -1) {
-    //                         filters?.splice(found, 1);
-    //                     }
-    //                 }
+                    if(newValue != '') {
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'perusahaan',
+                                value: newValue
+                            })
+                        }
+                    }
+                    else {
+                        if(found > -1) {
+                            filters?.splice(found, 1);
+                        }
+                    }
                     
-    //                 tmp.pageNumber = 1;
-    //                 tmp.filters = filters;             
-    //                 return tmp;
-    //             }
-    //         );
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
             
-    //     },
-    //     []
-    // );
+        },
+        []
+    );
 
-    // const _onClearSearchNamaPegawai= useCallback(
-    //     () => {
-    //         setCurrentPage(1);
-    //         setSearchNamaPerusahaan(undefined);
+    const _onClearSearchNamaPerusahaan= useCallback(
+        () => {
+            setCurrentPage(1);
+            setSearchNamaPerusahaan(undefined);
 
-    //         setQueryFilters(
-    //             prev => {
-    //                 let tmp = cloneDeep(prev);
-    //                 let filters = cloneDeep(tmp.filters);
-    //                 let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
                     
-    //                 if(found > -1) {
-    //                     filters?.splice(found, 1);
-    //                 }
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
                     
-    //                 tmp.filters = filters;             
-    //                 return tmp;
-    //             }
-    //         );
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
 
-    //         setQueryParams(
-    //             prev => {
-    //                 let tmp = cloneDeep(prev);
-    //                 let filters = cloneDeep(tmp.filters);
-    //                 let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
                     
                     
-    //                 if(found > -1) {
-    //                     filters?.splice(found, 1);
-    //                 }
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
                     
-    //                 tmp.pageNumber = 1;
-    //                 tmp.filters = filters;             
-    //                 return tmp;
-    //             }
-    //         );
-    //     },
-    //     []
-    // );
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+        },
+        []
+    );
 
     const _onChangeSearchNik = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNik(newValue);          
+            setSearchNik(newValue);     
+            if(newValue?.length as number >= 16) {
+                _onSearchNik(newValue);
+            }     
         },
         []
     );
@@ -865,6 +1009,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                     style={{width: 300}} 
                                     placeholder="pencarian nama pegawai" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNamaPegawai}
                                     onSearch={_onSearchNamaPegawai}
                                     onClear= {_onClearSearchNamaPegawai}
                                 />
@@ -925,7 +1070,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
-                            <Label htmlFor={searchNamaPerusahaanId}>Nama</Label>
+                            <Label htmlFor={searchNamaPerusahaanId}>Nama perusahaan</Label>
                             <SearchBox 
                                 id={searchNamaPerusahaanId}
                                 style={{width: 200}} 
@@ -933,13 +1078,13 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                 placeholder="nama sesuai ktp" 
                                 underlined={false} 
                                 onChange={_onChangeSearchNamaPerusahaan}
-                                onSearch={_onSearchNamaPegawai}
-                                onClear= {_onClearSearchNamaPegawai}
+                                onSearch={_onSearchNamaPerusahaan}
+                                onClear= {_onClearSearchNamaPerusahaan}
                                 value={searchNamaPerusahaan ? searchNamaPerusahaan:''}
                             />
                         </Stack.Item>
                         <Stack.Item>
-                            <Label htmlFor={searchNikId}>NIK</Label>
+                            <Label htmlFor={searchNikId}>NIK pegawai</Label>
                             <SearchBox 
                                 id={searchNikId}
                                 style={{width: 200}} 

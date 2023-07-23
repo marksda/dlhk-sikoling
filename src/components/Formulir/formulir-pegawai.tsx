@@ -1,6 +1,6 @@
 import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { PegawaiSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -118,9 +118,15 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
+  //ref component
+  const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
+  const comboBoxPersonRef = useRef<IComboBox>(null);
+  const comboBoxJabatanRef = useRef<IComboBox>(null);
   //hook-form
   const {handleSubmit, control, setValue, resetField, watch} = useForm<IPegawai>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
+      id: null,      
+    },
     resolver: zodResolver(PegawaiSchema),
   });
   // rtk query
@@ -185,38 +191,39 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
     setDisableForm(true);
     try {
       switch (mode) {
-        case 'add':
-        //   await savePegawai(data as IPegawai).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+        case 'add':          
+          await savePegawai(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         case 'edit':
-        //   if(dataLama?.id == data.id) {
-        //     await updatePegawai(data).unwrap().then((originalPromiseResult) => {
-        //       setDisableForm(false);
-        //     }).catch((rejectedValueOrSerializedError) => {
-        //       setDisableForm(false);
-        //     }); 
-        //   }
-        //   else {
-        //     await updateIdPegawai({idLama: dataLama?.id!, propinsi: data}).unwrap().then((originalPromiseResult) => {
-        //       setDisableForm(false);
-        //     }).catch((rejectedValueOrSerializedError) => {
-        //       setDisableForm(false);
-        //     }); 
-        //   }          
-        //   hideModal();
+          data.id = data.registerPerusahaan?.id?.concat(data.jabatan?.id!).concat(data.person?.nik!)!;
+          if(dataLama?.id == data.id) {
+            await updatePegawai(data).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }
+          else {
+            await updateIdPegawai({idLama: dataLama?.id!, pegawai: data}).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }          
+          hideModal();
           break;
         case 'delete':
-        //   await deletePegawai(data).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+          await deletePegawai(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         default:
           break;
@@ -294,38 +301,40 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
 
   const _onInputComboBoxRegisterPerusahaanValueChange = useCallback(
     (newValue: string) => {
-
-      setQueryRegisterPerusahaanParams(
-          prev => {
-              let tmp = cloneDeep(prev);
-              let filters = cloneDeep(tmp.filters);
-              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-              
-              if(newValue != '') {
-                  if(found == -1) {
-                      filters?.push({
-                          fieldName: 'nama',
-                          value: newValue
-                      });
-                  }
-                  else {
-                      filters?.splice(found, 1, {
-                          fieldName: 'nama',
-                          value: newValue
-                      })
-                  }
-              }
-              else {
-                  if(found > -1) {
-                      filters?.splice(found, 1);
-                  }
-              }
-              
-              tmp.pageNumber = 1;
-              tmp.filters = filters;             
-              return tmp;
-          }
-      );
+      if(newValue.length > 2) {
+        comboBoxRegisterPerusahaanRef.current?.focus(true);
+        setQueryRegisterPerusahaanParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
     },
     []
   );
@@ -379,38 +388,40 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
 
   const _onInputComboBoxPersonValueChange = useCallback(
     (newValue: string) => {
-
-      setQueryPersonParams(
-          prev => {
-              let tmp = cloneDeep(prev);
-              let filters = cloneDeep(tmp.filters);
-              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-              
-              if(newValue != '') {
-                  if(found == -1) {
-                      filters?.push({
-                          fieldName: 'nama',
-                          value: newValue
-                      });
-                  }
-                  else {
-                      filters?.splice(found, 1, {
-                          fieldName: 'nama',
-                          value: newValue
-                      })
-                  }
-              }
-              else {
-                  if(found > -1) {
-                      filters?.splice(found, 1);
-                  }
-              }
-              
-              tmp.pageNumber = 1;
-              tmp.filters = filters;             
-              return tmp;
-          }
-      );
+      if(newValue.length > 2) {
+        comboBoxPersonRef.current?.focus(true);
+        setQueryPersonParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
     },
     []
   );
@@ -442,38 +453,40 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
 
   const _onInputComboBoxJabatanValueChange = useCallback(
     (newValue: string) => {
-
-      setQueryJabatanParams(
-          prev => {
-              let tmp = cloneDeep(prev);
-              let filters = cloneDeep(tmp.filters);
-              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-              
-              if(newValue != '') {
-                  if(found == -1) {
-                      filters?.push({
-                          fieldName: 'nama',
-                          value: newValue
-                      });
-                  }
-                  else {
-                      filters?.splice(found, 1, {
-                          fieldName: 'nama',
-                          value: newValue
-                      })
-                  }
-              }
-              else {
-                  if(found > -1) {
-                      filters?.splice(found, 1);
-                  }
-              }
-              
-              tmp.pageNumber = 1;
-              tmp.filters = filters;             
-              return tmp;
-          }
-      );
+      if(newValue.length > 2) {
+        comboBoxJabatanRef.current?.focus(true);
+        setQueryJabatanParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
     },
     []
   );
@@ -516,20 +529,21 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
               field: {onChange, onBlur}, 
               fieldState: { error }
             }) => (
-            <ComboBox
-                  label="Perusahaan"
-                  placeholder="ketik nama perusahaan untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
-                  selectedKey={selectedKeyRegisterPerusahaan}
-                  useComboBoxAsMenuWidth={true}
-                  onRenderOption={_onRenderRegisterPerusahaanOption}   
-                  onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
-                  styles={basicComboBoxStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
+              <ComboBox
+                componentRef={comboBoxRegisterPerusahaanRef}
+                label="Perusahaan"
+                placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                allowFreeform={true}
+                options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+                selectedKey={selectedKeyRegisterPerusahaan}
+                useComboBoxAsMenuWidth={true}
+                onRenderOption={_onRenderRegisterPerusahaanOption}   
+                onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+                styles={basicComboBoxStyles}           
+                errorMessage={error && 'harus diisi'}
+                onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                disabled={mode == 'delete' ? true:disableForm}
+              />
             )}
         />
         <Controller 
@@ -540,20 +554,22 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
               field: {onChange, onBlur}, 
               fieldState: { error }
             }) => (
-            <ComboBox
-                  label="Person"
-                  placeholder="ketik nama person untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsPerson != undefined ? optionsPerson:[]}
-                  selectedKey={selectedKeyPerson}
-                  useComboBoxAsMenuWidth={true}
-                  onRenderOption={_onRenderPersonOption}   
-                  onInputValueChange={_onInputComboBoxPersonValueChange}      
-                  styles={basicComboBoxStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  onChange={_onHandleOnChangePersonComboBox}
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
+              <ComboBox
+                componentRef={comboBoxPersonRef}
+                label="Person"
+                placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                allowFreeform={true}
+                autoComplete={'off'}
+                options={optionsPerson != undefined ? optionsPerson:[]}
+                selectedKey={selectedKeyPerson}
+                useComboBoxAsMenuWidth={true}
+                onRenderOption={_onRenderPersonOption}   
+                onInputValueChange={_onInputComboBoxPersonValueChange}      
+                styles={basicComboBoxStyles}           
+                errorMessage={error && 'harus diisi'}
+                onChange={_onHandleOnChangePersonComboBox}
+                disabled={mode == 'delete' ? true:disableForm}
+              />
             )}
         />
         <Controller 
@@ -564,19 +580,20 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
               field: {onChange, onBlur}, 
               fieldState: { error }
             }) => (
-            <ComboBox
-                  label="Jabatan"
-                  placeholder="ketik jabatan untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsJabatan != undefined ? optionsJabatan:[]}
-                  selectedKey={selectedKeyJabatan}
-                  useComboBoxAsMenuWidth={true}
-                  onInputValueChange={_onInputComboBoxJabatanValueChange}      
-                  styles={basicComboBoxStyles}           
-                  errorMessage={error && 'harus diisi'}
-                  onChange={_onHandleOnChangeJabatanComboBox}
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
+              <ComboBox
+                componentRef={comboBoxJabatanRef}
+                label="Jabatan"
+                placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                allowFreeform={true}
+                options={optionsJabatan != undefined ? optionsJabatan:[]}
+                selectedKey={selectedKeyJabatan}
+                useComboBoxAsMenuWidth={true}
+                onInputValueChange={_onInputComboBoxJabatanValueChange}      
+                styles={basicComboBoxStyles}           
+                errorMessage={error && 'harus diisi'}
+                onChange={_onHandleOnChangeJabatanComboBox}
+                disabled={mode == 'delete' ? true:disableForm}
+              />
             )}
         />
         <PrimaryButton 

@@ -130,8 +130,8 @@ export const StatusWaliSchema = object({
 });
 
 export const JabatanSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
+    id: z.string(),
+    nama: z.string(),
 })
 
 export const PenanggungJawabSchema =  object({
@@ -184,7 +184,7 @@ export const DokumenNibSchema = DokumenSchema.extend({
 
 export const PegawaiSchema = DokumenSchema.extend({
     id: z.string().nullable(),
-    registerPerusahaan: RegisterPerusahaanSchema.nullable(),
-    person: PersonSchema.nullable(),
-    jabatan: JabatanSchema.nullable()
+    registerPerusahaan: RegisterPerusahaanSchema.pick({id: true}),
+    person: PersonSchema.pick({nik: true}),
+    jabatan: JabatanSchema.pick({id:true})
 });
