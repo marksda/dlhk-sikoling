@@ -79,7 +79,7 @@ export const MasterBackEnd: FC = () => {
                 }, 
                 {
                     key: 'identiras',
-                    name: 'Identitas',
+                    name: 'Register',
                     icon: 'Album',
                     onClick: undefined,
                     subMenuProps: {
@@ -94,7 +94,7 @@ export const MasterBackEnd: FC = () => {
                             },               
                             {
                                 key: 'pemrakarsa',
-                                name: 'Register perusahaan',
+                                name: 'Perusahaan',
                                 iconProps: {iconName:'CityNext'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pemrakarsa');
@@ -102,7 +102,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'pegawai',
-                                name: 'Pegawai perusahaan',
+                                name: 'Pegawai',
                                 iconProps: {iconName:'ManagerSelfService'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pegawai');
@@ -592,7 +592,7 @@ export const MasterBackEnd: FC = () => {
                             ],
                         }
                     }
-                    title="Pegawai perusahaan"
+                    title="Pegawai"
                 />;
                 break;
                 case 'pelaku_usaha':
@@ -628,7 +628,7 @@ export const MasterBackEnd: FC = () => {
                                 ],
                             }
                         }
-                        title="Register perusahaan"
+                        title="Perusahaan"
                     />;
                 break;
                 case 'posisi_tahap_pemberkasan':

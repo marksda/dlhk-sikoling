@@ -1,5 +1,5 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Selection, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Selection, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets, ComboBox, IComboBox, IComboBoxOption } from "@fluentui/react";
 import { flipFormatDate } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
@@ -237,10 +237,26 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                 );
             },
             isPadded: true,
-        }
+        },
+        { 
+            key: 'statusVerifikasi', 
+            name: 'Approved', 
+            minWidth: 40, 
+            maxWidth: 40, 
+            isResizable: false,            
+            onRender: (item: IItemRegisterPerusahaan) => {
+                return (
+                    <span>{
+                        item.statusVerifikasi != undefined ? item.statusVerifikasi == true ? 'Sudah':'Belum': null 
+                    }</span>
+                );
+            },
+            isPadded: true,
+        },
     ]);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
+    const [selectedKeyApproved, setSelectedKeyApproved] = useState<string|undefined|null>(undefined);
     // rtk hook state
     const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryParams);
     const { data: postsJumlahDataRegisterPerusahaan, isLoading: isLoadingCountPosts } = useGetJumlahDataRegisterPerusahaanQuery(queryFilters);
@@ -314,6 +330,80 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
     const _getKey = useCallback(
         (item: any, index?: number): string => {
             return item.key;
+        },
+        []
+    );
+
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {            
+            if(newValue!.length > 2) {
+                setCurrentPage(1);
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'nama',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'nama',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+    
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'nama',
+                                    value: newValue!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'nama',
+                                    value: newValue!
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+            } 
+            else if(newValue!.length == 0) {
+                _onClearSearch();
+            }
         },
         []
     );
@@ -661,6 +751,12 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                         filters?.splice(found, 1);
                     }
 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerifikasi'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
                     tmp.filters = filters;
 
                     return tmp;
@@ -676,6 +772,12 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerifikasi'}) as number;
+                    
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
 
                     tmp.pageNumber = 1;
                     tmp.filters = filters;
@@ -685,6 +787,7 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
             );                
 
             setNpwpTerparsing(undefined);
+            setSelectedKeyApproved(undefined);
         },
         []
     );
@@ -698,6 +801,64 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
             setIsModalSelection(checked!);  
         },
         [selection]
+    );
+
+    const _onHandleOnChangeApproved = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerifikasi'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'statusVerifikasi',
+                            value: option?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'statusVerifikasi',
+                            value: option?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerifikasi'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'statusVerifikasi',
+                            value: option?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'statusVerifikasi',
+                            value: option?.key as string
+                        })
+                    }                    
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setSelectedKeyApproved(option?.key as string);
+        },
+        []
     );
 
     return (
@@ -737,6 +898,7 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 /> 
@@ -803,6 +965,17 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                                 value={npwpTerparsing}
                                 onChange={_onChangeSearchNpwpMasked}
                             />     
+                        </Stack.Item>                        
+                        <Stack.Item>
+                            <ComboBox
+                                label="Approved"
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={[{ key: 'false', text: 'Belum'}, { key: 'true', text: 'Sudah'}]}
+                                selectedKey={selectedKeyApproved == undefined ? null:selectedKeyApproved}
+                                useComboBoxAsMenuWidth={true}     
+                                onChange={_onHandleOnChangeApproved}
+                            />
                         </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 
