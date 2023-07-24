@@ -4,13 +4,12 @@ import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetDaftarPelakuUsahaByFiltersQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
-import find from "lodash.find";
 import { parseNpwp } from "../../features/config/helper-function";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
-import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usaha";
 import { RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
-import { useGetDaftarDataModelPerizinanQuery, useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 import cloneDeep from "lodash.clonedeep";
+import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
 
 interface IFormulirRegisterPerusahaanFluentUIProps {
@@ -28,6 +27,7 @@ const contentStyles = mergeStyleSets({
     display: 'flex',
     flexFlow: 'column nowrap',
     alignItems: 'stretch',
+    minWidth: 450
   },
   header: [
     // eslint-disable-next-line deprecation/deprecation
@@ -76,10 +76,38 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     //local state
     const [selectedKeyModelPerizinan, setSelectedKeyModelPerizinan] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.modelPerizinan?.id!:undefined);
     const [selectedKeySkalaUsaha, setSelectedKeySkalaUsaha] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.skalaUsaha?.id!:undefined);
+    const [selectedKeyKategoriPelakuUsaha, setSelectedKeyKategoriPelakuUsaha] = useState<string|null|undefined>(dataLama != undefined ? dataLama.perusahaan?.pelakuUsaha?.kategoriPelakuUsaha?.id!:undefined);
     const [selectedKeyPelakuUsaha, setSelectedKeyPelakuUsaha] = useState<string|null|undefined>(dataLama != undefined ? dataLama.perusahaan?.pelakuUsaha?.id!:undefined);
-    const [kategoriPelakuUsaha, setKategoriPelakuUsaha] = useState<IKategoriPelakuUsaha|undefined>(undefined);
-    const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
-    const [badanUsaha, setBadanUsaha] = useState<string|undefined>(undefined); 
+    const [queryKategoriPelakuUsahaParams, setQueryKategoriPelakuUsahaParams] = useState<IQueryParamFilters>({
+      pageNumber: 1,
+      pageSize: 0,
+      filters: dataLama != undefined ? [{
+        fieldName: 'id_skala_usaha',
+        value: dataLama.perusahaan?.skalaUsaha?.id!
+      }]:[],
+      sortOrders: [
+          {
+              fieldName: 'nama',
+              value: 'ASC'
+          },
+      ],
+    });
+    const [queryPelakuUsahaParams, setQueryPelakuUsahaParams] = useState<IQueryParamFilters>({
+      pageNumber: 1,
+      pageSize: 0,
+      filters: dataLama != undefined ? [{
+        fieldName: 'kategori_pelaku_usaha',
+        value: dataLama.perusahaan?.pelakuUsaha?.kategoriPelakuUsaha?.id!
+      }]:[],
+      sortOrders: [
+          {
+              fieldName: 'nama',
+              value: 'ASC'
+          },
+      ],
+    });
+    const [npwpPerusahaan, setNpwpPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.id!:undefined);
+    const [badanUsaha, setBadanUsaha] = useState<string|null|undefined>(dataLama != undefined ? dataLama.perusahaan?.pelakuUsaha?.singkatan!:undefined); 
     const [namaTFValue, setNamaTFValue] = useState<string>('');  
     const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
     const titleId = useId('title');
@@ -97,7 +125,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
       sortOrders: [
         {
           fieldName: 'nama',
-          value: 'ASC'
+          value: 'DES'
         },
       ],
     });
@@ -112,22 +140,8 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
           },
       ],
     });
-    const { data: postsPelakuUsaha, isLoading: isLoadingPostsPelakuUsaha } = useGetDaftarPelakuUsahaByFiltersQuery(
-      {
-        pageNumber: 1,
-        pageSize: 50,
-        filters: [],
-        sortOrders: [
-            {
-                fieldName: 'nama',
-                value: 'ASC'
-            },
-        ],
-      },
-      {
-        skip: selectedKeySkalaUsaha == undefined ? true:false
-      }
-    );  
+    const { data: postsKategoriPelakuUsaha, isLoading: isLoadingPostsKategoriPelakuUsaha } = useGetDaftarDataKategoriPelakuUsahaQuery(queryKategoriPelakuUsahaParams, {skip: selectedKeySkalaUsaha == null ? true:false}); 
+    const { data: postsPelakuUsaha, isLoading: isLoadingPostsPelakuUsaha } = useGetDaftarPelakuUsahaByFiltersQuery(queryPelakuUsahaParams, {skip: selectedKeyKategoriPelakuUsaha == undefined ? true:false});  
 
     const dragOptions = useMemo(
       (): IDragOptions => ({
@@ -143,12 +157,12 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     const optionsModelPerizinan: IComboBoxOption[]|undefined = useMemo(
       () => (
         postsModelPerizinan?.map((item):IComboBoxOption => {
-                return {
-                  key: item.id!,
-                  text: item.singkatan!,
-                  data: item
-                };
-              })
+          return {
+            key: item.id!,
+            text: item.singkatan!,
+            data: item
+          };
+        })
       ),
       [postsModelPerizinan]
     );
@@ -156,62 +170,190 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     const optionsSkalaUsaha: IComboBoxOption[]|undefined = useMemo(
       () => (
         postsSkalaUsaha?.map((item):IComboBoxOption => {
-                return {
-                  key: item.id!,
-                  text: item.nama!,
-                  data: item
-                };
-              })
+          return {
+            key: item.id!,
+            text: item.singkatan!,
+            data: item
+          };
+        })
       ),
       [postsSkalaUsaha]
+    );
+
+    const optionsKategoriPelakuUsaha: IComboBoxOption[]|undefined = useMemo(
+      () => (
+        postsKategoriPelakuUsaha?.map((item):IComboBoxOption => {
+          return {
+            key: item.id!,
+            text: item.nama!,
+            data: item
+          };
+        })
+      ),
+      [postsKategoriPelakuUsaha]
     );
 
     const optionsPelakuUsaha: IComboBoxOption[]|undefined = useMemo(
       () => (
         postsPelakuUsaha?.map((item):IComboBoxOption => {
-                return {
-                  key: item.id!,
-                  text: item.nama!,
-                  data: item
-                };
-              })
+          return {
+            key: item.id!,
+            text: `${item.nama!} (${item.singkatan!})`,
+            data: item
+          };
+        })
       ),
       [postsPelakuUsaha]
     );
 
     const _onHandleOnChangeModelPerizinanDropDown = useCallback(
       (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
-          let modelPerizinan = cloneDeep(postsModelPerizinan?.at(index!));
-  
-          setValue('perusahaan.modelPerizinan', modelPerizinan!);
-          setSelectedKeyModelPerizinan(option?.key as string);
-        },
-        [postsModelPerizinan]
+        let modelPerizinan = cloneDeep(postsModelPerizinan?.at(index!));
+
+        setValue('perusahaan.modelPerizinan', modelPerizinan!);
+        setSelectedKeyModelPerizinan(option?.key as string);
+      },
+      [postsModelPerizinan]
     );
 
     const _onHandleOnChangeSkalaUsahaDropDown = useCallback(
       (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
+          _resetKategoriPelakuUsaha();
           let skalaUsaha = cloneDeep(postsSkalaUsaha?.at(index!));
-  
+          setQueryKategoriPelakuUsahaParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;     
+                                                    
+                if(found == -1) {
+                    filters?.push({
+                        fieldName: 'id_skala_usaha',
+                        value: option?.key as string
+                    });
+                }
+                else {
+                    filters?.splice(found, 1, {
+                        fieldName: 'id_skala_usaha',
+                        value: option?.key as string
+                    })
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+          );
           setValue('perusahaan.skalaUsaha', skalaUsaha!);
           setSelectedKeySkalaUsaha(option?.key as string);
-        },
-        [postsSkalaUsaha]
+      },
+      [postsSkalaUsaha]
+    );
+
+    const _resetKategoriPelakuUsaha = useCallback(
+      () => {
+        _resetPelakuUsaha();
+        setSelectedKeyKategoriPelakuUsaha(null);
+      },
+      []
+    );
+
+    const _resetPelakuUsaha = useCallback(
+      () => {
+        _resetNpwpPerusahaan()
+        resetField("perusahaan.pelakuUsaha");
+        setSelectedKeyPelakuUsaha(null);
+      },
+      []
+    );
+
+    const _resetNpwpPerusahaan = useCallback(
+      () => {
+        resetField("perusahaan.id");
+        setNpwpPerusahaan(undefined);
+      },
+      []
+    );
+
+    const _onHandleOnChangeKategoriPelakuUsahaDropDown = useCallback(
+      (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {        
+        // console.log(option?.key);
+        _resetPelakuUsaha();
+        _resetNpwpPerusahaan();
+
+        setQueryPelakuUsahaParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;     
+                                                  
+              if(found == -1) {
+                  filters?.push({
+                      fieldName: 'kategori_pelaku_usaha',
+                      value: option?.key as string
+                  });
+              }
+              else {
+                  filters?.splice(found, 1, {
+                      fieldName: 'kategori_pelaku_usaha',
+                      value: option?.key as string
+                  })
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+        );
+        setSelectedKeyKategoriPelakuUsaha(option?.key as string);
+      },
+      [postsPelakuUsaha]
     );
 
     const _onHandleOnChangePelakuUsahaDropDown = useCallback(
       (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
-          let pelakuUsaha = cloneDeep(postsPelakuUsaha?.at(index!));
-  
+          let pelakuUsaha = cloneDeep(postsPelakuUsaha?.at(index!));  
           setValue('perusahaan.pelakuUsaha', pelakuUsaha!);
           setSelectedKeyPelakuUsaha(option?.key as string);
+          setBadanUsaha(pelakuUsaha?.singkatan!);
         },
         [postsPelakuUsaha]
     );
 
-    const _onChangeNamaTF = useCallback(
+    const _onHandleOnChangeTextFieldNpwpPribadi = useCallback(
+      (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+        // setNamaTFValue(newValue || '');
+        setNpwpPerusahaan(newValue);
+
+        if(newValue?.length as number > 0) {
+          setValue('perusahaan.id', newValue);
+        }
+        else {
+          resetField('perusahaan.id');
+        }
+      },
+      []
+    );
+
+    const _onHandleOnChangeTextFieldNpwpBadan = useCallback(
+      (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+        let hasilParse = parseNpwp(newValue||'');
+        setNpwpPerusahaan(newValue||'');
+
+        if(hasilParse?.length as number > 0) {
+          setValue('perusahaan.id', hasilParse);
+        }
+        else {
+          resetField('perusahaan.id');
+        }
+      },
+      []
+    );
+
+    const _onHandleOnChangeTextFieldNamaPerusahaan = useCallback(
       (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setNamaTFValue(newValue || '');
+        setValue('perusahaan.nama', newValue!);
       },
       []
     );
@@ -271,9 +413,18 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
                     options={ optionsSkalaUsaha != undefined ? optionsSkalaUsaha:[]}
                     onChange={_onHandleOnChangeSkalaUsahaDropDown}
                     selectedKey={selectedKeySkalaUsaha != undefined ? selectedKeySkalaUsaha:null}
+                    disabled={selectedKeyModelPerizinan == undefined ? true:false}
                     errorMessage={error && 'harus diisi'}
                   />
               )}
+          />
+          <Dropdown
+            label="Jenis pelaku usaha"
+            placeholder="--Pilih--"
+            options={ optionsKategoriPelakuUsaha != undefined ? optionsKategoriPelakuUsaha:[]}
+            onChange={_onHandleOnChangeKategoriPelakuUsahaDropDown}
+            selectedKey={selectedKeyKategoriPelakuUsaha != undefined ? selectedKeyKategoriPelakuUsaha:null}
+            disabled={selectedKeySkalaUsaha == undefined ? true:false}
           />
           <Controller 
             name="perusahaan.pelakuUsaha"
@@ -284,13 +435,13 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
                 fieldState: { error }
               }) => (
                   <Dropdown
-                    label="Badan usaha"
+                    label="Pelaku usaha"
                     placeholder="--Pilih--"
                     options={ optionsPelakuUsaha != undefined ? optionsPelakuUsaha:[]}
                     onChange={_onHandleOnChangePelakuUsahaDropDown}
                     selectedKey={selectedKeyPelakuUsaha != undefined ? selectedKeyPelakuUsaha:null}
                     errorMessage={error && 'harus diisi'}
-                    disabled={selectedKeySkalaUsaha == undefined ? true:false}
+                    disabled={selectedKeyKategoriPelakuUsaha == undefined ? true:false}
                   />
               )}
           />
@@ -301,26 +452,29 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
               ({
                 field: {onChange}, 
                 fieldState: { error }
-              }) => (
-                  <MaskedTextField 
-                    label={`NPWP ${(kategoriPelakuUsaha?.id ==  '0101' || kategoriPelakuUsaha?.id ==  '0201') ? 'Pribadi':'Badan'}`}
+              }) => {
+                if(selectedKeyKategoriPelakuUsaha ==  '0101' || selectedKeyKategoriPelakuUsaha ==  '0201') { //pribadi
+                  return <TextField 
+                    label="NPWP pribadi"
+                    placeholder="isi dengan nik sesuai dengan ktp"
+                    value={npwpPerusahaan != undefined ? npwpPerusahaan:''}
+                    onChange={_onHandleOnChangeTextFieldNpwpPribadi}
+                    disabled={selectedKeyPelakuUsaha == undefined ? true:false}
+                    errorMessage={error && (error?.type == "invalid_type"? 'Harus diisi':error.message)}
+                  />;                  
+                }
+                else {
+                  return <MaskedTextField 
+                    label='NPWP badan'
                     mask="99.999.999.9-999.999"
-                    onChange={
-                      (e, i) => {
-                        let hasil = parseNpwp(i as string);
-                        if (hasil.length == 15) {
-                          setNpwpTerparsing(hasil);
-                          onChange(hasil);
-                        }
-                        else {
-                          npwpTerparsing != undefined ? setNpwpTerparsing(undefined):null;
-                        }
-                      }
-                    }
-                    disabled={kategoriPelakuUsaha == undefined ? true:false}
-                    errorMessage={error && 'Harus diisi'}
-                  />          
-              )}
+                    value={npwpPerusahaan != undefined ? npwpPerusahaan:''}
+                    onChange={_onHandleOnChangeTextFieldNpwpBadan}
+                    disabled={selectedKeyPelakuUsaha == undefined ? true:false}
+                    errorMessage={error && (error?.type == "invalid_type"? 'Harus diisi':error.message)}
+                  />
+                }                            
+              }
+            }
           />
           <Controller 
             name="perusahaan.nama"
@@ -331,11 +485,12 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
                 fieldState: { error }
               }) => (
                 <TextField 
-                  label="Nama"
+                  label="Nama perusahaan"
                   prefix={badanUsaha == undefined ? "": `${badanUsaha}.`}
                   value={namaTFValue}
-                  onChange={_onChangeNamaTF}
-                  disabled={npwpTerparsing == undefined ? true:false}
+                  onChange={_onHandleOnChangeTextFieldNamaPerusahaan}
+                  disabled={npwpPerusahaan == undefined ? true:false}
+                  errorMessage={error && 'Harus diisi'}
                 />
               )}
           />              

@@ -96,8 +96,8 @@ export const PelakuUsahaSchema = object({
 });
 
 export const PerusahaanSchema = object({
-    id: z.string().length(15, 'Format npwp salah'),
-    nama: z.string().min(1, "Harus diisi"),    
+    id: z.string().regex(/^\d+$/, 'tidak boleh ada abjad').min(15, 'minimal 15 digit'),
+    nama: z.string().min(3, "Harus diisi"),    
     modelPerizinan: ModelPerizinanSchema.pick({id: true}),
     skalaUsaha: SkalaUsahaSchema.pick({id: true}),
     pelakuUsaha: PelakuUsahaSchema.pick({id: true}),

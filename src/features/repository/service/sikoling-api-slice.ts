@@ -13,11 +13,13 @@ import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
 import { IJabatan } from "../../entity/jabatan";
 import { IModelPerizinan } from "../../entity/model-perizinan";
 import { ISkalaUsaha } from "../../entity/skala-usaha";
+import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
+import { IPelakuUsaha } from "../../entity/pelaku-usaha";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha'],
+    tagTypes: ['Desa', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriPelakuUsaha', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -487,9 +489,9 @@ export const sikolingApi = createApi({
                 invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
             }),
             deleteSkalaUsaha: builder.mutation<Partial<ISkalaUsaha>, Partial<ISkalaUsaha>>({
-                query(id) {
+                query(skalaUsaha) {
                   return {
-                    url: `/skala_usaha/${id}`,
+                    url: `/skala_usaha/${skalaUsaha.id}`,
                     method: 'DELETE',
                   }
                 },
@@ -501,6 +503,86 @@ export const sikolingApi = createApi({
             }),
             getJumlahDataSkalaUsaha: builder.query<number, qFilters>({
                 query: (queryFilters) => `/skala_usaha/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            saveKategoriPelakuUsaha: builder.mutation<IKategoriPelakuUsaha, Partial<IKategoriPelakuUsaha>>({
+                query: (kategoriPelakuUsaha) => ({
+                    url: '/kategori_pelaku_usaha',
+                    method: 'POST',
+                    body: kategoriPelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
+            }),
+            updateKategoriPelakuUsaha: builder.mutation<void, Partial<IKategoriPelakuUsaha>>({
+                query: (kategoriPelakuUsaha) => ({
+                    url: '/kategori_pelaku_usaha',
+                    method: 'PUT',
+                    body: kategoriPelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
+            }),
+            updateIdKategoriPelakuUsaha: builder.mutation<void, {id: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
+                query: ({id, kategoriPelakuUsaha}) => ({
+                    url: `/kategori_pelaku_usaha/id/${id}`,
+                    method: 'PUT',
+                    body: kategoriPelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
+            }),
+            deleteKategoriPelakuUsaha: builder.mutation<Partial<IKategoriPelakuUsaha>, Partial<IKategoriPelakuUsaha>>({
+                query(kategoriPelakuUsaha) {
+                  return {
+                    url: `kategori_pelaku_usaha/${kategoriPelakuUsaha.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
+            }),
+            getDaftarDataKategoriPelakuUsaha: builder.query<IKategoriPelakuUsaha[], IQueryParamFilters>({
+                query: (queryParams) => `kategori_pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['KategoriPelakuUsaha'],
+            }),
+            getJumlahDataKategoriPelakuUsaha: builder.query<number, qFilters>({
+                query: (queryFilters) => `kategori_pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            savePelakuUsaha: builder.mutation<IPelakuUsaha, Partial<IPelakuUsaha>>({
+                query: (pelakuUsaha) => ({
+                    url: '/pelaku_usaha',
+                    method: 'POST',
+                    body: pelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
+            }),
+            updatePelakuUsaha: builder.mutation<void, Partial<IPelakuUsaha>>({
+                query: (pelakuUsaha) => ({
+                    url: `pelaku_usaha/${pelakuUsaha.id}`,
+                    method: 'PUT',
+                    body: pelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
+            }),
+            updateIdPelakuUsaha: builder.mutation<void, {id: string; pelakuUsaha: IPelakuUsaha}>({
+                query: ({id, pelakuUsaha}) => ({
+                    url: `/pelaku_usaha/id/${id}`,
+                    method: 'PUT',
+                    body: pelakuUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
+            }),
+            deletePelakuUsaha: builder.mutation<Partial<IPelakuUsaha>, Partial<IPelakuUsaha>>({
+                query(pelakuUsaha) {
+                  return {
+                    url: `/pelaku_usaha/${pelakuUsaha.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
+            }),
+            getDaftarDataPelakuUsaha: builder.query<IPelakuUsaha[], IQueryParamFilters>({
+                query: (queryParams) => `/pelaku_usaha?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['PelakuUsaha'],
+            }),
+            getJumlahDataPelakuUsaha: builder.query<number, qFilters>({
+                query: (queryFilters) => `/pelaku_usaha/count?filters=${JSON.stringify(queryFilters)}`,
             }),
         }
     }
@@ -532,4 +614,6 @@ export const {
     useDeleteModelPerizinanMutation, useGetDaftarDataModelPerizinanQuery, useGetJumlahDataModelPerizinanQuery,
     useSaveSkalaUsahaMutation, useUpdateSkalaUsahaMutation, useUpdateIdSkalaUsahaMutation,
     useDeleteSkalaUsahaMutation, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataSkalaUsahaQuery,
+    useSaveKategoriPelakuUsahaMutation, useUpdateKategoriPelakuUsahaMutation, useUpdateIdKategoriPelakuUsahaMutation,
+    useDeleteKategoriPelakuUsahaMutation, useGetDaftarDataKategoriPelakuUsahaQuery, useGetJumlahDataKategoriPelakuUsahaQuery,
 } = sikolingApi;

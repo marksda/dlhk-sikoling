@@ -8,7 +8,6 @@ import { OtoritasApiSlice } from "../features/repository/service/otoritas-api-sl
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
-import { KategoriPelakuUsahaApiSlice } from "../features/repository/service/kategori-pelaku-usaha-api-slice";
 import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
 import perusahaanReducer from "../features/repository/ssot/perusahaan-slice";
 import kategoriDokumenReducer from "../features/repository/ssot/kategori-dokumen-slice";
@@ -48,7 +47,6 @@ export const store = configureStore({
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
-        [KategoriPelakuUsahaApiSlice.reducerPath]: KategoriPelakuUsahaApiSlice.reducer,   
         [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
         perusahaan: perusahaanReducer,
         kategoriDokumen: kategoriDokumenReducer,
@@ -79,7 +77,6 @@ export const store = configureStore({
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(OtoritasApiSlice.middleware)
                                             .concat(TokenApiSlice.middleware)
-                                            .concat(KategoriPelakuUsahaApiSlice.middleware)
                                             .concat(PelakuUsahaApiSlice.middleware)
                                             .concat(KategoriDokumenApiSlice.middleware)
                                             .concat(DokumenApiSlice.middleware)

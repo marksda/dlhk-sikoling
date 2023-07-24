@@ -986,13 +986,15 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                     </Stack>
                 </Callout>                
             }
-            <FormulirRegisterPerusahaan 
-                title={formulirTitle}
-                isModalOpen={isModalFormulirRegisterPerusahaanOpen}
-                hideModal={hideModalFormulirRegisterPerusahaan}
-                mode={modeForm}
-                dataLama={dataLama}
-            />
+            { isModalFormulirRegisterPerusahaanOpen == true ?
+                <FormulirRegisterPerusahaan 
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirRegisterPerusahaanOpen}
+                    hideModal={hideModalFormulirRegisterPerusahaan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />:null
+            }
         </Stack>
     );
 };
