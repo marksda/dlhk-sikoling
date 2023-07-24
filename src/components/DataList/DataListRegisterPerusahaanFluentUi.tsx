@@ -5,7 +5,7 @@ import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
-import { FormulirPerusahaan } from "../Formulir/formulir-perusahaan";
+import { FormulirRegisterPerusahaan } from "../Formulir/formulir-register-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
@@ -121,7 +121,6 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
     const [dataLama, setDataLama]= useState<IRegisterPerusahaan|undefined>(undefined);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
-    const [isModalFormulirPerusahaanOpen, { setTrue: showModalFormulirPerusahaan, setFalse: hideModalFormulirPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -987,11 +986,12 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                     </Stack>
                 </Callout>                
             }
-            <FormulirPerusahaan 
+            <FormulirRegisterPerusahaan 
                 title={formulirTitle}
-                isModalOpen={isModalFormulirPerusahaanOpen}
-                showModal={showModalFormulirPerusahaan}
-                hideModal={hideModalFormulirPerusahaan}
+                isModalOpen={isModalFormulirRegisterPerusahaanOpen}
+                hideModal={hideModalFormulirRegisterPerusahaan}
+                mode={modeForm}
+                dataLama={dataLama}
             />
         </Stack>
     );

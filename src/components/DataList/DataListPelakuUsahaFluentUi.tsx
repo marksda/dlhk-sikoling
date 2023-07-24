@@ -3,9 +3,9 @@ import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarPelakuUsahaByFiltersQuery, useGetTotalCountPelakuUsahaQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
-import { useGetAllSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPelakuUsaha } from "../../features/entity/pelaku-usaha";
+import { useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -175,7 +175,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPelakuUsahaQuery(queryFilters);
     const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarPelakuUsahaByFiltersQuery(queryParams); 
-    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetAllSkalaUsahaQuery(queryParams);    
+    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery(queryParams);    
     
 
     const _getKey = useCallback(

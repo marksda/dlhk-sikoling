@@ -1,26 +1,26 @@
-import { ContextualMenu, Dropdown, FontWeights, IDragOptions, IDropdownOption, IIconProps, IconButton, MaskedTextField, Modal, PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ContextualMenu, Dropdown, FontWeights, IComboBoxOption, IDragOptions, IDropdownOption, IIconProps, IconButton, MaskedTextField, Modal, PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { z } from "zod";
-import { PerusahaanSchema, RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IModelPerizinan, useGetAllModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
-import { ISkalaUsaha, useGetAllSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
 import { useGetDaftarPelakuUsahaByFiltersQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
 import find from "lodash.find";
-import { IPelakuUsaha } from "../../features/perusahaan/pelaku-usaha-slice";
-import { IKategoriPelakuUsaha } from "../../features/repository/ssot/kategori-pelaku-usaha-slice";
 import { parseNpwp } from "../../features/config/helper-function";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usaha";
+import { RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
+import { useGetDaftarDataModelPerizinanQuery, useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import cloneDeep from "lodash.clonedeep";
 
 
-interface IFormulirPerusahaanFluentUIProps {
+interface IFormulirRegisterPerusahaanFluentUIProps {
   title: string|undefined;
+  mode: string|undefined;
   isModalOpen: boolean;
-  showModal: () => void;
+  // showModal: () => void;
   hideModal: () => void;
+  dataLama?: IRegisterPerusahaan;
 };
-type FormSchemaType = z.infer<typeof RegisterPerusahaanSchema>;
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -72,36 +72,36 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal}) => { 
+export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
     //local state
-    const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(undefined);   
-    const [selectedPelakuUsaha, setSelectedPelakuUsaha] = useState<IDropdownOption|null|undefined>(undefined);
+    const [selectedKeyModelPerizinan, setSelectedKeyModelPerizinan] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.modelPerizinan?.id!:undefined);
+    const [selectedKeySkalaUsaha, setSelectedKeySkalaUsaha] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.skalaUsaha?.id!:undefined);
+    const [selectedKeyPelakuUsaha, setSelectedKeyPelakuUsaha] = useState<string|null|undefined>(dataLama != undefined ? dataLama.perusahaan?.pelakuUsaha?.id!:undefined);
     const [kategoriPelakuUsaha, setKategoriPelakuUsaha] = useState<IKategoriPelakuUsaha|undefined>(undefined);
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [badanUsaha, setBadanUsaha] = useState<string|undefined>(undefined); 
     const [namaTFValue, setNamaTFValue] = useState<string>('');  
     const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
     const titleId = useId('title');
-    const {
-      handleSubmit,
-      control,
-      resetField
-    } = useForm<FormSchemaType>({
+    const { handleSubmit, control, resetField, setValue } = useForm<IRegisterPerusahaan>({
+      defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
+        id: null, tanggalRegistrasi: null, kreator: null, verifikator: null, statusVerifikasi: null   
+      },
       resolver: zodResolver(RegisterPerusahaanSchema),
     });
 
-    const { data: postsModelPerizinan, isLoading: isLoadingPosts } = useGetAllModelPerizinanQuery({
+    const { data: postsModelPerizinan, isLoading: isLoadingPosts } = useGetDaftarDataModelPerizinanQuery({
       pageNumber: 1,
       pageSize: 0,
       filters: [],
       sortOrders: [
-          {
-              fieldName: 'nama',
-              value: 'ASC'
-          },
+        {
+          fieldName: 'nama',
+          value: 'ASC'
+        },
       ],
     });
-    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetAllSkalaUsahaQuery({
+    const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery({
       pageNumber: 1,
       pageSize: 0,
       filters: [],
@@ -115,13 +115,8 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
     const { data: postsPelakuUsaha, isLoading: isLoadingPostsPelakuUsaha } = useGetDaftarPelakuUsahaByFiltersQuery(
       {
         pageNumber: 1,
-        pageSize: 0,
-        filters: [
-          {
-            fieldName: 'skala_usaha',
-            value: selectedSkalaUsaha?.key as string
-          },
-        ],
+        pageSize: 50,
+        filters: [],
         sortOrders: [
             {
                 fieldName: 'nama',
@@ -130,7 +125,7 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
         ],
       },
       {
-        skip: selectedSkalaUsaha == undefined ? true:false
+        skip: selectedKeySkalaUsaha == undefined ? true:false
       }
     );  
 
@@ -145,6 +140,75 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
       [keepInBounds],
     );
 
+    const optionsModelPerizinan: IComboBoxOption[]|undefined = useMemo(
+      () => (
+        postsModelPerizinan?.map((item):IComboBoxOption => {
+                return {
+                  key: item.id!,
+                  text: item.singkatan!,
+                  data: item
+                };
+              })
+      ),
+      [postsModelPerizinan]
+    );
+
+    const optionsSkalaUsaha: IComboBoxOption[]|undefined = useMemo(
+      () => (
+        postsSkalaUsaha?.map((item):IComboBoxOption => {
+                return {
+                  key: item.id!,
+                  text: item.nama!,
+                  data: item
+                };
+              })
+      ),
+      [postsSkalaUsaha]
+    );
+
+    const optionsPelakuUsaha: IComboBoxOption[]|undefined = useMemo(
+      () => (
+        postsPelakuUsaha?.map((item):IComboBoxOption => {
+                return {
+                  key: item.id!,
+                  text: item.nama!,
+                  data: item
+                };
+              })
+      ),
+      [postsPelakuUsaha]
+    );
+
+    const _onHandleOnChangeModelPerizinanDropDown = useCallback(
+      (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
+          let modelPerizinan = cloneDeep(postsModelPerizinan?.at(index!));
+  
+          setValue('perusahaan.modelPerizinan', modelPerizinan!);
+          setSelectedKeyModelPerizinan(option?.key as string);
+        },
+        [postsModelPerizinan]
+    );
+
+    const _onHandleOnChangeSkalaUsahaDropDown = useCallback(
+      (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
+          let skalaUsaha = cloneDeep(postsSkalaUsaha?.at(index!));
+  
+          setValue('perusahaan.skalaUsaha', skalaUsaha!);
+          setSelectedKeySkalaUsaha(option?.key as string);
+        },
+        [postsSkalaUsaha]
+    );
+
+    const _onHandleOnChangePelakuUsahaDropDown = useCallback(
+      (event: FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
+          let pelakuUsaha = cloneDeep(postsPelakuUsaha?.at(index!));
+  
+          setValue('perusahaan.pelakuUsaha', pelakuUsaha!);
+          setSelectedKeyPelakuUsaha(option?.key as string);
+        },
+        [postsPelakuUsaha]
+    );
+
     const _onChangeNamaTF = useCallback(
       (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setNamaTFValue(newValue || '');
@@ -152,8 +216,8 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
       []
     );
 
-    const onSubmit: SubmitHandler<FormSchemaType> = data => console.log(data);
-    const onError: SubmitErrorHandler<FormSchemaType> = error => console.log(error);
+    const onSubmit: SubmitHandler<IRegisterPerusahaan> = data => console.log(data);
+    const onError: SubmitErrorHandler<IRegisterPerusahaan> = error => console.log(error);
     
     return (
       <Modal
@@ -186,19 +250,9 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
                   <Dropdown
                     label="Status OSS"
                     placeholder="--Pilih--"
-                    options={
-                      postsModelPerizinan != undefined ? postsModelPerizinan?.map(
-                            (t) => ({
-                                key: t.id!, 
-                                text: `${t.singkatan}`
-                            })
-                        ) : []
-                    }
-                    onChange={
-                      (e, i) => {
-                        onChange(find(postsModelPerizinan, (t:IModelPerizinan) => t.id == i?.key));
-                      }
-                    }
+                    options={optionsModelPerizinan != undefined ? optionsModelPerizinan:[]}
+                    onChange={_onHandleOnChangeModelPerizinanDropDown}
+                    selectedKey={selectedKeyModelPerizinan != undefined ? selectedKeyModelPerizinan:null}
                     errorMessage={error && 'harus diisi'}
                   />
               )}
@@ -214,23 +268,9 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
                   <Dropdown
                     label="Skala usaha"
                     placeholder="--Pilih--"
-                    options={
-                      postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
-                            (t) => ({
-                                key: t.id!, 
-                                text: `${t.singkatan}`
-                            })
-                        ) : []
-                    }
-                    onChange={
-                      (e, i) => {
-                        setSelectedSkalaUsaha(i);
-                        setSelectedPelakuUsaha(undefined);
-                        setBadanUsaha(undefined);
-                        resetField("perusahaan.pelakuUsaha");
-                        onChange(find(postsSkalaUsaha, (t:ISkalaUsaha) => t.id == i?.key));
-                      }
-                    }
+                    options={ optionsSkalaUsaha != undefined ? optionsSkalaUsaha:[]}
+                    onChange={_onHandleOnChangeSkalaUsahaDropDown}
+                    selectedKey={selectedKeySkalaUsaha != undefined ? selectedKeySkalaUsaha:null}
                     errorMessage={error && 'harus diisi'}
                   />
               )}
@@ -246,26 +286,11 @@ export const FormulirPerusahaan: FC<IFormulirPerusahaanFluentUIProps> = ({title,
                   <Dropdown
                     label="Badan usaha"
                     placeholder="--Pilih--"
-                    options={
-                      postsPelakuUsaha != undefined ? postsPelakuUsaha?.map(
-                            (t) => ({
-                                key: t.id!, 
-                                text: `${t.nama} (${t.singkatan})`
-                            })
-                        ) : []
-                    }
-                    onChange={
-                      (e, i) => {
-                        let tmp:IPelakuUsaha|undefined = find(postsPelakuUsaha, (t:IPelakuUsaha) => t.id == i?.key);
-                        setKategoriPelakuUsaha(tmp?.kategoriPelakuUsaha as IKategoriPelakuUsaha);
-                        setSelectedPelakuUsaha(i);
-                        setBadanUsaha(tmp?.singkatan as string);
-                        onChange(tmp);
-                      }
-                    }
-                    defaultSelectedKey={selectedPelakuUsaha == undefined ? null:selectedPelakuUsaha.key}
+                    options={ optionsPelakuUsaha != undefined ? optionsPelakuUsaha:[]}
+                    onChange={_onHandleOnChangePelakuUsahaDropDown}
+                    selectedKey={selectedKeyPelakuUsaha != undefined ? selectedKeyPelakuUsaha:null}
                     errorMessage={error && 'harus diisi'}
-                    disabled={selectedSkalaUsaha == undefined ? true:false}
+                    disabled={selectedKeySkalaUsaha == undefined ? true:false}
                   />
               )}
           />

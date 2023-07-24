@@ -11,11 +11,13 @@ import { IHakAkses } from "../../entity/hak-akses";
 import { IPegawai } from "../../entity/pegawai";
 import { IRegisterPerusahaan } from "../../entity/register-perusahaan";
 import { IJabatan } from "../../entity/jabatan";
+import { IModelPerizinan } from "../../entity/model-perizinan";
+import { ISkalaUsaha } from "../../entity/skala-usaha";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex'],
+    tagTypes: ['Desa', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'Person', 'Propinsi', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -420,6 +422,86 @@ export const sikolingApi = createApi({
             getJumlahDataJabatan: builder.query<number, qFilters>({
                 query: (queryFilters) => `/jabatan_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveModelPerizinan: builder.mutation<IModelPerizinan, Partial<IModelPerizinan>>({
+                query: (modelPerizinan) => ({
+                    url: '/model_perizinan',
+                    method: 'POST',
+                    modelPerizinan,
+                }),
+                invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong']
+            }),
+            updateModelPerizinan: builder.mutation<void, Partial<IModelPerizinan>>({
+                query: (modelPerizinan) => ({
+                    url: '/model_perizinan',
+                    method: 'PUT',
+                    body: modelPerizinan,
+                }),
+                invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong'],
+            }),
+            updateIdModelPerizinan: builder.mutation<void, {idLama: string; modelPerizinan: IJabatan}>({
+                query: ({idLama, modelPerizinan}) => ({
+                    url: `/model_perizinan/id/${idLama}`,
+                    method: 'PUT',
+                    body: modelPerizinan,
+                }),
+                invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong'],
+            }),
+            deleteModelPerizinan: builder.mutation<Partial<IModelPerizinan>, Partial<IModelPerizinan>>({
+                query(modelPerizinan) {
+                  return {
+                    url: `/model_perizinan/${modelPerizinan.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong'],
+            }),
+            getDaftarDataModelPerizinan: builder.query<IModelPerizinan[], IQueryParamFilters>({
+                query: (queryParams) => `/model_perizinan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['ModelPerizinan'],
+            }),
+            getJumlahDataModelPerizinan: builder.query<number, qFilters>({
+                query: (queryFilters) => `model_perizinan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            saveSkalaUsaha: builder.mutation<ISkalaUsaha, Partial<ISkalaUsaha>>({
+                query: (skalaUsaha) => ({
+                    url: '/skala_usaha',
+                    method: 'POST',
+                    body: skalaUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
+            }),
+            updateSkalaUsaha: builder.mutation<void, Partial<ISkalaUsaha>>({
+                query: (skalaUsaha) => ({
+                    url: '/skala_usaha',
+                    method: 'PUT',
+                    body: skalaUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
+            }),
+            updateIdSkalaUsaha: builder.mutation<void, {id: string; skalaUsaha: ISkalaUsaha}>({
+                query: ({id, skalaUsaha}) => ({
+                    url: `/skala_usaha/id/${id}`,
+                    method: 'PUT',
+                    body: skalaUsaha,
+                }),
+                invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
+            }),
+            deleteSkalaUsaha: builder.mutation<Partial<ISkalaUsaha>, Partial<ISkalaUsaha>>({
+                query(id) {
+                  return {
+                    url: `/skala_usaha/${id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
+            }),
+            getDaftarDataSkalaUsaha: builder.query<ISkalaUsaha[], IQueryParamFilters>({
+                query: (queryParams) => `/skala_usaha?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['SkalaUsaha'],
+            }),
+            getJumlahDataSkalaUsaha: builder.query<number, qFilters>({
+                query: (queryFilters) => `/skala_usaha/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
         }
     }
 });
@@ -446,4 +528,8 @@ export const {
     useDeleteRegisterPerusahaanMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery,
     useSaveJabatanMutation, useUpdateJabatanMutation, useUpdateIdJabatanMutation,
     useDeleteJabatanMutation, useGetDaftarDataJabatanQuery, useGetJumlahDataJabatanQuery,
+    useSaveModelPerizinanMutation, useUpdateModelPerizinanMutation, useUpdateIdModelPerizinanMutation,
+    useDeleteModelPerizinanMutation, useGetDaftarDataModelPerizinanQuery, useGetJumlahDataModelPerizinanQuery,
+    useSaveSkalaUsahaMutation, useUpdateSkalaUsahaMutation, useUpdateIdSkalaUsahaMutation,
+    useDeleteSkalaUsahaMutation, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataSkalaUsahaQuery,
 } = sikolingApi;

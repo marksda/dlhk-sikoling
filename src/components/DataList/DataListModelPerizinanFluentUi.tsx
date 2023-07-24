@@ -1,11 +1,10 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
-import { useGetAllModelPerizinanQuery, useGetTotalCountModelPerizinanQuery } from "../../features/repository/service/model-perizinan-api-slice";
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IModelPerizinan } from "../../features/entity/model-perizinan";
+import { useGetDaftarDataModelPerizinanQuery, useGetJumlahDataModelPerizinanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListModelPerizinanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -128,8 +127,8 @@ export const DataListModelPerizinanFluentUI: FC<IDataListModelPerizinanFluentUIP
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountModelPerizinanQuery(queryFilters);
-    const { data: postsModelPerizinan, isLoading: isLoadingPosts } = useGetAllModelPerizinanQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataModelPerizinanQuery(queryFilters);
+    const { data: postsModelPerizinan, isLoading: isLoadingPosts } = useGetDaftarDataModelPerizinanQuery(queryParams);    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {

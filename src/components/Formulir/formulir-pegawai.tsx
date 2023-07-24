@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption,  IconButton, Modal , PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { PegawaiSchema } from "../../features/schema-resolver/zod-schema";
@@ -56,7 +56,6 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {

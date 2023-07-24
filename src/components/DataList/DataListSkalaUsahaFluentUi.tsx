@@ -2,9 +2,9 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIc
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetAllSkalaUsahaQuery, useGetTotalCountSkalaUsahaQuery } from "../../features/repository/service/skala-usaha-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { ISkalaUsaha } from "../../features/entity/skala-usaha";
+import { useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListSkalaUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -127,8 +127,8 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountSkalaUsahaQuery(queryFilters);
-    const { data: postsSkalaUsaha, isLoading: isLoadingPosts } = useGetAllSkalaUsahaQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataSkalaUsahaQuery(queryFilters);
+    const { data: postsSkalaUsaha, isLoading: isLoadingPosts } = useGetDaftarDataSkalaUsahaQuery(queryParams);    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {
