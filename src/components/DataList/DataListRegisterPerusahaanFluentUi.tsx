@@ -311,8 +311,16 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                         setFormulirTitle('Edit register perusahaan');
                         setModeForm('edit');
                         showModalFormulirRegisterPerusahaan();
-                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key));
-                        console.log(dataTerpilih);
+                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key)) as IRegisterPerusahaan;                        
+                        if(dataTerpilih.kreator == undefined) {
+                            dataTerpilih.kreator = null;
+                        }
+                        if(dataTerpilih.verifikator == undefined) {
+                            dataTerpilih.verifikator = null;
+                        }
+                        if(dataTerpilih.tanggalRegistrasi == undefined) {
+                            dataTerpilih.tanggalRegistrasi = null;
+                        }
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -327,7 +335,16 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                         setFormulirTitle('Hapus pegawai');
                         setModeForm('delete');
                         showModalFormulirRegisterPerusahaan();
-                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key));
+                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key)) as IRegisterPerusahaan;
+                        if(dataTerpilih.kreator == undefined) {
+                            dataTerpilih.kreator = null;
+                        }
+                        if(dataTerpilih.verifikator == undefined) {
+                            dataTerpilih.verifikator = null;
+                        }
+                        if(dataTerpilih.tanggalRegistrasi == undefined) {
+                            dataTerpilih.tanggalRegistrasi = null;
+                        }
                         setDataLama(dataTerpilih);
                     }
                 },

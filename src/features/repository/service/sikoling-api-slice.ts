@@ -346,7 +346,7 @@ export const sikolingApi = createApi({
             }),
             saveRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, Partial<IRegisterPerusahaan>>({
                 query: (registerPerusahaan) => ({
-                    url: '/register_perusahaan',
+                    url: '/register_perusahaan/adm',
                     method: 'POST',
                     body: registerPerusahaan,
                 }),

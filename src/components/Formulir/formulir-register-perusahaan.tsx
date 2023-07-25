@@ -7,7 +7,7 @@ import { useGetDaftarPelakuUsahaByFiltersQuery } from "../../features/repository
 import { parseNpwp } from "../../features/config/helper-function";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
-import { useGetDaftarDataDesaQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataPropinsiQuery, useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterPerusahaanMutation, useGetDaftarDataDesaQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataPropinsiQuery, useGetDaftarDataSkalaUsahaQuery, useSaveRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/sikoling-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
@@ -190,7 +190,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
   const titleId = useId('title');
   const { handleSubmit, control, resetField, setValue } = useForm<IRegisterPerusahaan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
-      id: null, tanggalRegistrasi: null, kreator: null, verifikator: null, statusVerifikasi: null   
+      id: null, tanggalRegistrasi: null, kreator: null, verifikator: null, statusVerifikasi: false   
     },
     resolver: zodResolver(RegisterPerusahaanSchema),
   });
@@ -223,6 +223,10 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
   const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
   const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = useGetDaftarDataKecamatanQuery(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});
   const { data: postsDesa, isLoading: isLoadingPostsDesa } = useGetDaftarDataDesaQuery(queryDesaParams, {skip: selectedKeyKecamatan == null ? true:false});
+  const [ saveRegisterPerusahaan, {isLoading: isLoadingSaveRegisterPerusahaan}] = useSaveRegisterPerusahaanMutation();
+  const [ updateRegisterPerusahaan, {isLoading: isLoadingUpdateRegisterPerusahaan}] = useUpdateRegisterPerusahaanMutation();
+  const [ updateIdRegisterPerusahaan, {isLoading: isLoadingUpdateIdRegisterPerusahaan}] = useUpdateIdRegisterPerusahaanMutation();
+  const [ deleteRegisterPerusahaan, {isLoading: isLoadingDeleteRegisterPerusahaan}] = useDeleteRegisterPerusahaanMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -633,13 +637,58 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     []
   );
   const _onChangeApproved = useCallback(
-    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {              
-        setIsApproved(checked!);  
+    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
+      setValue("statusVerifikasi", checked!);             
+      setIsApproved(checked!);  
     },
     []
 );
 
-  const onSubmit: SubmitHandler<IRegisterPerusahaan> = data => console.log(data);
+  const onSubmit: SubmitHandler<IRegisterPerusahaan> = async (data) => {
+    console.log(data);   
+    setDisableForm(true);
+    try {
+      switch (mode) {
+        case 'add':       
+          await saveRegisterPerusahaan(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
+          break;
+        case 'edit': 
+          if(dataLama?.id == data.id) { //update non id
+            await updateRegisterPerusahaan(data).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            });             
+          }
+          else { //updare id
+            await updateIdRegisterPerusahaan({idLama: `${dataLama?.id}`, registerPerusahaan: data}).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }     
+          hideModal();     
+          break;
+        case 'delete':
+          await deleteRegisterPerusahaan(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
+          break;
+        default:
+          break;
+      }      
+    } catch (error) {
+      setDisableForm(false);
+    }
+  };
   const onError: SubmitErrorHandler<IRegisterPerusahaan> = error => console.log(error);
     
   return (
@@ -860,7 +909,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
                   }) => (
                       <TextField
                           label="Fax."
-                          placeholder="nomor faximile"
+                          placeholder="isi kalau ada nomor faximile"
                           value={faxTextFieldValue}
                           onChange={
                           (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -1043,7 +1092,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
         </Stack>                                    
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
-          text="Simpan" 
+          text={mode == 'delete' ? 'Hapus':'Simpan'} 
           onClick={handleSubmit(onSubmit, onError)}
         />
       </div>

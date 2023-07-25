@@ -85,6 +85,14 @@ export const MasterBackEnd: FC = () => {
                     subMenuProps: {
                         items: [
                             {
+                                key: 'dokumen',
+                                name: 'Dokumen',
+                                iconProps: {iconName:'Boards'},
+                                onClick: () => {
+                                    _onHandleMasterMenu('dokumen');
+                                }
+                            },
+                            {
                                 key: 'identitas_personal',
                                 name: 'Person',
                                 iconProps: { iconName: 'Contact'},
@@ -287,11 +295,11 @@ export const MasterBackEnd: FC = () => {
                                     }
                             },
                             {
-                                key: 'dokumen',
-                                name: 'Jenis okumen',
+                                key: 'jenis_dokumen',
+                                name: 'Jenis dokumen',
                                 iconProps: { iconName: 'Group' },
                                 onClick: () => {
-                                    _onHandleMasterMenu('dokumen');
+                                    _onHandleMasterMenu('jenis_dokumen');
                                 }
                             }
                         ],
@@ -322,24 +330,6 @@ export const MasterBackEnd: FC = () => {
                         }
                     }
                     title="Desa"
-                />;
-                break;
-                case 'dokumen':
-                konten = <DataListDokumenFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 50,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'nama',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Jenis dokumen"
                 />;
                 break;
                 case 'hak_akses':
@@ -377,6 +367,24 @@ export const MasterBackEnd: FC = () => {
                         }
                         title="Person"
                     />;
+                break;
+                case 'jenis_dokumen':
+                konten = <DataListDokumenFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'nama',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Jenis dokumen"
+                />;
                 break;
                 case 'kabupaten':
                 konten = <DataListKabupatenFluentUI
