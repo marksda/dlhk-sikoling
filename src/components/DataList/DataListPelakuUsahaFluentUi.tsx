@@ -2,10 +2,9 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIc
 import { FC, FormEvent, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarPelakuUsahaByFiltersQuery, useGetTotalCountPelakuUsahaQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPelakuUsaha } from "../../features/entity/pelaku-usaha";
-import { useGetDaftarDataSkalaUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -173,8 +172,8 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(null);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountPelakuUsahaQuery(queryFilters);
-    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarPelakuUsahaByFiltersQuery(queryParams); 
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataPelakuUsahaQuery(queryFilters);
+    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarDataPelakuUsahaQuery(queryParams); 
     const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery(queryParams);    
     
 
