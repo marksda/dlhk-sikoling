@@ -3,11 +3,10 @@ import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useGetDaftarPelakuUsahaByFiltersQuery } from "../../features/repository/service/pelaku-usaha-api-slice";
 import { parseNpwp } from "../../features/config/helper-function";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
-import { useDeleteRegisterPerusahaanMutation, useGetDaftarDataDesaQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataPropinsiQuery, useGetDaftarDataSkalaUsahaQuery, useSaveRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterPerusahaanMutation, useGetDaftarDataDesaQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataPropinsiQuery, useGetDaftarDataSkalaUsahaQuery, useSaveRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/sikoling-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
@@ -218,7 +217,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     ],
   });
   const { data: postsKategoriPelakuUsaha, isLoading: isLoadingPostsKategoriPelakuUsaha } = useGetDaftarDataKategoriPelakuUsahaQuery(queryKategoriPelakuUsahaParams, {skip: selectedKeySkalaUsaha == null ? true:false}); 
-  const { data: postsPelakuUsaha, isLoading: isLoadingPostsPelakuUsaha } = useGetDaftarPelakuUsahaByFiltersQuery(queryPelakuUsahaParams, {skip: selectedKeyKategoriPelakuUsaha == undefined ? true:false});  
+  const { data: postsPelakuUsaha, isLoading: isLoadingPostsPelakuUsaha } = useGetDaftarDataPelakuUsahaQuery(queryPelakuUsahaParams, {skip: selectedKeyKategoriPelakuUsaha == undefined ? true:false});  
   const { data: postsPropinsi, isLoading: isLoadingPostsPropinsi } = useGetDaftarDataPropinsiQuery(queryPropinsiParams);
   const { data: postsKabupaten, isLoading: isLoadingPostsKabupaten } = useGetDaftarDataKabupatenQuery(queryKabupatenParams, {skip: selectedKeyPropinsi == null ? true:false});
   const { data: postsKecamatan, isLoading: isLoadingPostsKecamatan } = useGetDaftarDataKecamatanQuery(queryKecamatanParams, {skip: selectedKeyKabupaten == null ? true:false});

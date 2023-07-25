@@ -3,9 +3,9 @@ import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useId } from "@fluentui/react-hooks";
-import { IDokumen } from "../../features/repository/ssot/dokumen-slice";
-import { useGetDaftarDokumentByFilterQuery, useGetTotalCountDokumenQuery } from "../../features/repository/service/dokumen-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IDokumen } from "../../features/entity/dokumen";
+import { useGetDaftarDataDokumenQuery, useGetJumlahDataDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -149,8 +149,8 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
     const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountDokumenQuery(queryFilters);
-    const { data: postsDokumen, isLoading: isLoadingPosts } = useGetDaftarDokumentByFilterQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataDokumenQuery(queryFilters);
+    const { data: postsDokumen, isLoading: isLoadingPosts } = useGetDaftarDataDokumenQuery(queryParams);   
     
 
     const _getKey = useCallback(

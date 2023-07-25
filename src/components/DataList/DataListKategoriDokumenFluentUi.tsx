@@ -2,9 +2,9 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IR
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IDokumen } from "../../features/repository/ssot/dokumen-slice";
-import { useGetKategoriDokumenByFilterQuery, useGetTotalCountKategoriDokumenQuery } from "../../features/repository/service/kategori-dokumen-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IDokumen } from "../../features/entity/dokumen";
+import { useGetDaftarDataKategoriDokumenQuery, useGetJumlahDataKategoriDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListKategoriDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters
@@ -116,8 +116,8 @@ export const DataListKategoriDokumenFluentUI: FC<IDataListKategoriDokumenFluentU
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriDokumenQuery(queryFilters);
-    const { data: postsKategoriDokumen, isLoading: isLoadingPosts } = useGetKategoriDokumenByFilterQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataKategoriDokumenQuery(queryFilters);
+    const { data: postsKategoriDokumen, isLoading: isLoadingPosts } = useGetDaftarDataKategoriDokumenQuery(queryParams);   
     
 
     const _getKey = useCallback(

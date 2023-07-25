@@ -5,7 +5,7 @@ import { IStatusDokumen } from "./status-dokumen";
 export interface IRegisterDokumen {
     id: string|null;
     dokumen: any|null;
-    perusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
+    registerPerusahaan: (Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>)|null;
     lokasiFile: string|null;
     statusDokumen: Partial<IStatusDokumen>|null;
     tanggalRegistrasi: string|null;

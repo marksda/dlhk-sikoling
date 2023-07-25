@@ -10,7 +10,7 @@ import { IOtoritas } from "../entity/otoritas";
 const initialState: IRegisterDokumen = {
     id: null,
     dokumen: null,
-    perusahaan: null,
+    registerPerusahaan: null,
     lokasiFile: null,
     statusDokumen: null,
     tanggalRegistrasi: null,
@@ -24,7 +24,7 @@ export const registerDokumenSlice = createSlice({
     reducers: {
         setRegisterDokumen: (state, action: PayloadAction<IRegisterDokumen>) => {
             state.dokumen = cloneDeep(action.payload.dokumen);
-            state.perusahaan = cloneDeep(action.payload.perusahaan)
+            state.registerPerusahaan = cloneDeep(action.payload.registerPerusahaan)
             state.lokasiFile = action.payload.lokasiFile;
             state.tanggalRegistrasi = action.payload.tanggalRegistrasi;
             state.uploader = cloneDeep(action.payload.uploader);
@@ -33,7 +33,7 @@ export const registerDokumenSlice = createSlice({
             state.dokumen = cloneDeep(action.payload);
         },
         setPerusahaanRegisterDokumen: (state, action: PayloadAction<Pick<IRegisterPerusahaan, 'id'> & Omit<IRegisterPerusahaan, 'id'>>) => {
-            state.perusahaan = cloneDeep(action.payload);
+            state.registerPerusahaan = cloneDeep(action.payload);
         },
         setStatusDokumenRegisterDokumen: (state, action: PayloadAction<Partial<IStatusDokumen>>) => {
             state.statusDokumen = cloneDeep(action.payload);

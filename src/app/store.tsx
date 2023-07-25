@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import jenisKelaminReducer from "../features/repository/ssot/jenis-kelamin-slice";
-import personReducer from "../features/repository/ssot/person-slice";
 import authenticationReducer from "../features/security/authentication-slice";
 import { AuthenticationApiSlice } from "../features/security/authentication-api-slice";
 import authorizationReducer from "../features/security/authorization-slice";
@@ -8,19 +6,10 @@ import { OtoritasApiSlice } from "../features/repository/service/otoritas-api-sl
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
-import { PelakuUsahaApiSlice } from "../features/repository/service/pelaku-usaha-api-slice";
-import perusahaanReducer from "../features/repository/ssot/perusahaan-slice";
-import kategoriDokumenReducer from "../features/repository/ssot/kategori-dokumen-slice";
-import { KategoriDokumenApiSlice } from "../features/repository/service/kategori-dokumen-api-slice";
-import dokumenReducer from "../features/repository/ssot/dokumen-slice";
-import { DokumenApiSlice } from "../features/repository/service/dokumen-api-slice";
-import registerDokumenReducer from "../features/dokumen/register-dokumen-slice";
-import { RegisterDokumenApiSlice } from "../features/dokumen/register-dokumen-api-slice";
 import kbliReducer from "../features/repository/ssot/kbli-slice";
 import { KbliApiSlice } from "../features/repository/service/kbli-api-slice";
 import registerKbliReducer from "../features/repository/ssot/register-kbli-slice";
 import { RegisterKbliApiSlice } from "../features/repository/service/register-kbli-api-slice";
-import registerPerusahaanReducer from "../features/repository/ssot/register-perusahaan-slice";
 import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
@@ -38,8 +27,6 @@ import loginReducer from "../features/login/login-slice";
 
 export const store = configureStore({
     reducer: {
-        jenisKelamin: jenisKelaminReducer,
-        person: personReducer,
         credential: authenticationReducer,
         [AuthenticationApiSlice.reducerPath]: AuthenticationApiSlice.reducer,
         authorization: authorizationReducer,
@@ -47,19 +34,10 @@ export const store = configureStore({
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
-        [PelakuUsahaApiSlice.reducerPath]: PelakuUsahaApiSlice.reducer,
-        perusahaan: perusahaanReducer,
-        kategoriDokumen: kategoriDokumenReducer,
-        [KategoriDokumenApiSlice.reducerPath]: KategoriDokumenApiSlice.reducer,
-        dokumen: dokumenReducer,
-        [DokumenApiSlice.reducerPath]: DokumenApiSlice.reducer,
-        dokumenRegister: registerDokumenReducer,
-        [RegisterDokumenApiSlice.reducerPath]: RegisterDokumenApiSlice.reducer,
         kbli: kbliReducer,
         [KbliApiSlice.reducerPath]: KbliApiSlice.reducer,
         registerKbli: registerKbliReducer,
         [RegisterKbliApiSlice.reducerPath]: RegisterKbliApiSlice.reducer,
-        registerPerusahaan: registerPerusahaanReducer,
         [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
@@ -77,10 +55,6 @@ export const store = configureStore({
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(OtoritasApiSlice.middleware)
                                             .concat(TokenApiSlice.middleware)
-                                            .concat(PelakuUsahaApiSlice.middleware)
-                                            .concat(KategoriDokumenApiSlice.middleware)
-                                            .concat(DokumenApiSlice.middleware)
-                                            .concat(RegisterDokumenApiSlice.middleware)
                                             .concat(KbliApiSlice.middleware)
                                             .concat(RegisterKbliApiSlice.middleware)
                                             .concat(RegisterPermohonanApiSlice.middleware)

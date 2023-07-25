@@ -15,7 +15,7 @@ import { DataListStatusPengurusPermohonanFluentUI } from "../../components/DataL
 import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataList/DataListPosisiTahapPemberkasanFluentUi";
 import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
 import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
-import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluenrUi";
+import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluentUi";
 import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataListKategoriDokumenFluentUi";
 import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMasterKbliFluentUi";
 import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/DataListAutorisasiPerusahaanFluentUi";
@@ -111,7 +111,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'pegawai',
                                 name: 'Pegawai',
-                                iconProps: {iconName:'ManagerSelfService'},
+                                iconProps: {iconName:'WorkforceManagement'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pegawai');
                                 }

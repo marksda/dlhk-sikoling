@@ -1,4 +1,4 @@
-import { IKategoriDokumen } from "../repository/ssot/kategori-dokumen-slice";
+import { IKategoriDokumen } from "./kategori-dokumen";
 
 export interface IDokumen {
     id: string|null;
