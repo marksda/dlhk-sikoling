@@ -17,13 +17,13 @@ export const PropinsiSchema = object({
 export const KabupatenSchema = object({
     id: z.string().nullable(),
     nama: z.string().nullable(),
-    propinsi: PropinsiSchema.nullable(),
+    propinsi: PropinsiSchema.pick({id: true}),
 });
 
 export const KecamatanSchema = object({
     id: z.string().nullable(),
     nama: z.string().nullable(),
-    kabupaten: KabupatenSchema.nullable(),
+    kabupaten: KabupatenSchema.pick({id: true}),
 });
 
 export const DesaSchema = object({
@@ -33,10 +33,10 @@ export const DesaSchema = object({
 });
 
 export const AlamatSchema = object({
-    propinsi: PropinsiSchema.nullable(),
-    kabupaten: KabupatenSchema.nullable(),
-    kecamatan: KecamatanSchema.nullable(),
-    desa: DesaSchema.nullable(),
+    propinsi: PropinsiSchema.pick({id: true}),
+    kabupaten: KabupatenSchema.pick({id: true}),
+    kecamatan: KecamatanSchema.pick({id: true}),
+    desa: DesaSchema.pick({id: true}),
     keterangan: z.string().nullable(),
 });
 

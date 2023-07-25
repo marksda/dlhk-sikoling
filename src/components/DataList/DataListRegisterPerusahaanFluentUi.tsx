@@ -102,13 +102,22 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
 
     const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                            }
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+            );
         },
         []
     );
@@ -299,10 +308,11 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit pegawai');
+                        setFormulirTitle('Edit register perusahaan');
                         setModeForm('edit');
                         showModalFormulirRegisterPerusahaan();
                         let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key));
+                        console.log(dataTerpilih);
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -326,12 +336,12 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         [isSelectedItem, selection, postsRegisterPerusahaan]
     );
 
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
-        },
-        []
-    );
+    // const _getKey = useCallback(
+    //     (item: any, index?: number): string => {
+    //         return item.key;
+    //     },
+    //     []
+    // );
 
     const _onChangeSearchNama = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {            
@@ -929,12 +939,13 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />

@@ -889,7 +889,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
               </p>
             </div>   
           </Stack.Item>
-        </Stack>      
+        </Stack>
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 
