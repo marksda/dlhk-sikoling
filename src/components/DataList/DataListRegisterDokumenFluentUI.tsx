@@ -1,4 +1,4 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles} from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
@@ -6,7 +6,7 @@ import { useBoolean, useId } from "@fluentui/react-hooks";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
 import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { flipFormatDate } from "../../features/config/config";
@@ -23,7 +23,7 @@ const classNames = mergeStyleSets({
     container: {
         width: "100%",
         position: "relative",
-        minHeight: 200,
+        // minHeight: 200,
     },
     gridContainer: {
         height: '100%',
@@ -55,6 +55,17 @@ const toggleStyles = {
         width: '80px',
     },
 };
+const comboBoxStyles: Partial<IComboBoxStyles> = {
+    input: {
+        minWidth: 200
+    }
+};
+
+const comboBoxWrapStyles: Partial<IComboBoxOptionStyles> = {
+    optionText : {
+        textWrap: 'wrap'
+    }
+  };
 
 export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -123,8 +134,9 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         { 
             key: 'tanggalRegistrasi', 
             name: 'Tanggal', 
-            minWidth: 70, 
-            maxWidth: 70, 
+            minWidth: 80, 
+            maxWidth: 80,             
+            isRowHeader: true,
             isResizable: true,             
             isSortedDescending: false,
             isSorted: true,
@@ -134,7 +146,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         },
         { 
-            key: 'registerPerusahaan', 
+            key: 'nama_perusahaan', 
             name: 'Perusahaan', 
             minWidth: 250, 
             maxWidth: 300, 
@@ -161,12 +173,11 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         },
         { 
-            key: 'jenisDokumen', 
+            key: 'nama_dokumen', 
             name: 'Jenis dokumen', 
             minWidth: 200, 
             maxWidth: 200, 
             isResizable: true, 
-            isRowHeader: true,
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemRegisterDokumen) => {
                 return item.dokumen.nama;
@@ -178,7 +189,6 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             name: 'Deskripsi dokumen', 
             minWidth: 180, 
             isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemRegisterDokumen) => {
                 let doc = null;
@@ -199,7 +209,19 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         konten = 
                         <>
                             <span>Tanggal penerbitan : {flipFormatDate(doc.tanggal!)}</span><br /> 
-                            <span>Nomor dokumen : {doc.nomor}</span>
+                            <span>Nib : {doc.nomor}</span><br/>
+                            <span>
+                                Kbli : {
+                                    doc.daftarKbli?.map((t,i) => {
+                                        if(i == 0) {
+                                            return t.kode;
+                                        }
+                                        else {
+                                            return ', ' + t.kode;
+                                        }
+                                    })
+                                }
+                            </span>
                         </>; 
                         break;
                     default:
@@ -215,7 +237,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             name: 'Approved', 
             minWidth: 100, 
             maxWidth: 100, 
-            isResizable: false,            
+            isResizable: false,          
+            onColumnClick: _onHandleColumnClick,  
             onRender: (item: IItemRegisterDokumen) => {
                 return (
                     <span>{
@@ -233,13 +256,22 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
     const [dataLama, setDataLama]= useState<IRegisterDokumen|undefined>(undefined);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
-    const [searchNamaPerusahaan, setSearchNamaPerusahaan] = useState<string|undefined>(undefined);
-    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
-    const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
-    const searchNikId = useId('searchNik');
+    const [selectedKeyApproved, setSelectedKeyApproved] = useState<string|undefined|null>(undefined);
+    const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined|null>(undefined);
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataRegisterDokumenQuery(queryFilters);
     const { data: postsRegisterDokumen, isLoading: isLoadingPosts } = useGetDaftarDataRegisterDokumenQuery(queryParams);  
+    const { data: postsDokumen, isLoading: isLoadingPostsDokumen } = useGetDaftarDataDokumenQuery({
+        pageNumber: 1,
+        pageSize: 0,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+    });
     
     const selection: Selection = useMemo(
         () => {
@@ -305,6 +337,19 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             ];
         }, 
         [isSelectedItem, selection, postsRegisterDokumen]
+    );
+
+    const optionsDokumen: IComboBoxOption[]|undefined = useMemo(
+        () => (
+            postsDokumen?.map((item):IComboBoxOption => {
+                return {
+                key: item.id!,
+                text: item.nama!,
+                data: item
+                };
+            })
+        ),
+        [postsDokumen]
     );
 
     const _onSortColumn = useCallback(
@@ -376,187 +421,15 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         [],
     );
 
-    const _onChangeSearchNamaRegisterDokumen = useCallback(
-        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {            
-            if(newValue!.length > 2) {
-                setCurrentPage(1);
-                setQueryFilters(
-                    prev => {
-                        let tmp = cloneDeep(prev);
-                        let filters = cloneDeep(tmp.filters);
-                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
-                        
-                        if(newValue != '') {
-                            if(found == -1) {
-                                filters?.push({
-                                    fieldName: 'pegawai',
-                                    value: newValue!
-                                });
-                            }
-                            else {
-                                filters?.splice(found, 1, {
-                                    fieldName: 'pegawai',
-                                    value: newValue!
-                                })
-                            }
-                        }
-                        else {
-                            if(found > -1) {
-                                filters?.splice(found, 1);
-                            }
-                        }
-                        
-                        tmp.filters = filters;             
-                        return tmp;
-                    }
-                );
-    
-                setQueryParams(
-                    prev => {
-                        let tmp = cloneDeep(prev);
-                        let filters = cloneDeep(tmp.filters);
-                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
-                        
-                        if(newValue != '') {
-                            if(found == -1) {
-                                filters?.push({
-                                    fieldName: 'pegawai',
-                                    value: newValue!
-                                });
-                            }
-                            else {
-                                filters?.splice(found, 1, {
-                                    fieldName: 'pegawai',
-                                    value: newValue!
-                                })
-                            }
-                        }
-                        else {
-                            if(found > -1) {
-                                filters?.splice(found, 1);
-                            }
-                        }
-                        
-                        tmp.pageNumber = 1;
-                        tmp.filters = filters;             
-                        return tmp;
-                    }
-                );
-            } 
-            else if(newValue!.length == 0) {
-                _onClearSearchNamaRegisterDokumen();
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
             }
+            
+            setIsModalSelection(checked!);  
         },
-        []
-    );
-
-    const _onSearchNamaRegisterDokumen = useCallback(
-        (newValue) => {
-            setCurrentPage(1);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'pegawai',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'pegawai',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
-                    
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'pegawai',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'pegawai',
-                                value: newValue
-                            })
-                        }
-                    }
-                    else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-        },
-        []
-    );
-
-    const _onClearSearchNamaRegisterDokumen= useCallback(
-        () => {
-            setCurrentPage(1);
-
-            setQueryFilters(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;  
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-
-            setQueryParams(
-                prev => {
-                    let tmp = cloneDeep(prev);
-                    let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
-                    
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                    
-                    tmp.pageNumber = 1;
-                    tmp.filters = filters;             
-                    return tmp;
-                }
-            );
-        },
-        []
+        [selection]
     );
 
     const _onRenderDetailsHeader  = useCallback(
@@ -602,73 +475,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
 
     const _onChangeSearchNamaPerusahaan = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNamaPerusahaan(newValue);          
-            if(newValue!.length > 2) {
-                setCurrentPage(1);
-                setQueryFilters(
-                    prev => {
-                        let tmp = cloneDeep(prev);
-                        let filters = cloneDeep(tmp.filters);
-                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
-                        
-                        if(newValue != '') {
-                            if(found == -1) {
-                                filters?.push({
-                                    fieldName: 'perusahaan',
-                                    value: newValue!
-                                });
-                            }
-                            else {
-                                filters?.splice(found, 1, {
-                                    fieldName: 'perusahaan',
-                                    value: newValue!
-                                })
-                            }
-                        }
-                        else {
-                            if(found > -1) {
-                                filters?.splice(found, 1);
-                            }
-                        }
-                        
-                        tmp.filters = filters;             
-                        return tmp;
-                    }
-                );
-    
-                setQueryParams(
-                    prev => {
-                        let tmp = cloneDeep(prev);
-                        let filters = cloneDeep(tmp.filters);
-                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
-                        
-                        if(newValue != '') {
-                            if(found == -1) {
-                                filters?.push({
-                                    fieldName: 'perusahaan',
-                                    value: newValue!
-                                });
-                            }
-                            else {
-                                filters?.splice(found, 1, {
-                                    fieldName: 'perusahaan',
-                                    value: newValue!
-                                })
-                            }
-                        }
-                        else {
-                            if(found > -1) {
-                                filters?.splice(found, 1);
-                            }
-                        }
-                        
-                        tmp.pageNumber = 1;
-                        tmp.filters = filters;             
-                        return tmp;
-                    }
-                );
-            }
-            else if(newValue!.length == 0) {
+            if(newValue!.length == 0) {
                 _onClearSearchNamaPerusahaan();
             }
         },
@@ -683,18 +490,18 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama_perusahaan'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama_perusahaan',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama_perusahaan',
                                 value: newValue
                             })
                         }
@@ -714,18 +521,18 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama_perusahaan'}) as number;     
                     
                     if(newValue != '') {
                         if(found == -1) {
                             filters?.push({
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama_perusahaan',
                                 value: newValue
                             });
                         }
                         else {
                             filters?.splice(found, 1, {
-                                fieldName: 'perusahaan',
+                                fieldName: 'nama_perusahaan',
                                 value: newValue
                             })
                         }
@@ -749,13 +556,12 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
     const _onClearSearchNamaPerusahaan= useCallback(
         () => {
             setCurrentPage(1);
-            setSearchNamaPerusahaan(undefined);
 
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama_perusahaan'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -770,7 +576,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama_perusahaan'}) as number;     
                     
                     
                     if(found > -1) {
@@ -786,47 +592,30 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         []
     );
 
-    const _onChangeSearchNik = useCallback(
-        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNik(newValue);     
-            if(newValue?.length as number >= 16) {
-                _onSearchNik(newValue);
-            }     
-        },
-        []
-    );
-
-    const _onSearchNik = useCallback(
-        (newValue) => {
+    const _onHandleOnChangeApproved = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
             setCurrentPage(1);
 
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerified'}) as number;   
                     
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'statusVerified',
+                            value: option?.key as string
+                        });
                     }
                     else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
+                        filters?.splice(found, 1, {
+                            fieldName: 'statusVerified',
+                            value: option?.key as string
+                        })
+                    }                    
                     
-                    tmp.filters = filters;             
+                    tmp.filters = filters;            
                     return tmp;
                 }
             );
@@ -835,54 +624,56 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerified'}) as number;   
                     
-                    if(newValue != '') {
-                        if(found == -1) {
-                            filters?.push({
-                                fieldName: 'nik',
-                                value: newValue
-                            });
-                        }
-                        else {
-                            filters?.splice(found, 1, {
-                                fieldName: 'nik',
-                                value: newValue
-                            })
-                        }
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'statusVerified',
+                            value: option?.key as string
+                        });
                     }
                     else {
-                        if(found > -1) {
-                            filters?.splice(found, 1);
-                        }
-                    }
+                        filters?.splice(found, 1, {
+                            fieldName: 'statusVerified',
+                            value: option?.key as string
+                        })
+                    }                    
                     
                     tmp.pageNumber = 1;
-                    tmp.filters = filters;             
+                    tmp.filters = filters;            
                     return tmp;
                 }
             );
-            
+
+            setSelectedKeyApproved(option?.key as string);
         },
         []
     );
 
-    const _onClearSearchNik= useCallback(
-        () => {
+    const _onHandleOnChangeDokumen = useCallback(
+        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
             setCurrentPage(1);
-            setSearchNik(undefined);
 
             setQueryFilters(
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'jenisDokumen'}) as number;   
                     
-                    if(found > -1) {
-                        filters?.splice(found, 1);
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'jenisDokumen',
+                            value: option?.key as string
+                        });
                     }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'jenisDokumen',
+                            value: option?.key as string
+                        })
+                    }                    
                     
-                    tmp.filters = filters;             
+                    tmp.filters = filters;            
                     return tmp;
                 }
             );
@@ -891,21 +682,31 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'jenisDokumen'}) as number;   
                     
-                    
-                    if(found > -1) {
-                        filters?.splice(found, 1);
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'jenisDokumen',
+                            value: option?.key as string
+                        });
                     }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'jenisDokumen',
+                            value: option?.key as string
+                        })
+                    }                    
                     
                     tmp.pageNumber = 1;
-                    tmp.filters = filters;             
+                    tmp.filters = filters;            
                     return tmp;
                 }
             );
+
+            setSelectedKeyDokumen(option?.key as string);
         },
         []
-    );
+    );  
 
     const _onHandleResetFilter = useCallback(
         () => {
@@ -915,16 +716,18 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerified'}) as number;
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
 
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number; 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'jenisDokumen'}) as number;
+                    
                     if(found != -1) {
-                        filters?.splice(found, 1);  
+                        filters?.splice(found, 1);
                     }
+                    
                     tmp.filters = filters;
 
                     return tmp;
@@ -935,16 +738,16 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'statusVerified'}) as number;
                     
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
-                    
-                    found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;  
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'jenisDokumen'}) as number;
                     
                     if(found != -1) {
-                        filters?.splice(found, 1);          
+                        filters?.splice(found, 1);
                     }
 
                     tmp.pageNumber = 1;
@@ -954,21 +757,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 }
             );                
 
-            setSearchNamaPerusahaan(undefined);
-            setSearchNik(undefined);
+            setSelectedKeyApproved(undefined);
+            setSelectedKeyDokumen(undefined);
         },
         []
-    );
-
-    const _onChangeModalSelection = useCallback(
-        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
-            if(selection.getSelectedCount() > 0) {
-                selection.toggleKeySelected(selection.getSelection()[0].key as string);
-            }
-            
-            setIsModalSelection(checked!);  
-        },
-        [selection]
     );
 
     return (
@@ -1006,11 +798,11 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama pegawai" 
+                                    placeholder="pencarian nama perusahaan" 
                                     underlined={false} 
-                                    onChange={_onChangeSearchNamaRegisterDokumen}
-                                    onSearch={_onSearchNamaRegisterDokumen}
-                                    onClear= {_onClearSearchNamaRegisterDokumen}
+                                    onChange={_onChangeSearchNamaPerusahaan}
+                                    onSearch={_onSearchNamaPerusahaan}
+                                    onClear= {_onClearSearchNamaPerusahaan}
                                 />
                             </Stack.Item>
                             <Stack.Item>
@@ -1069,31 +861,27 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
-                            <Label htmlFor={searchNamaPerusahaanId}>Nama perusahaan</Label>
-                            <SearchBox 
-                                id={searchNamaPerusahaanId}
-                                style={{width: 200}} 
-                                disableAnimation
-                                placeholder="nama sesuai ktp" 
-                                underlined={false} 
-                                onChange={_onChangeSearchNamaPerusahaan}
-                                onSearch={_onSearchNamaPerusahaan}
-                                onClear= {_onClearSearchNamaPerusahaan}
-                                value={searchNamaPerusahaan ? searchNamaPerusahaan:''}
+                            <ComboBox
+                                label="Jenis dokumen"
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={optionsDokumen != undefined ? optionsDokumen:[]}
+                                selectedKey={selectedKeyDokumen == undefined ? null:selectedKeyDokumen}
+                                useComboBoxAsMenuWidth={true}     
+                                onChange={_onHandleOnChangeDokumen}
+                                comboBoxOptionStyles={comboBoxWrapStyles}
+                                styles={comboBoxStyles}
                             />
                         </Stack.Item>
                         <Stack.Item>
-                            <Label htmlFor={searchNikId}>NIK pegawai</Label>
-                            <SearchBox 
-                                id={searchNikId}
-                                style={{width: 200}} 
-                                disableAnimation
-                                placeholder="nik sesuai ktp" 
-                                underlined={false} 
-                                onChange={_onChangeSearchNik}
-                                onSearch={_onSearchNik}
-                                onClear= {_onClearSearchNik}
-                                value={searchNik ? searchNik:''}
+                            <ComboBox
+                                label="Approved"
+                                placeholder="Pilih"
+                                allowFreeform={true}
+                                options={[{ key: 'false', text: 'Belum'}, { key: 'true', text: 'Sudah'}]}
+                                selectedKey={selectedKeyApproved == undefined ? null:selectedKeyApproved}
+                                useComboBoxAsMenuWidth={true}     
+                                onChange={_onHandleOnChangeApproved}
                             />
                         </Stack.Item>
                         <Stack.Item>

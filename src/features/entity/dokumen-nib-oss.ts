@@ -1,8 +1,8 @@
 import { IDokumen } from "./dokumen";
-import { IRegisterKbli } from "./register-kbli";
+import { IKbli } from "./kbli";
 
 export interface IDokumenNibOss extends IDokumen {
     nomor: string|null;
     tanggal: string|null;
-    daftarRegisterKbli: IRegisterKbli[]|null;
+    daftarKbli: IKbli[]|null;
 };
