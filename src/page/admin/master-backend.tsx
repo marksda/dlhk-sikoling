@@ -23,6 +23,7 @@ import { DataListPropinsiFluentUI } from "../../components/DataList/DataListProp
 import { DataListKabupatenFluentUI } from "../../components/DataList/DataListKabupatenFluentUI";
 import { DataListKecamatanFluentUI } from "../../components/DataList/DataListKecamatanFluentUI";
 import { DataListDesaFluentUI } from "../../components/DataList/DataListDesaFluentUI";
+import { DataListRegisterDokumenFluentUI } from "../../components/DataList/DataListRegisterDokumenFluentUI";
 
 // const noOp = () => undefined;
 
@@ -118,6 +119,32 @@ export const MasterBackEnd: FC = () => {
                             },
                         ]
                     }
+                },
+                {
+                    key: 'log',
+                    name: 'Log',
+                    icon: 'History',
+                    onClick: undefined,
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: 'kategori_log',
+                                name: 'Kategori Log',
+                                iconProps: { iconName: 'Backlog' },
+                                onClick: () => {
+                                        _onHandleMasterMenu('kategori_log');
+                                }
+                            },
+                            {
+                                key: 'status_flow_log',
+                                name: 'Status flow log',
+                                iconProps: { iconName: 'StatusCircleRing' },
+                                onClick: () => {
+                                    _onHandleMasterMenu('status_flow_log');
+                                }
+                            },                            
+                        ],
+                    },
                 }, 
                 {
                     key: 'usaha',
@@ -175,32 +202,6 @@ export const MasterBackEnd: FC = () => {
                                 }
                             },
                         ]
-                    },
-                },
-                {
-                    key: 'log',
-                    name: 'Log',
-                    icon: 'History',
-                    onClick: undefined,
-                    subMenuProps: {
-                        items: [
-                            {
-                                key: 'kategori_log',
-                                name: 'Kategori Log',
-                                iconProps: { iconName: 'Backlog' },
-                                onClick: () => {
-                                        _onHandleMasterMenu('kategori_log');
-                                }
-                            },
-                            {
-                                key: 'status_flow_log',
-                                name: 'Status flow log',
-                                iconProps: { iconName: 'StatusCircleRing' },
-                                onClick: () => {
-                                    _onHandleMasterMenu('status_flow_log');
-                                }
-                            },                            
-                        ],
                     },
                 },
                 {
@@ -314,6 +315,24 @@ export const MasterBackEnd: FC = () => {
         () => {
             let konten = null;
             switch (idContentPage) { 
+                case 'dokumen':
+                konten = <DataListRegisterDokumenFluentUI
+                    initSelectedFilters={
+                        {
+                            pageNumber: 1,
+                            pageSize: 50,
+                            filters: [],
+                            sortOrders: [
+                                {
+                                    fieldName: 'tanggalRegistrasi',
+                                    value: 'ASC'
+                                },
+                            ],
+                        }
+                    }
+                    title="Dokumen"
+                />;
+                break;
                 case 'desa':
                 konten = <DataListDesaFluentUI
                     initSelectedFilters={
