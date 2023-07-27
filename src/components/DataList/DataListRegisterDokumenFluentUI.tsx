@@ -56,16 +56,17 @@ const toggleStyles = {
     },
 };
 const comboBoxStyles: Partial<IComboBoxStyles> = {
+    container: {
+        width: '310px',
+    },
     input: {
-        minWidth: 200
-    }
+        minWidth: '200px',
+    },
+    optionsContainerWrapper: {
+        maxWidth: '400px',
+    },
 };
 
-const comboBoxWrapStyles: Partial<IComboBoxOptionStyles> = {
-    optionText : {
-        textWrap: 'wrap'
-    }
-  };
 
 export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -344,7 +345,13 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             postsDokumen?.map((item):IComboBoxOption => {
                 return {
                 key: item.id!,
-                text: item.nama!,
+                text: item.nama!,                
+                styles: {
+                    optionText: {
+                      overflow: 'visible',
+                      whiteSpace: 'normal',
+                    },
+                },
                 data: item
                 };
             })
@@ -867,9 +874,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                                 allowFreeform={true}
                                 options={optionsDokumen != undefined ? optionsDokumen:[]}
                                 selectedKey={selectedKeyDokumen == undefined ? null:selectedKeyDokumen}
-                                useComboBoxAsMenuWidth={true}     
+                                useComboBoxAsMenuWidth={false}     
                                 onChange={_onHandleOnChangeDokumen}
-                                comboBoxOptionStyles={comboBoxWrapStyles}
                                 styles={comboBoxStyles}
                             />
                         </Stack.Item>
@@ -882,6 +888,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                                 selectedKey={selectedKeyApproved == undefined ? null:selectedKeyApproved}
                                 useComboBoxAsMenuWidth={true}     
                                 onChange={_onHandleOnChangeApproved}
+                                styles={comboBoxStyles}
                             />
                         </Stack.Item>
                         <Stack.Item>
