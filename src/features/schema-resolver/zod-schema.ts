@@ -140,16 +140,7 @@ export const PenanggungJawabSchema =  object({
     person: PersonSchema
 });
 
-export const RegisterDokumenSchema = object({
-    id: z.string().optional(),
-    dokumen: z.any().optional(),
-    registerPerusahaan: RegisterPerusahaanSchema.optional(),
-    lokasiFile: z.string().optional(),
-    tanggalRegistrasi: z.string().optional(),
-    uploader: PersonSchema.optional()
-});
-
-export const DaftarDokumen = z.array(RegisterDokumenSchema);
+// export const DaftarDokumen = z.array(RegisterDokumenSchema);
 
 export const FileDokumenUploadSchema = object({
     dokumenFile: z.instanceof(File),
@@ -157,15 +148,27 @@ export const FileDokumenUploadSchema = object({
 });
 
 export const KategoriDokumenSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
-    parent: z.string().optional()
+    id: z.string(),
+    nama: z.string(),
+    parent: z.string()
 });
 
 export const DokumenSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
-    kategoriDokumen: KategoriDokumenSchema.optional(),
+    id: z.string(),
+    nama: z.string(),
+    kategoriDokumen: KategoriDokumenSchema.pick({id:true})
+});
+
+export const KbliSchema = object({
+    id: z.string(),
+    nama: z.string(),
+    kategori: z.string(),
+});
+
+export const DokumenNibSchema = DokumenSchema.extend({
+    nomor: z.string(),
+    tanggal:z.string(),
+    daftarKbli: z.array(KbliSchema.pick({id: true})).nullable()
 });
 
 export const RegisterKbliSchema = object({
@@ -174,13 +177,17 @@ export const RegisterKbliSchema = object({
     nama: z.string().optional()
 });
 
-export const DaftarKbliSchema = z.array(RegisterKbliSchema);
-
-export const DokumenNibSchema = DokumenSchema.extend({
-    nomor: z.string().length(13, {message: 'harus 13 digit'}).nullable(),
-    tanggal:z.string(),
-    daftarKbli: DaftarKbliSchema
+export const RegisterDokumenSchema = object({
+    id: z.string().nullable(),
+    dokumen: DokumenNibSchema.pick({id:true}),
+    registerPerusahaan: RegisterPerusahaanSchema.pick({id:true}),
+    lokasiFile: z.string().nullable(),
+    tanggalRegistrasi: z.string().nullable(),
+    uploader: OtoritasSchema.pick({id:true}),
+    statusVerified: z.boolean().nullable()
 });
+
+// export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 
 export const PegawaiSchema = DokumenSchema.extend({
     id: z.string().nullable(),

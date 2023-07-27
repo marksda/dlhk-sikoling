@@ -23,7 +23,7 @@ const classNames = mergeStyleSets({
     container: {
         width: "100%",
         position: "relative",
-        // minHeight: 200,
+        minHeight: 200,
     },
     gridContainer: {
         height: '100%',

@@ -7,13 +7,13 @@ import { cancelIcon, IModalFormulirSuratArahanProps } from "../FormulirPermohona
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TemplatePermohonanArahan } from "../FormTemplate/template-permohonan-arahan";
-import { DaftarDokumen, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
+import { DokumenSchema, JenisPermohonanArahanSchema, PenanggungJawabSchema,  RegisterPerusahaanSchema, StatusWaliSchema } from "../../features/schema-resolver/zod-schema";
 import { IRegisterPermohonanArahan, useAddRegisterPermohonanMutation } from "../../features/permohonan/register-permohonan-api-slice";
 import cloneDeep from "lodash.clonedeep";
-import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
+// import { IRegisterPerusahaan } from "../../features/perusahaan/register-perusahaan-slice";
 import { IJenisPermohonanSuratArahan } from "../../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
-import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
-import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
+// import { IPegawai } from "../../features/repository/ssot/pegawai-slice";
+// import { IRegisterDokumen } from "../../features/dokumen/register-dokumen-slice";
 
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -83,7 +83,7 @@ const permohonanArahanSchema = object({
     statusWali: StatusWaliSchema,
     penanggungJawabPermohonan: PenanggungJawabSchema,
     uraianKegiatan: z.string().default(''),
-    daftarDokumenSyarat: DaftarDokumen
+    daftarDokumenSyarat: z.array(DokumenSchema)
 });
 
 type FormData = z.infer<typeof permohonanArahanSchema>;

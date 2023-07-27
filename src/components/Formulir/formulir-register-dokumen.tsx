@@ -6,9 +6,10 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { useDeleteRegisterDokumenMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataJabatanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterDokumenMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataJabatanQuery, useGetDaftarDataDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { invertParseNpwp } from "../../features/config/helper-function";
+import { IDokumen } from "../../features/entity/dokumen";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
@@ -73,8 +74,8 @@ const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
-  const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
-  const [selectedKeyJabatan, setSelectedKeyJabatan] = useState<string|undefined>(dataLama != undefined ? dataLama.jabatan?.id!:undefined);
+  const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? (dataLama.dokumen as IDokumen)?.id!:undefined);
+  // const [selectedKeyJabatan, setSelectedKeyJabatan] = useState<string|undefined>(dataLama != undefined ? dataLama.jabatan?.id!:undefined);
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 50,
@@ -89,12 +90,12 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       },
     ],
   });
-  const [queryPersonParams, setQueryPersonParams] = useState<IQueryParamFilters>({
+  const [queryDokumenParams, setQueryDokumenParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
-    pageSize: 50,
+    pageSize: 100,
     filters: dataLama != undefined ? [{
       fieldName: 'nama',
-      value: dataLama.person?.nama!
+      value: (dataLama.dokumen as IDokumen).nama!
     }]:[],
     sortOrders: [
         {
@@ -103,24 +104,24 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
         },
     ],
   });
-  const [queryJabatanParams, setQueryJabatanParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: [],
-    sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
-    ],
-  });
+  // const [queryJabatanParams, setQueryJabatanParams] = useState<IQueryParamFilters>({
+  //   pageNumber: 1,
+  //   pageSize: 100,
+  //   filters: [],
+  //   sortOrders: [
+  //       {
+  //           fieldName: 'nama',
+  //           value: 'ASC'
+  //       },
+  //   ],
+  // });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //ref component
   const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
-  const comboBoxPersonRef = useRef<IComboBox>(null);
-  const comboBoxJabatanRef = useRef<IComboBox>(null);
+  const comboBoxDokumenRef = useRef<IComboBox>(null);
+  // const comboBoxJabatanRef = useRef<IComboBox>(null);
   //hook-form
   const {handleSubmit, control, setValue, resetField, watch} = useForm<IRegisterDokumen>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
@@ -134,8 +135,11 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
   const [ updateIdRegisterDokumen, {isLoading: isLoadingUpdateIdRegisterDokumen}] = useUpdateIdRegisterDokumenMutation();
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
-  const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
-  const { data: postsJabatan, isLoading: isLoadingPostsJabatan } = useGetDaftarDataJabatanQuery(queryJabatanParams);
+  const { data: postsDokumen, isLoading: isLoadingPostsDokumen } = useGetDaftarDataDokumenQuery(queryDokumenParams);
+  // const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
+  // const { data: postsJabatan, isLoading: isLoadingPostsJabatan } = useGetDaftarDataJabatanQuery(queryJabatanParams);
+
+  console.log(queryRegisterPerusahaanParams);
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -161,30 +165,30 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
     [postsRegisterPerusahaan]
   );
 
-  const optionsPerson: IComboBoxOption[]|undefined = useMemo(
+  const optionsDokumen: IComboBoxOption[]|undefined = useMemo(
     () => (
-        postsPerson?.map((item):IComboBoxOption => {
+      postsDokumen?.map((item):IComboBoxOption => {
               return {
-                key: item.nik!,
+                key: item.id!,
                 text: item.nama!,
                 data: item
               };
             })
     ),
-    [postsPerson]
+    [postsDokumen]
   );
 
-  const optionsJabatan: IComboBoxOption[]|undefined = useMemo(
-    () => (
-        postsJabatan?.map((item):IComboBoxOption => {
-              return {
-                key: item.id!,
-                text: item.nama!,
-              };
-            })
-    ),
-    [postsJabatan]
-  );
+  // const optionsJabatan: IComboBoxOption[]|undefined = useMemo(
+  //   () => (
+  //       postsJabatan?.map((item):IComboBoxOption => {
+  //             return {
+  //               key: item.id!,
+  //               text: item.nama!,
+  //             };
+  //           })
+  //   ),
+  //   [postsJabatan]
+  // );
   
   const onSubmit: SubmitHandler<IRegisterDokumen> = async (data) => {
     setDisableForm(true);
@@ -198,32 +202,32 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
           }); 
           hideModal();
           break;
-        case 'edit':
-          data.id = data.registerPerusahaan?.id?.concat(data.jabatan?.id!).concat(data.person?.nik!)!;
-          if(dataLama?.id == data.id) {
-            await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            }); 
-          }
-          else {
-            await updateIdRegisterDokumen({idLama: dataLama?.id!, pegawai: data}).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            }); 
-          }          
-          hideModal();
-          break;
-        case 'delete':
-          await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
-          break;
+        // case 'edit':
+        //   data.id = data.registerPerusahaan?.id?.concat(data.jabatan?.id!).concat(data.person?.nik!)!;
+        //   if(dataLama?.id == data.id) {
+        //     await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+        //       setDisableForm(false);
+        //     }).catch((rejectedValueOrSerializedError) => {
+        //       setDisableForm(false);
+        //     }); 
+        //   }
+        //   else {
+        //     await updateIdRegisterDokumen({idLama: dataLama?.id!, pegawai: data}).unwrap().then((originalPromiseResult) => {
+        //       setDisableForm(false);
+        //     }).catch((rejectedValueOrSerializedError) => {
+        //       setDisableForm(false);
+        //     }); 
+        //   }          
+        //   hideModal();
+        //   break;
+        // case 'delete':
+        //   await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+        //     setDisableForm(false);
+        //   }).catch((rejectedValueOrSerializedError) => {
+        //     setDisableForm(false);
+        //   }); 
+        //   hideModal();
+        //   break;
         default:
           break;
       }      
@@ -300,6 +304,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
 
   const _onInputComboBoxRegisterPerusahaanValueChange = useCallback(
     (newValue: string) => {
+      console.log(newValue);
       if(newValue.length > 2) {
         comboBoxRegisterPerusahaanRef.current?.focus(true);
         setQueryRegisterPerusahaanParams(
@@ -334,6 +339,23 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
             }
         );
       }
+      else if(newValue == '') {
+        setQueryRegisterPerusahaanParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;                 
+              console.log(found);
+              if(found > -1) {
+                filters?.splice(found, 1);
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;    
+              return tmp;
+          }
+        );
+      }
     },
     []
   );
@@ -353,43 +375,44 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       [postsRegisterPerusahaan]
   );
 
-  const _onRenderPersonOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
-    return item?.data != undefined ?
-          <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
-            <span><b>{item?.data.nama != undefined ? item.data.nama:'-'}</b></span><br />
-            <span>{item?.data.nik != undefined ? item.data.nik:'-'}</span><br />
-            <span>
-                {
-                    item?.data.alamat != undefined ? 
-                    item?.data.alamat.keterangan != undefined ? item.data.alamat.keterangan:null:null
-                }
-                {
-                    item?.data.alamat != undefined ? 
-                    item.data.alamat.desa != undefined ? `, ${item.data.alamat.desa.nama}`:null:null
-                }
-            </span><br />
-            <span>                            
-                {
-                    item?.data.alamat != undefined ? 
-                    item?.data.alamat.kecamatan != undefined ? item.data.alamat.kecamatan.nama:null:null
-                }
-                {
-                    item?.data.alamat != undefined ? 
-                    item?.data.alamat.kabupaten != undefined ? `, ${item.data.alamat.kabupaten.nama}`:null:null
-                }
-                {
-                    item?.data.alamat != undefined ? 
-                    item?.data.alamat.propinsi != undefined ? `, ${item.data.alamat.propinsi.nama}`:null:null
-                }
-            </span>
-          </div>:null;      
-  };
+  // const _onRenderDokumenOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+  //   return item?.data != undefined ?
+  //         <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+  //           <span><b>{item?.data.nama != undefined ? item.data.nama:'-'}</b></span><br />
+  //           <span>{item?.data.nik != undefined ? item.data.nik:'-'}</span><br />
+  //           <span>
+  //               {
+  //                   item?.data.alamat != undefined ? 
+  //                   item?.data.alamat.keterangan != undefined ? item.data.alamat.keterangan:null:null
+  //               }
+  //               {
+  //                   item?.data.alamat != undefined ? 
+  //                   item.data.alamat.desa != undefined ? `, ${item.data.alamat.desa.nama}`:null:null
+  //               }
+  //           </span><br />
+  //           <span>                            
+  //               {
+  //                   item?.data.alamat != undefined ? 
+  //                   item?.data.alamat.kecamatan != undefined ? item.data.alamat.kecamatan.nama:null:null
+  //               }
+  //               {
+  //                   item?.data.alamat != undefined ? 
+  //                   item?.data.alamat.kabupaten != undefined ? `, ${item.data.alamat.kabupaten.nama}`:null:null
+  //               }
+  //               {
+  //                   item?.data.alamat != undefined ? 
+  //                   item?.data.alamat.propinsi != undefined ? `, ${item.data.alamat.propinsi.nama}`:null:null
+  //               }
+  //           </span>
+  //         </div>:null;      
+  // };
 
-  const _onInputComboBoxPersonValueChange = useCallback(
+  const _onInputComboBoxDokumenValueChange = useCallback(
     (newValue: string) => {
+      console.log(newValue);
       if(newValue.length > 2) {
-        comboBoxPersonRef.current?.focus(true);
-        setQueryPersonParams(
+        comboBoxDokumenRef.current?.focus(true);
+        setQueryDokumenParams(
             prev => {
                 let tmp = cloneDeep(prev);
                 let filters = cloneDeep(tmp.filters);
@@ -421,83 +444,100 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
             }
         );
       }
-    },
-    []
-  );
-
-  const _onHandleOnChangePersonComboBox = useCallback(
-    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-        let person = cloneDeep(postsPerson?.at(index!));
-        if(person?.nik == undefined) {
-            person!.nik = null;
-        }
-        if(person?.jenisKelamin == undefined) {
-            person!.jenisKelamin = null;
-        } 
-        if(person?.alamat == undefined) {
-            person!.alamat = null;
-        } 
-        if(person?.kontak == undefined) {
-            person!.kontak = null;
-        }  
-        if(person?.scanKTP == undefined) {
-            person!.scanKTP = null;
-        }          
-
-        setValue('person', person!);
-        setSelectedKeyPerson(option?.key as string);
-      },
-      [postsPerson]
-  );
-
-  const _onInputComboBoxJabatanValueChange = useCallback(
-    (newValue: string) => {
-      if(newValue.length > 2) {
-        comboBoxJabatanRef.current?.focus(true);
-        setQueryJabatanParams(
-            prev => {
-                let tmp = cloneDeep(prev);
-                let filters = cloneDeep(tmp.filters);
-                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-                
-                if(newValue != '') {
-                    if(found == -1) {
-                        filters?.push({
-                            fieldName: 'nama',
-                            value: newValue
-                        });
-                    }
-                    else {
-                        filters?.splice(found, 1, {
-                            fieldName: 'nama',
-                            value: newValue
-                        })
-                    }
-                }
-                else {
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                }
-                
-                tmp.pageNumber = 1;
-                tmp.filters = filters;             
-                return tmp;
-            }
+      else if(newValue.length == 0) {
+        setQueryDokumenParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;                 
+              
+              if(found > -1) {
+                filters?.splice(found, 1);
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
         );
       }
     },
     []
   );
 
-  const _onHandleOnChangeJabatanComboBox = useCallback(
+  const _onHandleOnChangeDokumenComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-        let jabatan = cloneDeep(postsJabatan?.at(index!));
-        setValue('jabatan', jabatan!);
-        setSelectedKeyJabatan(option?.key as string);
+        let dokumen = cloneDeep(postsDokumen?.at(index!));
+        // if(person?.nik == undefined) {
+        //     person!.nik = null;
+        // }
+        // if(person?.jenisKelamin == undefined) {
+        //     person!.jenisKelamin = null;
+        // } 
+        // if(person?.alamat == undefined) {
+        //     person!.alamat = null;
+        // } 
+        // if(person?.kontak == undefined) {
+        //     person!.kontak = null;
+        // }  
+        // if(person?.scanKTP == undefined) {
+        //     person!.scanKTP = null;
+        // }          
+
+        setValue('dokumen', dokumen!);
+        setSelectedKeyDokumen(option?.key as string);
       },
-      [postsJabatan]
+      [postsDokumen]
   );
+
+  // const _onInputComboBoxJabatanValueChange = useCallback(
+  //   (newValue: string) => {
+  //     if(newValue.length > 2) {
+  //       comboBoxJabatanRef.current?.focus(true);
+  //       setQueryJabatanParams(
+  //           prev => {
+  //               let tmp = cloneDeep(prev);
+  //               let filters = cloneDeep(tmp.filters);
+  //               let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+  //               if(newValue != '') {
+  //                   if(found == -1) {
+  //                       filters?.push({
+  //                           fieldName: 'nama',
+  //                           value: newValue
+  //                       });
+  //                   }
+  //                   else {
+  //                       filters?.splice(found, 1, {
+  //                           fieldName: 'nama',
+  //                           value: newValue
+  //                       })
+  //                   }
+  //               }
+  //               else {
+  //                   if(found > -1) {
+  //                       filters?.splice(found, 1);
+  //                   }
+  //               }
+                
+  //               tmp.pageNumber = 1;
+  //               tmp.filters = filters;             
+  //               return tmp;
+  //           }
+  //       );
+  //     }
+  //   },
+  //   []
+  // );
+
+  // const _onHandleOnChangeJabatanComboBox = useCallback(
+  //   (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+  //       let jabatan = cloneDeep(postsJabatan?.at(index!));
+  //       setValue('jabatan', jabatan!);
+  //       setSelectedKeyJabatan(option?.key as string);
+  //     },
+  //     [postsJabatan]
+  // );
 
   return (
     <Modal
@@ -546,7 +586,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
             )}
         />
         <Controller 
-          name="person"
+          name="registerPerusahaan"
           control={control}
           render={
             ({
@@ -554,43 +594,17 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
               fieldState: { error }
             }) => (
               <ComboBox
-                componentRef={comboBoxPersonRef}
-                label="Person"
+                componentRef={comboBoxDokumenRef}
+                label="Jenis dokumen"
                 placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
                 allowFreeform={true}
-                autoComplete={'off'}
-                options={optionsPerson != undefined ? optionsPerson:[]}
-                selectedKey={selectedKeyPerson}
+                options={optionsDokumen != undefined ? optionsDokumen:[]}
+                selectedKey={selectedKeyDokumen}
                 useComboBoxAsMenuWidth={true}
-                onRenderOption={_onRenderPersonOption}   
-                onInputValueChange={_onInputComboBoxPersonValueChange}      
+                onInputValueChange={_onInputComboBoxDokumenValueChange}      
                 styles={basicComboBoxStyles}           
                 errorMessage={error && 'harus diisi'}
-                onChange={_onHandleOnChangePersonComboBox}
-                disabled={mode == 'delete' ? true:disableForm}
-              />
-            )}
-        />
-        <Controller 
-          name="jabatan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-              <ComboBox
-                componentRef={comboBoxJabatanRef}
-                label="Jabatan"
-                placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                allowFreeform={true}
-                options={optionsJabatan != undefined ? optionsJabatan:[]}
-                selectedKey={selectedKeyJabatan}
-                useComboBoxAsMenuWidth={true}
-                onInputValueChange={_onInputComboBoxJabatanValueChange}      
-                styles={basicComboBoxStyles}           
-                errorMessage={error && 'harus diisi'}
-                onChange={_onHandleOnChangeJabatanComboBox}
+                onChange={_onHandleOnChangeDokumenComboBox}
                 disabled={mode == 'delete' ? true:disableForm}
               />
             )}
