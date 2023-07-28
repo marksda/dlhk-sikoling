@@ -12,6 +12,8 @@ import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { flipFormatDate } from "../../features/config/config";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
+import { FormulirRegisterDokumenAktaPendirian, registerDokumenAktaPendirianSchema } from "../Formulir/formulir-dokumen-akta-pendirian";
+import { IDokumen } from "../../features/entity/dokumen";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -181,7 +183,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemRegisterDokumen) => {
-                return item.dokumen.nama;
+                return item.dokumen?.nama;
             },
             // isPadded: true,
         },
@@ -194,7 +196,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             onRender: (item: IItemRegisterDokumen) => {
                 let doc = null;
                 let konten = null;
-                switch (item.dokumen.id) {
+                switch (item.dokumen?.id) {
                     case '010101':
                         doc = item.dokumen as IDokumenAktaPendirian;
                         konten = 
@@ -357,7 +359,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             })
         ),
         [postsDokumen]
-    );
+    );    
 
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
@@ -901,16 +903,15 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                     </Stack>
                 </Callout>                
             }       
-            { isModalFormulirRegisterDokumenOpen == true ?
+            {isModalFormulirRegisterDokumenOpen && (
                 <FormulirRegisterDokumen
                     title={formulirTitle}
-                    isModalOpen={isModalFormulirRegisterDokumenOpen}
+                    isModalOpen={true}
                     showModal={showModalFormulirRegisterDokumen}
                     hideModal={hideModalFormulirRegisterDokumen}
                     mode={modeForm}
-                    dataLama={dataLama}
-                />:null
-            } 
+                    dataLama={dataLama}/>
+            )}          
         </Stack>
     );
-}
+}   

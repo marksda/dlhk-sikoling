@@ -140,6 +140,13 @@ export const PenanggungJawabSchema =  object({
     person: PersonSchema
 });
 
+export const PegawaiSchema = object({
+    id: z.string().nullable(),
+    registerPerusahaan: RegisterPerusahaanSchema.pick({id: true}),
+    person: PersonSchema.pick({nik: true}),
+    jabatan: JabatanSchema.pick({id:true})
+});
+
 // export const DaftarDokumen = z.array(RegisterDokumenSchema);
 
 export const FileDokumenUploadSchema = object({
@@ -155,7 +162,7 @@ export const KategoriDokumenSchema = object({
 
 export const DokumenSchema = object({
     id: z.string(),
-    nama: z.string(),
+    nama: z.string().nullable(),
     kategoriDokumen: KategoriDokumenSchema.pick({id:true})
 });
 
@@ -171,6 +178,13 @@ export const DokumenNibSchema = DokumenSchema.extend({
     daftarKbli: z.array(KbliSchema.pick({id: true})).nullable()
 });
 
+export const DokumenAktaPendirianSchema = DokumenSchema.pick({id: true}).extend({
+    nomor: z.string(),
+    tanggal:z.string(),
+    namaNotaris: z.string(),
+    penanggungJawab: PegawaiSchema.pick({id: true}),
+});
+
 export const RegisterKbliSchema = object({
     idNib: z.string().optional(),
     idKbli: z.string().optional(),
@@ -179,19 +193,13 @@ export const RegisterKbliSchema = object({
 
 export const RegisterDokumenSchema = object({
     id: z.string().nullable(),
-    dokumen: DokumenNibSchema.pick({id:true}),
+    dokumen: DokumenSchema,
     registerPerusahaan: RegisterPerusahaanSchema.pick({id:true}),
     lokasiFile: z.string().nullable(),
-    tanggalRegistrasi: z.string().nullable(),
-    uploader: OtoritasSchema.pick({id:true}),
-    statusVerified: z.boolean().nullable()
+    tanggalRegistrasi: z.string().optional(),
+    uploader: OtoritasSchema.pick({id:true}).optional(),
+    statusVerified: z.boolean().optional()
 });
 
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 
-export const PegawaiSchema = DokumenSchema.extend({
-    id: z.string().nullable(),
-    registerPerusahaan: RegisterPerusahaanSchema.pick({id: true}),
-    person: PersonSchema.pick({nik: true}),
-    jabatan: JabatanSchema.pick({id:true})
-});

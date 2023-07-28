@@ -1,21 +1,19 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption,  IconButton, Label, Modal , PrimaryButton, Stack, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption,  IconButton, Modal , Stack, find, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
-import { RegisterDokumenSchema } from "../../features/schema-resolver/zod-schema";
-import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { useDeleteRegisterDokumenMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation, useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataJabatanQuery, useGetDaftarDataDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { IDokumen } from "../../features/entity/dokumen";
+import { FormulirRegisterDokumenAktaPendirian, registerDokumenAktaPendirianSchema } from "./formulir-dokumen-akta-pendirian";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
-  showModal: () => void;
+  showModal?: () => void;
   hideModal: () => void;
   dataLama?: IRegisterDokumen;
 };
@@ -72,12 +70,11 @@ const iconButtonStyles = {
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 const stackTokens = { childrenGap: 8 };
 
-export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
+  // const [idRegisterDokumenTextFieldValue, setIdDokumenTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:'');
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
-  const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? (dataLama.dokumen as IDokumen)?.id!:undefined);
-  const [selectedDokumen, setSelectedDokumen] = useState<Partial<IDokumen>|undefined>(undefined);
-  // const [selectedKeyJabatan, setSelectedKeyJabatan] = useState<string|undefined>(dataLama != undefined ? dataLama.jabatan?.id!:undefined);
+  const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:undefined);  
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 50,
@@ -123,21 +120,8 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
   //ref component
   const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
   const comboBoxDokumenRef = useRef<IComboBox>(null);
-  //hook-form
-  const {handleSubmit, control, setValue, resetField, watch} = useForm<IRegisterDokumen>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
-      id: null,      
-    },
-    resolver: zodResolver(RegisterDokumenSchema),
-  });
-  // rtk query
-  const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
-  const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
-  const [ updateIdRegisterDokumen, {isLoading: isLoadingUpdateIdRegisterDokumen}] = useUpdateIdRegisterDokumenMutation();
-  const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
   const { data: postsDokumen, isLoading: isLoadingPostsDokumen } = useGetDaftarDataDokumenQuery(queryDokumenParams);
-
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -175,66 +159,29 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
     ),
     [postsDokumen]
   );
-  
-  const onSubmit: SubmitHandler<IRegisterDokumen> = async (data) => {
-    setDisableForm(true);
-    try {
-      switch (mode) {
-        case 'add':          
-          await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
-          break;
-        // case 'edit':
-        //   data.id = data.registerPerusahaan?.id?.concat(data.jabatan?.id!).concat(data.person?.nik!)!;
-        //   if(dataLama?.id == data.id) {
-        //     await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-        //       setDisableForm(false);
-        //     }).catch((rejectedValueOrSerializedError) => {
-        //       setDisableForm(false);
-        //     }); 
-        //   }
-        //   else {
-        //     await updateIdRegisterDokumen({idLama: dataLama?.id!, pegawai: data}).unwrap().then((originalPromiseResult) => {
-        //       setDisableForm(false);
-        //     }).catch((rejectedValueOrSerializedError) => {
-        //       setDisableForm(false);
-        //     }); 
-        //   }          
-        //   hideModal();
-        //   break;
-        // case 'delete':
-        //   await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
-        //   break;
-        default:
-          break;
-      }      
-    } catch (error) {
-      setDisableForm(false);
-    }
-  };
 
-  const onError: SubmitErrorHandler<IRegisterDokumen> = async (err) => {
-    if(mode == 'delete') {
-      await deleteRegisterDokumen(dataLama as IRegisterDokumen).unwrap().then((originalPromiseResult) => {
-        setDisableForm(false);
-      }).catch((rejectedValueOrSerializedError) => {
-        setDisableForm(false);
-      }); 
-      hideModal();
-    }
-    else {
-      console.log('error', err);
-    }
-  };
+  const kontenFormulirDokumen = useMemo(
+    () => {
+        let konten = null;        
+        if(selectedKeyDokumen != undefined && selectedKeyRegisterPerusahaan != undefined) {         
+          switch (selectedKeyDokumen) {
+            case '010101':
+            konten = 
+              <FormulirRegisterDokumenAktaPendirian 
+                mode={mode} 
+                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen)}
+                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
+                dataLama={dataLama != undefined ? dataLama as registerDokumenAktaPendirianSchema:undefined}/>;
+            break;            
+          default:
+            break;
+          }
+        }
+
+        return konten;
+    },
+    [selectedKeyDokumen, selectedKeyRegisterPerusahaan, postsDokumen, postsRegisterPerusahaan, dataLama]
+);
 
   const _handleOnDismissed = useCallback(
     () => {
@@ -348,14 +295,14 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
 
   const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-        let registerPerusahaan = cloneDeep(postsRegisterPerusahaan?.at(index!));
-        if(registerPerusahaan?.kreator == undefined) {
-            registerPerusahaan!.kreator = null;
-        }
-        if(registerPerusahaan?.verifikator == undefined) {
-            registerPerusahaan!.verifikator = null;
-        }                      
-        setValue('registerPerusahaan', registerPerusahaan!);
+        // let registerPerusahaan = cloneDeep(postsRegisterPerusahaan?.at(index!));
+        // if(registerPerusahaan?.kreator == undefined) {
+        //     registerPerusahaan!.kreator = null;
+        // }
+        // if(registerPerusahaan?.verifikator == undefined) {
+        //     registerPerusahaan!.verifikator = null;
+        // }                      
+        // setValue('registerPerusahaan', registerPerusahaan!);
         setSelectedKeyRegisterPerusahaan(option?.key as string);
       },
       [postsRegisterPerusahaan]
@@ -421,10 +368,9 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
 
   const _onHandleOnChangeDokumenComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-        let dokumen = cloneDeep(postsDokumen?.at(index!));
-        setSelectedDokumen(dokumen);
-
-        setValue('dokumen', dokumen!);
+        // let dokumen = cloneDeep(postsDokumen?.at(index!));
+        // setSelectedDokumen(dokumen);
+        // setValue('dokumen', dokumen!);
         setSelectedKeyDokumen(option?.key as string);
       },
       [postsDokumen]
@@ -452,74 +398,39 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       </div>
       <div className={contentStyles.body}>   
         <Stack>   
-          <Stack.Item> 
-            <Controller 
-              name="registerPerusahaan"
-              control={control}
-              render={
-                ({
-                  field: {onChange, onBlur}, 
-                  fieldState: { error }
-                }) => (
-                  <ComboBox
-                    componentRef={comboBoxRegisterPerusahaanRef}
-                    label="Perusahaan"
-                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                    allowFreeform={true}
-                    options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
-                    selectedKey={selectedKeyRegisterPerusahaan}
-                    useComboBoxAsMenuWidth={true}
-                    onRenderOption={_onRenderRegisterPerusahaanOption}   
-                    onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
-                    styles={basicComboBoxStyles}           
-                    errorMessage={error && 'harus diisi'}
-                    onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-                    disabled={mode == 'delete' ? true:disableForm}
-                  />
-                )}
+          <Stack.Item>
+            <ComboBox
+              componentRef={comboBoxRegisterPerusahaanRef}
+              label="Perusahaan"
+              placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+              allowFreeform={true}
+              options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+              selectedKey={selectedKeyRegisterPerusahaan}
+              useComboBoxAsMenuWidth={true}
+              onRenderOption={_onRenderRegisterPerusahaanOption}   
+              onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+              styles={basicComboBoxStyles}          
+              onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+              disabled={mode == 'delete' ? true:disableForm}
             />
           </Stack.Item> 
           <Stack.Item> 
-            <Controller 
-              name="dokumen"
-              control={control}
-              render={
-                ({
-                  field: {onChange, onBlur}, 
-                  fieldState: { error }
-                }) => (
-                  <ComboBox
-                    componentRef={comboBoxDokumenRef}
-                    label="Jenis dokumen"
-                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                    allowFreeform={true}
-                    options={optionsDokumen != undefined ? optionsDokumen:[]}
-                    selectedKey={selectedKeyDokumen}
-                    useComboBoxAsMenuWidth={true}
-                    onInputValueChange={_onInputComboBoxDokumenValueChange}      
-                    styles={basicComboBoxStyles}           
-                    errorMessage={error && 'harus diisi'}
-                    onChange={_onHandleOnChangeDokumenComboBox}
-                    disabled={mode == 'delete' ? true:disableForm}
-                  />
-                )}
+            <ComboBox
+              componentRef={comboBoxDokumenRef}
+              label="Jenis dokumen"
+              placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+              allowFreeform={true}
+              options={optionsDokumen != undefined ? optionsDokumen:[]}
+              selectedKey={selectedKeyDokumen}
+              useComboBoxAsMenuWidth={true}
+              onInputValueChange={_onInputComboBoxDokumenValueChange}      
+              styles={basicComboBoxStyles}           
+              onChange={_onHandleOnChangeDokumenComboBox}
+              disabled={mode == 'delete' ? true:disableForm}
             />
           </Stack.Item> 
-          { selectedDokumen != undefined &&         
-            <Stack.Item>
-              <Label>Formulir {selectedDokumen?.nama}</Label>
-              <Stack style={{border: '1px solid #e1dfdf', padding: 8}} tokens={stackTokens}>
-                fafasfas
-              </Stack>
-            </Stack.Item>
-          }
+          { kontenFormulirDokumen }
         </Stack>
-        <PrimaryButton 
-          style={{marginTop: 16, width: '100%'}}
-          text={mode == 'delete' ? 'Hapus':'Simpan'} 
-          onClick={handleSubmit(onSubmit, onError)}
-          disabled={disableForm}
-        />
       </div>
     </Modal>
   );

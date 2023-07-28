@@ -436,58 +436,58 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         <Stack horizontal tokens={stackTokens}>
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
-                <Stack.Item>
-                    <Controller 
-                        name="nik"
-                        control={control}
-                        render={
-                        ({
-                            field: {onChange, onBlur}, 
-                            fieldState: { error }
-                        }) => (
-                            <TextField
-                                label="Nik"
-                                placeholder="Isi sesuai KTP"
-                                value={nikTextFieldValue}
-                                onChange={
-                                  (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                    onChange(newValue || '');
-                                    setNikTextFieldValue(newValue || '');
-                                  }
-                                }
-                                styles={textFieldKtpStyles}
-                                disabled={mode == 'delete' ? true:disableForm}
-                                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                            />
-                        )}
-                    />
-                </Stack.Item>
-                <Stack.Item>
-                    <Controller 
-                    name="nama"
-                    control={control}
-                    render={
-                        ({
-                        field: {onChange, onBlur}, 
-                        fieldState: { error }
-                        }) => (
-                            <TextField
-                            label="Nama"
-                            placeholder="Isi sesuai KTP"
-                            value={namaTextFieldValue}
-                            onChange={
+              <Stack.Item>
+                  <Controller 
+                      name="nik"
+                      control={control}
+                      render={
+                      ({
+                          field: {onChange, onBlur}, 
+                          fieldState: { error }
+                      }) => (
+                          <TextField
+                              label="Nik"
+                              placeholder="Isi sesuai KTP"
+                              value={nikTextFieldValue}
+                              onChange={
                                 (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                onChange(newValue || '');
-                                setNamaTextFieldValue(newValue || '');
+                                  onChange(newValue || '');
+                                  setNikTextFieldValue(newValue || '');
                                 }
-                            }
-                            styles={textFieldStyles}
-                            disabled={mode == 'delete' ? true:disableForm}
-                            errorMessage={error && 'harus diisi'}
-                            />
-                        )}
-                    />
-                </Stack.Item>
+                              }
+                              styles={textFieldKtpStyles}
+                              disabled={mode == 'delete' ? true:disableForm}
+                              errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                          />
+                      )}
+                  />
+              </Stack.Item>
+              <Stack.Item>
+                  <Controller 
+                  name="nama"
+                  control={control}
+                  render={
+                      ({
+                      field: {onChange, onBlur}, 
+                      fieldState: { error }
+                      }) => (
+                          <TextField
+                          label="Nama"
+                          placeholder="Isi sesuai KTP"
+                          value={namaTextFieldValue}
+                          onChange={
+                              (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                              onChange(newValue || '');
+                              setNamaTextFieldValue(newValue || '');
+                              }
+                          }
+                          styles={textFieldStyles}
+                          disabled={mode == 'delete' ? true:disableForm}
+                          errorMessage={error && 'harus diisi'}
+                          />
+                      )}
+                  />
+              </Stack.Item>
             </Stack>
             <Stack horizontal tokens={stackTokens}>
                 <Stack.Item>
