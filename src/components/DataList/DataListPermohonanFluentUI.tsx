@@ -1,13 +1,13 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
-import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarKategoriPermohonanByFiltersQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -103,7 +103,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
             isSortedDescending: true,
             isSorted: true,
             onRender: (item: IItemRegisterPermohonan) => {
-                return flipFormatDate(item.tanggalRegistrasi!);
+                return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);
             }
         },
         { 
@@ -418,8 +418,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     );
 
     const handleSelectedDate = useCallback(
-        (date) => {
-            let tanggalTerpilih = onFormatDateUtc(date);
+        (date: Date|null|undefined) => {
+            let tanggalTerpilih = utcFormatDateToYYYYMMDD(date!);
 
             setCurrentPage(1);
 
@@ -448,7 +448,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                 }
             );
 
-            setSelectedDate(date);
+            setSelectedDate(date!);
         },
         []
     );
@@ -698,7 +698,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                                 placeholder="Pilih tanggal..."
                                 ariaLabel="Pilih tanggal"
                                 strings={DayPickerIndonesiaStrings}
-                                formatDate={onFormatDate}
+                                formatDate={utcFormatDateToDDMMYYYY}
                                 onSelectDate={handleSelectedDate}
                                 value={selectedDate}
                             />

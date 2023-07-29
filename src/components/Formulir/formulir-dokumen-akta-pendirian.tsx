@@ -8,10 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation } from "../../features/repository/service/sikoling-api-slice";
-import { DayPickerIndonesiaStrings } from "../../features/config/config";
+import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
-import { utcFormatDateToStringIndonesianFormatDate } from "../../features/config/helper-function";
+import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
 export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
@@ -240,10 +240,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         placeholder="Pilih tanggal"
                         ariaLabel="Pilih tanggal"
                         strings={DayPickerIndonesiaStrings}
-                        formatDate={utcFormatDateToStringIndonesianFormatDate}
+                        formatDate={utcFormatDateToDDMMYYYY}
                         styles={dateStyle}
                         onSelectDate={
                           (date) => {         
+                            // onChange(utcFormatDateToYYYYMMDD(date!));
                             setSelectedDate(date!);
                           }
                         }
@@ -274,7 +275,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                             setNomorTextFieldValue(newValue||'');
                           }
                         }
-                        disabled={mode == 'delete' ? true:disableForm}
+                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
                         styles={textFieldStyles}
                         errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                       />
@@ -303,7 +304,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                             setNotarisTextFieldValue(newValue || '');
                           }
                         }
-                        disabled={mode == 'delete' ? true:disableForm}
+                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
                         styles={textFieldStyles}
                         errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                       />
@@ -333,7 +334,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                           onChange(penanggungJawab);
                           setSelectedKeyPegawai(option?.key as string);
                         }}
-                        disabled={mode == 'delete' ? true:disableForm}
+                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
                       />
                     )
                   }
@@ -349,7 +350,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 
           onClick={handleSubmit(onSubmit, onError)}
-          disabled={disableForm}
+          disabled={selectedDate == undefined ? true:disableForm}
         />
     </Stack.Item>
   );

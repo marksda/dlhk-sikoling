@@ -1,13 +1,13 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
-import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useGetDaftarKategoriFlowLogByFiltersQuery } from "../../features/log/kategori-flow-log-api-slice";
 import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { DayPickerIndonesiaStrings, utcFormatStringToDDMMYYYY, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 
 
 interface IDataListFlowLogFluentUIProps {
@@ -104,7 +104,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             isSortedDescending: true,
             isSorted: true,
             onRender: (item: IItemFlowLogPermohonan) => {
-                return flipFormatDate(item.tanggal as string);
+                return utcFormatStringToDDMMYYYY(item.tanggal!);
             }
         },
         { 
@@ -167,7 +167,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                 {
                                     `Tanggal registrasi: ${
                                         item.registerPermohonan != undefined ?
-                                         flipFormatDate(item.registerPermohonan?.tanggalRegistrasi as string): '-'
+                                        utcFormatStringToDDMMYYYY(item.registerPermohonan?.tanggalRegistrasi!): '-'
                                     }`
                                 }
                             </span><br/>
@@ -462,8 +462,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     );
 
     const _onHandleSelectedDate = useCallback(
-        (date) => {
-            let tanggalTerpilih = onFormatDateUtc(date);            
+        (tanggal: Date|null|undefined) => {
+            let tanggalTerpilih = utcFormatDateToYYYYMMDD(tanggal!);            
 
             setCurrentPage(1);
 
@@ -515,7 +515,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                 }
             );
 
-            setSelectedDate(date);
+            setSelectedDate(tanggal!);
             
         },
         []
@@ -891,7 +891,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                 placeholder="Pilih tanggal..."
                                 ariaLabel="Pilih tanggal"
                                 strings={DayPickerIndonesiaStrings}
-                                formatDate={onFormatDate}
+                                formatDate={utcFormatDateToDDMMYYYY}
                                 onSelectDate={_onHandleSelectedDate}
                                 value={selectedDate}
                             />

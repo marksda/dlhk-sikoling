@@ -4,6 +4,7 @@ import { RootState } from "../../app/store";
 import { resetCredential } from "../security/authentication-slice";
 import { IResponseStatusToken, resetToken, setToken } from "../security/token-slice";
 import { urlApiSikoling } from "./config";
+import { IDatePickerStrings } from "@fluentui/react";
 
 const mutex = new Mutex();
 
@@ -165,7 +166,32 @@ export const getFileType = (mime: string) => {
     }        
 
     return hasil;
-}
+};
+
+export const DayPickerIndonesiaStrings: IDatePickerStrings = {
+    months: [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'December'
+    ],
+    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+    days: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+    shortDays: ['Mg', 'Sn', 'Sl', 'Rb', 'Km', 'Jm', 'Sb'],
+    goToToday: 'Hari ini',
+    prevMonthAriaLabel: 'Bulan Sebelumnya',
+    nextMonthAriaLabel: 'Bulan Selanjutnya',
+    prevYearAriaLabel: 'Tahun Sebelumnya',
+    nextYearAriaLabel: 'Tahun Berikutnya'
+};
 
 const addZeroDigitInFront = (bilangan: number) => {
     if(bilangan < 10) {
@@ -176,13 +202,17 @@ const addZeroDigitInFront = (bilangan: number) => {
     }
 }
 
-export const utcFormatDateToStringIndonesianFormatDate = (date: Date|undefined): string => {
+export const utcFormatDateToDDMMYYYY = (date: Date|undefined): string => {
     return  date == undefined ? '' : addZeroDigitInFront(date.getDate()) + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + date.getFullYear();
 };
 
-export const toFormatIndonesianDate = (tglStr?: string) => {
+export const utcFormatStringToDDMMYYYY = (tglStr: string) => {
     if(tglStr != undefined) {
         let tgl = tglStr?.split("-");
         return `${tgl![2]}-${tgl![1]}-${tgl![0]}`;    
     }
+};
+
+export const utcFormatDateToYYYYMMDD = (date?: Date): string => {
+    return !date ? '' : date.getFullYear() + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + addZeroDigitInFront(date.getDate());
 };

@@ -4,13 +4,13 @@ import cloneDeep from "lodash.clonedeep";
 import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { DayPickerIndonesiaStrings, flipFormatDate, onFormatDate, onFormatDateUtc } from "../../features/config/config";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IOtoritas } from "../../features/entity/otoritas";
 import find from "lodash.find";
 import { FormulirOtoritas } from "../Formulir/formulir-otoritas";
 import { useGetDaftarDataHakAksesQuery } from "../../features/repository/service/sikoling-api-slice";
+import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 
 interface IDataListOtoritasUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -117,7 +117,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             isSortedDescending: true,
             isSorted: true,
             onRender: (item: IItemAuthority) => {
-                return flipFormatDate(item.tanggal as string);
+                return utcFormatStringToDDMMYYYY(item.tanggal!);
             }
         },
         { 
@@ -784,8 +784,8 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     );
 
     const _onHandleSelectedDate = useCallback(
-        (date) => {
-            let tanggalTerpilih = onFormatDateUtc(date);              
+        (date: Date|null|undefined) => {
+            let tanggalTerpilih = utcFormatDateToYYYYMMDD(date!);              
 
             setCurrentPage(1);
 
@@ -837,7 +837,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                 }
             );
 
-            setSelectedDate(date);
+            setSelectedDate(date!);
         },
         []
     );
@@ -1130,7 +1130,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                                 placeholder="Pilih tanggal..."
                                 ariaLabel="Pilih tanggal"
                                 strings={DayPickerIndonesiaStrings}
-                                formatDate={onFormatDate}
+                                formatDate={utcFormatDateToDDMMYYYY}
                                 onSelectDate={_onHandleSelectedDate}
                                 value={selectedDate}
                             />

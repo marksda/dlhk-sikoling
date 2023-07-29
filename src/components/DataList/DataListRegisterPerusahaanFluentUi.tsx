@@ -1,12 +1,11 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Selection, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets, ComboBox, IComboBox, IComboBoxOption } from "@fluentui/react";
-import { flipFormatDate } from "../../features/config/config";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
 import { FormulirRegisterPerusahaan } from "../Formulir/formulir-register-perusahaan";
-import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
+import { invertParseNpwp, parseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
@@ -150,7 +149,7 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
             isSortedDescending: true,
             isSorted: true,
             onRender: (item: IItemRegisterPerusahaan) => {
-                return flipFormatDate(item.tanggalRegistrasi as string);
+                return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);
             }
         },
         { 

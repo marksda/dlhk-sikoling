@@ -3,7 +3,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
-import { invertParseNpwp, toFormatIndonesianDate } from "../../features/config/helper-function";
+import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
@@ -142,7 +142,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             isSorted: true,
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemRegisterDokumen) => {
-                return toFormatIndonesianDate(item.tanggalRegistrasi!);
+                return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);
             },
         },
         { 
@@ -198,7 +198,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         doc = item.dokumen as IDokumenAktaPendirian;
                         konten = 
                         <>
-                            <span>Tanggal penerbitan : {toFormatIndonesianDate(doc.tanggal!)}</span><br /> 
+                            <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
                             <span>Notaris : {doc.namaNotaris}</span><br /> 
                             <span>Nomor akta : {doc.nomor}</span><br /> 
                             <span>Direktur : {doc.penanggungJawab?.person?.nama}</span>
@@ -208,7 +208,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         doc = item.dokumen as IDokumenNibOss;
                         konten = 
                         <>
-                            <span>Tanggal penerbitan : {toFormatIndonesianDate(doc.tanggal!)}</span><br /> 
+                            <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
                             <span>Nib : {doc.nomor}</span><br/>
                             <span>
                                 Kbli : {

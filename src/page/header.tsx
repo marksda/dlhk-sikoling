@@ -1,7 +1,7 @@
 import { DefaultPalette, getTheme, Image, IStackItemStyles, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import { FC } from "react";
 import logo from '../sidoarjo.svg';
-import { onFormatDate } from "../features/config/config";
+import { utcFormatDateToDDMMYYYY } from "../features/config/helper-function";
 
 
 const theme = getTheme();
@@ -27,7 +27,7 @@ const dateStyles: IStackItemStyles = {
 };
 
 export const Header: FC = () => {
-    const today = onFormatDate(new Date());
+    const today = utcFormatDateToDDMMYYYY(new Date());
     return (
         <Stack horizontal styles={stackStyles} tokens={headerStackTokens}>
             <Stack.Item>
