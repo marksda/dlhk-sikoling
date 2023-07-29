@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useRef, useState} from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { z } from "zod";
 import { DokumenAktaPendirianSchema, RegisterDokumenSchema } from "../../features/schema-resolver/zod-schema";
 import { ComboBox, DatePicker, DayOfWeek, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
@@ -150,6 +150,40 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [comboBoxPenanggungJawabRef]
   );
 
+  useEffect(
+    () => {
+      if(registerPerusahaan != undefined) {        
+        resetField('dokumen.penanggungJawab');
+        setSelectedKeyPegawai(undefined);
+        setQueryPegawaiParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
+              
+              if(found == -1) {
+                  filters?.push({
+                      fieldName: 'perusahaan_id',
+                      value: registerPerusahaan.id!
+                  });
+              }
+              else {
+                  filters?.splice(found, 1, {
+                      fieldName: 'perusahaan_id',
+                      value: registerPerusahaan.id!
+                  })
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+        );
+      }
+    },
+    [registerPerusahaan]
+  );
+
   const onSubmit: SubmitHandler<registerDokumenAktaPendirianSchema> = async (data) => {
     setDisableForm(true);
     try {
@@ -288,7 +322,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
                         allowFreeform={true}
                         options={optionsPegawai != undefined ? optionsPegawai:[]}
-                        selectedKey={selectedKeyPegawai}
+                        selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
                         useComboBoxAsMenuWidth={true}
                         onRenderOption={_onRenderPegawaiOption}   
                         onInputValueChange={_onInputComboBoxPegawaiValueChange}      
