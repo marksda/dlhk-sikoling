@@ -1,17 +1,24 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { z } from "zod";
 import { DokumenAktaPendirianSchema, RegisterDokumenSchema } from "../../features/schema-resolver/zod-schema";
-import { ComboBox, DatePicker, DayOfWeek, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, Stack, TextField, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation } from "../../features/repository/service/sikoling-api-slice";
-import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
+import { DayPickerIndonesiaStrings, getFileType, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
+import { Document, Page, pdfjs } from "react-pdf";
+import type { PDFDocumentProxy } from 'pdfjs-dist';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
 export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
@@ -21,12 +28,39 @@ interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   registerPerusahaan?: IRegisterPerusahaan;
   dataLama?: registerDokumenAktaPendirianSchema;
 };
+const options = {
+  cMapUrl: '/cmaps/',
+  standardFontDataUrl: '/standard_fonts/',
+};
 const stackTokens = { childrenGap: 8 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
   root: {
     width: 130
   }
 };
+const contentStyles = mergeStyleSets({
+  fileViewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '1px solid #DDDCDC',
+    "&:hover": {
+        background: "#F4F2F2",
+        cursor: 'pointer',
+        border: '1px solid #D7D7D7'
+    },
+    width: 400,
+    height: 230,
+    padding: 2,
+  },
+  iconContainer: {
+    fontSize: 32,
+    height: 36,
+    color: '#DDDCDC',
+    margin: '0 25px',
+  },
+});
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
 
@@ -37,6 +71,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.nomor!:'');
   const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.namaNotaris!:'');
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen.penanggungJawab?.id!:undefined);
+  const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
+  const [numPages, setNumPages] = useState<number>();
   const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 0,
@@ -54,7 +90,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const comboBoxPenanggungJawabRef = useRef<IComboBox>(null);
   //react hook-form
-  const {handleSubmit, control, setValue, resetField, watch} = useForm<registerDokumenAktaPendirianSchema>({
+  const {handleSubmit, control, setValue, resetField} = useForm<registerDokumenAktaPendirianSchema>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama) as registerDokumenAktaPendirianSchema:{
       id: null,
       registerPerusahaan: {id: registerPerusahaan?.id!},
@@ -155,7 +191,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     () => {
       if(registerPerusahaan != undefined) {        
         resetField('dokumen.penanggungJawab');
-        setSelectedKeyPegawai(undefined);
+        if(mode == 'add') {
+          setSelectedKeyPegawai(undefined);
+        }        
         setQueryPegawaiParams(
           prev => {
               let tmp = cloneDeep(prev);
@@ -182,8 +220,37 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         );
       }
     },
-    [registerPerusahaan]
+    [registerPerusahaan, mode]
   );
+
+  const _handleFile = useCallback(
+    (event: FormEvent<HTMLInputElement>) => {            
+        if(event.currentTarget.files!.length > 0) {            
+          let fileType: string = getFileType(event.currentTarget.files![0].type);
+          let namaFile: string = event.currentTarget.files![0].name;
+
+          if(fileType == 'pdf') {
+            setSelectedFiles(event.currentTarget.files);
+            setValue("lokasiFile", namaFile);
+          }      
+        }
+    },
+    []
+  );
+
+  const _bindClickEventInputFile = useCallback(
+    (e) => {            
+        e.stopPropagation();
+        if(!disableForm) {
+          document.getElementById('fileUpload')!.click();
+        }        
+    },
+    [disableForm]
+  );
+
+  const _onDocumentLoadSuccess = ({ numPages: nextNumPages }: PDFDocumentProxy): void => {
+    setNumPages(nextNumPages);
+  };
 
   const onSubmit: SubmitHandler<registerDokumenAktaPendirianSchema> = async (data) => {
     setDisableForm(true);
@@ -343,7 +410,31 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             </Stack>  
           </Stack.Item> 
           <Stack.Item>
-            Area upload dokumen
+            <Controller 
+              name="lokasiFile"
+              control={control}
+              render={
+                ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                  <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
+                )
+              }
+            />    
+            { selectedFiles == undefined &&
+              <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
+                <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
+                <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+              </div>
+            } 
+            { selectedFiles && 
+              <Document 
+                file={selectedFiles[0]} 
+                onLoadSuccess={_onDocumentLoadSuccess} 
+                options={options}
+              >
+                <Page pageNumber={1} />
+              </Document>
+            }
           </Stack.Item>       
         </Stack>
         <PrimaryButton 
