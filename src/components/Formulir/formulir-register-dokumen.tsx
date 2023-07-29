@@ -67,7 +67,7 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
+const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
 const stackTokens = { childrenGap: 8 };
 
 export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
@@ -120,6 +120,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
   //ref component
   const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
   const comboBoxDokumenRef = useRef<IComboBox>(null);
+  // rtk query
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
   const { data: postsDokumen, isLoading: isLoadingPostsDokumen } = useGetDaftarDataDokumenQuery(queryDokumenParams);
 
@@ -237,7 +238,6 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
 
   const _onInputComboBoxRegisterPerusahaanValueChange = useCallback(
     (newValue: string) => {
-      console.log(newValue);
       if(newValue.length > 2) {
         comboBoxRegisterPerusahaanRef.current?.focus(true);
         setQueryRegisterPerusahaanParams(
@@ -290,22 +290,14 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
         );
       }
     },
-    []
+    [comboBoxRegisterPerusahaanRef]
   );
 
   const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-        // let registerPerusahaan = cloneDeep(postsRegisterPerusahaan?.at(index!));
-        // if(registerPerusahaan?.kreator == undefined) {
-        //     registerPerusahaan!.kreator = null;
-        // }
-        // if(registerPerusahaan?.verifikator == undefined) {
-        //     registerPerusahaan!.verifikator = null;
-        // }                      
-        // setValue('registerPerusahaan', registerPerusahaan!);
-        setSelectedKeyRegisterPerusahaan(option?.key as string);
-      },
-      [postsRegisterPerusahaan]
+      setSelectedKeyRegisterPerusahaan(option?.key as string);
+    },
+    [postsRegisterPerusahaan]
   );
   
   const _onInputComboBoxDokumenValueChange = useCallback(
@@ -397,38 +389,42 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
         />
       </div>
       <div className={contentStyles.body}>   
-        <Stack>   
+        <Stack tokens={stackTokens}>  
           <Stack.Item>
-            <ComboBox
-              componentRef={comboBoxRegisterPerusahaanRef}
-              label="Perusahaan"
-              placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-              allowFreeform={true}
-              options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
-              selectedKey={selectedKeyRegisterPerusahaan}
-              useComboBoxAsMenuWidth={true}
-              onRenderOption={_onRenderRegisterPerusahaanOption}   
-              onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
-              styles={basicComboBoxStyles}          
-              onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-              disabled={mode == 'delete' ? true:disableForm}
-            />
-          </Stack.Item> 
-          <Stack.Item> 
-            <ComboBox
-              componentRef={comboBoxDokumenRef}
-              label="Jenis dokumen"
-              placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-              allowFreeform={true}
-              options={optionsDokumen != undefined ? optionsDokumen:[]}
-              selectedKey={selectedKeyDokumen}
-              useComboBoxAsMenuWidth={true}
-              onInputValueChange={_onInputComboBoxDokumenValueChange}      
-              styles={basicComboBoxStyles}           
-              onChange={_onHandleOnChangeDokumenComboBox}
-              disabled={mode == 'delete' ? true:disableForm}
-            />
-          </Stack.Item> 
+            <Stack horizontal tokens={stackTokens} grow> 
+              <Stack.Item>
+                <ComboBox
+                  componentRef={comboBoxRegisterPerusahaanRef}
+                  label="Perusahaan"
+                  placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                  allowFreeform={true}
+                  options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+                  selectedKey={selectedKeyRegisterPerusahaan}
+                  useComboBoxAsMenuWidth={true}
+                  onRenderOption={_onRenderRegisterPerusahaanOption}   
+                  onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+                  styles={basicComboBoxStyles}          
+                  onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                  disabled={mode == 'delete'||mode == 'edit' ? true:disableForm}
+                />
+              </Stack.Item> 
+              <Stack.Item grow> 
+                <ComboBox
+                  componentRef={comboBoxDokumenRef}
+                  label="Jenis dokumen"
+                  placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                  allowFreeform={true}
+                  options={optionsDokumen != undefined ? optionsDokumen:[]}
+                  selectedKey={selectedKeyDokumen}
+                  useComboBoxAsMenuWidth={true}
+                  onInputValueChange={_onInputComboBoxDokumenValueChange}      
+                  styles={basicComboBoxStyles}           
+                  onChange={_onHandleOnChangeDokumenComboBox}
+                  disabled={mode == 'delete'||mode == 'edit' ? true:disableForm}
+                />
+              </Stack.Item> 
+            </Stack>
+          </Stack.Item>
           { kontenFormulirDokumen }
         </Stack>
       </div>
