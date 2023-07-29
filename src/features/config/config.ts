@@ -35,7 +35,7 @@ export const DayPickerIndonesiaStrings: IDatePickerStrings = {
     nextYearAriaLabel: 'Tahun Berikutnya'
 };
 export const onFormatDate = (date?: Date) => {
-    return !date ? '' : addZeroDigitInFront(date.getDate()) + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + date.getFullYear();
+    return date == undefined ? '' : addZeroDigitInFront(date.getDate()) + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + date.getFullYear();
 };
 export const onFormatDateUtc = (date?: Date) => {
     return !date ? '' : date.getFullYear() + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + addZeroDigitInFront(date.getDate());

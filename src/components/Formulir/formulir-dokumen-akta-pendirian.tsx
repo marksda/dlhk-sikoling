@@ -1,16 +1,17 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { z } from "zod";
 import { DokumenAktaPendirianSchema, RegisterDokumenSchema } from "../../features/schema-resolver/zod-schema";
-import { ComboBox, DatePicker, DayOfWeek, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation } from "../../features/repository/service/sikoling-api-slice";
-import { DayPickerIndonesiaStrings, onFormatDate } from "../../features/config/config";
+import { DayPickerIndonesiaStrings } from "../../features/config/config";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
+import { utcFormatDateToStringIndonesianFormatDate } from "../../features/config/helper-function";
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
 export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
@@ -32,7 +33,7 @@ const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama}) => { 
   //local state
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
-  const [selectedDate, setSelectedDate] = useState<Date|undefined>(undefined); 
+  const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen.tanggal!):undefined); 
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.nomor!:'');
   const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.namaNotaris!:'');
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen.penanggungJawab?.id!:undefined);
@@ -239,7 +240,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         placeholder="Pilih tanggal"
                         ariaLabel="Pilih tanggal"
                         strings={DayPickerIndonesiaStrings}
-                        formatDate={onFormatDate}
+                        formatDate={utcFormatDateToStringIndonesianFormatDate}
                         styles={dateStyle}
                         onSelectDate={
                           (date) => {         

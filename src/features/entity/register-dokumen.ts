@@ -1,5 +1,3 @@
-import { IDokumenAktaPendirian } from "./dokumen-akta-pendirian";
-import { IDokumenNibOss } from "./dokumen-nib-oss";
 import { IOtoritas } from "./otoritas";
 import { IRegisterPerusahaan } from "./register-perusahaan";
 import { IStatusDokumen } from "./status-dokumen";

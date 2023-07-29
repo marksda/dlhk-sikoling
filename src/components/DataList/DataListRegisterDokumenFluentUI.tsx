@@ -1,19 +1,16 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles} from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useBoolean, useId } from "@fluentui/react-hooks";
-import { invertParseNpwp } from "../../features/config/helper-function";
+import { useBoolean } from "@fluentui/react-hooks";
+import { invertParseNpwp, toFormatIndonesianDate } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
 import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
-import { flipFormatDate } from "../../features/config/config";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
-import { FormulirRegisterDokumenAktaPendirian, registerDokumenAktaPendirianSchema } from "../Formulir/formulir-dokumen-akta-pendirian";
-import { IDokumen } from "../../features/entity/dokumen";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -145,7 +142,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             isSorted: true,
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemRegisterDokumen) => {
-                return flipFormatDate(item.tanggalRegistrasi!);
+                return toFormatIndonesianDate(item.tanggalRegistrasi!);
             },
         },
         { 
@@ -201,7 +198,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         doc = item.dokumen as IDokumenAktaPendirian;
                         konten = 
                         <>
-                            <span>Tanggal penerbitan : {flipFormatDate(doc.tanggal!)}</span><br /> 
+                            <span>Tanggal penerbitan : {toFormatIndonesianDate(doc.tanggal!)}</span><br /> 
                             <span>Notaris : {doc.namaNotaris}</span><br /> 
                             <span>Nomor akta : {doc.nomor}</span><br /> 
                             <span>Direktur : {doc.penanggungJawab?.person?.nama}</span>
@@ -211,7 +208,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         doc = item.dokumen as IDokumenNibOss;
                         konten = 
                         <>
-                            <span>Tanggal penerbitan : {flipFormatDate(doc.tanggal!)}</span><br /> 
+                            <span>Tanggal penerbitan : {toFormatIndonesianDate(doc.tanggal!)}</span><br /> 
                             <span>Nib : {doc.nomor}</span><br/>
                             <span>
                                 Kbli : {

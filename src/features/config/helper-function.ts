@@ -166,3 +166,23 @@ export const getFileType = (mime: string) => {
 
     return hasil;
 }
+
+const addZeroDigitInFront = (bilangan: number) => {
+    if(bilangan < 10) {
+        return `0${bilangan}`;
+    }
+    else {
+        return `${bilangan}`;
+    }
+}
+
+export const utcFormatDateToStringIndonesianFormatDate = (date: Date|undefined): string => {
+    return  date == undefined ? '' : addZeroDigitInFront(date.getDate()) + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + date.getFullYear();
+};
+
+export const toFormatIndonesianDate = (tglStr?: string) => {
+    if(tglStr != undefined) {
+        let tgl = tglStr?.split("-");
+        return `${tgl![2]}-${tgl![1]}-${tgl![0]}`;    
+    }
+};
