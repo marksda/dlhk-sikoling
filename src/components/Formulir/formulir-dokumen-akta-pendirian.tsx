@@ -12,6 +12,8 @@ import { DayPickerIndonesiaStrings, getFileType, utcFormatDateToYYYYMMDD } from 
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
+import { DocumentEditor } from "@onlyoffice/document-editor-react";
+import { urlApiSikoling } from "../../features/config/config";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
 
@@ -286,9 +288,16 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     // }
   };
 
+  const _onDocumentReady = useCallback(
+    (e) => {
+      console.log("Document is loaded");
+    },
+    []
+  );
+
   return (
     <Stack.Item> 
-        <Stack style={{border: '1px solid #e1dfdf', padding: '0px 8px 8px 8px'}}>
+        <Stack style={{border: '1px solid #e1dfdf', padding: '0px 8px 8px 8px', minHeight: 800}}>
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
               <Stack.Item>
@@ -422,7 +431,26 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
               </div>
             } 
-            
+            { selectedFiles &&
+              <DocumentEditor 
+                id="docxEditor"
+                documentServerUrl="http://localhost:5434/"
+                config={{
+                  document: {
+                    fileType: "docx",
+                    key: "Khirz6zTPdfd7",
+                    title: "Example Document Title.docx",
+                    url: "https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx"
+                  },
+                  documentType: "word",
+                  editorConfig: {
+                    callbackUrl: urlApiSikoling
+                  },
+                  token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2OTA2OTQ4NTgsImV4cCI6MTcyMjIzMDg1OCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.7mW3CPcenMDsCdx26ess-UUNCKuLcKPaBEvj2QSqPGk"
+                }}
+                events_onDocumentReady={_onDocumentReady}
+              />
+            }
           </Stack.Item>       
         </Stack>
         <PrimaryButton 
