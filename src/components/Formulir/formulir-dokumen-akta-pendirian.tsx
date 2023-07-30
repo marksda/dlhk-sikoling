@@ -12,13 +12,17 @@ import { DayPickerIndonesiaStrings, getFileType, utcFormatDateToYYYYMMDD } from 
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
-import { Document, Page, pdfjs } from "react-pdf";
-import type { PDFDocumentProxy } from 'pdfjs-dist';
+// import { Document, Page, pdfjs } from "react-pdf";
+// import type { PDFDocumentProxy } from 'pdfjs-dist';
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   'pdfjs-dist/build/pdf.worker.min.js',
+//   import.meta.url,
+// ).toString();
+// const options = {
+//   cMapUrl: '/cmaps/',
+//   standardFontDataUrl: '/standard_fonts/',
+// };
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
 export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
@@ -27,10 +31,6 @@ interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   dokumen?: IDokumen;
   registerPerusahaan?: IRegisterPerusahaan;
   dataLama?: registerDokumenAktaPendirianSchema;
-};
-const options = {
-  cMapUrl: '/cmaps/',
-  standardFontDataUrl: '/standard_fonts/',
 };
 const stackTokens = { childrenGap: 8 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
@@ -248,10 +248,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [disableForm]
   );
 
-  const _onDocumentLoadSuccess = ({ numPages: nextNumPages }: PDFDocumentProxy): void => {
-    setNumPages(nextNumPages);
-  };
-
   const onSubmit: SubmitHandler<registerDokumenAktaPendirianSchema> = async (data) => {
     setDisableForm(true);
     try {
@@ -426,15 +422,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
               </div>
             } 
-            { selectedFiles && 
-              <Document 
-                file={selectedFiles[0]} 
-                onLoadSuccess={_onDocumentLoadSuccess} 
-                options={options}
-              >
-                <Page pageNumber={1} />
-              </Document>
-            }
+            
           </Stack.Item>       
         </Stack>
         <PrimaryButton 
