@@ -30,9 +30,10 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
             const release = await mutex.acquire();
             try {
                 const refreshToken = (api.getState() as RootState).token.refreshToken;
+                const userName = (api.getState() as RootState).token.userName;
                 const refreshResult = await baseQuery(
                 {
-                    url: 'user/refresh_token', 
+                    url: `user/refresh_token/${userName}`, 
                     method: 'POST',
                     body: refreshToken
                 },

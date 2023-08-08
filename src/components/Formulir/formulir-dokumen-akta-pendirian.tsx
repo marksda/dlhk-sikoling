@@ -14,6 +14,7 @@ import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 import { urlApiSikoling } from "../../features/config/config";
+import { useAppSelector } from "../../app/hooks";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
 
@@ -67,6 +68,7 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } 
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama}) => { 
+  const token = useAppSelector((state) => state.token);
   //local state
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen.tanggal!):undefined); 
@@ -231,10 +233,10 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           let fileType: string = getFileType(event.currentTarget.files![0].type);
           let namaFile: string = event.currentTarget.files![0].name;
 
-          if(fileType == 'pdf') {
+          // if(fileType == 'pdf') {
             setSelectedFiles(event.currentTarget.files);
             setValue("lokasiFile", namaFile);
-          }      
+          // }      
         }
     },
     []
@@ -291,6 +293,20 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const _onDocumentReady = useCallback(
     (e) => {
       console.log("Document is loaded");
+    },
+    []
+  );
+
+  const _onAppReady = useCallback(
+    (e) => {
+      console.log("App is ready");
+    },
+    []
+  );
+
+  const _onError = useCallback(
+    (e) => {
+      console.log(e);
     },
     []
   );
@@ -434,21 +450,23 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             { selectedFiles &&
               <DocumentEditor 
                 id="docxEditor"
-                documentServerUrl="http://localhost:5434/"
+                documentServerUrl="http://localhost/"
                 config={{
                   document: {
-                    fileType: "docx",
+                    fileType: "doc",
                     key: "Khirz6zTPdfd7",
                     title: "Example Document Title.docx",
-                    url: "https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx"
+                    url: `${urlApiSikoling}/files/onlyoffice/BAB A Tower.doc`
                   },
                   documentType: "word",
                   editorConfig: {
-                    callbackUrl: urlApiSikoling
+                    callbackUrl: `${urlApiSikoling}/files/onlyoffice`
                   },
-                  token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2OTA2OTQ4NTgsImV4cCI6MTcyMjIzMDg1OCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.7mW3CPcenMDsCdx26ess-UUNCKuLcKPaBEvj2QSqPGk"
+                  token: token.accessToken!
                 }}
                 events_onDocumentReady={_onDocumentReady}
+                events_onAppReady={_onAppReady}
+                events_onError={_onError}
               />
             }
           </Stack.Item>       
