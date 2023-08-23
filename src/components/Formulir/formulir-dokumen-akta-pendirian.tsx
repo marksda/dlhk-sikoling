@@ -13,7 +13,7 @@ import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-import { urlApiSikoling } from "../../features/config/config";
+import { urlApiSikoling, urlCallback } from "../../features/config/config";
 import { useAppSelector } from "../../app/hooks";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
@@ -460,7 +460,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                   },
                   documentType: "word",
                   editorConfig: {
-                    callbackUrl: `${urlApiSikoling}/files/onlyoffice`
+                    callbackUrl: urlCallback
                   },
                   token: token.accessToken!
                 }}

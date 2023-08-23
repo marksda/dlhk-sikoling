@@ -3,7 +3,12 @@ import { IJenisKelamin } from "../entity/jenis-kelamin";
 import { IDatePickerStrings } from "@fluentui/react";
 
 // export const sikolingBaseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
-export const urlApiSikoling:string = 'http://localhost:8080/Sikoling-web/api';
+export const urlApiSikoling:string = 'https://dlhk.ddns.net/Sikoling-web/api';
+export const urlCallback:string = 'https://dlhk.ddns.net/Sikoling-web/api/onlyoffice/track';
+export const URL_DOC_SERVICE_CONVERTER='https://dlhk.ddns.net/ConvertService.ashx';
+// export const URL_DOC_SERVICE_COMMAND='https://dlhk.ddns.net/coauthoring/CommandService.ashx';
+export const URL_DOC_SERVICE_API='https://dlhk.ddns.net/eb-apps/apps/api/documents/api.js';
+export const URL_DOC_SERVICE_PRELOADER='https://dlhk.ddns.net/web-apps/apps/api/documents/cache-scripts.html';
 // export const baseIdentityProviderUrl = 'http://localhost:8082/';
 export const defaultHalaman: IHalaman = {page: 1, pageSize: 10};
 export const defaultJenisKelamin: IJenisKelamin = {id: 'L', nama: 'Laki-Laki'};
