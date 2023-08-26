@@ -21,4 +21,4 @@ const getFile = (namaFile: string) => {
     return http.get(`/files/${namaFile}`)
 };
 
-export default { upload, getFile }
+export { upload, getFile}

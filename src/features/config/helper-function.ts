@@ -25,7 +25,7 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
 
     let result = await baseQuery(args, api, extraOptions);
     
-    if (result.error && result.error.status === 500) {
+    if (result.error && result.error.status === 401) {
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
             try {
@@ -33,7 +33,7 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                 const userName = (api.getState() as RootState).token.userName;
                 const refreshResult = await baseQuery(
                 {
-                    url: `user/refresh_token/${userName}`, 
+                    url: `/user/refresh_token/${userName}`, 
                     method: 'POST',
                     body: refreshToken
                 },

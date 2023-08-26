@@ -13,8 +13,11 @@ import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-import { urlApiSikoling, urlCallback } from "../../features/config/config";
+// import { urlApiSikoling, urlCallback } from "../../features/config/config";
 import { useAppSelector } from "../../app/hooks";
+import { IConfig } from "../../features/entity/onlyoffice-config-editor";
+import { getOnlyofficeConfigEditor, uploadFile } from "../../features/repository/service/http-file-service";
+import { urlDocumenService } from "../../features/config/config";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
 
@@ -76,7 +79,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.namaNotaris!:'');
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen.penanggungJawab?.id!:undefined);
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
-  const [numPages, setNumPages] = useState<number>();
+  // const [numPages, setNumPages] = useState<number>();
   const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 0,
@@ -92,6 +95,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     ],
   });
   const [disableForm, setDisableForm] = useState<boolean>(false);
+  const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<IConfig|null>(null);
   const comboBoxPenanggungJawabRef = useRef<IComboBox>(null);
   //react hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<registerDokumenAktaPendirianSchema>({
@@ -230,13 +234,25 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const _handleFile = useCallback(
     (event: FormEvent<HTMLInputElement>) => {            
         if(event.currentTarget.files!.length > 0) {            
-          let fileType: string = getFileType(event.currentTarget.files![0].type);
+          // let fileType: string = getFileType(event.currentTarget.files![0].type);
           let namaFile: string = event.currentTarget.files![0].name;
 
           // if(fileType == 'pdf') {
             setSelectedFiles(event.currentTarget.files);
             setValue("lokasiFile", namaFile);
-          // }      
+          // }    
+          uploadFile(event.currentTarget.files![0], `/upload/akta_pendirian/temp`, null)
+            .then((responseUpload) => {
+              getOnlyofficeConfigEditor(responseUpload.uri)
+                .then((responseOnlyofficeConfigEditor) => {
+                  setConfigOnlyOfficeEditor(responseOnlyofficeConfigEditor);
+                })
+                .catch((er) => {
+                  console.log(er);
+                });
+            })
+            .catch(); 
+          
         }
     },
     []
@@ -450,20 +466,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             { selectedFiles &&
               <DocumentEditor 
                 id="docxEditor"
-                documentServerUrl="http://localhost/"
-                config={{
-                  document: {
-                    fileType: "doc",
-                    key: "Khirz6zTPdfd7",
-                    title: "Example Document Title.docx",
-                    url: `${urlApiSikoling}/files/onlyoffice/BAB A Tower.doc`
-                  },
-                  documentType: "word",
-                  editorConfig: {
-                    callbackUrl: urlCallback
-                  },
-                  token: token.accessToken!
-                }}
+                documentServerUrl={urlDocumenService}
+                config={configOnlyOfficeEditor!}
                 events_onDocumentReady={_onDocumentReady}
                 events_onAppReady={_onAppReady}
                 events_onError={_onError}
