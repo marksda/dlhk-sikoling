@@ -1,6 +1,6 @@
 import { IHalamanBasePageAndPageSize as IHalaman } from "../halaman/pagging";
 import { IJenisKelamin } from "../entity/jenis-kelamin";
-import { IDatePickerStrings } from "@fluentui/react";
+// import { IDatePickerStrings } from "@fluentui/react";
 
 // export const sikolingBaseRestAPIUrl:string = 'http://localhost:8080/Sikoling-web/api/';
 export const urlApiSikoling:string = 'https://dlhk.ddns.net/Sikoling-web/api';
