@@ -241,9 +241,10 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             setSelectedFiles(event.currentTarget.files);
             setValue("lokasiFile", namaFile);
           // }    
-          uploadFile(event.currentTarget.files!, `/upload/akta_pendirian/temp`, null)
-            .then((responseUpload) => {
-              getOnlyofficeConfigEditor(responseUpload.uri)
+          let subUri = `/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`;
+          uploadFile(event.currentTarget.files![0], subUri, null)
+            .then((uri) => {
+              getOnlyofficeConfigEditor(uri)
                 .then((responseOnlyofficeConfigEditor) => {
                   setConfigOnlyOfficeEditor(responseOnlyofficeConfigEditor);
                 })

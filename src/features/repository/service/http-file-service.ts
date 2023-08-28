@@ -61,14 +61,15 @@ const restAxiosAPI = () => {
         }
     );
 
-    const uploadFile = (files: any, subPath: string, onUploadProgress: any) => {
+    const uploadFile = (file: any, subPath: string, onUploadProgress: any) => {
         let formData = new FormData();
-        let i: number = 1;
+        formData.append('file', file);
+        // let i: number = 1;
     
-        for(let dataFile of files) {
-            formData.append(`file-${i}`, dataFile);
-            i++;
-        }    
+        // for(let dataFile of files) {
+        //     formData.append(`file-${i}`, dataFile);
+        //     i++;
+        // }    
         
         return api.post(subPath, formData, {
             headers: {
@@ -77,12 +78,12 @@ const restAxiosAPI = () => {
             },
             onUploadProgress,
         })
-        .then((response) => response.data)
+        .then((response) => response.data.uri)
         .catch((response) => response.error);
     };
     
-    const getOnlyofficeConfigEditor = (namaFile: String) => {
-        return api.get<IConfig>(`/onlyoffice/config?fileName=${namaFile}`,{
+    const getOnlyofficeConfigEditor = (uri: string) => {
+        return api.get<IConfig>(`/onlyoffice/config?fileNameParam=${uri}`,{
             headers: {
                 Accept: "application/json",
             },
