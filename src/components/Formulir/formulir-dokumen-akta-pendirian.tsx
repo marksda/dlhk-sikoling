@@ -15,7 +15,6 @@ import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 // import { urlApiSikoling, urlCallback } from "../../features/config/config";
 import { useAppSelector } from "../../app/hooks";
-import { IConfig } from "../../features/entity/onlyoffice-config-editor";
 import { urlDocumenService } from "../../features/config/config";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
@@ -115,9 +114,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams);
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
-
-  console.log(configOnlyOfficeEditor);
-
+  
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
     () => (
       postsPegawai?.map((item):IComboBoxOption => {
@@ -253,11 +250,12 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           };
           uploadFile(parm).unwrap()
             .then((firstPromiseResult) => {
-              // setDisableForm(false);
-              // console.log(firstPromiseResult);
               getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
                 .then((secondPromiseResult) => {
-                  setConfigOnlyOfficeEditor(secondPromiseResult);
+                  setDisableForm(false);
+                  let hasil = cloneDeep(secondPromiseResult);
+                  hasil.height = "500px";
+                  setConfigOnlyOfficeEditor(hasil);
                 })
                 .catch((rejectedValueOrSerializedError) => {
                   setDisableForm(false);
@@ -265,11 +263,10 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             })
             .catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
-              // console.log(rejectedValueOrSerializedError);
             });
           
-          setSelectedFiles(event.currentTarget.files);
-          setValue("lokasiFile", namaFile);
+          // setSelectedFiles(event.currentTarget.files);
+          // setValue("lokasiFile", namaFile);
         }
     },
     []
@@ -473,14 +470,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 )
               }
             />    
-            { selectedFiles == undefined &&
+            { configOnlyOfficeEditor == null &&
               <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
                 <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
                 <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
                 <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
               </div>
             } 
-            { selectedFiles && configOnlyOfficeEditor &&
+            { configOnlyOfficeEditor &&
               <DocumentEditor 
                 id="onlyOfficeEditor"
                 documentServerUrl={urlDocumenService}

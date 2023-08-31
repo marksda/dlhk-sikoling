@@ -18,7 +18,6 @@ import { IPelakuUsaha } from "../../entity/pelaku-usaha";
 import { IDokumen } from "../../entity/dokumen";
 import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 import { IRegisterDokumen } from "../../entity/register-dokumen";
-import { IConfig } from "../../entity/onlyoffice-config-editor";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',

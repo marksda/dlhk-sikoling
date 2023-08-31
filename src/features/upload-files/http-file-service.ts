@@ -1,6 +1,6 @@
 import axios from "axios";
 import { urlApiSikoling } from "../config/config";
-import { IConfig } from "../entity/onlyoffice-config-editor";
+// import { IConfig } from "../entity/onlyoffice-config-editor";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IResponseStatusToken, setToken } from "../security/token-slice";
 
