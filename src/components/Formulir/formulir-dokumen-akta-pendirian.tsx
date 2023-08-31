@@ -54,9 +54,9 @@ const contentStyles = mergeStyleSets({
         cursor: 'pointer',
         border: '1px solid #D7D7D7'
     },
-    width: 400,
-    height: 230,
-    padding: 2,
+    width: 300,
+    height: 100,
+    padding: '16px 16px 0px 16px',
   },
   iconContainer: {
     fontSize: 32,
@@ -254,7 +254,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 .then((secondPromiseResult) => {
                   setDisableForm(false);
                   let hasil = cloneDeep(secondPromiseResult);
-                  hasil.height = "500px";
+                  hasil.height = `${window.innerHeight - 350}px`;
                   setConfigOnlyOfficeEditor(hasil);
                 })
                 .catch((rejectedValueOrSerializedError) => {
@@ -343,7 +343,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   return (
     <Stack.Item> 
-        <Stack style={{border: '1px solid #e1dfdf', padding: '0px 8px 8px 8px', minHeight: 800}}>
+        <Stack style={{border: '1px solid #e1dfdf', padding: '8px 8px 8px 8px'}}>
+          { configOnlyOfficeEditor &&
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
               <Stack.Item>
@@ -459,8 +460,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 />                
               </Stack.Item>
             </Stack>  
-          </Stack.Item> 
-          <Stack.Item>
+          </Stack.Item>         
+          }
+          <Stack.Item align="center">
             <Controller 
               name="lokasiFile"
               control={control}
@@ -471,13 +473,15 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               }
             />    
             { configOnlyOfficeEditor == null &&
-              <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
-                <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
-                <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-              </div>
-            } 
-            { configOnlyOfficeEditor &&
+            <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
+              <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
+              <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+            </div>
+            }             
+          </Stack.Item> 
+          { configOnlyOfficeEditor &&
+            <Stack.Item>
               <DocumentEditor 
                 id="onlyOfficeEditor"
                 documentServerUrl={urlDocumenService}
@@ -486,14 +490,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 events_onAppReady={_onAppReady}
                 events_onError={_onError}
               />
-            }
-          </Stack.Item>       
+            </Stack.Item>
+            }      
         </Stack>
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 
           onClick={handleSubmit(onSubmit, onError)}
-          disabled={selectedDate == undefined ? true:disableForm}
+          disabled={configOnlyOfficeEditor == null ? true:disableForm}
         />
     </Stack.Item>
   );
