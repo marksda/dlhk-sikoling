@@ -7,7 +7,7 @@ import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-ho
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
-import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, getFileType, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
@@ -16,7 +16,6 @@ import { DocumentEditor } from "@onlyoffice/document-editor-react";
 // import { urlApiSikoling, urlCallback } from "../../features/config/config";
 import { useAppSelector } from "../../app/hooks";
 import { IConfig } from "../../features/entity/onlyoffice-config-editor";
-import { getOnlyofficeConfigEditor, uploadFile } from "../../features/repository/service/http-file-service";
 import { urlDocumenService } from "../../features/config/config";
 // import { Document, Page, pdfjs } from "react-pdf";
 // import type { PDFDocumentProxy } from 'pdfjs-dist';
@@ -95,7 +94,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     ],
   });
   const [disableForm, setDisableForm] = useState<boolean>(false);
-  const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<IConfig|null>(null);
+  const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
   const comboBoxPenanggungJawabRef = useRef<IComboBox>(null);
   //react hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<registerDokumenAktaPendirianSchema>({
@@ -114,6 +113,10 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   // const [ updateIdRegisterDokumen, {isLoading: isLoadingUpdateIdRegisterDokumen}] = useUpdateIdRegisterDokumenMutation();
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams);
+  const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
+  const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
+
+  console.log(configOnlyOfficeEditor);
 
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
     () => (
@@ -235,25 +238,38 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     (event: FormEvent<HTMLInputElement>) => {            
         if(event.currentTarget.files!.length > 0) {            
           // let fileType: string = getFileType(event.currentTarget.files![0].type);
-          let namaFile: string = event.currentTarget.files![0].name;
+          let file = event.currentTarget.files![0];
+          let namaFile: string = file.name;
 
           // if(fileType == 'pdf') {
-            setSelectedFiles(event.currentTarget.files);
-            setValue("lokasiFile", namaFile);
+            // setSelectedFiles(event.currentTarget.files);
+            // setValue("lokasiFile", namaFile);
           // }    
-          let subUri = `/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`;
-          uploadFile(event.currentTarget.files![0], subUri, null)
-            .then((uri) => {
-              getOnlyofficeConfigEditor(uri)
-                .then((responseOnlyofficeConfigEditor) => {
-                  setConfigOnlyOfficeEditor(responseOnlyofficeConfigEditor);
+          let formData = new FormData();
+          formData.append('file', file);
+          let parm = {
+            subPath: `/file/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`,
+            dataForm: formData
+          };
+          uploadFile(parm).unwrap()
+            .then((firstPromiseResult) => {
+              // setDisableForm(false);
+              // console.log(firstPromiseResult);
+              getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
+                .then((secondPromiseResult) => {
+                  setConfigOnlyOfficeEditor(secondPromiseResult);
                 })
-                .catch((er) => {
-                  console.log(er);
+                .catch((rejectedValueOrSerializedError) => {
+                  setDisableForm(false);
                 });
             })
-            .catch(); 
+            .catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+              // console.log(rejectedValueOrSerializedError);
+            });
           
+          setSelectedFiles(event.currentTarget.files);
+          setValue("lokasiFile", namaFile);
         }
     },
     []
@@ -464,11 +480,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
               </div>
             } 
-            { selectedFiles &&
+            { selectedFiles && configOnlyOfficeEditor &&
               <DocumentEditor 
-                id="docxEditor"
+                id="onlyOfficeEditor"
                 documentServerUrl={urlDocumenService}
-                config={configOnlyOfficeEditor!}
+                config={configOnlyOfficeEditor}
                 events_onDocumentReady={_onDocumentReady}
                 events_onAppReady={_onAppReady}
                 events_onError={_onError}

@@ -18,11 +18,12 @@ import { IPelakuUsaha } from "../../entity/pelaku-usaha";
 import { IDokumen } from "../../entity/dokumen";
 import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 import { IRegisterDokumen } from "../../entity/register-dokumen";
+import { IConfig } from "../../entity/onlyoffice-config-editor";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha'],
+    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'UploadFile', 'ConfigEditor'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -707,6 +708,21 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `/register_dokumen/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            uploadFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
+                query: ({subPath, dataForm}) => ({
+                    url: encodeURI(subPath),
+                    method: 'POST',
+                    body: dataForm,
+                }),
+                invalidatesTags: (result) => result ? ['UploadFile']:['Kosong']
+            }),
+            getOnlyofficeConfigEditor: builder.mutation<any, string>({
+                query: (subPath) => ({
+                    url: encodeURI(subPath),
+                    method: 'GET',
+                }),
+                invalidatesTags: (result) => result ? ['ConfigEditor']:['Kosong']
+            }),
         }
     }
 });
@@ -747,4 +763,5 @@ export const {
     useDeleteKategoriDokumenMutation, useGetDaftarDataKategoriDokumenQuery, useGetJumlahDataKategoriDokumenQuery,
     useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation,
     useDeleteRegisterDokumenMutation, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery,
+    useUploadFileMutation, useGetOnlyofficeConfigEditorMutation,
 } = sikolingApi;
