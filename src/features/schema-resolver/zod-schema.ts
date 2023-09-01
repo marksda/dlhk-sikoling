@@ -193,13 +193,15 @@ export const RegisterKbliSchema = object({
 
 export const RegisterDokumenSchema = object({
     id: z.string().nullable(),
-    dokumen: DokumenSchema,
+    // dokumen: DokumenSchema,
     registerPerusahaan: RegisterPerusahaanSchema.pick({id:true}),
     lokasiFile: z.string().nullable(),
     tanggalRegistrasi: z.string().optional(),
     uploader: OtoritasSchema.pick({id:true}).optional(),
     statusVerified: z.boolean().optional()
 });
+
+export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.extend({dokumen: DokumenAktaPendirianSchema});
 
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

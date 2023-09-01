@@ -667,7 +667,7 @@ export const sikolingApi = createApi({
             getJumlahDataKategoriDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `/kategori_dokumen/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            saveRegisterDokumen: builder.mutation<IRegisterDokumen, Partial<IRegisterDokumen>>({
+            saveRegisterDokumen: builder.mutation<IRegisterDokumen<any>, Partial<IRegisterDokumen<any>>>({
                 query: (kategoriDokumen) => ({
                     url: '/register_dokumen',
                     method: 'POST',
@@ -675,7 +675,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            updateRegisterDokumen: builder.mutation<void, Partial<IRegisterDokumen>>({
+            updateRegisterDokumen: builder.mutation<void, Partial<IRegisterDokumen<any>>>({
                 query: (kategoriDokumen) => ({
                     url: `/register_dokumen/${kategoriDokumen.id}`,
                     method: 'PUT',
@@ -683,7 +683,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            updateIdRegisterDokumen: builder.mutation<void, {id: string; kategoriDokumen: IRegisterDokumen}>({
+            updateIdRegisterDokumen: builder.mutation<void, {id: string; kategoriDokumen: IRegisterDokumen<any>}>({
                 query: ({id, kategoriDokumen}) => ({
                     url: `/register_dokumen/id/${id}`,
                     method: 'PUT',
@@ -691,7 +691,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            deleteRegisterDokumen: builder.mutation<Partial<IRegisterDokumen>, Partial<IRegisterDokumen>>({
+            deleteRegisterDokumen: builder.mutation<Partial<IRegisterDokumen<any>>, Partial<IRegisterDokumen<any>>>({
                 query(kategoriDokumen) {
                   return {
                     url: `/register_dokumen/${kategoriDokumen.id}`,
@@ -700,7 +700,7 @@ export const sikolingApi = createApi({
                 },
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            getDaftarDataRegisterDokumen: builder.query<IRegisterDokumen[], IQueryParamFilters>({
+            getDaftarDataRegisterDokumen: builder.query<IRegisterDokumen<any>[], IQueryParamFilters>({
                 query: (queryParams) => `/register_dokumen?filters=${JSON.stringify(queryParams)}`,
                 providesTags: ['RegisterDokumen'],
             }),

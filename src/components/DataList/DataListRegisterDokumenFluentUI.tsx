@@ -1,4 +1,4 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Label, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles} from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
@@ -16,7 +16,7 @@ interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemRegisterDokumen = {key: string|null;} & Partial<IRegisterDokumen>;
+type IItemRegisterDokumen = {key: string|null;} & Partial<IRegisterDokumen<any>>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -253,7 +253,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirRegisterDokumenOpen, {setTrue: showModalFormulirRegisterDokumen, setFalse: hideModalFormulirRegisterDokumen}] = useBoolean(false);
-    const [dataLama, setDataLama]= useState<IRegisterDokumen|undefined>(undefined);
+    const [dataLama, setDataLama]= useState<IRegisterDokumen<any>|undefined>(undefined);
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [selectedKeyApproved, setSelectedKeyApproved] = useState<string|undefined|null>(undefined);

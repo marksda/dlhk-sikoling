@@ -7,7 +7,8 @@ import { useGetDaftarDataRegisterPerusahaanQuery, useGetDaftarDataDokumenQuery }
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import { IDokumen } from "../../features/entity/dokumen";
-import { FormulirRegisterDokumenAktaPendirian, registerDokumenAktaPendirianSchema } from "./formulir-dokumen-akta-pendirian";
+import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
+import { FormulirRegisterDokumenAktaPendirian } from "./formulir-dokumen-akta-pendirian";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
@@ -15,7 +16,7 @@ interface IFormulirRegisterDokumenFluentUIProps {
   isModalOpen: boolean;
   showModal?: () => void;
   hideModal: () => void;
-  dataLama?: IRegisterDokumen;
+  dataLama?: IRegisterDokumen<any>;
 };
 
 const theme = getTheme();
@@ -170,9 +171,9 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
             konten = 
               <FormulirRegisterDokumenAktaPendirian 
                 mode={mode} 
-                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen)}
+                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
                 registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama != undefined ? dataLama as registerDokumenAktaPendirianSchema:undefined}/>;
+                dataLama={dataLama}/>;
             break;            
           default:
             break;

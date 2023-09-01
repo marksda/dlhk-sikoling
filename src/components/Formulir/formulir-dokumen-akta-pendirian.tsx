@@ -1,40 +1,30 @@
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { z } from "zod";
-import { DokumenAktaPendirianSchema, RegisterDokumenSchema } from "../../features/schema-resolver/zod-schema";
-import { ComboBox, DatePicker, DayOfWeek, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Stack, TextField, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IDokumen } from "../../features/entity/dokumen";
-import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
-import { DayPickerIndonesiaStrings, getFileType, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
+import { DayPickerIndonesiaStrings } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-// import { urlApiSikoling, urlCallback } from "../../features/config/config";
 import { useAppSelector } from "../../app/hooks";
 import { urlDocumenService } from "../../features/config/config";
-// import { Document, Page, pdfjs } from "react-pdf";
-// import type { PDFDocumentProxy } from 'pdfjs-dist';
+import { IRegisterDokumen } from "../../features/entity/register-dokumen";
+import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
+import { RegisterDokumenAktaPendirianSchema } from "../../features/schema-resolver/zod-schema";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { IDokumen } from "../../features/entity/dokumen";
 
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   'pdfjs-dist/build/pdf.worker.min.js',
-//   import.meta.url,
-// ).toString();
-// const options = {
-//   cMapUrl: '/cmaps/',
-//   standardFontDataUrl: '/standard_fonts/',
-// };
 
-export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
-export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
+// export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
+// export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   mode?: string;
   dokumen?: IDokumen;
   registerPerusahaan?: IRegisterPerusahaan;
-  dataLama?: registerDokumenAktaPendirianSchema;
+  dataLama?: IRegisterDokumen<IDokumenAktaPendirian>;
 };
 const stackTokens = { childrenGap: 8 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
@@ -72,11 +62,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const token = useAppSelector((state) => state.token);
   //local state
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
-  const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen.tanggal!):undefined); 
-  const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.nomor!:'');
-  const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen.namaNotaris!:'');
-  const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen.penanggungJawab?.id!:undefined);
-  const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
+  const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
+  const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
+  const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.namaNotaris!:'');
+  const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.penanggungJawab?.id!:undefined);
+  // const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   // const [numPages, setNumPages] = useState<number>();
   const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
@@ -96,13 +86,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
   const comboBoxPenanggungJawabRef = useRef<IComboBox>(null);
   //react hook-form
-  const {handleSubmit, control, setValue, resetField} = useForm<registerDokumenAktaPendirianSchema>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama) as registerDokumenAktaPendirianSchema:{
+  const {handleSubmit, control, setValue, resetField} = useForm<IRegisterDokumen<IDokumenAktaPendirian>>({
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
       id: null,
-      registerPerusahaan: {id: registerPerusahaan?.id!},
-      dokumen: {
-        id: dokumen?.id!
-      }
+      registerPerusahaan: {id: registerPerusahaan?.id},
+      dokumen: {...dokumen}
     },
     resolver: zodResolver(RegisterDokumenAktaPendirianSchema)
   });
@@ -282,7 +270,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [disableForm]
   );
 
-  const onSubmit: SubmitHandler<registerDokumenAktaPendirianSchema> = async (data) => {
+  const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (data) => {
     setDisableForm(true);
     try {
       let formData = new FormData();
@@ -305,7 +293,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     }
   };
 
-  const onError: SubmitErrorHandler<registerDokumenAktaPendirianSchema> = async (err) => {
+  const onError: SubmitErrorHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (err) => {
     console.log('error', err);
     // if(mode == 'delete') {
     //   await deletePerson(dataLama as IPerson).unwrap().then((originalPromiseResult) => {
