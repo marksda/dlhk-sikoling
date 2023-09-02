@@ -4,7 +4,7 @@ import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
-import { DayPickerIndonesiaStrings } from "../../features/config/helper-function";
+import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
@@ -332,6 +332,24 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   return (
     <Stack.Item> 
         <Stack style={{border: '1px solid #e1dfdf', padding: '8px 8px 8px 8px'}}>
+          <Stack.Item align="center">
+            <Controller 
+              name="lokasiFile"
+              control={control}
+              render={
+                ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                  <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
+                )
+              }
+            />    
+            { configOnlyOfficeEditor == null &&
+            <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
+              <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
+              <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+            </div>
+            }             
+          </Stack.Item> 
           { configOnlyOfficeEditor &&
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
@@ -351,7 +369,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         styles={dateStyle}
                         onSelectDate={
                           (date) => {         
-                            // onChange(utcFormatDateToYYYYMMDD(date!));
+                            onChange(utcFormatDateToYYYYMMDD(date!));
                             setSelectedDate(date!);
                           }
                         }
@@ -449,25 +467,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               </Stack.Item>
             </Stack>  
           </Stack.Item>         
-          }
-          <Stack.Item align="center">
-            <Controller 
-              name="lokasiFile"
-              control={control}
-              render={
-                ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                  <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-                )
-              }
-            />    
-            { configOnlyOfficeEditor == null &&
-            <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
-              <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
-              <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-            </div>
-            }             
-          </Stack.Item> 
+          }          
           { configOnlyOfficeEditor &&
             <Stack.Item>
               <DocumentEditor 
@@ -479,7 +479,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 events_onError={_onError}
               />
             </Stack.Item>
-            }      
+          }      
         </Stack>
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
