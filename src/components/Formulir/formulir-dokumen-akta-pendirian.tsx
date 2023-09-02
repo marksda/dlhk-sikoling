@@ -238,11 +238,12 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           };
           uploadFile(parm).unwrap()
             .then((firstPromiseResult) => {
+              setValue("lokasiFile", firstPromiseResult.uri);
               getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
                 .then((secondPromiseResult) => {
                   setDisableForm(false);
                   let hasil = cloneDeep(secondPromiseResult);
-                  hasil.height = `${window.innerHeight - 350}px`;
+                  hasil.height = `${window.innerHeight - 350}px`;                  
                   setConfigOnlyOfficeEditor(hasil);
                 })
                 .catch((rejectedValueOrSerializedError) => {
@@ -271,6 +272,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   );
 
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (data) => {
+    console.log(data);
     setDisableForm(true);
     try {
       let formData = new FormData();
@@ -333,15 +335,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     <Stack.Item> 
         <Stack style={{border: '1px solid #e1dfdf', padding: '8px 8px 8px 8px'}}>
           <Stack.Item align="center">
-            <Controller 
-              name="lokasiFile"
-              control={control}
-              render={
-                ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                  <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-                )
-              }
-            />    
+            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />  
             { configOnlyOfficeEditor == null &&
             <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
               <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
@@ -460,6 +454,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                           setSelectedKeyPegawai(option?.key as string);
                         }}
                         disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                       />
                     )
                   }
