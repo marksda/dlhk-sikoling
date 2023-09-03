@@ -253,9 +253,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             .catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             });
-          
-          // setSelectedFiles(event.currentTarget.files);
-          // setValue("lokasiFile", namaFile);
         }
     },
     []
@@ -275,16 +272,16 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     console.log(data);
     setDisableForm(true);
     try {
-      let formData = new FormData();
+      // let formData = new FormData();
       switch (mode) {
         case 'add':          
           // formData.append('imageKtp', selectedFiles?.item(0)!);
           // formData.append('personData', JSON.stringify(data));
-          // await savePerson(formData).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
+          await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
           // hideModal();
           break;
         default:
