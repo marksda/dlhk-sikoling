@@ -162,28 +162,28 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
     [postsDokumen]
   );
 
-  const kontenFormulirDokumen = useMemo(
-    () => {
-        let konten = null;        
-        if(selectedKeyDokumen != undefined && selectedKeyRegisterPerusahaan != undefined) {         
-          switch (selectedKeyDokumen) {
-            case '010101':
-            konten = 
-              <FormulirRegisterDokumenAktaPendirian 
-                mode={mode} 
-                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
-                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama}/>;
-            break;            
-          default:
-            break;
-          }
-        }
-
-        return konten;
-    },
-    [selectedKeyDokumen, selectedKeyRegisterPerusahaan, postsDokumen, postsRegisterPerusahaan, dataLama]
-);
+//   const kontenFormulirDokumen = useMemo(
+//     () => {
+//         let konten = null;        
+//         if(selectedKeyDokumen != undefined && selectedKeyRegisterPerusahaan != undefined) {         
+//           switch (selectedKeyDokumen) {
+//             case '010101':
+//             konten = 
+//               <FormulirRegisterDokumenAktaPendirian 
+//                 mode={mode} 
+//                 dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
+//                 registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
+//                 dataLama={dataLama}/>;
+//             break;            
+//           default:
+//             break;
+//           }
+//         }
+//         console.log('konten dokumwn dipanggil');
+//         return konten;
+//     },
+//     [selectedKeyDokumen, selectedKeyRegisterPerusahaan, postsDokumen, postsRegisterPerusahaan, dataLama]
+// );
 
   const _handleOnDismissed = useCallback(
     () => {
@@ -426,7 +426,15 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
               </Stack.Item> 
             </Stack>
           </Stack.Item>
-          { kontenFormulirDokumen }
+          {
+            selectedKeyDokumen == '010101' && selectedKeyRegisterPerusahaan != undefined && (
+              <FormulirRegisterDokumenAktaPendirian 
+                mode={mode} 
+                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
+                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
+                dataLama={dataLama}/>
+            )
+          }
         </Stack>
       </div>
     </Modal>

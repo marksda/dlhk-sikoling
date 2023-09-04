@@ -215,8 +215,21 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           }
         );
       }
+
+      if(dataLama != undefined) {
+        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama.lokasiFile}`).unwrap()
+          .then((secondPromiseResult) => {
+            setDisableForm(false);
+            let hasil = cloneDeep(secondPromiseResult);
+            hasil.height = `${window.innerHeight - 350}px`;                  
+            setConfigOnlyOfficeEditor(hasil);
+          })
+          .catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          });
+      }
     },
-    [registerPerusahaan, mode]
+    [registerPerusahaan, mode, dataLama]
   );
 
   const _handleFile = useCallback(
@@ -269,7 +282,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   );
 
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (data) => {
-    console.log(data);
     setDisableForm(true);
     try {
       // let formData = new FormData();

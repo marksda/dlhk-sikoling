@@ -314,10 +314,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                     onClick: () => {
                         setFormulirTitle('Edit dokumen');
                         setModeForm('edit');
-                        showModalFormulirRegisterDokumen();
                         let dataTerpilih = cloneDeep(find(postsRegisterDokumen, (i) => i.id == selection.getSelection()[0].key));
                         setDataLama(dataTerpilih);
-                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);                        
+                        showModalFormulirRegisterDokumen();
                     }
                 },
                 { 
