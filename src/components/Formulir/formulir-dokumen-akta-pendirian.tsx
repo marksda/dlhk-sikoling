@@ -1,5 +1,5 @@
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { ComboBox, DatePicker, DayOfWeek, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,10 +26,10 @@ interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   registerPerusahaan?: IRegisterPerusahaan;
   dataLama?: IRegisterDokumen<IDokumenAktaPendirian>;
 };
-const stackTokens = { childrenGap: 8 };
+const stackTokens = { childrenGap: 4 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
   root: {
-    width: 130
+    width: 200
   }
 };
 const contentStyles = mergeStyleSets({
@@ -44,7 +44,7 @@ const contentStyles = mergeStyleSets({
         cursor: 'pointer',
         border: '1px solid #D7D7D7'
     },
-    width: 300,
+    width: 800,
     height: 100,
     padding: '16px 16px 0px 16px',
   },
@@ -59,15 +59,12 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } 
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 200 } };
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama}) => { 
-  const token = useAppSelector((state) => state.token);
-  //local state
+  // const token = useAppSelector((state) => state.token);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
   const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.namaNotaris!:'');
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.penanggungJawab?.id!:undefined);
-  // const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
-  // const [numPages, setNumPages] = useState<number>();
   const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 0,
@@ -95,23 +92,22 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     resolver: zodResolver(RegisterDokumenAktaPendirianSchema)
   });
   //rtk query
+  const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams);
   const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
   const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
-  // const [ updateIdRegisterDokumen, {isLoading: isLoadingUpdateIdRegisterDokumen}] = useUpdateIdRegisterDokumenMutation();
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
-  const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams);
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
     () => (
       postsPegawai?.map((item):IComboBoxOption => {
-              return {
-                key: item.id!,
-                text: item.person?.nama!,
-                data: item
-              };
-            })
+        return {
+          key: item.id!,
+          text: item.person?.nama!,
+          data: item
+        };
+      })
     ),
     [postsPegawai]
   );
@@ -185,11 +181,38 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   useEffect(
     () => {
-      if(registerPerusahaan != undefined) {        
-        resetField('dokumen.penanggungJawab');
-        if(mode == 'add') {
-          setSelectedKeyPegawai(undefined);
-        }        
+      // if(registerPerusahaan != undefined) {        
+      //   resetField('dokumen.penanggungJawab');
+      //   if(mode == 'add') {
+      //     setSelectedKeyPegawai(undefined);
+      //   }        
+        // setQueryPegawaiParams(
+        //   prev => {
+        //       let tmp = cloneDeep(prev);
+        //       let filters = cloneDeep(tmp.filters);
+        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
+              
+        //       if(found == -1) {
+        //           filters?.push({
+        //               fieldName: 'perusahaan_id',
+        //               value: registerPerusahaan.id!
+        //           });
+        //       }
+        //       else {
+        //           filters?.splice(found, 1, {
+        //               fieldName: 'perusahaan_id',
+        //               value: registerPerusahaan.id!
+        //           })
+        //       }
+              
+        //       tmp.pageNumber = 1;
+        //       tmp.filters = filters;             
+        //       return tmp;
+        //   }
+        // );
+      // }
+
+      if(mode != 'add') {
         setQueryPegawaiParams(
           prev => {
               let tmp = cloneDeep(prev);
@@ -199,13 +222,13 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               if(found == -1) {
                   filters?.push({
                       fieldName: 'perusahaan_id',
-                      value: registerPerusahaan.id!
+                      value: dataLama?.registerPerusahaan?.id!
                   });
               }
               else {
                   filters?.splice(found, 1, {
                       fieldName: 'perusahaan_id',
-                      value: registerPerusahaan.id!
+                      value: dataLama?.registerPerusahaan?.id!
                   })
               }
               
@@ -214,10 +237,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               return tmp;
           }
         );
-      }
 
-      if(dataLama != undefined) {
-        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama.lokasiFile}`).unwrap()
+        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
           .then((secondPromiseResult) => {
             setDisableForm(false);
             let hasil = cloneDeep(secondPromiseResult);
@@ -230,7 +251,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           });
       }
     },
-    [registerPerusahaan, mode, dataLama]
+    [mode]
   );
 
   useEffect(
@@ -366,22 +387,25 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   return (
     <Stack.Item> 
-        <Stack style={{border: '1px solid #e1dfdf', padding: '8px 8px 8px 8px'}}>
+        <Stack>
+          { configOnlyOfficeEditor == null && mode == 'add' &&
           <Stack.Item align="center">
-            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />  
-            { configOnlyOfficeEditor == null &&
+            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />              
             <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
               <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
               <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
               <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-            </div>
-            }             
+            </div>                        
           </Stack.Item> 
+          } 
           { configOnlyOfficeEditor &&
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
-              <Stack.Item>
+              <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
                 <Stack>
+                  <Stack.Item>
+                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file</Label>
+                  </Stack.Item>
                   <Stack.Item>
                     <Controller 
                       name="dokumen.tanggal"
@@ -474,7 +498,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         ({field: {onChange, onBlur}, fieldState: { error }}) => (
                           <ComboBox
                             componentRef={comboBoxPenanggungJawabRef}
-                            label="Penanggung jawab"
+                            label="Direktur"
                             placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
                             allowFreeform={true}
                             options={optionsPegawai != undefined ? optionsPegawai:[]}
@@ -497,8 +521,13 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                   </Stack.Item>
                   <PrimaryButton 
                     style={{marginTop: 16, width: '100%'}}
-                    text={mode == 'delete' ? 'Hapus':'Simpan'} 
+                    text={mode == 'delete' ? 'Hapus dokumen':'Update meta file'} 
                     onClick={handleSubmit(onSubmit, onError)}
+                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                  />
+                  <DefaultButton 
+                    style={{marginTop: 4, width: '100%'}}
+                    text={'Upload ulang dokumen'} 
                     disabled={configOnlyOfficeEditor == null ? true:disableForm}
                   />
                 </Stack>  
@@ -516,8 +545,13 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             </Stack>            
           </Stack.Item>         
           }     
-        </Stack>
-        
+          {configOnlyOfficeEditor == null && mode != 'add' &&
+          <Stack.Item align="center">
+            <Label>Please wait...</Label>
+            <Spinner size={SpinnerSize.large} />
+          </Stack.Item>
+          }
+        </Stack>        
     </Stack.Item>
   );
 }
