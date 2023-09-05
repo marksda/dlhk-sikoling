@@ -56,7 +56,7 @@ const contentStyles = mergeStyleSets({
   },
 });
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
-const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
+const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 200 } };
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama}) => { 
   const token = useAppSelector((state) => state.token);
@@ -221,7 +221,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           .then((secondPromiseResult) => {
             setDisableForm(false);
             let hasil = cloneDeep(secondPromiseResult);
-            hasil.height = `${window.innerHeight - 350}px`;                  
+            hasil.height = `${window.innerHeight - 150}px`;  
+            hasil.width =  `${window.innerWidth - 310}px`;                 
             setConfigOnlyOfficeEditor(hasil);
           })
           .catch((rejectedValueOrSerializedError) => {
@@ -230,6 +231,28 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
       }
     },
     [registerPerusahaan, mode, dataLama]
+  );
+
+  useEffect(
+    () => {
+      function handleResize() {
+        setConfigOnlyOfficeEditor(
+          (prev: any) => {
+            let hasil = cloneDeep(prev);
+            hasil.height = `${window.innerHeight - 150}px`;
+            hasil.width =  `${window.innerWidth - 310}px`; 
+            return hasil;
+          }
+        );
+      }
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    },
+    []
   );
 
   const _handleFile = useCallback(
@@ -256,7 +279,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 .then((secondPromiseResult) => {
                   setDisableForm(false);
                   let hasil = cloneDeep(secondPromiseResult);
-                  hasil.height = `${window.innerHeight - 350}px`;                  
+                  hasil.height = `${window.innerHeight - 50}px`;            
+                  hasil.width =  `${window.innerWidth - 50}px`; 
                   setConfigOnlyOfficeEditor(hasil);
                 })
                 .catch((rejectedValueOrSerializedError) => {
@@ -357,140 +381,143 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           <Stack.Item>
             <Stack horizontal tokens={stackTokens}>
               <Stack.Item>
-                <Controller 
-                  name="dokumen.tanggal"
-                  control={control}
-                  render={
-                    ({field: {onChange}, fieldState: { error }}) => (                      
-                      <DatePicker
-                        label="Tgl. penerbitan"
-                        firstDayOfWeek={firstDayOfWeek}
-                        placeholder="Pilih tanggal"
-                        ariaLabel="Pilih tanggal"
-                        strings={DayPickerIndonesiaStrings}
-                        formatDate={utcFormatDateToDDMMYYYY}
-                        styles={dateStyle}
-                        onSelectDate={
-                          (date) => {         
-                            onChange(utcFormatDateToYYYYMMDD(date!));
-                            setSelectedDate(date!);
-                          }
-                        }
-                        value={selectedDate}
-                      />
-                    )
-                  }
-                />
+                <Stack>
+                  <Stack.Item>
+                    <Controller 
+                      name="dokumen.tanggal"
+                      control={control}
+                      render={
+                        ({field: {onChange}, fieldState: { error }}) => (                      
+                          <DatePicker
+                            label="Tgl. penerbitan"
+                            firstDayOfWeek={firstDayOfWeek}
+                            placeholder="Pilih tanggal"
+                            ariaLabel="Pilih tanggal"
+                            strings={DayPickerIndonesiaStrings}
+                            formatDate={utcFormatDateToDDMMYYYY}
+                            styles={dateStyle}
+                            onSelectDate={
+                              (date) => {         
+                                onChange(utcFormatDateToYYYYMMDD(date!));
+                                setSelectedDate(date!);
+                              }
+                            }
+                            value={selectedDate}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="dokumen.nomor"
+                      control={control}
+                      render={
+                        ({field: {onChange}, fieldState: { error }}) => (
+                          <TextField
+                            label="Nomor"
+                            placeholder="isikan nomor dokumen"
+                            value={nomorTextFieldValue}
+                            onChange={
+                              (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                if(newValue!.length > 0) {
+                                  onChange(newValue!);
+                                }
+                                else {
+                                  resetField("dokumen.nomor");
+                                }
+                                setNomorTextFieldValue(newValue||'');
+                              }
+                            }
+                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                            styles={textFieldStyles}
+                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>         
+                  <Stack.Item>
+                    <Controller 
+                      name="dokumen.namaNotaris"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <TextField
+                            label="Notaris"
+                            placeholder="isikan nama notaris"
+                            value={notarisTextFieldValue}
+                            onChange={
+                              (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                if(newValue!.length > 0) {
+                                  onChange(newValue!);
+                                }
+                                else {
+                                  resetField("dokumen.namaNotaris");
+                                }
+                                setNotarisTextFieldValue(newValue || '');
+                              }
+                            }
+                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                            styles={textFieldStyles}
+                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                          />
+                        )
+                      }
+                    />
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Controller 
+                      name="dokumen.penanggungJawab"
+                      control={control}
+                      render={
+                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                          <ComboBox
+                            componentRef={comboBoxPenanggungJawabRef}
+                            label="Penanggung jawab"
+                            placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                            allowFreeform={true}
+                            options={optionsPegawai != undefined ? optionsPegawai:[]}
+                            selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
+                            useComboBoxAsMenuWidth={true}
+                            onRenderOption={_onRenderPegawaiOption}   
+                            onInputValueChange={_onInputComboBoxPegawaiValueChange}      
+                            styles={basicComboBoxStyles}          
+                            onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                              let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
+                              onChange(penanggungJawab);
+                              setSelectedKeyPegawai(option?.key as string);
+                            }}
+                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                          />
+                        )
+                      }
+                    />                
+                  </Stack.Item>
+                  <PrimaryButton 
+                    style={{marginTop: 16, width: '100%'}}
+                    text={mode == 'delete' ? 'Hapus':'Simpan'} 
+                    onClick={handleSubmit(onSubmit, onError)}
+                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                  />
+                </Stack>  
               </Stack.Item>
               <Stack.Item>
-                <Controller 
-                  name="dokumen.nomor"
-                  control={control}
-                  render={
-                    ({field: {onChange}, fieldState: { error }}) => (
-                      <TextField
-                        label="Nomor"
-                        placeholder="isikan nomor dokumen"
-                        value={nomorTextFieldValue}
-                        onChange={
-                          (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            if(newValue!.length > 0) {
-                              onChange(newValue!);
-                            }
-                            else {
-                              resetField("dokumen.nomor");
-                            }
-                            setNomorTextFieldValue(newValue||'');
-                          }
-                        }
-                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                        styles={textFieldStyles}
-                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                      />
-                    )
-                  }
+                <DocumentEditor 
+                  id="onlyOfficeEditor"
+                  documentServerUrl={urlDocumenService}
+                  config={configOnlyOfficeEditor}
+                  events_onDocumentReady={_onDocumentReady}
+                  events_onAppReady={_onAppReady}
+                  events_onError={_onError}
                 />
-              </Stack.Item>         
-              <Stack.Item>
-                <Controller 
-                  name="dokumen.namaNotaris"
-                  control={control}
-                  render={
-                    ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                      <TextField
-                        label="Notaris"
-                        placeholder="isikan nama notaris"
-                        value={notarisTextFieldValue}
-                        onChange={
-                          (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            if(newValue!.length > 0) {
-                              onChange(newValue!);
-                            }
-                            else {
-                              resetField("dokumen.namaNotaris");
-                            }
-                            setNotarisTextFieldValue(newValue || '');
-                          }
-                        }
-                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                        styles={textFieldStyles}
-                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                      />
-                    )
-                  }
-                />
-              </Stack.Item>
-              <Stack.Item>
-                <Controller 
-                  name="dokumen.penanggungJawab"
-                  control={control}
-                  render={
-                    ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                      <ComboBox
-                        componentRef={comboBoxPenanggungJawabRef}
-                        label="Penanggung jawab"
-                        placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                        allowFreeform={true}
-                        options={optionsPegawai != undefined ? optionsPegawai:[]}
-                        selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
-                        useComboBoxAsMenuWidth={true}
-                        onRenderOption={_onRenderPegawaiOption}   
-                        onInputValueChange={_onInputComboBoxPegawaiValueChange}      
-                        styles={basicComboBoxStyles}          
-                        onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                          let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
-                          onChange(penanggungJawab);
-                          setSelectedKeyPegawai(option?.key as string);
-                        }}
-                        disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                        errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                      />
-                    )
-                  }
-                />                
-              </Stack.Item>
-            </Stack>  
+              </Stack.Item>       
+            </Stack>            
           </Stack.Item>         
-          }          
-          { configOnlyOfficeEditor &&
-            <Stack.Item>
-              <DocumentEditor 
-                id="onlyOfficeEditor"
-                documentServerUrl={urlDocumenService}
-                config={configOnlyOfficeEditor}
-                events_onDocumentReady={_onDocumentReady}
-                events_onAppReady={_onAppReady}
-                events_onError={_onError}
-              />
-            </Stack.Item>
-          }      
+          }     
         </Stack>
-        <PrimaryButton 
-          style={{marginTop: 16, width: '100%'}}
-          text={mode == 'delete' ? 'Hapus':'Simpan'} 
-          onClick={handleSubmit(onSubmit, onError)}
-          disabled={configOnlyOfficeEditor == null ? true:disableForm}
-        />
+        
     </Stack.Item>
   );
 }

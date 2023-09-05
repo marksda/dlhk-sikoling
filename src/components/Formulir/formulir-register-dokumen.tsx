@@ -390,42 +390,45 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
         />
       </div>
       <div className={contentStyles.body}>   
-        <Stack tokens={stackTokens}>  
-          <Stack.Item>
-            <Stack horizontal tokens={stackTokens} grow> 
-              <Stack.Item>
-                <ComboBox
-                  componentRef={comboBoxRegisterPerusahaanRef}
-                  label="Perusahaan"
-                  placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
-                  selectedKey={selectedKeyRegisterPerusahaan}
-                  useComboBoxAsMenuWidth={true}
-                  onRenderOption={_onRenderRegisterPerusahaanOption}   
-                  onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
-                  styles={basicComboBoxStyles}          
-                  onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-                  disabled={mode == 'delete'||mode == 'edit' ? true:disableForm}
-                />
-              </Stack.Item> 
-              <Stack.Item grow> 
-                <ComboBox
-                  componentRef={comboBoxDokumenRef}
-                  label="Jenis dokumen"
-                  placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
-                  allowFreeform={true}
-                  options={optionsDokumen != undefined ? optionsDokumen:[]}
-                  selectedKey={selectedKeyDokumen}
-                  useComboBoxAsMenuWidth={true}
-                  onInputValueChange={_onInputComboBoxDokumenValueChange}      
-                  styles={basicComboBoxStyles}           
-                  onChange={_onHandleOnChangeDokumenComboBox}
-                  disabled={mode == 'delete'||mode == 'edit' ? true:disableForm}
-                />
-              </Stack.Item> 
-            </Stack>
-          </Stack.Item>
+        <Stack tokens={stackTokens}> 
+          {
+            mode == "add" &&
+            <Stack.Item>
+              <Stack horizontal tokens={stackTokens} grow> 
+                <Stack.Item>
+                  <ComboBox
+                    componentRef={comboBoxRegisterPerusahaanRef}
+                    label="Perusahaan"
+                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                    allowFreeform={true}
+                    options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+                    selectedKey={selectedKeyRegisterPerusahaan}
+                    useComboBoxAsMenuWidth={true}
+                    onRenderOption={_onRenderRegisterPerusahaanOption}   
+                    onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+                    styles={basicComboBoxStyles}          
+                    onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                    disabled={disableForm}
+                  />
+                </Stack.Item> 
+                <Stack.Item grow> 
+                  <ComboBox
+                    componentRef={comboBoxDokumenRef}
+                    label="Jenis dokumen"
+                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                    allowFreeform={true}
+                    options={optionsDokumen != undefined ? optionsDokumen:[]}
+                    selectedKey={selectedKeyDokumen}
+                    useComboBoxAsMenuWidth={true}
+                    onInputValueChange={_onInputComboBoxDokumenValueChange}      
+                    styles={basicComboBoxStyles}           
+                    onChange={_onHandleOnChangeDokumenComboBox}
+                    disabled={disableForm}
+                  />
+                </Stack.Item> 
+              </Stack>
+            </Stack.Item>
+          }           
           {
             selectedKeyDokumen == '010101' && selectedKeyRegisterPerusahaan != undefined && (
               <FormulirRegisterDokumenAktaPendirian 
