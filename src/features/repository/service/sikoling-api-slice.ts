@@ -692,9 +692,9 @@ export const sikolingApi = createApi({
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
             deleteRegisterDokumen: builder.mutation<Partial<IRegisterDokumen<any>>, Partial<IRegisterDokumen<any>>>({
-                query(kategoriDokumen) {
+                query(registerDokumen) {
                   return {
-                    url: `/register_dokumen/${kategoriDokumen.id}`,
+                    url: `/register_dokumen/${registerDokumen.id}`,
                     method: 'DELETE',
                   }
                 },

@@ -242,7 +242,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           .then((secondPromiseResult) => {
             setDisableForm(false);
             let hasil = cloneDeep(secondPromiseResult);
-            hasil.height = `${window.innerHeight - 150}px`;  
+            hasil.height = `${window.innerHeight - 130}px`;  
             hasil.width =  `${window.innerWidth - 310}px`;                 
             setConfigOnlyOfficeEditor(hasil);
           })
@@ -260,8 +260,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         setConfigOnlyOfficeEditor(
           (prev: any) => {
             let hasil = cloneDeep(prev);
-            hasil.height = `${window.innerHeight - 150}px`;
-            hasil.width =  `${window.innerWidth - 310}px`; 
+            hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
+            hasil.width = `${window.innerWidth - 310}px`; 
             return hasil;
           }
         );
@@ -300,8 +300,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 .then((secondPromiseResult) => {
                   setDisableForm(false);
                   let hasil = cloneDeep(secondPromiseResult);
-                  hasil.height = `${window.innerHeight - 50}px`;            
-                  hasil.width =  `${window.innerWidth - 50}px`; 
+                  hasil.height = `${window.innerHeight - 195}px`;            
+                  hasil.width =  `${window.innerWidth - 310}px`; 
                   setConfigOnlyOfficeEditor(hasil);
                 })
                 .catch((rejectedValueOrSerializedError) => {
@@ -340,6 +340,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             setDisableForm(false);
           }); 
           // hideModal();
+          break;
+        case 'delete':
+          console.log(data);
+          await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
           break;
         default:
           break;
@@ -427,6 +435,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                               }
                             }
                             value={selectedDate}
+                            disabled={mode == 'delete' ? true:disableForm}
                           />
                         )
                       }
@@ -521,15 +530,18 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                   </Stack.Item>
                   <PrimaryButton 
                     style={{marginTop: 16, width: '100%'}}
-                    text={mode == 'delete' ? 'Hapus dokumen':'Update meta file'} 
+                    text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
                     onClick={handleSubmit(onSubmit, onError)}
-                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                    disabled={configOnlyOfficeEditor == null ? true : disableForm}
                   />
-                  <DefaultButton 
-                    style={{marginTop: 4, width: '100%'}}
-                    text={'Upload ulang dokumen'} 
-                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
-                  />
+                  { mode == 'edit' &&
+                    <DefaultButton 
+                      style={{marginTop: 4, width: '100%'}}
+                      text={'Upload ulang dokumen'} 
+                      onClick={handleSubmit(onSubmit, onError)}
+                      disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                    />
+                  }                  
                 </Stack>  
               </Stack.Item>
               <Stack.Item>
