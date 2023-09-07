@@ -715,6 +715,14 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['UploadFile']:['Kosong']
             }),
+            replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
+                query: ({subPath, dataForm}) => ({
+                    url: encodeURI(subPath),
+                    method: 'POST',
+                    body: dataForm,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
+            }),
             getOnlyofficeConfigEditor: builder.mutation<any, string>({
                 query: (subPath) => ({
                     url: encodeURI(subPath),
@@ -762,5 +770,5 @@ export const {
     useDeleteKategoriDokumenMutation, useGetDaftarDataKategoriDokumenQuery, useGetJumlahDataKategoriDokumenQuery,
     useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation,
     useDeleteRegisterDokumenMutation, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery,
-    useUploadFileMutation, useGetOnlyofficeConfigEditorMutation,
+    useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation,
 } = sikolingApi;

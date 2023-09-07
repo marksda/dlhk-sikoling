@@ -3,7 +3,7 @@ import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IC
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
@@ -17,8 +17,6 @@ import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IDokumen } from "../../features/entity/dokumen";
 
 
-// export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.omit({dokumen: true}).extend({dokumen: DokumenAktaPendirianSchema});
-// export type registerDokumenAktaPendirianSchema = z.infer<typeof RegisterDokumenAktaPendirianSchema>;
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   mode?: string;
   dokumen?: IDokumen;
@@ -97,6 +95,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
+  const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
@@ -281,39 +280,70 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         if(event.currentTarget.files!.length > 0) {            
           // let fileType: string = getFileType(event.currentTarget.files![0].type);
           let file = event.currentTarget.files![0];
-          let namaFile: string = file.name;
+          let namaFile = file.name;
+          let formData;
+          let parm;     
 
-          // if(fileType == 'pdf') {
-            // setSelectedFiles(event.currentTarget.files);
-            // setValue("lokasiFile", namaFile);
-          // }    
-          let formData = new FormData();
-          formData.append('file', file);
-          let parm = {
-            subPath: `/file/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`,
-            dataForm: formData
-          };
-          uploadFile(parm).unwrap()
-            .then((firstPromiseResult) => {
-              setValue("lokasiFile", firstPromiseResult.uri);
-              getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
-                .then((secondPromiseResult) => {
-                  setDisableForm(false);
-                  let hasil = cloneDeep(secondPromiseResult);
-                  hasil.height = `${window.innerHeight - 195}px`;            
-                  hasil.width =  `${window.innerWidth - 310}px`; 
-                  setConfigOnlyOfficeEditor(hasil);
+          switch (mode) {
+            case 'add':
+              formData = new FormData();
+              formData.append('file', file);
+              parm = {
+                subPath: `/file/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`,
+                dataForm: formData
+              };  
+              uploadFile(parm).unwrap()
+                .then((firstPromiseResult) => {
+                  setValue("lokasiFile", firstPromiseResult.uri);
+                  getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
+                    .then((secondPromiseResult) => {
+                      setDisableForm(false);
+                      let hasil = cloneDeep(secondPromiseResult);
+                      hasil.height = `${window.innerHeight - 195}px`;            
+                      hasil.width =  `${window.innerWidth - 310}px`; 
+                      setConfigOnlyOfficeEditor(hasil);
+                    })
+                    .catch((rejectedValueOrSerializedError) => {
+                      setDisableForm(false);
+                    });
                 })
                 .catch((rejectedValueOrSerializedError) => {
                   setDisableForm(false);
-                });
-            })
-            .catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            });
+                }); 
+              break;
+            case 'edit':
+              formData = new FormData();
+              formData.append('file', file);
+              formData.append('idRegisterDokumen', dataLama?.id!);
+              parm = {
+                subPath: `/file/replace?fileNameParam=${namaFile}`,
+                dataForm: formData
+              };  
+              replaceFile(parm).unwrap()
+                .then((firstPromiseResult) => {
+                  setValue("lokasiFile", firstPromiseResult.uri);
+                  getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
+                    .then((secondPromiseResult) => {
+                      setDisableForm(false);
+                      let hasil = cloneDeep(secondPromiseResult);
+                      hasil.height = `${window.innerHeight - 195}px`;            
+                      hasil.width =  `${window.innerWidth - 310}px`; 
+                      setConfigOnlyOfficeEditor(hasil);
+                    })
+                    .catch((rejectedValueOrSerializedError) => {
+                      setDisableForm(false);
+                    });
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                  setDisableForm(false);
+                }); 
+              break;
+            default:
+              break;
+          }
         }
     },
-    []
+    [mode, dataLama]
   );
 
   const _bindClickEventInputFile = useCallback(
@@ -329,11 +359,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (data) => {
     setDisableForm(true);
     try {
-      // let formData = new FormData();
       switch (mode) {
         case 'add':          
-          // formData.append('imageKtp', selectedFiles?.item(0)!);
-          // formData.append('personData', JSON.stringify(data));
           await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
@@ -342,7 +369,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           closeWindow();
           break;
         case 'delete':
-          console.log(data);
           await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
@@ -375,14 +401,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   const _onDocumentReady = useCallback(
     (e) => {
-      console.log("Document is loaded");
+      // console.log("Document is loaded");
     },
     []
   );
 
   const _onAppReady = useCallback(
     (e) => {
-      console.log("App is ready");
+      // console.log("App is ready");
     },
     []
   );
@@ -397,9 +423,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   return (
     <Stack.Item> 
         <Stack>
+          <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
           { configOnlyOfficeEditor == null && mode == 'add' &&
-          <Stack.Item align="center">
-            <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />              
+          <Stack.Item align="center">                          
             <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
               <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
               <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
@@ -539,7 +565,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                     <DefaultButton 
                       style={{marginTop: 4, width: '100%'}}
                       text={'Upload ulang dokumen'} 
-                      onClick={handleSubmit(onSubmit, onError)}
+                      onClick={_bindClickEventInputFile}
                       disabled={configOnlyOfficeEditor == null ? true:disableForm}
                     />
                   }                  
