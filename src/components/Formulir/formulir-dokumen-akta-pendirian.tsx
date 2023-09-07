@@ -9,7 +9,6 @@ import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-import { useAppSelector } from "../../app/hooks";
 import { urlDocumenService } from "../../features/config/config";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
@@ -25,6 +24,7 @@ interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
   dokumen?: IDokumen;
   registerPerusahaan?: IRegisterPerusahaan;
   dataLama?: IRegisterDokumen<IDokumenAktaPendirian>;
+  closeWindow: () => void;
 };
 const stackTokens = { childrenGap: 4 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
@@ -58,7 +58,7 @@ const contentStyles = mergeStyleSets({
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 200 } };
 
-export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama}) => { 
+export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
   // const token = useAppSelector((state) => state.token);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
@@ -181,36 +181,36 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   useEffect(
     () => {
-      // if(registerPerusahaan != undefined) {        
-      //   resetField('dokumen.penanggungJawab');
-      //   if(mode == 'add') {
-      //     setSelectedKeyPegawai(undefined);
-      //   }        
-        // setQueryPegawaiParams(
-        //   prev => {
-        //       let tmp = cloneDeep(prev);
-        //       let filters = cloneDeep(tmp.filters);
-        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
+      if(registerPerusahaan != undefined) {        
+        resetField('dokumen.penanggungJawab');
+        if(mode == 'add') {
+          setSelectedKeyPegawai(undefined);
+        }        
+        setQueryPegawaiParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
               
-        //       if(found == -1) {
-        //           filters?.push({
-        //               fieldName: 'perusahaan_id',
-        //               value: registerPerusahaan.id!
-        //           });
-        //       }
-        //       else {
-        //           filters?.splice(found, 1, {
-        //               fieldName: 'perusahaan_id',
-        //               value: registerPerusahaan.id!
-        //           })
-        //       }
+              if(found == -1) {
+                  filters?.push({
+                      fieldName: 'perusahaan_id',
+                      value: registerPerusahaan.id!
+                  });
+              }
+              else {
+                  filters?.splice(found, 1, {
+                      fieldName: 'perusahaan_id',
+                      value: registerPerusahaan.id!
+                  })
+              }
               
-        //       tmp.pageNumber = 1;
-        //       tmp.filters = filters;             
-        //       return tmp;
-        //   }
-        // );
-      // }
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+        );
+      }
 
       if(mode != 'add') {
         setQueryPegawaiParams(
@@ -251,7 +251,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           });
       }
     },
-    [mode]
+    [mode, registerPerusahaan]
   );
 
   useEffect(
@@ -339,7 +339,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
-          // hideModal();
+          closeWindow();
           break;
         case 'delete':
           console.log(data);
@@ -348,6 +348,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
+          closeWindow();
           break;
         default:
           break;

@@ -14,7 +14,6 @@ interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
-  showModal?: () => void;
   hideModal: () => void;
   dataLama?: IRegisterDokumen<any>;
 };
@@ -435,7 +434,8 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                 mode={mode} 
                 dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
                 registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama}/>
+                dataLama={dataLama}
+                closeWindow={hideModal}/>
             )
           }
         </Stack>
