@@ -202,6 +202,7 @@ export const RegisterDokumenSchema = object({
 });
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.extend({dokumen: DokumenAktaPendirianSchema});
+export const RegisterDokumenNibSchema = RegisterDokumenSchema.extend({dokumen: DokumenNibSchema});
 
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

@@ -9,6 +9,8 @@ import { invertParseNpwp } from "../../features/config/helper-function";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { FormulirRegisterDokumenAktaPendirian } from "./formulir-dokumen-akta-pendirian";
+import { FormulirRegisterDokumenNibOss } from "./formulir-dolumen-nib";
+import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
@@ -367,6 +369,33 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       },
       [postsDokumen]
   );
+
+  function detailFormulir(idDokumen: string) {
+    let konten: any;
+    switch (idDokumen) {
+      case '010101':
+        konten = <FormulirRegisterDokumenAktaPendirian 
+                mode={mode} 
+                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
+                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
+                dataLama={dataLama}
+                closeWindow={hideModal}/>;
+        break;
+      case '010301':
+        konten = <FormulirRegisterDokumenNibOss 
+                mode={mode} 
+                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss}
+                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
+                dataLama={dataLama}
+                closeWindow={hideModal}/>;
+        break;
+      default:
+        konten = null;
+        break;
+    }
+
+    return konten;
+  }
   
   return (
     <Modal
@@ -422,24 +451,18 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                     onInputValueChange={_onInputComboBoxDokumenValueChange}      
                     styles={basicComboBoxStyles}           
                     onChange={_onHandleOnChangeDokumenComboBox}
-                    disabled={disableForm}
+                    disabled={selectedKeyRegisterPerusahaan == undefined ? true : disableForm}
                   />
                 </Stack.Item> 
               </Stack>
             </Stack.Item>
           }           
           {
-            selectedKeyDokumen == '010101' && selectedKeyRegisterPerusahaan != undefined && (
-              <FormulirRegisterDokumenAktaPendirian 
-                mode={mode} 
-                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
-                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama}
-                closeWindow={hideModal}/>
-            )
+            detailFormulir(selectedKeyDokumen!)
           }
         </Stack>
       </div>
     </Modal>
   );
 }
+

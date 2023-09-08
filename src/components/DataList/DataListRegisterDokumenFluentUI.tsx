@@ -904,7 +904,6 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 <FormulirRegisterDokumen
                     title={formulirTitle}
                     isModalOpen={true}
-                    showModal={showModalFormulirRegisterDokumen}
                     hideModal={hideModalFormulirRegisterDokumen}
                     mode={modeForm}
                     dataLama={dataLama}/>
