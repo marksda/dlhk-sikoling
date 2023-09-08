@@ -1,16 +1,17 @@
-import { FC, FormEvent, useCallback, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
-import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IKbli } from "../../features/entity/kbli";
+import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
 interface IFormulirRegisterDokumenNibOssFluentUIProps {
     mode?: string;
@@ -41,6 +42,11 @@ const contentStyles = mergeStyleSets({
     color: '#DDDCDC',
     margin: '0 25px',
   },
+  kbliContainer: {
+    border: '1px solid grey',
+    padding: 4,
+    minHeight: 100,
+  }
 });
 const stackTokens = { childrenGap: 4 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
@@ -55,11 +61,22 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined);
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
-  const [listKbli, setListKbli] = useState<IKbli[]>([]);
+  const [daftarKbliSelected, setDaftarKbliSelected] = useState<Partial<IKbli>[]>([]);
+  const [queryParamsKbli, setQueryParamsKbli] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 30,
+    filters: [],
+    sortOrders: [
+        {
+          fieldName: 'kode',
+          value: 'ASC'
+        },
+    ],
+  });
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
   //ref
-  // const comboBoxKbliRef = useRef<IComboBox>(null);
+  const comboBoxKbliRef = useRef<IComboBox>(null);
   //react form hook
   const {handleSubmit, control, setValue, resetField} = useForm<IRegisterDokumen<IDokumenNibOss>>({
       defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
@@ -74,6 +91,27 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
+  const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetDaftarDataKbliQuery(queryParamsKbli);
+
+  const kbliOptions: IDropdownOption<any>[] = useMemo(
+    () => {
+        if(listKbli != undefined) {
+            return [
+                ...listKbli.map(
+                    (t) => ({
+                        key: t.kode!,
+                        text: `${t.kode} - ${t.nama}`,
+                        data: t,
+                    })
+                )
+            ];
+        }
+        else {
+            return [];
+        }
+    },
+    [listKbli]
+);
   
   const _bindClickEventInputFile = useCallback(
     (e) => {            
@@ -156,6 +194,58 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
       [mode, dataLama]
   );
 
+  const inputKbliChange = useCallback(
+    (newValue: string) => {
+      if(newValue.length > 1) {
+        comboBoxKbliRef.current?.focus(true);
+        setQueryParamsKbli(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'kode'}) as number;     
+              
+              if(newValue != '') {
+                  if(found == -1) {
+                      filters?.push({
+                          fieldName: 'kode',
+                          value: newValue
+                      });
+                  }
+                  else {
+                      filters?.splice(found, 1, {
+                          fieldName: 'kode',
+                          value: newValue
+                      })
+                  }
+              }
+              else {
+                  if(found > -1) {
+                      filters?.splice(found, 1);
+                  }
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;             
+              return tmp;
+          }
+        );
+      }
+    },
+    [comboBoxKbliRef],
+  );
+
+  const kbliItemClick = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {      
+      setDaftarKbliSelected((prev) => {
+        let tmpDaftarKbli = cloneDeep(prev);
+        tmpDaftarKbli.push(option!.data);
+        setValue('dokumen.daftarKbli', tmpDaftarKbli);
+        return tmpDaftarKbli;
+      });
+    },
+    [],
+  );
+
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
     setDisableForm(true);
     try {
@@ -203,7 +293,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
       <Stack.Item>
           <Stack>
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-            { configOnlyOfficeEditor == null && mode == 'add' &&
+            { configOnlyOfficeEditor != null && mode == 'add' &&
             <Stack.Item align="center">                          
               <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
                 <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
@@ -212,7 +302,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
               </div>                        
             </Stack.Item> 
             } 
-            {configOnlyOfficeEditor &&
+            {configOnlyOfficeEditor == null &&
             <Stack.Item>
               <Stack horizontal tokens={stackTokens}>
                 <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
@@ -277,10 +367,26 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                       />
                     </Stack.Item>
                     <Stack.Item>
+                      <Label>Daftar kbli</Label>
+                      <ComboBox 
+                          label="Daftar kbli"
+                          placeholder="Ketik kode kbli untuk pencarian"
+                          selectedKey={null}
+                          dropdownMaxWidth={450}
+                          allowFreeform={true}
+                          autoComplete="on"
+                          options={kbliOptions}
+                          onInputValueChange={inputKbliChange}
+                          onItemClick={kbliItemClick}
+                          disabled={selectedDate ? disableForm : true}
+                      />
+                      <div className={contentStyles.kbliContainer}>
+                        
+                      </div>
                       <ul>
                         {
-                          listKbli?.length > 0 ?
-                          listKbli?.map((item, idx) => {
+                          daftarKbliSelected?.length > 0 ?
+                          daftarKbliSelected?.map((item, idx) => {
                             return <li key={item.kode}>{item.kode} - {item.nama}</li>;
                           }):null
                         }

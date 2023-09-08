@@ -9,7 +9,7 @@ import { invertParseNpwp } from "../../features/config/helper-function";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { FormulirRegisterDokumenAktaPendirian } from "./formulir-dokumen-akta-pendirian";
-import { FormulirRegisterDokumenNibOss } from "./formulir-dolumen-nib";
+import { FormulirRegisterDokumenNibOss } from "./formulir-dokumen-nib";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 
 interface IFormulirRegisterDokumenFluentUIProps {

@@ -4,5 +4,5 @@ import { IKbli } from "./kbli";
 export interface IDokumenNibOss extends IDokumen {
     nomor: string|null;
     tanggal: string|null;
-    daftarKbli: IKbli[]|null;
+    daftarKbli: Partial<IKbli>[]|null;
 };

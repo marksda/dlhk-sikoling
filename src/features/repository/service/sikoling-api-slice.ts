@@ -18,11 +18,13 @@ import { IPelakuUsaha } from "../../entity/pelaku-usaha";
 import { IDokumen } from "../../entity/dokumen";
 import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 import { IRegisterDokumen } from "../../entity/register-dokumen";
+import { IKbli } from "../../entity/kbli";
+import { IRegisterKbli } from "../../entity/register-kbli";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'UploadFile', 'ConfigEditor'],
+    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'UploadFile', 'ConfigEditor'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -120,7 +122,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result? ['Kabupaten']:['Kosong']
             }),
-            updateKabupaten: builder.mutation<void, Partial<IKabupaten>>({
+            updateKabupaten: builder.mutation<IKabupaten, Partial<IKabupaten>>({
                 query: (body) => ({
                     url: '/kabupaten',
                     method: 'PUT',
@@ -158,7 +160,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result? ['Kecamatan']:['Kosong']
             }),
-            updateKecamatan: builder.mutation<void, Partial<IKecamatan>>({
+            updateKecamatan: builder.mutation<IKecamatan, Partial<IKecamatan>>({
                 query: (body) => ({
                     url: '/kecamatan',
                     method: 'PUT',
@@ -196,7 +198,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result? ['Desa']:['Kosong']
             }),
-            updateDesa: builder.mutation<void, Partial<IDesa>>({
+            updateDesa: builder.mutation<IDesa, Partial<IDesa>>({
                 query: (body) => ({
                     url: '/desa',
                     method: 'PUT',
@@ -275,7 +277,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags:  (result) => result ? ['HakAkses']:['Kosong'],
             }),
-            updateHakAkses: builder.mutation<void, Partial<IHakAkses>>({
+            updateHakAkses: builder.mutation<IHakAkses, Partial<IHakAkses>>({
                 query: (hakAkses) => ({
                     url: '/hak_akses',
                     method: 'PUT',
@@ -283,7 +285,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['HakAkses']:['Kosong'],
             }),
-            updateIdHakAkses: builder.mutation<void, {idLama: string; hakAkses: IHakAkses}>({
+            updateIdHakAkses: builder.mutation<IHakAkses, {idLama: string; hakAkses: IHakAkses}>({
                 query: ({idLama, hakAkses}) => ({
                     url: `/hak_akses/id/${idLama}`,
                     method: 'PUT',
@@ -315,7 +317,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
-            updatePegawai: builder.mutation<void, Partial<IPegawai>>({
+            updatePegawai: builder.mutation<IPegawai, Partial<IPegawai>>({
                 query: (body) => ({
                     url: '/pegawai_perusahaan',
                     method: 'PUT',
@@ -323,7 +325,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Pegawai']:['Kosong'],
             }),
-            updateIdPegawai: builder.mutation<void, {idLama: string; pegawai: IPegawai}>({
+            updateIdPegawai: builder.mutation<IPegawai, {idLama: string; pegawai: IPegawai}>({
                 query: ({idLama, pegawai}) => ({
                     url: `/pegawai_perusahaan/id/${idLama}`,
                     method: 'PUT',
@@ -355,7 +357,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
             }), 
-            updateRegisterPerusahaan: builder.mutation<void, Partial<IRegisterPerusahaan>>({
+            updateRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, Partial<IRegisterPerusahaan>>({
                 query: (registerPerusahaan) => ({
                     url: '/register_perusahaan',
                     method: 'PUT',
@@ -363,7 +365,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['RegisterPerusahaan']:['Kosong'],
             }),
-            updateIdRegisterPerusahaan: builder.mutation<void, {idLama: string; registerPerusahaan: IRegisterPerusahaan}>({
+            updateIdRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, {idLama: string; registerPerusahaan: IRegisterPerusahaan}>({
                 query: ({idLama, registerPerusahaan}) => ({
                     url: `/register_perusahaan/id/${idLama}`,
                     method: 'PUT',
@@ -395,7 +397,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
             }),
-            updateJabatan: builder.mutation<void, Partial<IJabatan>>({
+            updateJabatan: builder.mutation<IJabatan, Partial<IJabatan>>({
                 query: (jabatan) => ({
                     url: '/jabatan_perusahaan',
                     method: 'PUT',
@@ -403,7 +405,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Jabatan']:['Kosong'],
             }),
-            updateIdJabatan: builder.mutation<void, {idLama: string; jabatan: IJabatan}>({
+            updateIdJabatan: builder.mutation<IJabatan, {idLama: string; jabatan: IJabatan}>({
                 query: ({idLama, jabatan}) => ({
                     url: `/jabatan_perusahaan/id/${idLama}`,
                     method: 'PUT',
@@ -435,7 +437,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong']
             }),
-            updateModelPerizinan: builder.mutation<void, Partial<IModelPerizinan>>({
+            updateModelPerizinan: builder.mutation<IModelPerizinan, Partial<IModelPerizinan>>({
                 query: (modelPerizinan) => ({
                     url: '/model_perizinan',
                     method: 'PUT',
@@ -443,7 +445,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong'],
             }),
-            updateIdModelPerizinan: builder.mutation<void, {idLama: string; modelPerizinan: IJabatan}>({
+            updateIdModelPerizinan: builder.mutation<IModelPerizinan, {idLama: string; modelPerizinan: IJabatan}>({
                 query: ({idLama, modelPerizinan}) => ({
                     url: `/model_perizinan/id/${idLama}`,
                     method: 'PUT',
@@ -475,7 +477,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
             }),
-            updateSkalaUsaha: builder.mutation<void, Partial<ISkalaUsaha>>({
+            updateSkalaUsaha: builder.mutation<ISkalaUsaha, Partial<ISkalaUsaha>>({
                 query: (skalaUsaha) => ({
                     url: '/skala_usaha',
                     method: 'PUT',
@@ -483,7 +485,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
             }),
-            updateIdSkalaUsaha: builder.mutation<void, {id: string; skalaUsaha: ISkalaUsaha}>({
+            updateIdSkalaUsaha: builder.mutation<ISkalaUsaha, {id: string; skalaUsaha: ISkalaUsaha}>({
                 query: ({id, skalaUsaha}) => ({
                     url: `/skala_usaha/id/${id}`,
                     method: 'PUT',
@@ -515,7 +517,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
             }),
-            updateKategoriPelakuUsaha: builder.mutation<void, Partial<IKategoriPelakuUsaha>>({
+            updateKategoriPelakuUsaha: builder.mutation<IKategoriPelakuUsaha, Partial<IKategoriPelakuUsaha>>({
                 query: (kategoriPelakuUsaha) => ({
                     url: '/kategori_pelaku_usaha',
                     method: 'PUT',
@@ -523,7 +525,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
             }),
-            updateIdKategoriPelakuUsaha: builder.mutation<void, {id: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
+            updateIdKategoriPelakuUsaha: builder.mutation<IKategoriPelakuUsaha, {id: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
                 query: ({id, kategoriPelakuUsaha}) => ({
                     url: `/kategori_pelaku_usaha/id/${id}`,
                     method: 'PUT',
@@ -555,15 +557,15 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
             }),
-            updatePelakuUsaha: builder.mutation<void, Partial<IPelakuUsaha>>({
+            updatePelakuUsaha: builder.mutation<IPelakuUsaha, Partial<IPelakuUsaha>>({
                 query: (pelakuUsaha) => ({
-                    url: `pelaku_usaha/${pelakuUsaha.id}`,
+                    url: '/pelaku_usaha',
                     method: 'PUT',
                     body: pelakuUsaha,
                 }),
                 invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
             }),
-            updateIdPelakuUsaha: builder.mutation<void, {id: string; pelakuUsaha: IPelakuUsaha}>({
+            updateIdPelakuUsaha: builder.mutation<IPelakuUsaha, {id: string; pelakuUsaha: IPelakuUsaha}>({
                 query: ({id, pelakuUsaha}) => ({
                     url: `/pelaku_usaha/id/${id}`,
                     method: 'PUT',
@@ -595,15 +597,15 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['Dokumen']:['Kosong'],
             }),
-            updateDokumen: builder.mutation<void, Partial<IDokumen>>({
+            updateDokumen: builder.mutation<IDokumen, Partial<IDokumen>>({
                 query: (dokumen) => ({
-                    url: `/dokumen/${dokumen.id}`,
+                    url: '/dokumen',
                     method: 'PUT',
                     body: dokumen,
                 }),
                 invalidatesTags: (result) => result ?['Dokumen']:['Kosong'],
             }),
-            updateIdDokumen: builder.mutation<void, {id: string; dokumen: IDokumen}>({
+            updateIdDokumen: builder.mutation<IDokumen, {id: string; dokumen: IDokumen}>({
                 query: ({id, dokumen}) => ({
                     url: `/dokumen/id/${id}`,
                     method: 'PUT',
@@ -635,15 +637,15 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
             }),
-            updateKategoriDokumen: builder.mutation<void, Partial<IKategoriDokumen>>({
+            updateKategoriDokumen: builder.mutation<IKategoriDokumen, Partial<IKategoriDokumen>>({
                 query: (kategoriDokumen) => ({
-                    url: `/kategori_dokumen/${kategoriDokumen.id}`,
+                    url: '/kategori_dokumen',
                     method: 'PUT',
                     body: kategoriDokumen,
                 }),
                 invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
             }),
-            updateIdKategoriDokumen: builder.mutation<void, {id: string; kategoriDokumen: IKategoriDokumen}>({
+            updateIdKategoriDokumen: builder.mutation<IKategoriDokumen, {id: string; kategoriDokumen: IKategoriDokumen}>({
                 query: ({id, kategoriDokumen}) => ({
                     url: `/kategori_dokumen/id/${id}`,
                     method: 'PUT',
@@ -675,15 +677,15 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            updateRegisterDokumen: builder.mutation<void, Partial<IRegisterDokumen<any>>>({
+            updateRegisterDokumen: builder.mutation<IRegisterDokumen<any>, Partial<IRegisterDokumen<any>>>({
                 query: (kategoriDokumen) => ({
-                    url: `/register_dokumen/${kategoriDokumen.id}`,
+                    url: '/register_dokumen',
                     method: 'PUT',
                     body: kategoriDokumen,
                 }),
                 invalidatesTags: (result) => result ?['RegisterDokumen']:['Kosong'],
             }),
-            updateIdRegisterDokumen: builder.mutation<void, {id: string; kategoriDokumen: IRegisterDokumen<any>}>({
+            updateIdRegisterDokumen: builder.mutation<IRegisterDokumen<any>, {id: string; kategoriDokumen: IRegisterDokumen<any>}>({
                 query: ({id, kategoriDokumen}) => ({
                     url: `/register_dokumen/id/${id}`,
                     method: 'PUT',
@@ -706,6 +708,86 @@ export const sikolingApi = createApi({
             }),
             getJumlahDataRegisterDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `/register_dokumen/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            saveKbli: builder.mutation<IKbli, Partial<IKbli>>({
+                query: (kbli) => ({
+                    url: '/kbli',
+                    method: 'POST',
+                    body: kbli,
+                }),
+                invalidatesTags: (result) => result ?['Kbli']:['Kosong'],
+            }),
+            updateKbli: builder.mutation<IKbli, Partial<IKbli>>({
+                query: (kbli) => ({
+                    url: '/kbli',
+                    method: 'PUT',
+                    body: kbli,
+                }),
+                invalidatesTags: (result) => result ?['Kbli']:['Kosong'],
+            }),
+            updateIdKbli: builder.mutation<IKbli, {kode: string; kbli: IKbli}>({
+                query: ({kode, kbli}) => ({
+                    url: `kbli/id/${kode}`,
+                    method: 'PUT',
+                    body: kbli,
+                }),
+                invalidatesTags: (result) => result ?['Kbli']:['Kosong'],
+            }),
+            deleteKbli: builder.mutation<Partial<IKbli>, Partial<IKbli>>({
+                query(kbli) {
+                  return {
+                    url: `/kbli/${kbli.kode}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ?['Kbli']:['Kosong'],
+            }),
+            getDaftarDataKbli: builder.query<IKbli[], IQueryParamFilters>({
+                query: (queryParams) => `/kbli?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['Kbli'],
+            }),
+            getJumlahDataKbli: builder.query<number, qFilters>({
+                query: (queryFilters) => `/kbli/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
+            saveRegisterKbli: builder.mutation<IRegisterKbli, Partial<IRegisterKbli>>({
+                query: (registerKbli) => ({
+                    url: '/register_kbli',
+                    method: 'POST',
+                    body: registerKbli,
+                }),
+                invalidatesTags: (result) => result ?['RegisterKbli']:['Kosong'],
+            }),
+            updateRegisterKbli: builder.mutation<IRegisterKbli, Partial<IRegisterKbli>>({
+                query: (registereKbli) => ({
+                    url: '/register_kbli',
+                    method: 'PUT',
+                    body: registereKbli,
+                }),
+                invalidatesTags: (result) => result ?['RegisterKbli']:['Kosong'],
+            }),
+            updateIdRegisterKbli: builder.mutation<IRegisterKbli, {idNibLama: String; idKbliLama: string; registerKbli: IRegisterKbli}>({
+                query: ({idNibLama, idKbliLama, registerKbli}) => ({
+                    url: `register_kbli/${idNibLama}/${idKbliLama}`,
+                    method: 'PUT',
+                    body: registerKbli,
+                }),
+                invalidatesTags: (result) => result ?['RegisterKbli']:['Kosong'],
+            }),
+            deleteRegisterKbli: builder.mutation<Partial<IRegisterKbli>, {idNibLama: String; idKbliLama: string; registerKbli: Partial<IRegisterKbli>}>({
+                query({idNibLama, idKbliLama}) {
+                  return {
+                    url: `/register_kbli/${idNibLama}/${idKbliLama}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ?['RegisterKbli']:['Kosong'],
+            }),
+            getDaftarDataRegisterKbli: builder.query<IRegisterKbli[], IQueryParamFilters>({
+                query: (queryParams) => `/register_kbli?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['RegisterKbli'],
+            }),
+            getJumlahDataRegisterKbli: builder.query<number, qFilters>({
+                query: (queryFilters) => `/register_kbli/count?filters=${JSON.stringify(queryFilters)}`,
             }),
             uploadFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({
@@ -770,5 +852,9 @@ export const {
     useDeleteKategoriDokumenMutation, useGetDaftarDataKategoriDokumenQuery, useGetJumlahDataKategoriDokumenQuery,
     useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation,
     useDeleteRegisterDokumenMutation, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery,
+    useSaveKbliMutation, useUpdateKbliMutation, useUpdateIdKbliMutation,
+    useDeleteKbliMutation, useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery,
+    useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
+    useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation,
 } = sikolingApi;

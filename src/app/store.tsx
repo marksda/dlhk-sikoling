@@ -6,10 +6,6 @@ import { OtoritasApiSlice } from "../features/repository/service/otoritas-api-sl
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
-import kbliReducer from "../features/repository/ssot/kbli-slice";
-import { KbliApiSlice } from "../features/repository/service/kbli-api-slice";
-import registerKbliReducer from "../features/repository/ssot/register-kbli-slice";
-import { RegisterKbliApiSlice } from "../features/repository/service/register-kbli-api-slice";
 import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
@@ -34,10 +30,6 @@ export const store = configureStore({
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
-        kbli: kbliReducer,
-        [KbliApiSlice.reducerPath]: KbliApiSlice.reducer,
-        registerKbli: registerKbliReducer,
-        [RegisterKbliApiSlice.reducerPath]: RegisterKbliApiSlice.reducer,
         [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
@@ -55,8 +47,6 @@ export const store = configureStore({
                                             .concat(AuthenticationApiSlice.middleware)
                                             .concat(OtoritasApiSlice.middleware)
                                             .concat(TokenApiSlice.middleware)
-                                            .concat(KbliApiSlice.middleware)
-                                            .concat(RegisterKbliApiSlice.middleware)
                                             .concat(RegisterPermohonanApiSlice.middleware)
                                             .concat(FlowLogApiSlice.middleware)
                                             .concat(StatusFlowLogApiSlice.middleware)
