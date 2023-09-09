@@ -4,7 +4,8 @@ import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IKbli } from "../../features/entity/kbli";
-import { useGetDaftarDataQuery as getDaftarKbli, useGetJumlahDataQuery as getJumlahKbli} from "../../features/repository/service/kbli-api-slice";
+import { useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery } from "../../features/repository/service/sikoling-api-slice";
+// import { useGetDaftarDataQuery as getDaftarKbli, useGetJumlahDataQuery as getJumlahKbli} from "../../features/repository/service/kbli-api-slice";
 
 interface IDataListMasterKbliFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -128,8 +129,8 @@ export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = 
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = getJumlahKbli(queryFilters);
-    const { data: postsKbli, isLoading: isLoadingPosts } = getDaftarKbli(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataKbliQuery(queryFilters);
+    const { data: postsKbli, isLoading: isLoadingPosts } = useGetDaftarDataKbliQuery(queryParams);    
 
     const _getKey = useCallback(
         (item: any, index?: number): string => {

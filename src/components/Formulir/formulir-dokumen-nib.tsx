@@ -3,7 +3,7 @@ import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
-import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultButton, DetailsList, DetailsListLayoutMode, FontIcon, IColumn, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, SelectionMode, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
 import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
@@ -44,8 +44,12 @@ const contentStyles = mergeStyleSets({
   },
   kbliContainer: {
     border: '1px solid grey',
-    padding: 4,
+    marginTop: 2,
+    padding: '0px 4px 0px 8px',
+    background: 'white',
     minHeight: 100,
+    width: 370,
+    maxHeight: 250,
   }
 });
 const stackTokens = { childrenGap: 4 };
@@ -56,6 +60,34 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 
+const _columns: IColumn[] = [
+  { 
+    key: 'kode', 
+    name: 'Kode', 
+    fieldName: 'kode', 
+    minWidth: 50, 
+    maxWidth: 50, 
+    isRowHeader: true,
+    isResizable: false,
+    isPadded: true,
+    isSortedDescending: false,
+    isSorted: true,
+    onRender: (item: IKbli) => {
+        return item.kode;
+    }
+},
+{ 
+    key: 'nama', 
+    name: 'Nama', 
+    minWidth: 250, 
+    isResizable: true, 
+    data: 'string',
+    onRender: (item: IKbli) => {
+        return item.nama;
+    },
+    isPadded: true,
+},
+];
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
 
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
@@ -367,30 +399,43 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                       />
                     </Stack.Item>
                     <Stack.Item>
-                      <Label>Daftar kbli</Label>
                       <ComboBox 
-                          label="Daftar kbli"
-                          placeholder="Ketik kode kbli untuk pencarian"
-                          selectedKey={null}
-                          dropdownMaxWidth={450}
-                          allowFreeform={true}
-                          autoComplete="on"
-                          options={kbliOptions}
-                          onInputValueChange={inputKbliChange}
-                          onItemClick={kbliItemClick}
-                          disabled={selectedDate ? disableForm : true}
+                        label="Daftar kbli"
+                        placeholder="ketik 2 atau lebih digit pertama kbli, lalu pilih"
+                        selectedKey={null}
+                        dropdownMaxWidth={550}
+                        allowFreeform={true}
+                        autoComplete="off"
+                        options={kbliOptions}
+                        onInputValueChange={inputKbliChange}
+                        onItemClick={kbliItemClick}
+                        disabled={selectedDate ? disableForm : true}
                       />
-                      <div className={contentStyles.kbliContainer}>
-                        
-                      </div>
-                      <ul>
-                        {
-                          daftarKbliSelected?.length > 0 ?
-                          daftarKbliSelected?.map((item, idx) => {
-                            return <li key={item.kode}>{item.kode} - {item.nama}</li>;
-                          }):null
-                        }
-                      </ul>
+                      <ScrollablePane scrollbarVisibility="auto">
+                        <DetailsList
+                            items={
+                              daftarKbliSelected != undefined ? daftarKbliSelected?.map(
+                                    (t) => (
+                                        {key: t.kode as string, ...t}
+                                    )
+                                ) : []
+                            }
+                            compact={false}
+                            columns={_columns}
+                            setKey="none"
+                            layoutMode={DetailsListLayoutMode.justified}
+                            selectionMode={SelectionMode.none}
+                            isHeaderVisible={true}
+                        />
+                      </ScrollablePane>
+                      <div className={contentStyles.kbliContainer} style={{background: selectedDate == undefined ? 'rgb(241 241 241)' : 'white'}}>
+                          {
+                            daftarKbliSelected?.length > 0 ?
+                            daftarKbliSelected?.map((item, idx) => {
+                              return <Label key={item.kode}>{item.kode} - {item.nama}</Label>;
+                            }):null
+                          }
+                      </div>                      
                     </Stack.Item>
                     <PrimaryButton 
                       style={{marginTop: 16, width: '100%'}}
