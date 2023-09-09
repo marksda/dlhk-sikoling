@@ -1,4 +1,4 @@
-import { FC, FormEvent, useCallback, useMemo, useRef, useState } from "react";
+import { FC, FormEvent, MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
@@ -45,11 +45,17 @@ const contentStyles = mergeStyleSets({
   kbliContainer: {
     border: '1px solid grey',
     marginTop: 2,
-    padding: '0px 4px 0px 8px',
+    padding: '4px 4px 4px 8px',
     background: 'white',
-    minHeight: 100,
+    minHeight: 90,
     width: 370,
     maxHeight: 250,
+    overflowY: 'auto',
+    overflowX: 'hidden',
+  },
+  spanDelete: {
+    color: 'red',
+    cursor: 'pointer',
   }
 });
 const stackTokens = { childrenGap: 4 };
@@ -270,8 +276,11 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {      
       setDaftarKbliSelected((prev) => {
         let tmpDaftarKbli = cloneDeep(prev);
-        tmpDaftarKbli.push(option!.data);
-        setValue('dokumen.daftarKbli', tmpDaftarKbli);
+        let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == option!.data.kode}) as number;
+        if(found == -1) {
+          tmpDaftarKbli.push(option!.data);
+          setValue('dokumen.daftarKbli', tmpDaftarKbli);
+        }
         return tmpDaftarKbli;
       });
     },
@@ -320,6 +329,18 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
     //   console.log('error', err);
     // }
   };
+
+  const handleDeleteItemKbli = useCallback(
+    (e) => {      
+      setDaftarKbliSelected((prev) => {
+        let tmpDaftarKbli = cloneDeep(prev);
+        let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == e.target.dataset.kode}) as number;
+        tmpDaftarKbli?.splice(found, 1);
+        return tmpDaftarKbli;
+      });
+    },
+    [],
+  );
       
   return (
       <Stack.Item>
@@ -401,7 +422,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                     <Stack.Item>
                       <ComboBox 
                         label="Daftar kbli"
-                        placeholder="ketik 2 atau lebih digit pertama kbli, lalu pilih"
+                        placeholder="ketik minimal 2 digit pertama kode kbli, lalu pilih"
                         selectedKey={null}
                         dropdownMaxWidth={550}
                         allowFreeform={true}
@@ -410,32 +431,15 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                         onInputValueChange={inputKbliChange}
                         onItemClick={kbliItemClick}
                         disabled={selectedDate ? disableForm : true}
-                      />
-                      <ScrollablePane scrollbarVisibility="auto">
-                        <DetailsList
-                            items={
-                              daftarKbliSelected != undefined ? daftarKbliSelected?.map(
-                                    (t) => (
-                                        {key: t.kode as string, ...t}
-                                    )
-                                ) : []
-                            }
-                            compact={false}
-                            columns={_columns}
-                            setKey="none"
-                            layoutMode={DetailsListLayoutMode.justified}
-                            selectionMode={SelectionMode.none}
-                            isHeaderVisible={true}
-                        />
-                      </ScrollablePane>
+                      />                       
                       <div className={contentStyles.kbliContainer} style={{background: selectedDate == undefined ? 'rgb(241 241 241)' : 'white'}}>
-                          {
-                            daftarKbliSelected?.length > 0 ?
-                            daftarKbliSelected?.map((item, idx) => {
-                              return <Label key={item.kode}>{item.kode} - {item.nama}</Label>;
-                            }):null
-                          }
-                      </div>                      
+                        {
+                          daftarKbliSelected?.length > 0 ?
+                          daftarKbliSelected?.map((item, idx) => {
+                            return <Label key={item.kode}>{item.kode} - {item.nama} <span data-kode={item.kode} className={contentStyles.spanDelete} title="Klik untuk menghapus item ini" onClick={handleDeleteItemKbli}>[x]</span></Label>;
+                          }):null
+                        }
+                      </div>      
                     </Stack.Item>
                     <PrimaryButton 
                       style={{marginTop: 16, width: '100%'}}
