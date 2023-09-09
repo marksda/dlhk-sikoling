@@ -167,7 +167,7 @@ export const DokumenSchema = object({
 });
 
 export const KbliSchema = object({
-    id: z.string(),
+    kode: z.string(),
     nama: z.string(),
     kategori: z.string(),
 });
@@ -175,7 +175,7 @@ export const KbliSchema = object({
 export const DokumenNibSchema = DokumenSchema.extend({
     nomor: z.string(),
     tanggal:z.string(),
-    daftarKbli: z.array(KbliSchema.pick({id: true})).nullable()
+    daftarKbli: z.array(KbliSchema.pick({kode: true})).nullable()
 });
 
 export const DokumenAktaPendirianSchema = DokumenSchema.pick({id: true}).extend({

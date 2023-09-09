@@ -66,34 +66,6 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 
-const _columns: IColumn[] = [
-  { 
-    key: 'kode', 
-    name: 'Kode', 
-    fieldName: 'kode', 
-    minWidth: 50, 
-    maxWidth: 50, 
-    isRowHeader: true,
-    isResizable: false,
-    isPadded: true,
-    isSortedDescending: false,
-    isSorted: true,
-    onRender: (item: IKbli) => {
-        return item.kode;
-    }
-},
-{ 
-    key: 'nama', 
-    name: 'Nama', 
-    minWidth: 250, 
-    isResizable: true, 
-    data: 'string',
-    onRender: (item: IKbli) => {
-        return item.nama;
-    },
-    isPadded: true,
-},
-];
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
 
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
@@ -124,7 +96,6 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
       },
       resolver: zodResolver(RegisterDokumenNibSchema)
   });
-
   //rtk query
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
@@ -288,7 +259,8 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   );
 
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
-    setDisableForm(true);
+    console.log(data);
+    // setDisableForm(true);
     try {
       switch (mode) {
         case 'add':          
@@ -335,7 +307,10 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
       setDaftarKbliSelected((prev) => {
         let tmpDaftarKbli = cloneDeep(prev);
         let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == e.target.dataset.kode}) as number;
-        tmpDaftarKbli?.splice(found, 1);
+        if(found > -1) {
+          tmpDaftarKbli?.splice(found, 1);
+          setValue('dokumen.daftarKbli', tmpDaftarKbli);
+        }        
         return tmpDaftarKbli;
       });
     },
@@ -346,7 +321,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
       <Stack.Item>
           <Stack>
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-            { configOnlyOfficeEditor != null && mode == 'add' &&
+            { configOnlyOfficeEditor == null && mode == 'add' &&
             <Stack.Item align="center">                          
               <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
                 <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
@@ -355,7 +330,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
               </div>                        
             </Stack.Item> 
             } 
-            {configOnlyOfficeEditor == null &&
+            {configOnlyOfficeEditor != null &&
             <Stack.Item>
               <Stack horizontal tokens={stackTokens}>
                 <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
@@ -445,7 +420,6 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                       style={{marginTop: 16, width: '100%'}}
                       text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
                       onClick={handleSubmit(onSubmit, onError)}
-                      disabled={configOnlyOfficeEditor == null ? true : disableForm}
                     />
                     { mode == 'edit' &&
                       <DefaultButton 
