@@ -1,10 +1,10 @@
-import { FC, FormEvent, MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
+import { FC, FormEvent, MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { ComboBox, DatePicker, DayOfWeek, DefaultButton, DetailsList, DetailsListLayoutMode, FontIcon, IColumn, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, SelectionMode, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IKbli } from "../../features/entity/kbli";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
+import { DocumentEditor } from "@onlyoffice/document-editor-react";
+import { urlDocumenService } from "../../features/config/config";
 
 interface IFormulirRegisterDokumenNibOssFluentUIProps {
     mode?: string;
@@ -101,6 +103,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetDaftarDataKbliQuery(queryParamsKbli);
+  const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
 
   const kbliOptions: IDropdownOption<any>[] = useMemo(
     () => {
@@ -120,6 +123,28 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
         }
     },
     [listKbli]
+);
+
+useEffect(
+  () => {
+    function handleResize() {
+      setConfigOnlyOfficeEditor(
+        (prev: any) => {
+          let hasil = cloneDeep(prev);
+          hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
+          hasil.width = `${window.innerWidth - 520}px`; 
+          return hasil;
+        }
+      );
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  },
+  []
 );
   
   const _bindClickEventInputFile = useCallback(
@@ -157,7 +182,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                         setDisableForm(false);
                         let hasil = cloneDeep(secondPromiseResult);
                         hasil.height = `${window.innerHeight - 195}px`;            
-                        hasil.width =  `${window.innerWidth - 310}px`; 
+                        hasil.width =  `${window.innerWidth - 520}px`; 
                         setConfigOnlyOfficeEditor(hasil);
                       })
                       .catch((rejectedValueOrSerializedError) => {
@@ -260,16 +285,16 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
 
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
     console.log(data);
-    // setDisableForm(true);
+    setDisableForm(true);
     try {
       switch (mode) {
         case 'add':          
-          // await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-          //   setDisableForm(false);
-          // }).catch((rejectedValueOrSerializedError) => {
-          //   setDisableForm(false);
-          // }); 
-          // closeWindow();
+          await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          closeWindow();
           break;
         case 'delete':
           // await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
@@ -316,6 +341,27 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
     },
     [],
   );
+
+  const _onDocumentReady = useCallback(
+    (e) => {
+      // console.log("Document is loaded");
+    },
+    []
+  );
+
+  const _onAppReady = useCallback(
+    (e) => {
+      // console.log("App is ready");
+    },
+    []
+  );
+
+  const _onError = useCallback(
+    (e) => {
+      console.log(e);
+    },
+    []
+  );
       
   return (
       <Stack.Item>
@@ -345,7 +391,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                         render={
                           ({field: {onChange}, fieldState: { error }}) => (                      
                             <DatePicker
-                              label="Tgl. penerbitan"
+                              label="Tgl. penetapan/penerbitan"
                               firstDayOfWeek={firstDayOfWeek}
                               placeholder="Pilih tanggal"
                               ariaLabel="Pilih tanggal"
@@ -372,7 +418,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                         render={
                           ({field: {onChange}, fieldState: { error }}) => (
                             <TextField
-                              label="Nomor"
+                              label="NIB"
                               placeholder="isikan nomor dokumen"
                               value={nomorTextFieldValue}
                               onChange={
@@ -419,6 +465,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                     <PrimaryButton 
                       style={{marginTop: 16, width: '100%'}}
                       text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
+                      disabled={selectedDate == undefined ? true:disableForm}
                       onClick={handleSubmit(onSubmit, onError)}
                     />
                     { mode == 'edit' &&
@@ -432,7 +479,14 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                   </Stack>
                 </Stack.Item>
                 <Stack.Item>
-                  
+                  <DocumentEditor 
+                    id="onlyOfficeEditor"
+                    documentServerUrl={urlDocumenService}
+                    config={configOnlyOfficeEditor}
+                    events_onDocumentReady={_onDocumentReady}
+                    events_onAppReady={_onAppReady}
+                    events_onError={_onError}
+                  />
                 </Stack.Item>
               </Stack>
             </Stack.Item>  
