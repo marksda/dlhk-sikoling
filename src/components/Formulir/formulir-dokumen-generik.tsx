@@ -243,38 +243,39 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     );
 
     const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
+        console.log(data);
         setDisableForm(true);
         try {
         switch (mode) {
             case 'add':          
-            await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
-            }); 
-            closeWindow();
-            break;
+                // await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                //     setDisableForm(false);
+                // }).catch((rejectedValueOrSerializedError) => {
+                //     setDisableForm(false);
+                // }); 
+                // closeWindow();
+                // break;
             case 'edit':
-            await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
-            }); 
-            closeWindow();
-            break;
+                // await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                //     setDisableForm(false);
+                // }).catch((rejectedValueOrSerializedError) => {
+                //     setDisableForm(false);
+                // }); 
+                // closeWindow();
+                // break;
             case 'delete':
-            await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-                setDisableForm(false);
-            }); 
-            closeWindow();
+                // await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                //     setDisableForm(false);
+                // }).catch((rejectedValueOrSerializedError) => {
+                //     setDisableForm(false);
+                // }); 
+                // closeWindow();
             break;
             default:
             break;
         }      
         } catch (error) {
-        setDisableForm(false);
+            setDisableForm(false);
         }
     };
 
