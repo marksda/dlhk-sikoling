@@ -1,9 +1,9 @@
-import { FC, FormEvent, MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
-import { ComboBox, DatePicker, DayOfWeek, DefaultButton, DetailsList, DetailsListLayoutMode, FontIcon, IColumn, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, SelectionMode, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
 import { useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
@@ -196,9 +196,9 @@ useEffect(
   const _bindClickEventInputFile = useCallback(
     (e) => {            
         e.stopPropagation();
-        if(!disableForm) {
+        // if(!disableForm) {
           document.getElementById('fileUpload')!.click();
-        }        
+        // }        
     },
     [disableForm]
   );
@@ -217,7 +217,7 @@ useEffect(
                 formData = new FormData();
                 formData.append('file', file);
                 parm = {
-                  subPath: `/file/upload?fileNameParam=/nib_oss/temp/${namaFile}`,
+                  subPath: `/file/upload?fileNameParam=/${dokumen?.nama}/temp/${namaFile}`,
                   dataForm: formData
                 };  
                 uploadFile(parm).unwrap()
@@ -426,7 +426,7 @@ useEffect(
             <Stack.Item align="center">                          
               <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
                 <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
+                <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
                 <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
               </div>                        
             </Stack.Item> 
@@ -437,14 +437,14 @@ useEffect(
                 <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
                   <Stack>
                     <Stack.Item>
-                      <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dataLama?.dokumen?.nama}</Label>
+                      <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
                     </Stack.Item>
                     {mode != 'add' &&
                     <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
                       <Label style={{padding: 4}}>
-                        {dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                        `${dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${dataLama?.registerPerusahaan?.perusahaan?.nama}`:
-                        `${dataLama?.registerPerusahaan?.perusahaan?.nama}`}
+                        {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                        `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
+                        `${registerPerusahaan?.perusahaan?.nama}`}
 
                       </Label>
                       </Stack.Item>
@@ -484,7 +484,7 @@ useEffect(
                           ({field: {onChange}, fieldState: { error }}) => (
                             <TextField
                               label="NIB"
-                              placeholder="isikan nomor dokumen"
+                              placeholder="isikan nib"
                               value={nomorTextFieldValue}
                               onChange={
                                 (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {

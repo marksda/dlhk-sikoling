@@ -11,6 +11,8 @@ import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendir
 import { FormulirRegisterDokumenAktaPendirian } from "./formulir-dokumen-akta-pendirian";
 import { FormulirRegisterDokumenNibOss } from "./formulir-dokumen-nib";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
+import { FormulirRegisterDokumenGenerik } from "./formulir-dokumen-generik";
+import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
@@ -370,32 +372,45 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       [postsDokumen]
   );
 
-  function detailFormulir(idDokumen: string) {
-    let konten: any;
-    switch (idDokumen) {
-      case '010101':
-        konten = <FormulirRegisterDokumenAktaPendirian 
-                mode={mode} 
-                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
-                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama}
-                closeWindow={hideModal}/>;
-        break;
-      case '010301':
-        konten = <FormulirRegisterDokumenNibOss 
-                mode={mode} 
-                dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss}
-                registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-                dataLama={dataLama}
-                closeWindow={hideModal}/>;
-        break;
-      default:
+  const detailFormulir = useCallback(
+    () => {
+      let konten: any;
+      if(selectedKeyDokumen == undefined) {
         konten = null;
-        break;
-    }
+      }
+      else {
+        switch (selectedKeyDokumen) {
+          case '010101':
+            konten = <FormulirRegisterDokumenAktaPendirian 
+                    mode={mode} 
+                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian : dataLama?.dokumen as IDokumenAktaPendirian}
+                    registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
+                    dataLama={dataLama}
+                    closeWindow={hideModal}/>;
+            break;
+          case '010301':
+            konten = <FormulirRegisterDokumenNibOss 
+                    mode={mode} 
+                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss : dataLama?.dokumen as IDokumenNibOss}
+                    registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
+                    dataLama={dataLama}
+                    closeWindow={hideModal}/>;
+            break;
+          default:
+            konten = <FormulirRegisterDokumenGenerik
+                    mode={mode} 
+                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenGenerik : dataLama?.dokumen as IDokumenGenerik}
+                    registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
+                    dataLama={dataLama}
+                    closeWindow={hideModal}/>;
+            break;
+        }
+      }
 
-    return konten;
-  }
+      return konten;
+    },
+    [selectedKeyDokumen]
+  );
   
   return (
     <Modal
@@ -458,7 +473,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
             </Stack.Item>
           }           
           {
-            detailFormulir(selectedKeyDokumen!)
+            detailFormulir()
           }
         </Stack>
       </div>

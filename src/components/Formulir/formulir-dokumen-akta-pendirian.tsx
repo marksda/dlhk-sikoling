@@ -242,7 +242,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             setDisableForm(false);
             let hasil = cloneDeep(secondPromiseResult);
             hasil.height = `${window.innerHeight - 130}px`;  
-            hasil.width =  `${window.innerWidth - 310}px`;                 
+            hasil.width =  `${window.innerWidth - 510}px`;                 
             setConfigOnlyOfficeEditor(hasil);
           })
           .catch((rejectedValueOrSerializedError) => {
@@ -260,7 +260,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           (prev: any) => {
             let hasil = cloneDeep(prev);
             hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
-            hasil.width = `${window.innerWidth - 310}px`; 
+            hasil.width = `${window.innerWidth - 510}px`; 
             return hasil;
           }
         );
@@ -289,7 +289,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               formData = new FormData();
               formData.append('file', file);
               parm = {
-                subPath: `/file/upload?fileNameParam=/akta_pendirian/temp/${namaFile}`,
+                subPath: `/file/upload?fileNameParam=/${dokumen?.nama}/temp/${namaFile}`,
                 dataForm: formData
               };  
               uploadFile(parm).unwrap()
@@ -349,9 +349,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const _bindClickEventInputFile = useCallback(
     (e) => {            
         e.stopPropagation();
-        if(!disableForm) {
+        // if(!disableForm) {
           document.getElementById('fileUpload')!.click();
-        }        
+        // }        
     },
     [disableForm]
   );
@@ -436,7 +436,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           <Stack.Item align="center">                          
             <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
               <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file akta pendirian</Label>
+              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
               <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
             </div>                        
           </Stack.Item> 
@@ -447,14 +447,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
                 <Stack>
                   <Stack.Item>
-                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dataLama?.dokumen?.nama}</Label>
+                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
                   </Stack.Item>
                   {mode != 'add' &&
                     <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
                       <Label style={{padding: 4}}>
-                        {dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                        `${dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${dataLama?.registerPerusahaan?.perusahaan?.nama}`:
-                        `${dataLama?.registerPerusahaan?.perusahaan?.nama}`}
+                        {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                        `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
+                        `${registerPerusahaan?.perusahaan?.nama}`}
 
                       </Label>
                     </Stack.Item>
@@ -466,13 +466,12 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       render={
                         ({field: {onChange}, fieldState: { error }}) => (                      
                           <DatePicker
-                            label="Tgl. penerbitan"
+                            label="Tgl. penetapan/penerbitan"
                             firstDayOfWeek={firstDayOfWeek}
                             placeholder="Pilih tanggal"
                             ariaLabel="Pilih tanggal"
                             strings={DayPickerIndonesiaStrings}
                             formatDate={utcFormatDateToDDMMYYYY}
-                            styles={dateStyle}
                             onSelectDate={
                               (date) => {         
                                 onChange(utcFormatDateToYYYYMMDD(date!));
@@ -508,7 +507,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                               }
                             }
                             disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                            styles={textFieldStyles}
                             errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                           />
                         )
@@ -537,7 +535,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                               }
                             }
                             disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                            styles={textFieldStyles}
                             errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                           />
                         )
@@ -559,8 +556,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                             selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
                             useComboBoxAsMenuWidth={true}
                             onRenderOption={_onRenderPegawaiOption}   
-                            onInputValueChange={_onInputComboBoxPegawaiValueChange}      
-                            styles={basicComboBoxStyles}          
+                            onInputValueChange={_onInputComboBoxPegawaiValueChange}    
                             onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
                               let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
                               onChange(penanggungJawab);
