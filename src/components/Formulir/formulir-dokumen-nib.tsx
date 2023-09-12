@@ -4,7 +4,7 @@ import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { ComboBox, DatePicker, DayOfWeek, DefaultButton, DetailsList, DetailsListLayoutMode, FontIcon, IColumn, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, ScrollablePane, SelectionMode, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -69,11 +69,10 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
-
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
-  const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined);
+  const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
-  const [daftarKbliSelected, setDaftarKbliSelected] = useState<Partial<IKbli>[]>([]);
+  const [daftarKbliSelected, setDaftarKbliSelected] = useState<Partial<IKbli>[]>(dataLama != undefined ? cloneDeep(dataLama.dokumen?.daftarKbli!):[]);
   const [queryParamsKbli, setQueryParamsKbli] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 30,
@@ -85,7 +84,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
         },
     ],
   });
-  const [disableForm, setDisableForm] = useState<boolean>(false);
+  const [disableForm, setDisableForm] = useState<boolean>(mode == 'delete' ? false:true);
   const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
   //ref
   const comboBoxKbliRef = useRef<IComboBox>(null);
@@ -104,6 +103,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetDaftarDataKbliQuery(queryParamsKbli);
   const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
+  const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
 
   const kbliOptions: IDropdownOption<any>[] = useMemo(
     () => {
@@ -123,6 +123,51 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
         }
     },
     [listKbli]
+);
+
+useEffect(
+  () => {
+    if(mode != 'add') {
+      // setQueryPegawaiParams(
+      //   prev => {
+      //       let tmp = cloneDeep(prev);
+      //       let filters = cloneDeep(tmp.filters);
+      //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
+            
+      //       if(found == -1) {
+      //           filters?.push({
+      //               fieldName: 'perusahaan_id',
+      //               value: dataLama?.registerPerusahaan?.id!
+      //           });
+      //       }
+      //       else {
+      //           filters?.splice(found, 1, {
+      //               fieldName: 'perusahaan_id',
+      //               value: dataLama?.registerPerusahaan?.id!
+      //           })
+      //       }
+            
+      //       tmp.pageNumber = 1;
+      //       tmp.filters = filters;             
+      //       return tmp;
+      //   }
+      // );
+
+      getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
+        .then((secondPromiseResult) => {
+          setDisableForm(false);
+          let hasil = cloneDeep(secondPromiseResult);
+          hasil.height = `${window.innerHeight - 130}px`;  
+          hasil.width =  `${window.innerWidth - 520}px`;                 
+          setConfigOnlyOfficeEditor(hasil);
+        })
+        .catch((rejectedValueOrSerializedError) => {
+          console.log(rejectedValueOrSerializedError);
+          setDisableForm(false);
+        });
+    }
+  },
+  [mode, dataLama]
 );
 
 useEffect(
@@ -269,7 +314,7 @@ useEffect(
   );
 
   const kbliItemClick = useCallback(
-    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {      
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number) => {  
       setDaftarKbliSelected((prev) => {
         let tmpDaftarKbli = cloneDeep(prev);
         let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == option!.data.kode}) as number;
@@ -284,12 +329,20 @@ useEffect(
   );
 
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
-    console.log(data);
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':          
           await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          closeWindow();
+          break;
+        case 'edit':
+          console.log(data);
+          await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -328,18 +381,20 @@ useEffect(
   };
 
   const handleDeleteItemKbli = useCallback(
-    (e) => {      
-      setDaftarKbliSelected((prev) => {
-        let tmpDaftarKbli = cloneDeep(prev);
-        let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == e.target.dataset.kode}) as number;
-        if(found > -1) {
-          tmpDaftarKbli?.splice(found, 1);
-          setValue('dokumen.daftarKbli', tmpDaftarKbli);
-        }        
-        return tmpDaftarKbli;
-      });
+    (e) => {  
+      if(mode != 'delete') {
+        setDaftarKbliSelected((prev) => {
+          let tmpDaftarKbli = cloneDeep(prev);
+          let found = tmpDaftarKbli?.findIndex((obj) => {return obj.kode == e.target.dataset.kode}) as number;
+          if(found > -1) {
+            tmpDaftarKbli?.splice(found, 1);
+            setValue('dokumen.daftarKbli', tmpDaftarKbli);
+          }        
+          return tmpDaftarKbli;
+        });
+      }
     },
-    [],
+    [mode],
   );
 
   const _onDocumentReady = useCallback(
@@ -382,8 +437,18 @@ useEffect(
                 <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
                   <Stack>
                     <Stack.Item>
-                      <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file</Label>
+                      <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dataLama?.dokumen?.nama}</Label>
                     </Stack.Item>
+                    {mode != 'add' &&
+                    <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
+                      <Label style={{padding: 4}}>
+                        {dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                        `${dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${dataLama?.registerPerusahaan?.perusahaan?.nama}`:
+                        `${dataLama?.registerPerusahaan?.perusahaan?.nama}`}
+
+                      </Label>
+                      </Stack.Item>
+                    }
                     <Stack.Item>
                       <Controller 
                         name="dokumen.tanggal"
@@ -451,13 +516,13 @@ useEffect(
                         options={kbliOptions}
                         onInputValueChange={inputKbliChange}
                         onItemClick={kbliItemClick}
-                        disabled={selectedDate ? disableForm : true}
+                        disabled={mode == 'delete' ? true : selectedDate ? disableForm : true}
                       />                       
-                      <div className={contentStyles.kbliContainer} style={{background: selectedDate == undefined ? 'rgb(241 241 241)' : 'white'}}>
+                      <div className={contentStyles.kbliContainer} style={{background: selectedDate == undefined ? 'rgb(241 241 241)' : mode == 'delete' ? 'rgb(241 241 241)':'white'}}>
                         {
                           daftarKbliSelected?.length > 0 ?
                           daftarKbliSelected?.map((item, idx) => {
-                            return <Label key={item.kode}>{item.kode} - {item.nama} <span data-kode={item.kode} className={contentStyles.spanDelete} title="Klik untuk menghapus item ini" onClick={handleDeleteItemKbli}>[x]</span></Label>;
+                            return <Label key={item.kode}>{item.kode} - {item.nama} {mode != 'delete' ? <span data-kode={item.kode} className={contentStyles.spanDelete} title="Klik untuk menghapus item ini" onClick={handleDeleteItemKbli}>[x]</span>:null}</Label>;
                           }):null
                         }
                       </div>      
@@ -465,7 +530,7 @@ useEffect(
                     <PrimaryButton 
                       style={{marginTop: 16, width: '100%'}}
                       text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
-                      disabled={selectedDate == undefined ? true:disableForm}
+                      disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true:disableForm}
                       onClick={handleSubmit(onSubmit, onError)}
                     />
                     { mode == 'edit' &&

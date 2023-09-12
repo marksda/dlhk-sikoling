@@ -77,7 +77,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
       },
     ],
   });
-  const [disableForm, setDisableForm] = useState<boolean>(false);
+  const [disableForm, setDisableForm] = useState<boolean>(mode == 'delete' ? false:true);
   const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
   const comboBoxPenanggungJawabRef = useRef<IComboBox>(null);
   //react hook-form
@@ -439,8 +439,18 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
                 <Stack>
                   <Stack.Item>
-                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file</Label>
+                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dataLama?.dokumen?.nama}</Label>
                   </Stack.Item>
+                  {mode != 'add' &&
+                    <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
+                      <Label style={{padding: 4}}>
+                        {dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                        `${dataLama?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${dataLama?.registerPerusahaan?.perusahaan?.nama}`:
+                        `${dataLama?.registerPerusahaan?.perusahaan?.nama}`}
+
+                      </Label>
+                    </Stack.Item>
+                  }
                   <Stack.Item>
                     <Controller 
                       name="dokumen.tanggal"
@@ -559,7 +569,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                     style={{marginTop: 16, width: '100%'}}
                     text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
                     onClick={handleSubmit(onSubmit, onError)}
-                    disabled={configOnlyOfficeEditor == null ? true : disableForm}
+                    disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true : disableForm}
                   />
                   { mode == 'edit' &&
                     <DefaultButton 
