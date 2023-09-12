@@ -368,6 +368,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           }); 
           closeWindow();
           break;
+        case 'edit':
+          await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          closeWindow();
+          break;
         case 'delete':
           await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
