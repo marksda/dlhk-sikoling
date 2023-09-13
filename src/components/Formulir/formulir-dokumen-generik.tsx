@@ -3,7 +3,7 @@ import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenGenerikSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -67,6 +67,7 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
 
 export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
+    const [tempFile, setTempFile] = useState<boolean>(false);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
     const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
@@ -86,6 +87,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     //rtk query
     const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
     const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
+    const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
     const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
     const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
     const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
@@ -132,6 +134,19 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     },
     []
     );
+
+    useEffect(
+        () => {
+          return () => {
+            if(tempFile == true && mode == "add") {
+              let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
+              pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+              deleteFile(pathFile);
+            }
+          }      
+        },
+        [tempFile, mode, configOnlyOfficeEditor]
+    );
   
     const _bindClickEventInputFile = useCallback(
         (e) => {            
@@ -170,6 +185,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                             hasil.height = `${window.innerHeight - 195}px`;            
                             hasil.width =  `${window.innerWidth - 360}px`; 
                             setConfigOnlyOfficeEditor(hasil);
+                            setTempFile(true);
                         })
                         .catch((rejectedValueOrSerializedError) => {
                             setDisableForm(false);

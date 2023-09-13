@@ -3,7 +3,7 @@ import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IC
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
@@ -53,11 +53,10 @@ const contentStyles = mergeStyleSets({
     margin: '0 25px',
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
-const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 200 } };
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
   // const token = useAppSelector((state) => state.token);
+  const [tempFile, setTempFile] = useState<boolean>(false);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
@@ -96,6 +95,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
+  const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
@@ -275,6 +275,19 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     []
   );
 
+  useEffect(
+    () => {
+      return () => {
+        if(tempFile == true && mode == "add") {
+          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
+          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+          deleteFile(pathFile);
+        }
+      }      
+    },
+    [tempFile, mode, configOnlyOfficeEditor]
+  );
+
   const _handleFile = useCallback(
     (event: FormEvent<HTMLInputElement>) => {            
         if(event.currentTarget.files!.length > 0) {            
@@ -293,15 +306,16 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 dataForm: formData
               };  
               uploadFile(parm).unwrap()
-                .then((firstPromiseResult) => {
+                .then((firstPromiseResult) => { 
                   setValue("lokasiFile", firstPromiseResult.uri);
                   getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
                     .then((secondPromiseResult) => {
                       setDisableForm(false);
                       let hasil = cloneDeep(secondPromiseResult);
                       hasil.height = `${window.innerHeight - 195}px`;            
-                      hasil.width =  `${window.innerWidth - 310}px`; 
-                      setConfigOnlyOfficeEditor(hasil);
+                      hasil.width =  `${window.innerWidth - 360}px`; 
+                      setConfigOnlyOfficeEditor(hasil);                 
+                      setTempFile(true);
                     })
                     .catch((rejectedValueOrSerializedError) => {
                       setDisableForm(false);
@@ -363,6 +377,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         case 'add':          
           await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
+            setTempFile(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 

@@ -805,6 +805,12 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
             }),
+            deleteFile: builder.mutation<{hasil:string}, string>({
+                query: (subPath) => ({
+                    url: encodeURI(subPath),
+                    method: 'DELETE',
+                }),
+            }),
             getOnlyofficeConfigEditor: builder.mutation<any, string>({
                 query: (subPath) => ({
                     url: encodeURI(subPath),
@@ -857,4 +863,5 @@ export const {
     useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation,
+    useDeleteFileMutation,
 } = sikolingApi;

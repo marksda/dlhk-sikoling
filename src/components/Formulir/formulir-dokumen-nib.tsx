@@ -4,7 +4,7 @@ import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -69,6 +69,7 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
+  const [tempFile, setTempFile] = useState<boolean>(false);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
@@ -100,6 +101,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   //rtk query
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
   const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
+  const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetDaftarDataKbliQuery(queryParamsKbli);
   const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
@@ -124,74 +126,87 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
         }
     },
     [listKbli]
-);
+  );
 
-useEffect(
-  () => {
-    if(mode != 'add') {
-      // setQueryPegawaiParams(
-      //   prev => {
-      //       let tmp = cloneDeep(prev);
-      //       let filters = cloneDeep(tmp.filters);
-      //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
-            
-      //       if(found == -1) {
-      //           filters?.push({
-      //               fieldName: 'perusahaan_id',
-      //               value: dataLama?.registerPerusahaan?.id!
-      //           });
-      //       }
-      //       else {
-      //           filters?.splice(found, 1, {
-      //               fieldName: 'perusahaan_id',
-      //               value: dataLama?.registerPerusahaan?.id!
-      //           })
-      //       }
-            
-      //       tmp.pageNumber = 1;
-      //       tmp.filters = filters;             
-      //       return tmp;
-      //   }
-      // );
+  useEffect(
+    () => {
+      if(mode != 'add') {
+        // setQueryPegawaiParams(
+        //   prev => {
+        //       let tmp = cloneDeep(prev);
+        //       let filters = cloneDeep(tmp.filters);
+        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
+              
+        //       if(found == -1) {
+        //           filters?.push({
+        //               fieldName: 'perusahaan_id',
+        //               value: dataLama?.registerPerusahaan?.id!
+        //           });
+        //       }
+        //       else {
+        //           filters?.splice(found, 1, {
+        //               fieldName: 'perusahaan_id',
+        //               value: dataLama?.registerPerusahaan?.id!
+        //           })
+        //       }
+              
+        //       tmp.pageNumber = 1;
+        //       tmp.filters = filters;             
+        //       return tmp;
+        //   }
+        // );
 
-      getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
-        .then((secondPromiseResult) => {
-          setDisableForm(false);
-          let hasil = cloneDeep(secondPromiseResult);
-          hasil.height = `${window.innerHeight - 130}px`;  
-          hasil.width =  `${window.innerWidth - 520}px`;                 
-          setConfigOnlyOfficeEditor(hasil);
-        })
-        .catch((rejectedValueOrSerializedError) => {
-          console.log(rejectedValueOrSerializedError);
-          setDisableForm(false);
-        });
-    }
-  },
-  [mode, dataLama]
-);
+        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
+          .then((secondPromiseResult) => {
+            setDisableForm(false);
+            let hasil = cloneDeep(secondPromiseResult);
+            hasil.height = `${window.innerHeight - 130}px`;  
+            hasil.width =  `${window.innerWidth - 520}px`;                 
+            setConfigOnlyOfficeEditor(hasil);
+          })
+          .catch((rejectedValueOrSerializedError) => {
+            console.log(rejectedValueOrSerializedError);
+            setDisableForm(false);
+          });
+      }
+    },
+    [mode, dataLama]
+  );
 
-useEffect(
-  () => {
-    function handleResize() {
-      setConfigOnlyOfficeEditor(
-        (prev: any) => {
-          let hasil = cloneDeep(prev);
-          hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
-          hasil.width = `${window.innerWidth - 520}px`; 
-          return hasil;
+  useEffect(
+    () => {
+      function handleResize() {
+        setConfigOnlyOfficeEditor(
+          (prev: any) => {
+            let hasil = cloneDeep(prev);
+            hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
+            hasil.width = `${window.innerWidth - 520}px`; 
+            return hasil;
+          }
+        );
+      }
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    },
+    []
+  );
+
+  useEffect(
+    () => {
+      return () => {
+        if(tempFile == true && mode == "add") {
+          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
+          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+          deleteFile(pathFile);
         }
-      );
-    }
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  },
-  []
-);
+      }      
+    },
+    [tempFile, mode, configOnlyOfficeEditor]
+  );
   
   const _bindClickEventInputFile = useCallback(
     (e) => {            
@@ -230,6 +245,7 @@ useEffect(
                         hasil.height = `${window.innerHeight - 195}px`;            
                         hasil.width =  `${window.innerWidth - 520}px`; 
                         setConfigOnlyOfficeEditor(hasil);
+                        setTempFile(true);
                       })
                       .catch((rejectedValueOrSerializedError) => {
                         setDisableForm(false);
