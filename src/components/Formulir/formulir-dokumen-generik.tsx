@@ -1,17 +1,14 @@
-import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
-import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
+import { RegisterDokumenGenerikSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
-import { IKbli } from "../../features/entity/kbli";
-import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 import { urlDocumenService } from "../../features/config/config";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
@@ -64,10 +61,10 @@ const contentStyles = mergeStyleSets({
 const stackTokens = { childrenGap: 4 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
   root: {
-    width: 200
+    width: 250
   }
 };
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
 
 export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
@@ -78,13 +75,13 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     //ref
     const comboBoxKbliRef = useRef<IComboBox>(null);
     //react form hook
-    const {handleSubmit, control, setValue, resetField} = useForm<IRegisterDokumen<IDokumenNibOss>>({
+    const {handleSubmit, control, setValue, resetField} = useForm<IRegisterDokumen<IDokumenGenerik>>({
         defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
         id: null,
         registerPerusahaan: {id: registerPerusahaan?.id},
         dokumen: {...dokumen}
         },
-        resolver: zodResolver(RegisterDokumenNibSchema)
+        resolver: zodResolver(RegisterDokumenGenerikSchema)
     });
     //rtk query
     const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
@@ -97,43 +94,18 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     useEffect(
     () => {
         if(mode != 'add') {
-        // setQueryPegawaiParams(
-        //   prev => {
-        //       let tmp = cloneDeep(prev);
-        //       let filters = cloneDeep(tmp.filters);
-        //       let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;                   
-                
-        //       if(found == -1) {
-        //           filters?.push({
-        //               fieldName: 'perusahaan_id',
-        //               value: dataLama?.registerPerusahaan?.id!
-        //           });
-        //       }
-        //       else {
-        //           filters?.splice(found, 1, {
-        //               fieldName: 'perusahaan_id',
-        //               value: dataLama?.registerPerusahaan?.id!
-        //           })
-        //       }
-                
-        //       tmp.pageNumber = 1;
-        //       tmp.filters = filters;             
-        //       return tmp;
-        //   }
-        // );
-
-        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
-            .then((secondPromiseResult) => {
-            setDisableForm(false);
-            let hasil = cloneDeep(secondPromiseResult);
-            hasil.height = `${window.innerHeight - 130}px`;  
-            hasil.width =  `${window.innerWidth - 520}px`;                 
-            setConfigOnlyOfficeEditor(hasil);
-            })
-            .catch((rejectedValueOrSerializedError) => {
-            console.log(rejectedValueOrSerializedError);
-            setDisableForm(false);
-            });
+            getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${dataLama?.lokasiFile}`).unwrap()
+                .then((secondPromiseResult) => {
+                    setDisableForm(false);
+                    let hasil = cloneDeep(secondPromiseResult);
+                    hasil.height = `${window.innerHeight - 130}px`;  
+                    hasil.width =  `${window.innerWidth - 360}px`;                 
+                    setConfigOnlyOfficeEditor(hasil);
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    console.log(rejectedValueOrSerializedError);
+                    setDisableForm(false);
+                });
         }
     },
     [mode, dataLama]
@@ -146,7 +118,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
             (prev: any) => {
             let hasil = cloneDeep(prev);
             hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
-            hasil.width = `${window.innerWidth - 520}px`; 
+            hasil.width = `${window.innerWidth - 360}px`; 
             return hasil;
             }
         );
@@ -196,7 +168,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                             setDisableForm(false);
                             let hasil = cloneDeep(secondPromiseResult);
                             hasil.height = `${window.innerHeight - 195}px`;            
-                            hasil.width =  `${window.innerWidth - 520}px`; 
+                            hasil.width =  `${window.innerWidth - 360}px`; 
                             setConfigOnlyOfficeEditor(hasil);
                         })
                         .catch((rejectedValueOrSerializedError) => {
@@ -223,7 +195,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                             setDisableForm(false);
                             let hasil = cloneDeep(secondPromiseResult);
                             hasil.height = `${window.innerHeight - 195}px`;            
-                            hasil.width =  `${window.innerWidth - 310}px`; 
+                            hasil.width =  `${window.innerWidth - 580}px`; 
                             setConfigOnlyOfficeEditor(hasil);
                         })
                         .catch((rejectedValueOrSerializedError) => {
@@ -242,44 +214,43 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
         [mode, dataLama]
     );
 
-    const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenNibOss>> = async (data) => {
-        console.log(data);
+    const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenGenerik>> = async (data) => {
         setDisableForm(true);
         try {
         switch (mode) {
             case 'add':          
-                // await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                //     setDisableForm(false);
-                // }).catch((rejectedValueOrSerializedError) => {
-                //     setDisableForm(false);
-                // }); 
-                // closeWindow();
-                // break;
+                await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
+                }).catch((rejectedValueOrSerializedError) => {
+                    setDisableForm(false);
+                }); 
+                closeWindow();
+                break;
             case 'edit':
-                // await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                //     setDisableForm(false);
-                // }).catch((rejectedValueOrSerializedError) => {
-                //     setDisableForm(false);
-                // }); 
-                // closeWindow();
-                // break;
+                await updateRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
+                }).catch((rejectedValueOrSerializedError) => {
+                    setDisableForm(false);
+                }); 
+                closeWindow();
+                break;
             case 'delete':
-                // await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
-                //     setDisableForm(false);
-                // }).catch((rejectedValueOrSerializedError) => {
-                //     setDisableForm(false);
-                // }); 
-                // closeWindow();
-            break;
+                await deleteRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
+                    setDisableForm(false);
+                }).catch((rejectedValueOrSerializedError) => {
+                    setDisableForm(false);
+                }); 
+                closeWindow();
+                break;
             default:
-            break;
+                break;
         }      
         } catch (error) {
             setDisableForm(false);
         }
     };
 
-    const onError: SubmitErrorHandler<IRegisterDokumen<IDokumenNibOss>> = async (err) => {
+    const onError: SubmitErrorHandler<IRegisterDokumen<IDokumenGenerik>> = async (err) => {
         console.log('error', err);
     };
 
@@ -308,127 +279,127 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
         <Stack.Item>
             <Stack>
                 <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-                { configOnlyOfficeEditor == null && mode == 'add' &&
+                { configOnlyOfficeEditor == null && mode == 'add' && !isLoadingUploadFile &&
                 <Stack.Item align="center">                          
-                <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
-                    <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                    <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
-                    <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-                </div>                        
+                    <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
+                        <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                        <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
+                        <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+                    </div>                        
                 </Stack.Item> 
                 } 
                 {configOnlyOfficeEditor != null &&
                 <Stack.Item>
-                <Stack horizontal tokens={stackTokens}>
-                    <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
-                    <Stack>
-                        <Stack.Item>
-                        <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
-                        </Stack.Item>
-                        {mode != 'add' &&
-                        <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
-                        <Label style={{padding: 4}}>
-                            {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                            `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
-                            `${registerPerusahaan?.perusahaan?.nama}`}
+                    <Stack horizontal tokens={stackTokens}>
+                        <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
+                            <Stack>
+                                <Stack.Item>
+                                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
+                                </Stack.Item>
+                                {mode != 'add' &&
+                                <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
+                                    <Label style={{padding: 4}}>
+                                        {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                                        `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
+                                        `${registerPerusahaan?.perusahaan?.nama}`}
 
-                        </Label>
-                        </Stack.Item>
-                        }
-                        <Stack.Item>
-                        <Controller 
-                            name="dokumen.tanggal"
-                            control={control}
-                            render={
-                            ({field: {onChange}, fieldState: { error }}) => (                      
-                                <DatePicker
-                                label="Tgl. penetapan/penerbitan"
-                                firstDayOfWeek={firstDayOfWeek}
-                                placeholder="Pilih tanggal"
-                                ariaLabel="Pilih tanggal"
-                                strings={DayPickerIndonesiaStrings}
-                                formatDate={utcFormatDateToDDMMYYYY}
-                                styles={dateStyle}
-                                onSelectDate={
-                                    (date) => {         
-                                    onChange(utcFormatDateToYYYYMMDD(date!));
-                                    setSelectedDate(date!);
-                                    }
+                                    </Label>
+                                </Stack.Item>
                                 }
-                                value={selectedDate}
-                                disabled={mode == 'delete' ? true:disableForm}
+                                <Stack.Item>
+                                    <Controller 
+                                        name="dokumen.tanggal"
+                                        control={control}
+                                        render={
+                                        ({field: {onChange}, fieldState: { error }}) => (                      
+                                            <DatePicker
+                                            label="Tgl. penetapan/penerbitan"
+                                            firstDayOfWeek={firstDayOfWeek}
+                                            placeholder="Pilih tanggal"
+                                            ariaLabel="Pilih tanggal"
+                                            strings={DayPickerIndonesiaStrings}
+                                            formatDate={utcFormatDateToDDMMYYYY}
+                                            styles={dateStyle}
+                                            onSelectDate={
+                                                (date) => {         
+                                                onChange(utcFormatDateToYYYYMMDD(date!));
+                                                setSelectedDate(date!);
+                                                }
+                                            }
+                                            value={selectedDate}
+                                            disabled={mode == 'delete' ? true:disableForm}
+                                            />
+                                        )
+                                        }
+                                    />
+                                </Stack.Item>
+                                <Stack.Item>
+                                    <Controller 
+                                        name="dokumen.nomor"
+                                        control={control}
+                                        render={
+                                        ({field: {onChange}, fieldState: { error }}) => (
+                                            <TextField
+                                                label="Nomor"
+                                                placeholder="isikan nomor dokumen"
+                                                value={nomorTextFieldValue}
+                                                onChange={
+                                                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                                                    if(newValue!.length > 0) {
+                                                        onChange(newValue!);
+                                                    }
+                                                    else {
+                                                        resetField("dokumen.nomor");
+                                                    }
+                                                    setNomorTextFieldValue(newValue||'');
+                                                    }
+                                                }
+                                                disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                                                styles={textFieldStyles}
+                                                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                                                />
+                                        )
+                                        }
+                                    />
+                                </Stack.Item>
+                                <PrimaryButton 
+                                style={{marginTop: 16, width: '100%'}}
+                                text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
+                                disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true:disableForm}
+                                onClick={handleSubmit(onSubmit, onError)}
                                 />
-                            )
-                            }
-                        />
+                                { mode == 'edit' &&
+                                <DefaultButton 
+                                    style={{marginTop: 4, width: '100%'}}
+                                    text={'Upload ulang dokumen'} 
+                                    onClick={_bindClickEventInputFile}
+                                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                                />
+                                }   
+                                { mode == 'edit' &&
+                                <DefaultButton 
+                                    style={{marginTop: 4, width: '100%'}}
+                                    text={'Generate ulang dokumen'} 
+                                    onClick={() => alert('Generate')}
+                                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                                />
+                                }     
+                            </Stack>
                         </Stack.Item>
                         <Stack.Item>
-                        <Controller 
-                            name="dokumen.nomor"
-                            control={control}
-                            render={
-                            ({field: {onChange}, fieldState: { error }}) => (
-                                <TextField
-                                label="Nomor"
-                                placeholder="isikan nomor dokumen"
-                                value={nomorTextFieldValue}
-                                onChange={
-                                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                    if(newValue!.length > 0) {
-                                        onChange(newValue!);
-                                    }
-                                    else {
-                                        resetField("dokumen.nomor");
-                                    }
-                                    setNomorTextFieldValue(newValue||'');
-                                    }
-                                }
-                                disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                                styles={textFieldStyles}
-                                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                                />
-                            )
-                            }
-                        />
+                            <DocumentEditor 
+                                id="onlyOfficeEditor"
+                                documentServerUrl={urlDocumenService}
+                                config={configOnlyOfficeEditor}
+                                events_onDocumentReady={_onDocumentReady}
+                                events_onAppReady={_onAppReady}
+                                events_onError={_onError}
+                            />
                         </Stack.Item>
-                        <PrimaryButton 
-                        style={{marginTop: 16, width: '100%'}}
-                        text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
-                        disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true:disableForm}
-                        onClick={handleSubmit(onSubmit, onError)}
-                        />
-                        { mode == 'edit' &&
-                        <DefaultButton 
-                            style={{marginTop: 4, width: '100%'}}
-                            text={'Upload ulang dokumen'} 
-                            onClick={_bindClickEventInputFile}
-                            disabled={configOnlyOfficeEditor == null ? true:disableForm}
-                        />
-                        }   
-                        { mode == 'edit' &&
-                        <DefaultButton 
-                            style={{marginTop: 4, width: '100%'}}
-                            text={'Generate ulang dokumen'} 
-                            onClick={() => alert('Generate')}
-                            disabled={configOnlyOfficeEditor == null ? true:disableForm}
-                        />
-                        }     
                     </Stack>
-                    </Stack.Item>
-                    <Stack.Item>
-                    <DocumentEditor 
-                        id="onlyOfficeEditor"
-                        documentServerUrl={urlDocumenService}
-                        config={configOnlyOfficeEditor}
-                        events_onDocumentReady={_onDocumentReady}
-                        events_onAppReady={_onAppReady}
-                        events_onError={_onError}
-                    />
-                    </Stack.Item>
-                </Stack>
                 </Stack.Item>  
                 }
-                {configOnlyOfficeEditor == null && mode != 'add' &&
+                {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
                 <Stack.Item align="center">
                 <Label>Please wait...</Label>
                 <Spinner size={SpinnerSize.large} />

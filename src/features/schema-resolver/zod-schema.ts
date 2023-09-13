@@ -185,6 +185,11 @@ export const DokumenAktaPendirianSchema = DokumenSchema.pick({id: true}).extend(
     penanggungJawab: PegawaiSchema.pick({id: true}),
 });
 
+export const DokumenGenerikSchema = DokumenSchema.pick({id: true}).extend({
+    nomor: z.string(),
+    tanggal:z.string(),
+});
+
 export const RegisterKbliSchema = object({
     idNib: z.string().optional(),
     idKbli: z.string().optional(),
@@ -203,6 +208,7 @@ export const RegisterDokumenSchema = object({
 
 export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.extend({dokumen: DokumenAktaPendirianSchema});
 export const RegisterDokumenNibSchema = RegisterDokumenSchema.extend({dokumen: DokumenNibSchema});
+export const RegisterDokumenGenerikSchema = RegisterDokumenSchema.extend({dokumen: DokumenGenerikSchema});
 
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

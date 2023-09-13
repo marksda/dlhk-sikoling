@@ -422,7 +422,7 @@ useEffect(
       <Stack.Item>
           <Stack>
             <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-            { configOnlyOfficeEditor == null && mode == 'add' &&
+            { configOnlyOfficeEditor == null && mode == 'add' && !isLoadingUploadFile &&
             <Stack.Item align="center">                          
               <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
                 <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
@@ -556,7 +556,7 @@ useEffect(
               </Stack>
             </Stack.Item>  
             }
-            {configOnlyOfficeEditor == null && mode != 'add' &&
+            {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
             <Stack.Item align="center">
               <Label>Please wait...</Label>
               <Spinner size={SpinnerSize.large} />

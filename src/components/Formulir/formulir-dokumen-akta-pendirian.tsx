@@ -27,7 +27,7 @@ interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
 const stackTokens = { childrenGap: 4 };
 const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles> = {
   root: {
-    width: 200
+    width: 250
   }
 };
 const contentStyles = mergeStyleSets({
@@ -242,7 +242,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             setDisableForm(false);
             let hasil = cloneDeep(secondPromiseResult);
             hasil.height = `${window.innerHeight - 130}px`;  
-            hasil.width =  `${window.innerWidth - 510}px`;                 
+            hasil.width =  `${window.innerWidth - 360}px`;                 
             setConfigOnlyOfficeEditor(hasil);
           })
           .catch((rejectedValueOrSerializedError) => {
@@ -260,7 +260,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           (prev: any) => {
             let hasil = cloneDeep(prev);
             hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
-            hasil.width = `${window.innerWidth - 510}px`; 
+            hasil.width = `${window.innerWidth - 360}px`; 
             return hasil;
           }
         );
@@ -327,7 +327,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       setDisableForm(false);
                       let hasil = cloneDeep(secondPromiseResult);
                       hasil.height = `${window.innerHeight - 195}px`;            
-                      hasil.width =  `${window.innerWidth - 310}px`; 
+                      hasil.width =  `${window.innerWidth - 360}px`; 
                       setConfigOnlyOfficeEditor(hasil);
                     })
                     .catch((rejectedValueOrSerializedError) => {
@@ -432,7 +432,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     <Stack.Item> 
         <Stack>
           <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-          { configOnlyOfficeEditor == null && mode == 'add' &&
+          { configOnlyOfficeEditor == null && mode == 'add' && !isLoadingUploadFile &&
           <Stack.Item align="center">                          
             <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
               <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
@@ -480,6 +480,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                             }
                             value={selectedDate}
                             disabled={mode == 'delete' ? true:disableForm}
+                            styles={dateStyle}
                           />
                         )
                       }
@@ -598,7 +599,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
             </Stack>            
           </Stack.Item>         
           }     
-          {configOnlyOfficeEditor == null && mode != 'add' &&
+          {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
           <Stack.Item align="center">
             <Label>Please wait...</Label>
             <Spinner size={SpinnerSize.large} />

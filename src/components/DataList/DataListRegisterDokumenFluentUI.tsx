@@ -11,6 +11,7 @@ import find from "lodash.find";
 import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
+import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -225,7 +226,12 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         </>; 
                         break;
                     default:
-                        konten = '-';
+                        doc = item.dokumen as IDokumenGenerik;
+                        konten = 
+                        <>
+                            <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+                            <span>Nomor dokumen : {doc.nomor}</span>
+                        </>; 
                         break;
                 }
 
