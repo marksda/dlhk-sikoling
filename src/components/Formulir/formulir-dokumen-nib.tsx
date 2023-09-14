@@ -128,6 +128,19 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
     [listKbli]
   );
 
+  const officeEditor = useMemo(
+    () => {
+        if(configOnlyOfficeEditor != null) {
+            return <DocumentEditor 
+                id="onlyOfficeEditor"
+                documentServerUrl={urlDocumenService}
+                config={configOnlyOfficeEditor}
+            />;
+        }
+    },
+    [configOnlyOfficeEditor]
+);
+
   useEffect(
     () => {
       if(mode != 'add') {
@@ -412,27 +425,6 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
     },
     [mode],
   );
-
-  const _onDocumentReady = useCallback(
-    (e) => {
-      // console.log("Document is loaded");
-    },
-    []
-  );
-
-  const _onAppReady = useCallback(
-    (e) => {
-      // console.log("App is ready");
-    },
-    []
-  );
-
-  const _onError = useCallback(
-    (e) => {
-      console.log(e);
-    },
-    []
-  );
       
   return (
       <Stack.Item>
@@ -560,14 +552,7 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                   </Stack>
                 </Stack.Item>
                 <Stack.Item>
-                  <DocumentEditor 
-                    id="onlyOfficeEditor"
-                    documentServerUrl={urlDocumenService}
-                    config={configOnlyOfficeEditor}
-                    events_onDocumentReady={_onDocumentReady}
-                    events_onAppReady={_onAppReady}
-                    events_onError={_onError}
-                  />
+                  {officeEditor}
                 </Stack.Item>
               </Stack>
             </Stack.Item>  

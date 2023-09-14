@@ -1,8 +1,8 @@
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
 import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenGenerikSchema } from "../../features/schema-resolver/zod-schema";
@@ -67,14 +67,14 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
 
 export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
-    const [tempFile, setTempFile] = useState<boolean>(false);
+    const [tempFile, setTempFile] = useState<string|null>(null);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
     const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
+    const [isApproved, setIsApproved] = useState<boolean>(dataLama != undefined ? dataLama.statusVerified!:false);
     const [disableForm, setDisableForm] = useState<boolean>(mode == 'delete' ? false:true);
     const [configOnlyOfficeEditor, setConfigOnlyOfficeEditor] = useState<any|null>(null);
-    //ref
-    const comboBoxKbliRef = useRef<IComboBox>(null);
+    
     //react form hook
     const {handleSubmit, control, setValue, resetField} = useForm<IRegisterDokumen<IDokumenGenerik>>({
         defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
@@ -92,6 +92,19 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
     const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
     const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
+
+    const officeEditor = useMemo(
+        () => {
+            if(configOnlyOfficeEditor != null) {
+                return <DocumentEditor 
+                    id="onlyOfficeEditor"
+                    documentServerUrl={urlDocumenService}
+                    config={configOnlyOfficeEditor}
+                />;
+            }
+        },
+        [configOnlyOfficeEditor]
+    );
 
     useEffect(
     () => {
@@ -138,14 +151,14 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     useEffect(
         () => {
           return () => {
-            if(tempFile == true && mode == "add") {
-              let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
-              pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+            if(tempFile != null && mode == "add") {
+            //   let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
+              let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
               deleteFile(pathFile);
             }
           }      
         },
-        [tempFile, mode, configOnlyOfficeEditor]
+        [tempFile, mode]
     );
   
     const _bindClickEventInputFile = useCallback(
@@ -184,8 +197,9 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                             let hasil = cloneDeep(secondPromiseResult);
                             hasil.height = `${window.innerHeight - 195}px`;            
                             hasil.width =  `${window.innerWidth - 360}px`; 
+
+                            setTempFile(hasil.document.url);
                             setConfigOnlyOfficeEditor(hasil);
-                            setTempFile(true);
                         })
                         .catch((rejectedValueOrSerializedError) => {
                             setDisableForm(false);
@@ -238,6 +252,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                 await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
                     setDisableForm(false);
                 }).catch((rejectedValueOrSerializedError) => {
+                    console.log(rejectedValueOrSerializedError);
                     setDisableForm(false);
                 }); 
                 closeWindow();
@@ -269,27 +284,6 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     const onError: SubmitErrorHandler<IRegisterDokumen<IDokumenGenerik>> = async (err) => {
         console.log('error', err);
     };
-
-    const _onDocumentReady = useCallback(
-        (e) => {
-        // console.log("Document is loaded");
-        },
-        []
-    );
-
-    const _onAppReady = useCallback(
-        (e) => {
-        // console.log("App is ready");
-        },
-        []
-    );
-
-    const _onError = useCallback(
-        (e) => {
-        console.log(e);
-        },
-        []
-    );
       
     return (
         <Stack.Item>
@@ -378,12 +372,33 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                                         }
                                     />
                                 </Stack.Item>
+                                <Stack.Item>
+                                    <Controller 
+                                        name="statusVerified"
+                                        control={control}
+                                        render={
+                                            ({field: {onChange}, fieldState: { error }}) => (                                            
+                                                <Toggle
+                                                    label="Approved"
+                                                    checked={isApproved}
+                                                    onChange={(ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined) => {                                                        
+                                                        setIsApproved(checked!);
+                                                        onChange(checked!);
+                                                    }}
+                                                    onText="Sudah"
+                                                    offText="Belum"
+                                                    disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                                                    />
+                                            )
+                                        }
+                                    />                                    
+                                </Stack.Item>
                                 <PrimaryButton 
-                                style={{marginTop: 16, width: '100%'}}
-                                text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
-                                disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true:disableForm}
-                                onClick={handleSubmit(onSubmit, onError)}
-                                />
+                                    style={{marginTop: 16, width: '100%'}}
+                                    text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
+                                    disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true:disableForm}
+                                    onClick={handleSubmit(onSubmit, onError)}
+                                    />
                                 { mode == 'edit' &&
                                 <DefaultButton 
                                     style={{marginTop: 4, width: '100%'}}
@@ -403,14 +418,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                             </Stack>
                         </Stack.Item>
                         <Stack.Item>
-                            <DocumentEditor 
-                                id="onlyOfficeEditor"
-                                documentServerUrl={urlDocumenService}
-                                config={configOnlyOfficeEditor}
-                                events_onDocumentReady={_onDocumentReady}
-                                events_onAppReady={_onAppReady}
-                                events_onError={_onError}
-                            />
+                            {officeEditor}
                         </Stack.Item>
                     </Stack>
                 </Stack.Item>  

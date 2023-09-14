@@ -111,6 +111,19 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [postsPegawai]
   );
 
+  const officeEditor = useMemo(
+    () => {
+        if(configOnlyOfficeEditor != null) {
+            return <DocumentEditor 
+                id="onlyOfficeEditor"
+                documentServerUrl={urlDocumenService}
+                config={configOnlyOfficeEditor}
+            />;
+        }
+    },
+    [configOnlyOfficeEditor]
+  );
+
   const _onRenderPegawaiOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
     let data: IPegawai = item?.data;
     return data != undefined ?
@@ -176,6 +189,19 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
       }
     },
     [comboBoxPenanggungJawabRef]
+  );
+
+  useEffect(
+    () => {
+      return () => {
+        if(tempFile == true && mode == "add") {
+          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
+          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+          deleteFile(pathFile);
+        }
+      }      
+    },
+    [tempFile, mode, configOnlyOfficeEditor]
   );
 
   useEffect(
@@ -274,19 +300,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     },
     []
   );
-
-  useEffect(
-    () => {
-      return () => {
-        if(tempFile == true && mode == "add") {
-          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
-          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
-          deleteFile(pathFile);
-        }
-      }      
-    },
-    [tempFile, mode, configOnlyOfficeEditor]
-  );
+  
 
   const _handleFile = useCallback(
     (event: FormEvent<HTMLInputElement>) => {            
@@ -421,27 +435,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     //   console.log('error', err);
     // }
   };
-
-  const _onDocumentReady = useCallback(
-    (e) => {
-      // console.log("Document is loaded");
-    },
-    []
-  );
-
-  const _onAppReady = useCallback(
-    (e) => {
-      // console.log("App is ready");
-    },
-    []
-  );
-
-  const _onError = useCallback(
-    (e) => {
-      console.log(e);
-    },
-    []
-  );
 
   return (
     <Stack.Item> 
@@ -602,14 +595,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                 </Stack>  
               </Stack.Item>
               <Stack.Item>
-                <DocumentEditor 
-                  id="onlyOfficeEditor"
-                  documentServerUrl={urlDocumenService}
-                  config={configOnlyOfficeEditor}
-                  events_onDocumentReady={_onDocumentReady}
-                  events_onAppReady={_onAppReady}
-                  events_onError={_onError}
-                />
+                {officeEditor}
               </Stack.Item>       
             </Stack>            
           </Stack.Item>         

@@ -635,13 +635,14 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
     },
     []
   );
+
   const _onChangeApproved = useCallback(
     (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
       setValue("statusVerifikasi", checked!);             
       setIsApproved(checked!);  
     },
     []
-);
+  );
 
   const onSubmit: SubmitHandler<IRegisterPerusahaan> = async (data) => {
     console.log(data);   
