@@ -69,7 +69,7 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } };
 
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
-  const [tempFile, setTempFile] = useState<boolean>(false);
+  const [tempFile, setTempFile] = useState<string|null>(null);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
@@ -211,14 +211,13 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   useEffect(
     () => {
       return () => {
-        if(tempFile == true && mode == "add") {
-          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
-          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
+        if(tempFile != null && mode == "add") {
+          let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
           deleteFile(pathFile);
         }
       }      
     },
-    [tempFile, mode, configOnlyOfficeEditor]
+    [tempFile, mode]
   );
   
   const _bindClickEventInputFile = useCallback(
@@ -257,8 +256,9 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
                         let hasil = cloneDeep(secondPromiseResult);
                         hasil.height = `${window.innerHeight - 195}px`;            
                         hasil.width =  `${window.innerWidth - 520}px`; 
+
+                        setTempFile(hasil.document.url);
                         setConfigOnlyOfficeEditor(hasil);
-                        setTempFile(true);
                       })
                       .catch((rejectedValueOrSerializedError) => {
                         setDisableForm(false);

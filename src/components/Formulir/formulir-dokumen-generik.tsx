@@ -152,7 +152,6 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
         () => {
           return () => {
             if(tempFile != null && mode == "add") {
-            //   let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
               let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
               deleteFile(pathFile);
             }

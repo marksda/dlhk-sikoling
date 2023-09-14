@@ -55,8 +55,7 @@ const contentStyles = mergeStyleSets({
 });
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
-  // const token = useAppSelector((state) => state.token);
-  const [tempFile, setTempFile] = useState<boolean>(false);
+  const [tempFile, setTempFile] = useState<string|null>(null);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
@@ -190,20 +189,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     },
     [comboBoxPenanggungJawabRef]
   );
-
-  useEffect(
-    () => {
-      return () => {
-        if(tempFile == true && mode == "add") {
-          let pathFile: string = decodeURIComponent((configOnlyOfficeEditor.document.url) as string);
-          pathFile = "/file/delete?fileNameParam=" + pathFile.split("=")[1];
-          deleteFile(pathFile);
-        }
-      }      
-    },
-    [tempFile, mode, configOnlyOfficeEditor]
-  );
-
+ 
   useEffect(
     () => {
       if(registerPerusahaan != undefined) {        
@@ -301,6 +287,17 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     []
   );
   
+  useEffect(
+    () => {
+      return () => {
+        if(tempFile != null && mode == "add") {
+          let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
+          deleteFile(pathFile);
+        }
+      }      
+    },
+    [tempFile, mode]
+  );
 
   const _handleFile = useCallback(
     (event: FormEvent<HTMLInputElement>) => {            
@@ -328,8 +325,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       let hasil = cloneDeep(secondPromiseResult);
                       hasil.height = `${window.innerHeight - 195}px`;            
                       hasil.width =  `${window.innerWidth - 360}px`; 
-                      setConfigOnlyOfficeEditor(hasil);                 
-                      setTempFile(true);
+
+                      setTempFile(hasil.document.url);
+                      setConfigOnlyOfficeEditor(hasil);  
                     })
                     .catch((rejectedValueOrSerializedError) => {
                       setDisableForm(false);
@@ -391,7 +389,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         case 'add':          
           await saveRegisterDokumen(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
-            setTempFile(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
           }); 
