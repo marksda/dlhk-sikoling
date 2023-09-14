@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useMemo, useState } from "react";
 import { Control, useWatch } from "react-hook-form";
 // import { useGetAllJenisKelaminQuery } from "../../features/repository/service/jenis-kelamin-api-slice";
-import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
-import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
+// import { ControlledFluentUiDropDown } from "../ControlledDropDown/ControlledFluentUiDropDown";
+// import { ControlledFluentUiTextField } from "../ControlledTextField/ControlledFluentUiTextField";
 import { backIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantPID } from "./InterfaceRegistrasiForm";
 
 const stackTokens = { childrenGap: 2 };

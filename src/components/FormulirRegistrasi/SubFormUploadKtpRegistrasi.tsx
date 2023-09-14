@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FC, useCallback, useState } from "react";
 import { Control, SubmitHandler, UseFormHandleSubmit, useWatch } from "react-hook-form";
 import { useAppSelector } from "../../app/hooks";
-import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
+// import { IUploadMode, UploadFilesFluentUi } from "../UploadFiles/UploadFilesFluentUI";
 import { backIcon, durationAnimFormRegistrasi, ISubFormRegistrasiProps, variantUploadKTP } from "./InterfaceRegistrasiForm";
 import { IPerson } from "../../features/entity/person";
 
