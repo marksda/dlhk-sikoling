@@ -6,14 +6,14 @@ import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowL
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 
-const _daftarBreadCrumb = [
-    {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
-    {key: 'Perusahaan', value: [
-        {text: 'Dashboard', key: 'default'},
-        {text: 'Perusahaan', key: 'Perusahaan'}
-    ]},
+// const _daftarBreadCrumb = [
+//     {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
+//     {key: 'Perusahaan', value: [
+//         {text: 'Dashboard', key: 'default'},
+//         {text: 'Perusahaan', key: 'Perusahaan'}
+//     ]},
     
-];
+// ];
 
 const buttonStyles: Partial<IButtonStyles> = {
     root: {
@@ -38,27 +38,15 @@ export const KontenDashboardPemrakarsa: FC = () => {
                     onClick: undefined,
                 },
                 {
-                    key: 'permohonan',
-                    name: 'Permohonan',
-                    icon: 'PublishCourse',
-                    onClick: undefined,
-                },
-                {
-                    key: 'pelaporan',
-                    name: 'Pelaporan',
-                    icon: 'AnalyticsReport',
+                    key: 'tracking_log',
+                    name: 'Tracking log',
+                    icon: 'History',
                     onClick: undefined,
                 },
                 {
                     key: 'pemrakarsa',
-                    name: 'Pemrakarsa',
+                    name: 'Data Pemrakarsa',
                     icon: 'CityNext',
-                    onClick: undefined,
-                },
-                {
-                    key: 'tracking_log',
-                    name: 'Tracking log',
-                    icon: 'History',
                     onClick: undefined,
                 },
             ]
@@ -117,7 +105,12 @@ export const KontenDashboardPemrakarsa: FC = () => {
                                 {
                                     pageNumber: 1,
                                     pageSize: 50,
-                                    filters: [],
+                                    filters: [
+                                        {
+                                            fieldName: 'nama',
+                                            value: '12321'
+                                        }
+                                    ],
                                     sortOrders: [
                                         {
                                             fieldName: 'tanggal_registrasi',
