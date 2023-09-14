@@ -2,10 +2,6 @@ import { CommandBarButton, IButtonStyles, ILabelStyles, IOverflowSetItemProps, I
 import { FC, useCallback, useMemo, useState } from "react";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 
-const labelStyles: Partial<IStyleSet<ILabelStyles>> = {
-    root: { marginTop: 10 },
-};
-
 const buttonStyles: Partial<IButtonStyles> = {
     root: {
         minWidth: 0,
@@ -16,19 +12,6 @@ const buttonStyles: Partial<IButtonStyles> = {
 };
 
 export const PermohonanBackEnd: FC = () => {
-    const daftarMenuOverFlow = useMemo(
-        () => {
-            return [
-                {
-                    key: 'tracking_log',
-                    name: 'Tracking log',
-                    icon: 'Shield',
-                    onClick: undefined,
-                },
-            ]
-        },
-        []
-    );
 
     const [idContentPage, setIdContentPage] = useState<string>('tracking_log');
 
@@ -79,18 +62,10 @@ export const PermohonanBackEnd: FC = () => {
     
     return (
         <Stack grow verticalFill>
-            <Stack.Item style={{marginTop: -2, marginBottom: 4, borderBottom: '1px solid #e5e5e5'}}>
-                <OverflowSet
-                    aria-label="Custom Example"
-                    items={daftarMenuOverFlow}
-                    onRenderItem={onRenderItem}
-                    onRenderOverflowButton={_onRenderOverflowButton}
-                />
-            </Stack.Item>
             <Stack.Item grow>
                 <Pivot>
                     <PivotItem
-                        headerText="Permohonan masuk"
+                        headerText="Berkas masuk"
                         headerButtonProps={{
                         'data-order': 1,
                         'data-title': 'baru',
@@ -117,26 +92,26 @@ export const PermohonanBackEnd: FC = () => {
                                     ],
                                 }
                             }
-                            title="Permohonan masuk"
+                            title="Berkas masuk"
                         />
                     </PivotItem>
                     <PivotItem 
-                        headerText="Permohonan keluar"
+                        headerText="Berkas keluar"
                         itemIcon="Generate"
                     >
-                        <Label styles={labelStyles}>Pivot #2</Label>
+                        <Label >Pivot #2</Label>
                     </PivotItem>
                     <PivotItem 
-                        headerText="Permohonan selesai"
+                        headerText="Berkas selesai"
                         itemIcon="DocumentApproval"    
                     >
-                        <Label styles={labelStyles}>Pivot #3</Label>
+                        <Label>Pivot #3</Label>
                     </PivotItem>
                     <PivotItem 
-                        headerText="Permohonan tertolak"
+                        headerText="Berkas tertolak"
                         itemIcon="PageRemove"
                     >
-                        <Label styles={labelStyles}>Pivot #3</Label>
+                        <Label>Pivot #3</Label>
                     </PivotItem>
                 </Pivot>
             </Stack.Item>
