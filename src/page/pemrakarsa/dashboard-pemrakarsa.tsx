@@ -6,15 +6,6 @@ import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowL
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 
-// const _daftarBreadCrumb = [
-//     {key: 'default', value: [{text: 'Dashboard', key: 'dashboard-default'}]},
-//     {key: 'Perusahaan', value: [
-//         {text: 'Dashboard', key: 'default'},
-//         {text: 'Perusahaan', key: 'Perusahaan'}
-//     ]},
-    
-// ];
-
 const buttonStyles: Partial<IButtonStyles> = {
     root: {
         minWidth: 0,
@@ -48,32 +39,6 @@ const daftarMenuOverFlow = [
 export const KontenDashboardPemrakarsa: FC = () => {
     //local state    
     const [idContentPage, setIdContentPage] = useState<string>('permohonan');
-
-    // const daftarMenuOverFlow = useMemo(
-    //     () => {
-    //         return [
-    //             {
-    //                 key: 'notifikasi',
-    //                 name: 'Notifikasi',
-    //                 icon: 'Info',
-    //                 onClick: undefined,
-    //             },
-    //             {
-    //                 key: 'tracking_log',
-    //                 name: 'Tracking log',
-    //                 icon: 'History',
-    //                 onClick: undefined,
-    //             },
-    //             {
-    //                 key: 'pemrakarsa',
-    //                 name: 'Data Pemrakarsa',
-    //                 icon: 'CityNext',
-    //                 onClick: undefined,
-    //             },
-    //         ]
-    //     },
-    //     []
-    // );
 
     const kontentPage = useMemo(
         () => {
@@ -196,53 +161,6 @@ export const KontenDashboardPemrakarsa: FC = () => {
         },
         []
     );
-    
-    // const [selectedPage, setSelectedPage] = useState<string>('default');
-    // const [selectedBreadCrumb, setSelectedBreadCrumb] = useState<Array<any>>([]);
-
-    // const selectedBreadCrumb: IBreadcrumbItem[] = useMemo(
-    //     () => {
-    //         let breadCrumbObject;
-    //         let arrayBreadCrumb: IBreadcrumbItem[];
-    //         switch (selectedPage) {
-    //             case 'default':
-    //                 breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
-    //                 arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as IBreadcrumbItem[];
-    //                 break;
-    //             case 'Perusahaan':
-    //                 breadCrumbObject = find(_daftarBreadCrumb, (item) => (item.key == selectedPage));
-    //                 arrayBreadCrumb = cloneDeep(breadCrumbObject?.value) as Array<IBreadcrumbItem> ; 
-    //                 arrayBreadCrumb[0].onClick = (e, i) => setSelectedPage(i?.key!);
-    //                 break;
-    //             default:
-    //                 arrayBreadCrumb = []
-    //                 break;
-    //         }
-
-    //         return arrayBreadCrumb;
-    //     },
-    //     [selectedPage]
-    // );
-
-    // const konten = useMemo(
-    //     () => {
-    //         let kontenTerpilih;
-    //         switch (selectedPage) {
-    //             case 'default':
-    //                 kontenTerpilih = <DashboardDefault setParentPage={setSelectedPage}/>;
-    //                 break;
-    //             case 'Perusahaan':
-    //                 kontenTerpilih = <KontenDashboardPerusahaan/>;
-    //                 break;
-    //             default:
-    //                 kontenTerpilih = null;
-    //                 break;
-    //         }
-
-    //         return kontenTerpilih;
-    //     },
-    //     [selectedPage]
-    // );
 
     return (        
         <Stack grow verticalFill>
@@ -257,76 +175,6 @@ export const KontenDashboardPemrakarsa: FC = () => {
             <Stack.Item grow>
                 {kontentPage}
             </Stack.Item>
-        </Stack>        
+        </Stack>
     );
 };
-
-// const getContentPage = (idContentPage: string) => {
-//     let konten = null;
-//     switch (idContentPage) {
-//         case 'tracking_log':
-//             konten =             
-//                 <DataListFlowLogFluentUI 
-//                     initSelectedFilters={
-//                         {
-//                             pageNumber: 1,
-//                             pageSize: 50,
-//                             filters: [],
-//                             sortOrders: [
-//                                 {
-//                                     fieldName: 'tanggal',
-//                                     value: 'DESC'
-//                                 },
-//                             ],
-//                         }
-//                     }
-//                     title="Tracking log"
-//                 /> 
-//             break; 
-//         case 'permohonan':
-//             konten =
-//                 <DataListPermohonanFluentUI
-//                     initSelectedFilters={
-//                         {
-//                             pageNumber: 1,
-//                             pageSize: 50,
-//                             filters: [],
-//                             sortOrders: [
-//                                 {
-//                                     fieldName: 'tanggal_registrasi',
-//                                     value: 'DESC'
-//                                 },
-//                             ],
-//                         }
-//                     }
-//                     title="Permohonan"
-//                 />;
-//             break;
-//         case 'pelaporan':
-//             konten = null;
-//             break;
-//         case 'pemrakarsa':
-//             konten = <DataListPerusahaanFluentUI 
-//                     initSelectedFilters={
-//                         {
-//                             pageNumber: 1,
-//                             pageSize: 50,
-//                             filters: [],
-//                             sortOrders: [
-//                                 {
-//                                     fieldName: 'tanggal_registrasi',
-//                                     value: 'DESC'
-//                                 },
-//                             ],
-//                         }
-//                     }
-//                     title="Pemrakarsa"
-//                     toolBar={<span>Sda</span>}
-//                 />;
-//             break;
-//         default:
-//             konten = null;
-//             break;
-//     }
-//     return konten;
-// };
