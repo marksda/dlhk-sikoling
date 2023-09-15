@@ -352,13 +352,6 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         [isSelectedItem, selection, postsRegisterPerusahaan]
     );
 
-    // const _getKey = useCallback(
-    //     (item: any, index?: number): string => {
-    //         return item.key;
-    //     },
-    //     []
-    // );
-
     const _onChangeSearchNama = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {            
             if(newValue!.length > 2) {
