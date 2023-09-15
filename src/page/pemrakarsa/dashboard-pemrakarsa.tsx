@@ -24,35 +24,56 @@ const buttonStyles: Partial<IButtonStyles> = {
     },
 };
 
+const daftarMenuOverFlow = [
+    {
+        key: 'notifikasi',
+        name: 'Notifikasi',
+        icon: 'Info',
+        onClick: undefined,
+    },
+    {
+        key: 'tracking_log',
+        name: 'Tracking log',
+        icon: 'History',
+        onClick: undefined,
+    },
+    {
+        key: 'pemrakarsa',
+        name: 'Data Pemrakarsa',
+        icon: 'CityNext',
+        onClick: undefined,
+    }
+];
+
 export const KontenDashboardPemrakarsa: FC = () => {
     //local state    
     const [idContentPage, setIdContentPage] = useState<string>('permohonan');
 
-    const daftarMenuOverFlow = useMemo(
-        () => {
-            return [
-                {
-                    key: 'notifikasi',
-                    name: 'Notifikasi',
-                    icon: 'Info',
-                    onClick: undefined,
-                },
-                {
-                    key: 'tracking_log',
-                    name: 'Tracking log',
-                    icon: 'History',
-                    onClick: undefined,
-                },
-                {
-                    key: 'pemrakarsa',
-                    name: 'Data Pemrakarsa',
-                    icon: 'CityNext',
-                    onClick: undefined,
-                },
-            ]
-        },
-        []
-    );
+    // const daftarMenuOverFlow = useMemo(
+    //     () => {
+    //         return [
+    //             {
+    //                 key: 'notifikasi',
+    //                 name: 'Notifikasi',
+    //                 icon: 'Info',
+    //                 onClick: undefined,
+    //             },
+    //             {
+    //                 key: 'tracking_log',
+    //                 name: 'Tracking log',
+    //                 icon: 'History',
+    //                 onClick: undefined,
+    //             },
+    //             {
+    //                 key: 'pemrakarsa',
+    //                 name: 'Data Pemrakarsa',
+    //                 icon: 'CityNext',
+    //                 onClick: undefined,
+    //             },
+    //         ]
+    //     },
+    //     []
+    // );
 
     const kontentPage = useMemo(
         () => {
@@ -107,7 +128,7 @@ export const KontenDashboardPemrakarsa: FC = () => {
                                     pageSize: 50,
                                     filters: [
                                         {
-                                            fieldName: 'nama',
+                                            fieldName: 'kepemilikan',
                                             value: '12321'
                                         }
                                     ],
