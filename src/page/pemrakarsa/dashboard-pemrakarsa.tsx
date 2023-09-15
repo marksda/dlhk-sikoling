@@ -1,11 +1,14 @@
-import { CommandBarButton,  IBreadcrumbItem,  IButtonStyles,  IOverflowSetItemProps,  IconButton,  OverflowSet,  Stack } from "@fluentui/react";
+import { CommandBarButton, IButtonStyles, IOverflowSetItemProps,  IconButton,  OverflowSet,  Stack } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
-import find from "lodash.find";
-import cloneDeep from "lodash.clonedeep";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
+import { DataListRegisterDokumenFluentUI } from "../../components/DataList/DataListRegisterDokumenFluentUI";
 
+
+interface IDashboatdPemrakarsaFluentUIProps {
+    idUser: string;
+};
 const buttonStyles: Partial<IButtonStyles> = {
     root: {
         minWidth: 0,
@@ -29,14 +32,20 @@ const daftarMenuOverFlow = [
         onClick: undefined,
     },
     {
-        key: 'pemrakarsa',
-        name: 'Data Pemrakarsa',
+        key: 'perusahaan',
+        name: 'Perusahaan',
         icon: 'CityNext',
+        onClick: undefined,
+    },
+    {
+        key: 'dokumen',
+        name: 'Dokumen',
+        icon: 'Boards',
         onClick: undefined,
     }
 ];
 
-export const KontenDashboardPemrakarsa: FC = () => {
+export const KontenDashboardPemrakarsa: FC<IDashboatdPemrakarsaFluentUIProps> = ({idUser}) => {
     //local state    
     const [idContentPage, setIdContentPage] = useState<string>('permohonan');
 
@@ -85,7 +94,7 @@ export const KontenDashboardPemrakarsa: FC = () => {
                 case 'pelaporan':
                     konten = null;
                     break;
-                case 'pemrakarsa':
+                case 'perusahaan':
                     konten = <DataListRegisterPerusahaanFluentUI 
                             initSelectedFilters={
                                 {
@@ -94,7 +103,7 @@ export const KontenDashboardPemrakarsa: FC = () => {
                                     filters: [
                                         {
                                             fieldName: 'kepemilikan',
-                                            value: '12321'
+                                            value: idUser
                                         }
                                     ],
                                     sortOrders: [
@@ -105,16 +114,40 @@ export const KontenDashboardPemrakarsa: FC = () => {
                                     ],
                                 }
                             }
-                            title="Pemrakarsa"
+                            title="Perusahaan"
                         />;
                     break;
+                case 'dokumen':
+                    konten =
+                        <DataListRegisterDokumenFluentUI
+                            initSelectedFilters={
+                                {
+                                    pageNumber: 1,
+                                    pageSize: 50,
+                                    filters: [
+                                        {
+                                            fieldName: 'kepemilikan_perusahaan',
+                                            value: idUser
+                                        }
+                                    ],
+                                    sortOrders: [
+                                        {
+                                            fieldName: 'tanggalRegistrasi',
+                                            value: 'DESC'
+                                        },
+                                    ],
+                                }
+                            }
+                            title="Dokumen"
+                        />;
+                    break;   
                 default:
                     konten = null;
                     break;
             }
             return konten;
         },
-        [idContentPage]
+        [idContentPage, idUser]
     );
 
     const onRenderItem = useCallback(

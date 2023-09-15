@@ -146,7 +146,7 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
-            isSortedDescending: true,
+            isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
             isSorted: true,
             onRender: (item: IItemRegisterPerusahaan) => {
                 return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);

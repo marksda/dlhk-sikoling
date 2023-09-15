@@ -139,7 +139,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             maxWidth: 80,             
             isRowHeader: true,
             isResizable: true,             
-            isSortedDescending: false,
+            isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
             isSorted: true,
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemRegisterDokumen) => {

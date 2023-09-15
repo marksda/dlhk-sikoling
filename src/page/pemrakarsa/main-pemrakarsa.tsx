@@ -1,5 +1,5 @@
 import { INavLinkGroup, Stack, mergeStyleSets } from "@fluentui/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { KontenDashboardPemrakarsa } from "./dashboard-pemrakarsa";
 import { KontenPelaporanPemrakarsa } from "./template-pelaporan-pemrakarsa";
 import { KontenPermohonanPemrakarsa } from "./template-permohonan-pemrakarsa";
@@ -87,6 +87,29 @@ export const PemrakarsaPage: FC = () => {
   //react router hook variable
   const navigate = useNavigate();
 
+  const kontentPage = useMemo(
+    () => {
+      let konten = null;
+      switch (idContentPage) {
+          case 'Dashboard':
+              konten =             
+                <KontenDashboardPemrakarsa idUser={token.userId!}/>;
+              break; 
+          case 'pmh':
+              konten = <KontenPermohonanPemrakarsa />;   
+              break;
+          case 'plp':
+              konten = <KontenPelaporanPemrakarsa />;   
+              break;
+          default:
+              konten =null;
+              break;
+      }
+      return konten;
+    },
+    [idContentPage, token]
+  );
+  
   useEffect(
     () => {            
       switch (token.hakAkses) {
@@ -121,7 +144,7 @@ export const PemrakarsaPage: FC = () => {
                 />
               </Stack.Item>
               <Stack.Item grow className={classNames.mainKonten}>
-                {getContentPage(idContentPage)}
+                {kontentPage}
               </Stack.Item>
             </Stack>
           </Stack.Item>
@@ -133,22 +156,22 @@ export const PemrakarsaPage: FC = () => {
        
 };
 
-const getContentPage = (idContentPage: string) => {
-  let konten = null;
-  switch (idContentPage) {
-      case 'Dashboard':
-          konten =             
-            <KontenDashboardPemrakarsa />;
-          break; 
-      case 'pmh':
-          konten = <KontenPermohonanPemrakarsa />;   
-          break;
-      case 'plp':
-          konten = <KontenPelaporanPemrakarsa />;   
-          break;
-      default:
-          konten = <KontenDashboardPemrakarsa />;
-          break;
-  }
-  return konten;
-};
+// const getContentPage = (idContentPage: string, idUser: string) => {
+//   let konten = null;
+//   switch (idContentPage) {
+//       case 'Dashboard':
+//           konten =             
+//             <KontenDashboardPemrakarsa />;
+//           break; 
+//       case 'pmh':
+//           konten = <KontenPermohonanPemrakarsa />;   
+//           break;
+//       case 'plp':
+//           konten = <KontenPelaporanPemrakarsa />;   
+//           break;
+//       default:
+//           konten = <KontenDashboardPemrakarsa />;
+//           break;
+//   }
+//   return konten;
+// };
