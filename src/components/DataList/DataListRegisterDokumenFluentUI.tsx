@@ -490,6 +490,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             if(newValue!.length == 0) {
                 _onClearSearchNamaPerusahaan();
             }
+
+            if(newValue!.length > 1) {
+                _onSearchNamaPerusahaan(newValue);
+            }
         },
         []
     );
@@ -810,7 +814,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian nama perusahaan" 
+                                    placeholder="ketik nama depan perusahaan" 
                                     underlined={false} 
                                     onChange={_onChangeSearchNamaPerusahaan}
                                     onSearch={_onSearchNamaPerusahaan}
