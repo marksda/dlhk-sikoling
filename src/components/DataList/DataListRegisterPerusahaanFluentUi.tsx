@@ -10,6 +10,7 @@ import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { useGetDaftarDataRegisterPerusahaanQuery, useGetJumlahDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import { useAppSelector } from "../../app/hooks";
 
 interface IDataListRegisterPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -66,6 +67,7 @@ const toggleStyles = {
 };
 
 export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
+    const token = useAppSelector((state) => state.token);
 
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -123,7 +125,7 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
 
     //local state
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
-    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [selectedKeyItem, setSelectedKeyItem] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirRegisterPerusahaanOpen, {setTrue: showModalFormulirRegisterPerusahaan, setFalse: hideModalFormulirRegisterPerusahaan}] = useBoolean(false);
     const [dataLama, setDataLama]= useState<IRegisterPerusahaan|undefined>(undefined);
@@ -272,12 +274,9 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         () => {
             return new Selection({
                 onSelectionChanged: () => {
-                    if(selection.count >= 1) {
-                        setIsSelectedItem(true);
-                    }
-                    else {
-                        setIsSelectedItem(false);
-                    }
+                    if(selection.getSelection().length > 0) {
+                        setSelectedKeyItem(selection.getSelection()[0].key as string);
+                    }                    
                 },           
                 getKey: (item, index) => {
                     return item.key as string;
@@ -289,67 +288,164 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
-            return [
-                { 
-                    key: 'newItem', 
-                    text: 'Add', 
-                    iconProps: { iconName: 'Add' }, 
-                    onClick: () => {
-                        setFormulirTitle('Add register perusahaan');
-                        setModeForm('add');
-                        showModalFormulirRegisterPerusahaan();
-                        setDataLama(undefined);
-                    }
-                },
-                { 
-                    key: 'editItem', 
-                    text: 'Edit', 
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Edit' }, 
-                    onClick: () => {
-                        setFormulirTitle('Edit register perusahaan');
-                        setModeForm('edit');
-                        showModalFormulirRegisterPerusahaan();
-                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key)) as IRegisterPerusahaan;                        
-                        if(dataTerpilih.kreator == undefined) {
-                            dataTerpilih.kreator = null;
+            const dataTerpilih = selection.getSelection()[0] != undefined ? 
+                cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selectedKeyItem)) as IRegisterPerusahaan : undefined;
+            if(dataTerpilih == undefined) {
+                return [
+                    { 
+                        key: 'newItem', 
+                        text: 'Add', 
+                        iconProps: { iconName: 'Add' }, 
+                        onClick: () => {
+                            setFormulirTitle('Add register perusahaan');
+                            setModeForm('add');
+                            showModalFormulirRegisterPerusahaan();
+                            setDataLama(undefined);
                         }
-                        if(dataTerpilih.verifikator == undefined) {
-                            dataTerpilih.verifikator = null;
-                        }
-                        if(dataTerpilih.tanggalRegistrasi == undefined) {
-                            dataTerpilih.tanggalRegistrasi = null;
-                        }
-                        setDataLama(dataTerpilih);
-                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
-                    }
-                },
-                { 
-                    key: 'deleteItem', 
-                    text: 'Hapus', 
-                    renderedInOverflow: false,
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Delete' }, 
-                    onClick: () => {
-                        setFormulirTitle('Hapus pegawai');
-                        setModeForm('delete');
-                        showModalFormulirRegisterPerusahaan();
-                        let dataTerpilih = cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key)) as IRegisterPerusahaan;
-                        if(dataTerpilih.kreator == undefined) {
-                            dataTerpilih.kreator = null;
-                        }
-                        if(dataTerpilih.verifikator == undefined) {
-                            dataTerpilih.verifikator = null;
-                        }
-                        if(dataTerpilih.tanggalRegistrasi == undefined) {
-                            dataTerpilih.tanggalRegistrasi = null;
-                        }
-                        setDataLama(dataTerpilih);
-                    }
-                },
-            ];
+                    },
+                    { 
+                        key: 'editItem', 
+                        text: 'Edit', 
+                        disabled: true,
+                        iconProps: { iconName: 'Edit' },
+                    },
+                    { 
+                        key: 'deleteItem', 
+                        text: 'Hapus', 
+                        renderedInOverflow: false,
+                        disabled: true,
+                        iconProps: { iconName: 'Delete' }, 
+                    },
+                ];
+            }
+            else {
+                let hasil = null;                
+                switch (token.hakAkses) {
+                    case 'Administrator':
+                        hasil = [
+                            { 
+                                key: 'newItem', 
+                                text: 'Add', 
+                                iconProps: { iconName: 'Add' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Add register perusahaan');
+                                    setModeForm('add');
+                                    showModalFormulirRegisterPerusahaan();
+                                    setDataLama(undefined);
+                                }
+                            },
+                            { 
+                                key: 'editItem', 
+                                text: 'Edit', 
+                                disabled: !selectedKeyItem,
+                                iconProps: { iconName: 'Edit' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Edit register perusahaan');
+                                    setModeForm('edit');
+                                    showModalFormulirRegisterPerusahaan();                       
+                                    if(dataTerpilih.kreator == undefined) {
+                                        dataTerpilih.kreator = null;
+                                    }
+                                    if(dataTerpilih.verifikator == undefined) {
+                                        dataTerpilih.verifikator = null;
+                                    }
+                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
+                                        dataTerpilih.tanggalRegistrasi = null;
+                                    }
+                                    setDataLama(dataTerpilih);
+                                    selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                                }
+                            },
+                            { 
+                                key: 'deleteItem', 
+                                text: 'Hapus', 
+                                renderedInOverflow: false,
+                                disabled: !selectedKeyItem,
+                                iconProps: { iconName: 'Delete' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Hapus pegawai');
+                                    setModeForm('delete');
+                                    showModalFormulirRegisterPerusahaan();
+                                    if(dataTerpilih.kreator == undefined) {
+                                        dataTerpilih.kreator = null;
+                                    }
+                                    if(dataTerpilih.verifikator == undefined) {
+                                        dataTerpilih.verifikator = null;
+                                    }
+                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
+                                        dataTerpilih.tanggalRegistrasi = null;
+                                    }
+                                    setDataLama(dataTerpilih);
+                                }
+                            },
+                        ];
+                        break;                
+                    default:
+                        hasil = [
+                            { 
+                                key: 'newItem', 
+                                text: 'Add', 
+                                iconProps: { iconName: 'Add' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Add register perusahaan');
+                                    setModeForm('add');
+                                    showModalFormulirRegisterPerusahaan();
+                                    setDataLama(undefined);
+                                }
+                            },
+                            { 
+                                key: 'editItem', 
+                                text: 'Edit', 
+                                disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
+                                iconProps: { iconName: 'Edit' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Edit register perusahaan');
+                                    setModeForm('edit');
+                                    showModalFormulirRegisterPerusahaan();                     
+                                    if(dataTerpilih.kreator == undefined) {
+                                        dataTerpilih.kreator = null;
+                                    }
+                                    if(dataTerpilih.verifikator == undefined) {
+                                        dataTerpilih.verifikator = null;
+                                    }
+                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
+                                        dataTerpilih.tanggalRegistrasi = null;
+                                    }
+                                    setDataLama(dataTerpilih);
+                                    selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                                }
+                            },
+                            { 
+                                key: 'deleteItem', 
+                                text: 'Hapus', 
+                                renderedInOverflow: false,
+                                disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
+                                iconProps: { iconName: 'Delete' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Hapus pegawai');
+                                    setModeForm('delete');
+                                    showModalFormulirRegisterPerusahaan();
+
+                                    if(dataTerpilih.kreator == undefined) {
+                                        dataTerpilih.kreator = null;
+                                    }
+                                    if(dataTerpilih.verifikator == undefined) {
+                                        dataTerpilih.verifikator = null;
+                                    }
+                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
+                                        dataTerpilih.tanggalRegistrasi = null;
+                                    }
+                                    setDataLama(dataTerpilih);
+                                }
+                            },
+                        ];
+                        break;
+                }
+
+                return hasil;
+            }
         }, 
-        [isSelectedItem, selection, postsRegisterPerusahaan]
+        [selectedKeyItem, selection, postsRegisterPerusahaan, token]
     );
 
     const _onChangeSearchNama = useCallback(

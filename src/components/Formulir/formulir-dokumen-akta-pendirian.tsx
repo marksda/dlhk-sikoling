@@ -1,5 +1,5 @@
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,7 @@ import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendir
 import { RegisterDokumenAktaPendirianSchema } from "../../features/schema-resolver/zod-schema";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IDokumen } from "../../features/entity/dokumen";
+import { useAppSelector } from "../../app/hooks";
 
 
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
@@ -53,14 +54,22 @@ const contentStyles = mergeStyleSets({
     margin: '0 25px',
   },
 });
+const toggleStyles = {
+  root: {
+      marginBottom: 0,
+      width: '150px',
+  },
+};
 
-export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
+export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => {
+  const token = useAppSelector((state) => state.token); 
   const [tempFile, setTempFile] = useState<string|null>(null);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
   const [nomorTextFieldValue, setNomorTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.nomor!:'');
   const [notarisTextFieldValue, setNotarisTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.dokumen?.namaNotaris!:'');
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.penanggungJawab?.id!:undefined);
+  const [isApproved, setIsApproved] = useState<boolean>(dataLama != undefined ? dataLama.statusVerified!:false);
   const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 0,
@@ -382,6 +391,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [disableForm]
   );
 
+  const _onChangeApproved = useCallback(
+    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
+      setValue("statusVerified", checked!);             
+      setIsApproved(checked!);  
+    },
+    []
+  );
+
   const onSubmit: SubmitHandler<IRegisterDokumen<IDokumenAktaPendirian>> = async (data) => {
     setDisableForm(true);
     try {
@@ -575,6 +592,25 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       }
                     />                
                   </Stack.Item>
+                  {token.hakAkses == 'Administrator' ?
+                  <Stack.Item>
+                    <Stack horizontal tokens={stackTokens} style={{marginTop: 16}}>
+                        <Stack.Item>
+                            <span>Approved</span>
+                        </Stack.Item>            
+                        <Stack.Item>
+                            <Toggle
+                              checked={isApproved}
+                              onChange={_onChangeApproved}
+                              styles={toggleStyles}
+                              onText="Sudah"
+                              offText="Belum"
+                              disabled={mode == 'delete' ? true:disableForm}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                  </Stack.Item>:null        
+                  }   
                   <PrimaryButton 
                     style={{marginTop: 16, width: '100%'}}
                     text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 

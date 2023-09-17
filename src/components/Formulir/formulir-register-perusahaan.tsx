@@ -9,13 +9,13 @@ import { RegisterPerusahaanSchema } from "../../features/schema-resolver/zod-sch
 import { useDeleteRegisterPerusahaanMutation, useGetDaftarDataDesaQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataModelPerizinanQuery, useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataPropinsiQuery, useGetDaftarDataSkalaUsahaQuery, useSaveRegisterPerusahaanMutation, useUpdateIdRegisterPerusahaanMutation, useUpdateRegisterPerusahaanMutation } from "../../features/repository/service/sikoling-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
+import { useAppSelector } from "../../app/hooks";
 
 
 interface IFormulirRegisterPerusahaanFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
-  // showModal: () => void;
   hideModal: () => void;
   dataLama?: IRegisterPerusahaan;
 };
@@ -86,6 +86,7 @@ const toggleStyles = {
 };
 
 export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+  const token = useAppSelector((state) => state.token);
   //local state
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [selectedKeyModelPerizinan, setSelectedKeyModelPerizinan] = useState<string|undefined>(dataLama != undefined ? dataLama.perusahaan?.modelPerizinan?.id!:undefined);
@@ -712,7 +713,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
       </div>
       <div className={contentStyles.body}>
         <Stack horizontal tokens={stackTokens}>
-          <Stack.Item style={{width: 200}}>
+          <Stack.Item style={{width: 260}}>
             <Controller 
               name="perusahaan.modelPerizinan"
               control={control}
@@ -756,7 +757,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
           </Stack.Item>  
         </Stack>     
         <Stack horizontal tokens={stackTokens}>
-          <Stack.Item style={{width: 200}}>              
+          <Stack.Item style={{width: 260}}>              
             <Dropdown
               label="Jenis pelaku usaha"
               placeholder="--Pilih--"
@@ -790,7 +791,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
           </Stack.Item>  
         </Stack>
         <Stack horizontal tokens={stackTokens}>
-          <Stack.Item style={{width: 200}}>
+          <Stack.Item style={{width: 260}}>
             <Controller 
               name="perusahaan.id"
               control={control}
@@ -845,7 +846,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
           </Stack.Item>
         </Stack>
         <Stack horizontal tokens={stackTokens}>
-          <Stack.Item style={{width: 200}}>
+          <Stack.Item style={{width: 260}}>
             <Stack>
               <Stack.Item>
                 <Controller 
@@ -922,7 +923,26 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
                       />
                   )}
                 />
-              </Stack.Item>
+              </Stack.Item>  
+              {token.hakAkses == 'Administrator' ?
+              <Stack.Item>
+                <Stack horizontal tokens={stackTokens} style={{marginTop: 116}}>
+                    <Stack.Item>
+                        <span>Approved status</span>
+                    </Stack.Item>            
+                    <Stack.Item>
+                        <Toggle
+                          checked={isApproved}
+                          onChange={_onChangeApproved}
+                          styles={toggleStyles}
+                          onText="Sudah"
+                          offText="Belum"
+                          disabled={mode == 'delete' ? true:disableForm}
+                        />
+                    </Stack.Item>
+                </Stack>
+              </Stack.Item>:null        
+              }                 
             </Stack>            
           </Stack.Item>
           <Stack.Item style={{width: 350}}>
@@ -1074,22 +1094,7 @@ export const FormulirRegisterPerusahaan: FC<IFormulirRegisterPerusahaanFluentUIP
               </Stack.Item>
             </Stack>            
           </Stack.Item>          
-        </Stack>  
-        <Stack horizontal tokens={stackTokens} style={{marginTop: 8}}>
-            <Stack.Item>
-                <span style={{width: 60}}>Approved status</span>
-            </Stack.Item>
-            <Stack.Item>
-                <Toggle
-                  checked={isApproved}
-                  onChange={_onChangeApproved}
-                  styles={toggleStyles}
-                  onText="Sudah"
-                  offText="Belum"
-                  disabled={mode == 'delete' ? true:disableForm}
-                />
-            </Stack.Item>
-        </Stack>                                    
+        </Stack>           
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
           text={mode == 'delete' ? 'Hapus':'Simpan'} 

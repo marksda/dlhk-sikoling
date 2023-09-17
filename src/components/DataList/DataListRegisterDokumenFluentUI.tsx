@@ -12,6 +12,7 @@ import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
+import { useAppSelector } from "../../app/hooks";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -69,6 +70,8 @@ const comboBoxStyles: Partial<IComboBoxStyles> = {
 
 
 export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentUIProps> = ({initSelectedFilters, title}) => {   
+    const token = useAppSelector((state) => state.token);
+    
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -254,7 +257,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         },
     ]);  
-    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false); 
+    const [selectedKeyItem, setSelectedKeyItem] = useState<string|undefined>(undefined);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
@@ -282,12 +285,9 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
     const selection: Selection = useMemo(
         () => {
             return new Selection({
-                onSelectionChanged: () => {
-                    if(selection.count >= 1) {
-                        setIsSelectedItem(true);
-                    }
-                    else {
-                        setIsSelectedItem(false);
+                onSelectionChanged: () => {                  
+                    if(selection.getSelection().length > 0) {
+                        setSelectedKeyItem(selection.getSelection()[0].key as string);
                     }
                 },           
                 getKey: (item, index) => {
@@ -300,49 +300,128 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
-            return [
-                { 
-                    key: 'newItem', 
-                    text: 'Add', 
-                    iconProps: { iconName: 'Add' }, 
-                    onClick: () => {
-                        setFormulirTitle('Add dokumen');
-                        setModeForm('add');
-                        showModalFormulirRegisterDokumen();
-                        setDataLama(undefined);
-                    }
-                },
-                { 
-                    key: 'editItem', 
-                    text: 'Edit', 
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Edit' }, 
-                    onClick: () => {
-                        setFormulirTitle('Edit dokumen');
-                        setModeForm('edit');
-                        let dataTerpilih = cloneDeep(find(postsRegisterDokumen, (i) => i.id == selection.getSelection()[0].key));
-                        setDataLama(dataTerpilih);
-                        selection.toggleKeySelected(selection.getSelection()[0].key as string);                        
-                        showModalFormulirRegisterDokumen();
-                    }
-                },
-                { 
-                    key: 'deleteItem', 
-                    text: 'Hapus', 
-                    renderedInOverflow: false,
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Delete' }, 
-                    onClick: () => {
-                        setFormulirTitle('Hapus dokumen');
-                        setModeForm('delete');
-                        showModalFormulirRegisterDokumen();
-                        let dataTerpilih = cloneDeep(find(postsRegisterDokumen, (i) => i.id == selection.getSelection()[0].key));
-                        setDataLama(dataTerpilih);
-                    }
-                },
-            ];
+            const dataTerpilih = selectedKeyItem != undefined ? 
+                cloneDeep(find(postsRegisterDokumen, (i) => i.id == selectedKeyItem)) as IRegisterDokumen<any> : undefined;
+
+            if(dataTerpilih == undefined) {
+                return [
+                    { 
+                        key: 'newItem', 
+                        text: 'Add', 
+                        iconProps: { iconName: 'Add' }, 
+                        onClick: () => {
+                            setFormulirTitle('Add dokumen');
+                            setModeForm('add');
+                            showModalFormulirRegisterDokumen();
+                            setDataLama(undefined);
+                        }
+                    },
+                    { 
+                        key: 'editItem', 
+                        text: 'Edit', 
+                        disabled: true,
+                        iconProps: { iconName: 'Edit' }, 
+                    },
+                    { 
+                        key: 'deleteItem', 
+                        text: 'Hapus', 
+                        renderedInOverflow: false,
+                        disabled: true,
+                        iconProps: { iconName: 'Delete' }, 
+                    },
+                ];
+            }
+            else {
+                let hasil = null;  
+                switch (token.hakAkses) {
+                    case 'Administrator':
+                        hasil = [
+                            { 
+                                key: 'newItem', 
+                                text: 'Add', 
+                                iconProps: { iconName: 'Add' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Add dokumen');
+                                    setModeForm('add');
+                                    showModalFormulirRegisterDokumen();
+                                    setDataLama(undefined);
+                                }
+                            },
+                            { 
+                                key: 'editItem', 
+                                text: 'Edit', 
+                                disabled: !selectedKeyItem,
+                                iconProps: { iconName: 'Edit' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Edit dokumen');
+                                    setModeForm('edit');
+                                    setDataLama(dataTerpilih);
+                                    selection.toggleKeySelected(selectedKeyItem!);      
+                                    setSelectedKeyItem(undefined);                  
+                                    showModalFormulirRegisterDokumen();
+                                }
+                            },
+                            { 
+                                key: 'deleteItem', 
+                                text: 'Hapus', 
+                                renderedInOverflow: false,
+                                disabled: !selectedKeyItem,
+                                iconProps: { iconName: 'Delete' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Hapus dokumen');
+                                    setModeForm('delete');
+                                    showModalFormulirRegisterDokumen();
+                                    setDataLama(dataTerpilih);
+                                }
+                            },
+                        ];
+                        break;                
+                    default:
+                        hasil = [
+                            { 
+                                key: 'newItem', 
+                                text: 'Add', 
+                                iconProps: { iconName: 'Add' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Add dokumen');
+                                    setModeForm('add');
+                                    showModalFormulirRegisterDokumen();
+                                    setDataLama(undefined);
+                                }
+                            },
+                            { 
+                                key: 'editItem', 
+                                text: 'Edit', 
+                                disabled: dataTerpilih.statusVerified == true ? true : !selectedKeyItem,
+                                iconProps: { iconName: 'Edit' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Edit dokumen');
+                                    setModeForm('edit');
+                                    setDataLama(dataTerpilih);
+                                    selection.toggleKeySelected(selection.getSelection()[0].key as string);                        
+                                    showModalFormulirRegisterDokumen();
+                                }
+                            },
+                            { 
+                                key: 'deleteItem', 
+                                text: 'Hapus', 
+                                renderedInOverflow: false,
+                                disabled: dataTerpilih.statusVerified == true ? true : !selectedKeyItem,
+                                iconProps: { iconName: 'Delete' }, 
+                                onClick: () => {
+                                    setFormulirTitle('Hapus dokumen');
+                                    setModeForm('delete');
+                                    showModalFormulirRegisterDokumen();
+                                    setDataLama(dataTerpilih);
+                                }
+                            },
+                        ];
+                        break;
+                }
+                return hasil;
+            }
         }, 
-        [isSelectedItem, selection, postsRegisterDokumen]
+        [selectedKeyItem, selection, postsRegisterDokumen, token]
     );
 
     const optionsDokumen: IComboBoxOption[]|undefined = useMemo(
