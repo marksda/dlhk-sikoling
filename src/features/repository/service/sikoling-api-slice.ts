@@ -801,7 +801,7 @@ export const sikolingApi = createApi({
                 query: (subPath) => ({
                     url: encodeURI(subPath),
                     method: 'GET',
-                }),
+                }),                
             }),
             replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({

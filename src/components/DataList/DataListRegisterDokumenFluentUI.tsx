@@ -1,7 +1,6 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles, Link} from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean } from "@fluentui/react-hooks";
 import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
@@ -14,6 +13,9 @@ import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
 import { useAppSelector } from "../../app/hooks";
 import { urlApiSikoling } from "../../features/config/config";
+import { Pagination } from "../Pagination/pagination-fluent-ui";
+import { Blob } from "buffer";
+import axios from "axios";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -207,7 +209,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <span>Notaris : {doc.namaNotaris}</span><br /> 
                             <span>Nomor akta : {doc.nomor}</span><br /> 
                             <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
-                            <Link onClick={handleClickOnLink} underline>
+                            <Link onClick={_onHandleClickOnLink} underline data-lokasi-file={item.lokasiFile}>
                             Download
                             </Link>
                         </>; 
@@ -866,9 +868,38 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         []
     );
 
-    function handleClickOnLink(ev: React.MouseEvent<unknown>) {
-        window.alert('clicked on Link component which is rendered as html button');
-    }
+    const  _onHandleClickOnLink = useCallback(
+        (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) => {
+            const lokasiFile = (ev.target as HTMLButtonElement).dataset.lokasiFile;
+            axios({
+                url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, //your url
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const href = URL.createObjectURL(response.data);
+                const link = document.createElement('a');
+                link.href = href;
+                link.setAttribute('download', 'file.pdf'); 
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(href);
+            });
+            // downloadFile(`/file/download?fileNameParam=${lokasiFile!}`).unwrap().then((result) => {
+            //     console.log(result);
+            //     const url = URL.createObjectURL(result);
+            //     const link = document.createElement("a");
+            //     link.href = url;
+            //     document.body.appendChild(link);
+            //     link.click();
+            //     link.parentNode!.removeChild(link);
+            // }).catch((rejectedValueOrSerializedError) => {
+            //     //sdfdsf
+            //     console.log(rejectedValueOrSerializedError);
+            // }); 
+        },
+        []
+    );
 
     return (
         <Stack grow verticalFill>
