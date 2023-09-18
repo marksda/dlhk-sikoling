@@ -795,7 +795,13 @@ export const sikolingApi = createApi({
                     method: 'POST',
                     body: dataForm,
                 }),
-                invalidatesTags: (result) => result ? ['UploadFile']:['Kosong']
+                // invalidatesTags: (result) => result ? ['UploadFile']:['Kosong']
+            }),
+            downloadFile: builder.mutation<File, string>({
+                query: (subPath) => ({
+                    url: encodeURI(subPath),
+                    method: 'GET',
+                }),
             }),
             replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({
@@ -863,5 +869,5 @@ export const {
     useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation,
-    useDeleteFileMutation,
+    useDeleteFileMutation, useDownloadFileMutation,
 } = sikolingApi;

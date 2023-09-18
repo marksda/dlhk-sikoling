@@ -1,4 +1,4 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles} from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles, Link} from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
@@ -6,13 +6,14 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useDownloadFileMutation, useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
 import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
 import { useAppSelector } from "../../app/hooks";
+import { urlApiSikoling } from "../../features/config/config";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -205,7 +206,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
                             <span>Notaris : {doc.namaNotaris}</span><br /> 
                             <span>Nomor akta : {doc.nomor}</span><br /> 
-                            <span>Direktur : {doc.penanggungJawab?.person?.nama}</span>
+                            <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
+                            <Link onClick={handleClickOnLink} underline>
+                            Download
+                            </Link>
                         </>; 
                         break;
                     case '010301':
@@ -234,6 +238,9 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         <>
                             <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
                             <span>Nomor dokumen : {doc.nomor}</span>
+                            <Link href={`${urlApiSikoling}/${item.lokasiFile}`} underline target="_blank">
+                            Download
+                            </Link>
                         </>; 
                         break;
                 }
@@ -281,7 +288,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         ],
     });
-    
+    const [ downloadFile, {isLoading: isLoadingDownloadFile}] = useDownloadFileMutation();
+
     const selection: Selection = useMemo(
         () => {
             return new Selection({
@@ -857,6 +865,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         },
         []
     );
+
+    function handleClickOnLink(ev: React.MouseEvent<unknown>) {
+        window.alert('clicked on Link component which is rendered as html button');
+    }
 
     return (
         <Stack grow verticalFill>
