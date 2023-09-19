@@ -25,20 +25,20 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
 
     let result = await baseQuery(args, api, extraOptions);
     
-    if (result.error && result.error.status === 500) {
+    if (result.error && result.error.status === 401) {
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
             try {
                 const refreshToken = (api.getState() as RootState).token.refreshToken;
                 const userName = (api.getState() as RootState).token.userName;
                 const refreshResult = await baseQuery(
-                {
-                    url: `/user/refresh_token/${userName}`, 
-                    method: 'POST',
-                    body: refreshToken
-                },
-                api,
-                extraOptions
+                    {
+                        url: `/user/refresh_token/${userName}`, 
+                        method: 'POST',
+                        body: refreshToken
+                    },
+                    api,
+                    extraOptions,
                 )
                 if (refreshResult.data) {
                     // api.dispatch(tokenReceived(refreshResult.data))
@@ -52,34 +52,11 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                 else {
                     api.dispatch(resetToken());
                 }
-                // let x = args as FetchArgs;
-                // const refreshToken = (api.getState() as RootState).token.refreshToken;
-                // try {
-                //     const refreshResult = await axios.post(
-                //         `${sikolingBaseRestAPIUrl}/user/refresh_token`, 
-                //         refreshToken,
-                //         {
-                //             headers: {
-                //                 'Content-Type': 'text/plain',
-                //             }
-                //         });
-                    let hasil = refreshResult.data as IResponseStatusToken;
-                    localStorage.removeItem('token');
-                    localStorage.setItem('token', JSON.stringify(hasil.token));
-                    api.dispatch(setToken(hasil.token));
-                //     result = await baseQuery(args, api, extraOptions);
-                // }
-                // catch (axiosError) {
-                //     let err = axiosError as AxiosError;
-                //     localStorage.removeItem('token');
-                //     api.dispatch(resetToken());
-                //     result = {
-                //         error: {                            
-                //             status: err.response?.status as number,
-                //             data: err.response?.data || err.message,
-                //         },
-                //     }
-                // }
+
+                let hasil = refreshResult.data as IResponseStatusToken;
+                localStorage.removeItem('token');
+                localStorage.setItem('token', JSON.stringify(hasil.token));
+                api.dispatch(setToken(hasil.token));
             } finally {
                 release();
             }

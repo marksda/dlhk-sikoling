@@ -5,7 +5,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
-import { useDownloadFileMutation, useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataDokumenQuery, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
 import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
@@ -210,7 +210,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <span>Notaris : {doc.namaNotaris}</span><br /> 
                             <span>Nomor akta : {doc.nomor}</span><br /> 
                             <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
-                            <Link onClick={_onHandleClickOnLink} underline data-lokasi-file={item.lokasiFile}>
+                            <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
                             Download
                             </Link>
                         </>; 
@@ -232,7 +232,10 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                                         }
                                     })
                                 }
-                            </span>
+                            </span><br />
+                            <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+                            Download
+                            </Link>
                         </>; 
                         break;
                     default:
@@ -240,8 +243,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         konten = 
                         <>
                             <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
-                            <span>Nomor dokumen : {doc.nomor}</span>
-                            <Link href={`${urlApiSikoling}/${item.lokasiFile}`} underline target="_blank">
+                            <span>Nomor dokumen : {doc.nomor}</span><br />
+                            <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
                             Download
                             </Link>
                         </>; 
@@ -291,7 +294,6 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         ],
     });
-    const [ downloadFile, {isLoading: isLoadingDownloadFile}] = useDownloadFileMutation();
 
     const selection: Selection = useMemo(
         () => {
@@ -869,38 +871,43 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         []
     );
 
-    const  _onHandleClickOnLink = useCallback(
-        (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) => {
-            const lokasiFile = (ev.target as HTMLButtonElement).dataset.lokasiFile;
+    const  _onHandleClickOnLinkDownload = useCallback(
+        async (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) => {
+            const btnElm = ev.target as HTMLButtonElement
+            const lokasiFile = btnElm.dataset.lokasiFile;
+            const parentElm = btnElm.parentElement;
+            btnElm.style.display = 'none';
+            const progressElm = document.createElement("progress");
+            progressElm.setAttribute("value", "0");
+            progressElm.setAttribute("max", "1");
+            parentElm?.append(progressElm);
+
             axios({
                 url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, 
                 method: 'GET',
                 responseType: 'blob', 
-            }).then((response) => {
-                console.log(response);
-                // const suggestedFileName = response.headers["Content-Disposition"];
-                // saveAs();
-                // const href = URL.createObjectURL(response.data);
-                // const link = document.createElement('a');
-                // link.href = href;
-                // link.setAttribute('download', 'file.pdf'); 
-                // document.body.appendChild(link);
-                // link.click();
-                // document.body.removeChild(link);
-                // URL.revokeObjectURL(href);
+                headers: {
+                    Authorization: `Bearer ${token.accessToken}` 
+                },
+                onDownloadProgress: progressEvent => {
+                    progressElm.setAttribute("value", `${progressEvent.progress}`);
+                }                
+            }).then((response) => {                 
+                progressElm.remove();
+                btnElm.style.display = 'inline-block';
+                const suggestedFileName = response.headers["x-suggested-filename"];
+                saveAs(response.data, suggestedFileName);
+            }).catch((error) => {
+                progressElm.remove();
+                btnElm.style.display = 'inline-block';  
+                
+                if(error.response.status == 401) {
+                    alert('token habis');
+                }
+                else {
+                    alert("File tidak ditemukan silakan hubungi pihak DLHK");
+                }
             });
-            // downloadFile(`/file/download?fileNameParam=${lokasiFile!}`).unwrap().then((result) => {
-            //     console.log(result);
-            //     const url = URL.createObjectURL(result);
-            //     const link = document.createElement("a");
-            //     link.href = url;
-            //     document.body.appendChild(link);
-            //     link.click();
-            //     link.parentNode!.removeChild(link);
-            // }).catch((rejectedValueOrSerializedError) => {
-            //     //sdfdsf
-            //     console.log(rejectedValueOrSerializedError);
-            // }); 
         },
         []
     );
