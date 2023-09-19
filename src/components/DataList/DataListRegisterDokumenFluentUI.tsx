@@ -16,6 +16,7 @@ import { urlApiSikoling } from "../../features/config/config";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { Blob } from "buffer";
 import axios from "axios";
+import { saveAs } from "file-saver";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -872,18 +873,21 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) => {
             const lokasiFile = (ev.target as HTMLButtonElement).dataset.lokasiFile;
             axios({
-                url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, //your url
+                url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, 
                 method: 'GET',
-                responseType: 'blob', // important
+                responseType: 'blob', 
             }).then((response) => {
-                const href = URL.createObjectURL(response.data);
-                const link = document.createElement('a');
-                link.href = href;
-                link.setAttribute('download', 'file.pdf'); 
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(href);
+                console.log(response);
+                // const suggestedFileName = response.headers["Content-Disposition"];
+                // saveAs();
+                // const href = URL.createObjectURL(response.data);
+                // const link = document.createElement('a');
+                // link.href = href;
+                // link.setAttribute('download', 'file.pdf'); 
+                // document.body.appendChild(link);
+                // link.click();
+                // document.body.removeChild(link);
+                // URL.revokeObjectURL(href);
             });
             // downloadFile(`/file/download?fileNameParam=${lokasiFile!}`).unwrap().then((result) => {
             //     console.log(result);
