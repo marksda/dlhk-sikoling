@@ -24,7 +24,7 @@ import { IRegisterKbli } from "../../entity/register-kbli";
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'UploadFile', 'ConfigEditor'],
+    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha',  'ConfigEditor'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -795,7 +795,7 @@ export const sikolingApi = createApi({
                     method: 'POST',
                     body: dataForm,
                 }),
-                // invalidatesTags: (result) => result ? ['UploadFile']:['Kosong']
+                invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
             }),
             replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({

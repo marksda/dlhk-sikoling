@@ -41,8 +41,6 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                     extraOptions,
                 )
                 if (refreshResult.data) {
-                    // api.dispatch(tokenReceived(refreshResult.data))
-                    // retry the initial query
                     let hasil = refreshResult.data as IResponseStatusToken;
                     localStorage.removeItem('token');
                     localStorage.setItem('token', JSON.stringify(hasil.token));
