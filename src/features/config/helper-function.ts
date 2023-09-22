@@ -48,6 +48,7 @@ export const baseQueryWithReauth: BaseQueryFn<string|FetchArgs, unknown, FetchBa
                     result = await baseQuery(args, api, extraOptions);
                 } 
                 else {
+                    localStorage.removeItem('token');
                     api.dispatch(resetToken());
                 }
 

@@ -11,12 +11,14 @@ import { FormulirRegisterDokumen } from "../Formulir/formulir-register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { urlApiSikoling } from "../../features/config/config";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { Blob } from "buffer";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { saveAs } from "file-saver";
+import { resetToken, setToken } from "../../features/security/token-slice";
+import { Mutex } from "async-mutex";
+import { IToken } from "../../features/entity/token";
 
 interface IDataListRegisterDokumenFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -71,10 +73,11 @@ const comboBoxStyles: Partial<IComboBoxStyles> = {
         maxWidth: '400px',
     },
 };
-
+const mutexRegisterDokumen = new Mutex();
 
 export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentUIProps> = ({initSelectedFilters, title}) => {   
     const token = useAppSelector((state) => state.token);
+    const dispatch = useAppDispatch();
     
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -871,46 +874,81 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         []
     );
 
-    const  _onHandleClickOnLinkDownload = useCallback(
-        async (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) => {
-            const btnElm = ev.target as HTMLButtonElement
-            const lokasiFile = btnElm.dataset.lokasiFile;
-            const parentElm = btnElm.parentElement;
-            btnElm.style.display = 'none';
-            const progressElm = document.createElement("progress");
-            progressElm.setAttribute("value", "0");
-            progressElm.setAttribute("max", "1");
-            parentElm?.append(progressElm);
+    async function  _onHandleClickOnLinkDownload (ev: React.MouseEvent<HTMLElement | HTMLAnchorElement | HTMLButtonElement, MouseEvent>) {
+        const btnElm = ev.target as HTMLButtonElement
+        const lokasiFile = btnElm.dataset.lokasiFile;
+        const parentElm = btnElm.parentElement;
+        btnElm.style.display = 'none';
+        const progressElm = document.createElement("progress");
+        progressElm.setAttribute("value", "0");
+        progressElm.setAttribute("max", "1");
+        parentElm?.append(progressElm);            
+        _downloadDokumen(lokasiFile!, progressElm, btnElm, token);
+    }
 
-            axios({
-                url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, 
-                method: 'GET',
-                responseType: 'blob', 
-                headers: {
-                    Authorization: `Bearer ${token.accessToken}` 
-                },
-                onDownloadProgress: progressEvent => {
-                    progressElm.setAttribute("value", `${progressEvent.progress}`);
-                }                
-            }).then((response) => {                 
-                progressElm.remove();
-                btnElm.style.display = 'inline-block';
-                const suggestedFileName = response.headers["x-suggested-filename"];
-                saveAs(response.data, suggestedFileName);
-            }).catch((error) => {
+    async function _downloadDokumen(lokasiFile: string, progressElm: HTMLProgressElement, btnElm: HTMLButtonElement, _token: IToken) { 
+        axios({
+            url: `${urlApiSikoling}/file/download?fileNameParam=${lokasiFile!}`, 
+            method: 'GET',
+            responseType: 'blob', 
+            headers: {
+                Authorization: `Bearer ${_token.accessToken}` 
+            },
+            onDownloadProgress: progressEvent => {
+                progressElm.setAttribute("value", `${progressEvent.progress}`);
+            }                
+        }).then((response) => {                 
+            progressElm.remove();
+            btnElm.style.display = 'inline-block';
+            const suggestedFileName = response.headers["x-suggested-filename"];
+            saveAs(response.data, suggestedFileName);
+        }).catch(async (error) => {       
+            console.log(error);     
+            if(error.response.status == 401) {
+                if (!mutexRegisterDokumen.isLocked()) {
+                    const release = await mutexRegisterDokumen.acquire();
+                    try {
+                        _refreshToken(lokasiFile, progressElm, btnElm);
+
+                    } catch (error) {
+                        release();
+                    }
+                }   
+                else {
+                    await mutexRegisterDokumen.waitForUnlock();
+                    _downloadDokumen(lokasiFile, progressElm, btnElm, token);
+                }  
+            }
+            else {
                 progressElm.remove();
                 btnElm.style.display = 'inline-block';  
-                
-                if(error.response.status == 401) {
-                    alert('token habis');
-                }
-                else {
-                    alert("File tidak ditemukan silakan hubungi pihak DLHK");
-                }
-            });
-        },
-        []
-    );
+                alert("File tidak ditemukan silakan hubungi pihak DLHK");
+            }
+        });
+    }
+
+    function _refreshToken(lokasiFile: string, progressElm: HTMLProgressElement, btnElm: HTMLButtonElement) {
+        axios({
+            url: `${urlApiSikoling}/user/refresh_token/${token.userName}`, 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            responseType: 'json',
+            data: token.refreshToken      
+        }).then((responseRefreshToken) => {                 
+            const hasil = responseRefreshToken.data
+            localStorage.removeItem('token');
+            localStorage.setItem('token', JSON.stringify(hasil.token));
+            dispatch(setToken(hasil.token));
+            _downloadDokumen(lokasiFile, progressElm, btnElm, hasil.token);
+            mutexRegisterDokumen.release();
+        }).catch((errorRefreshToken) => {
+            localStorage.removeItem('token');
+            dispatch(resetToken());
+            mutexRegisterDokumen.release();
+        });
+    }
 
     return (
         <Stack grow verticalFill>
