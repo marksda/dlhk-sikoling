@@ -1,5 +1,5 @@
 import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, ActionButton, IIconProps, PrimaryButton, CommandBar, ICommandBarItemProps, Toggle, ComboBox, IComboBox, IComboBoxOption, IComboBoxStyles, Link} from "@fluentui/react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { useBoolean } from "@fluentui/react-hooks";
 import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
@@ -457,7 +457,145 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             })
         ),
         [postsDokumen]
-    );    
+    ); 
+    
+    // const columns: IColumn[] = useMemo(
+    //     () => {
+    //         return [ 
+    //             { 
+    //                 key: 'tanggalRegistrasi', 
+    //                 name: 'Tanggal', 
+    //                 minWidth: 80, 
+    //                 maxWidth: 80,             
+    //                 isRowHeader: true,
+    //                 isResizable: true,             
+    //                 isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
+    //                 isSorted: true,
+    //                 onColumnClick: _onHandleColumnClick,
+    //                 onRender: (item: IItemRegisterDokumen) => {
+    //                     return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);
+    //                 },
+    //             },
+    //             { 
+    //                 key: 'nama_perusahaan', 
+    //                 name: 'Perusahaan', 
+    //                 minWidth: 250, 
+    //                 maxWidth: 300, 
+    //                 isResizable: true, 
+    //                 onColumnClick: _onHandleColumnClick,
+    //                 onRender: (item: IItemRegisterDokumen) => {
+    //                     return (
+    //                         <>
+    //                             <span>
+    //                                 {
+    //                                 item.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+    //                                 `${item.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPerusahaan?.perusahaan?.nama}` :
+    //                                 `${item.registerPerusahaan?.perusahaan?.nama}`
+    //                                 }
+    //                             </span><br />  
+    //                             <span>
+    //                                 {
+    //                                     item.registerPerusahaan?.perusahaan?.id != undefined ?
+    //                                     invertParseNpwp(item.registerPerusahaan?.perusahaan?.id) : `-`
+    //                                 }
+    //                             </span>
+    //                         </>               
+    //                     );
+    //                 },
+    //             },
+    //             { 
+    //                 key: 'nama_dokumen', 
+    //                 name: 'Jenis dokumen', 
+    //                 minWidth: 200, 
+    //                 maxWidth: 200, 
+    //                 isResizable: true, 
+    //                 onColumnClick: _onHandleColumnClick,
+    //                 onRender: (item: IItemRegisterDokumen) => {
+    //                     return item.dokumen?.nama;
+    //                 },
+    //                 // isPadded: true,
+    //             },
+    //             { 
+    //                 key: 'deskripsi', 
+    //                 name: 'Deskripsi dokumen', 
+    //                 minWidth: 180, 
+    //                 isResizable: true, 
+    //                 data: 'string',
+    //                 onRender: (item: IItemRegisterDokumen) => {
+    //                     let doc = null;
+    //                     let konten = null;
+    //                     switch (item.dokumen?.id) {
+    //                         case '010101':
+    //                             doc = item.dokumen as IDokumenAktaPendirian;
+    //                             konten = 
+    //                             <>
+    //                                 <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+    //                                 <span>Notaris : {doc.namaNotaris}</span><br /> 
+    //                                 <span>Nomor akta : {doc.nomor}</span><br /> 
+    //                                 <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
+    //                                 <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+    //                                 Download
+    //                                 </Link>
+    //                             </>; 
+    //                             break;
+    //                         case '010301':
+    //                             doc = item.dokumen as IDokumenNibOss;
+    //                             konten = 
+    //                             <>
+    //                                 <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+    //                                 <span>Nib : {doc.nomor}</span><br/>
+    //                                 <span>
+    //                                     Kbli : {
+    //                                         doc.daftarKbli?.map((t,i) => {
+    //                                             if(i == 0) {
+    //                                                 return t.kode;
+    //                                             }
+    //                                             else {
+    //                                                 return ', ' + t.kode;
+    //                                             }
+    //                                         })
+    //                                     }
+    //                                 </span><br />
+    //                                 <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+    //                                 Download
+    //                                 </Link>
+    //                             </>; 
+    //                             break;
+    //                         default:
+    //                             doc = item.dokumen as IDokumenGenerik;
+    //                             konten = 
+    //                             <>
+    //                                 <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+    //                                 <span>Nomor dokumen : {doc.nomor}</span><br />
+    //                                 <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+    //                                 Download
+    //                                 </Link>
+    //                             </>; 
+    //                             break;
+    //                     }
+
+    //                     return konten;
+    //                 },
+    //             },
+    //             { 
+    //                 key: 'statusVerified', 
+    //                 name: 'Approved', 
+    //                 minWidth: 100, 
+    //                 maxWidth: 100, 
+    //                 isResizable: false,          
+    //                 onColumnClick: _onHandleColumnClick,  
+    //                 onRender: (item: IItemRegisterDokumen) => {
+    //                     return (
+    //                         <span>{
+    //                             item.statusVerified != undefined ? item.statusVerified == true ? 'Sudah':'Belum': null 
+    //                         }</span>
+    //                     );
+    //                 },
+    //             },
+    //         ]
+    //     },
+    //     [token]
+    // );  
 
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
@@ -902,8 +1040,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             btnElm.style.display = 'inline-block';
             const suggestedFileName = response.headers["x-suggested-filename"];
             saveAs(response.data, suggestedFileName);
-        }).catch(async (error) => {       
-            console.log(error);     
+        }).catch(async (error) => {   
             if(error.response.status == 401) {
                 if (!mutexRegisterDokumen.isLocked()) {
                     const release = await mutexRegisterDokumen.acquire();
@@ -917,7 +1054,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                 else {
                     await mutexRegisterDokumen.waitForUnlock();
                     _downloadDokumen(lokasiFile, progressElm, btnElm, token);
-                }  
+                }                  
             }
             else {
                 progressElm.remove();
@@ -949,6 +1086,204 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             mutexRegisterDokumen.release();
         });
     }
+
+    useEffect(
+        () => {
+           
+            setColumns((prev) => {
+                let newColumns: IColumn[] = cloneDeep(prev);
+                newColumns[3].onRender = (item: IItemRegisterDokumen) => {
+                    let doc = null;
+                    let konten = null;
+                    switch (item.dokumen?.id) {
+                        case '010101':
+                            doc = item.dokumen as IDokumenAktaPendirian;
+                            konten = 
+                            <>
+                                <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+                                <span>Notaris : {doc.namaNotaris}</span><br /> 
+                                <span>Nomor akta : {doc.nomor}</span><br /> 
+                                <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
+                                <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+                                Download
+                                </Link>
+                            </>; 
+                            break;
+                        case '010301':
+                            doc = item.dokumen as IDokumenNibOss;
+                            konten = 
+                            <>
+                                <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+                                <span>Nib : {doc.nomor}</span><br/>
+                                <span>
+                                    Kbli : {
+                                        doc.daftarKbli?.map((t,i) => {
+                                            if(i == 0) {
+                                                return t.kode;
+                                            }
+                                            else {
+                                                return ', ' + t.kode;
+                                            }
+                                        })
+                                    }
+                                </span><br />
+                                <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+                                Download
+                                </Link>
+                            </>; 
+                            break;
+                        default:
+                            doc = item.dokumen as IDokumenGenerik;
+                            konten = 
+                            <>
+                                <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+                                <span>Nomor dokumen : {doc.nomor}</span><br />
+                                <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+                                Download
+                                </Link>
+                            </>; 
+                            break;
+                    }
+    
+                    return konten;
+                };
+                return newColumns;
+            });
+            // setColumns([ 
+            //     { 
+            //         key: 'tanggalRegistrasi', 
+            //         name: 'Tanggal', 
+            //         minWidth: 80, 
+            //         maxWidth: 80,             
+            //         isRowHeader: true,
+            //         isResizable: true,             
+            //         isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
+            //         isSorted: true,
+            //         onColumnClick: _onHandleColumnClick,
+            //         onRender: (item: IItemRegisterDokumen) => {
+            //             return utcFormatStringToDDMMYYYY(item.tanggalRegistrasi!);
+            //         },
+            //     },
+            //     { 
+            //         key: 'nama_perusahaan', 
+            //         name: 'Perusahaan', 
+            //         minWidth: 250, 
+            //         maxWidth: 300, 
+            //         isResizable: true, 
+            //         onColumnClick: _onHandleColumnClick,
+            //         onRender: (item: IItemRegisterDokumen) => {
+            //             return (
+            //                 <>
+            //                     <span>
+            //                         {
+            //                         item.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+            //                         `${item.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPerusahaan?.perusahaan?.nama}` :
+            //                         `${item.registerPerusahaan?.perusahaan?.nama}`
+            //                         }
+            //                     </span><br />  
+            //                     <span>
+            //                         {
+            //                             item.registerPerusahaan?.perusahaan?.id != undefined ?
+            //                             invertParseNpwp(item.registerPerusahaan?.perusahaan?.id) : `-`
+            //                         }
+            //                     </span>
+            //                 </>               
+            //             );
+            //         },
+            //     },
+            //     { 
+            //         key: 'nama_dokumen', 
+            //         name: 'Jenis dokumen', 
+            //         minWidth: 200, 
+            //         maxWidth: 200, 
+            //         isResizable: true, 
+            //         onColumnClick: _onHandleColumnClick,
+            //         onRender: (item: IItemRegisterDokumen) => {
+            //             return item.dokumen?.nama;
+            //         },
+            //         // isPadded: true,
+            //     },
+            //     { 
+            //         key: 'deskripsi', 
+            //         name: 'Deskripsi dokumen', 
+            //         minWidth: 180, 
+            //         isResizable: true, 
+            //         data: 'string',
+            //         onRender: (item: IItemRegisterDokumen) => {
+            //             let doc = null;
+            //             let konten = null;
+            //             switch (item.dokumen?.id) {
+            //                 case '010101':
+            //                     doc = item.dokumen as IDokumenAktaPendirian;
+            //                     konten = 
+            //                     <>
+            //                         <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+            //                         <span>Notaris : {doc.namaNotaris}</span><br /> 
+            //                         <span>Nomor akta : {doc.nomor}</span><br /> 
+            //                         <span>Direktur : {doc.penanggungJawab?.person?.nama}</span><br />
+            //                         <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+            //                         Download
+            //                         </Link>
+            //                     </>; 
+            //                     break;
+            //                 case '010301':
+            //                     doc = item.dokumen as IDokumenNibOss;
+            //                     konten = 
+            //                     <>
+            //                         <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+            //                         <span>Nib : {doc.nomor}</span><br/>
+            //                         <span>
+            //                             Kbli : {
+            //                                 doc.daftarKbli?.map((t,i) => {
+            //                                     if(i == 0) {
+            //                                         return t.kode;
+            //                                     }
+            //                                     else {
+            //                                         return ', ' + t.kode;
+            //                                     }
+            //                                 })
+            //                             }
+            //                         </span><br />
+            //                         <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+            //                         Download
+            //                         </Link>
+            //                     </>; 
+            //                     break;
+            //                 default:
+            //                     doc = item.dokumen as IDokumenGenerik;
+            //                     konten = 
+            //                     <>
+            //                         <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+            //                         <span>Nomor dokumen : {doc.nomor}</span><br />
+            //                         <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+            //                         Download
+            //                         </Link>
+            //                     </>; 
+            //                     break;
+            //             }
+        
+            //             return konten;
+            //         },
+            //     },
+            //     { 
+            //         key: 'statusVerified', 
+            //         name: 'Approved', 
+            //         minWidth: 100, 
+            //         maxWidth: 100, 
+            //         isResizable: false,          
+            //         onColumnClick: _onHandleColumnClick,  
+            //         onRender: (item: IItemRegisterDokumen) => {
+            //             return (
+            //                 <span>{
+            //                     item.statusVerified != undefined ? item.statusVerified == true ? 'Sudah':'Belum': null 
+            //                 }</span>
+            //             );
+            //         },
+            //     },
+            // ]);
+        },
+        [token, postsRegisterDokumen]
+    );
 
     return (
         <Stack grow verticalFill>
