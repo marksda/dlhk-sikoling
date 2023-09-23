@@ -14,7 +14,7 @@ import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { urlApiSikoling } from "../../features/config/config";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { saveAs } from "file-saver";
 import { resetToken, setToken } from "../../features/security/token-slice";
 import { Mutex } from "async-mutex";

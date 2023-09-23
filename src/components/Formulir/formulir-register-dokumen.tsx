@@ -75,8 +75,6 @@ const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } 
 const stackTokens = { childrenGap: 8 };
 
 export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
-  // local state
-  // const [idRegisterDokumenTextFieldValue, setIdDokumenTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:'');
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:undefined);  
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
@@ -107,17 +105,6 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
         },
     ],
   });
-  // const [queryJabatanParams, setQueryJabatanParams] = useState<IQueryParamFilters>({
-  //   pageNumber: 1,
-  //   pageSize: 100,
-  //   filters: [],
-  //   sortOrders: [
-  //       {
-  //           fieldName: 'nama',
-  //           value: 'ASC'
-  //       },
-  //   ],
-  // });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
@@ -164,29 +151,6 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
     ),
     [postsDokumen]
   );
-
-//   const kontenFormulirDokumen = useMemo(
-//     () => {
-//         let konten = null;        
-//         if(selectedKeyDokumen != undefined && selectedKeyRegisterPerusahaan != undefined) {         
-//           switch (selectedKeyDokumen) {
-//             case '010101':
-//             konten = 
-//               <FormulirRegisterDokumenAktaPendirian 
-//                 mode={mode} 
-//                 dokumen={find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian}
-//                 registerPerusahaan={find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan)}
-//                 dataLama={dataLama}/>;
-//             break;            
-//           default:
-//             break;
-//           }
-//         }
-//         console.log('konten dokumwn dipanggil');
-//         return konten;
-//     },
-//     [selectedKeyDokumen, selectedKeyRegisterPerusahaan, postsDokumen, postsRegisterPerusahaan, dataLama]
-// );
 
   const _handleOnDismissed = useCallback(
     () => {
