@@ -903,25 +903,32 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             const suggestedFileName = response.headers["x-suggested-filename"];
             saveAs(response.data, suggestedFileName);
         }).catch(async (error) => {   
-            if(error.response.status == 401) {
-                if (!mutexRegisterDokumen.isLocked()) {
-                    const release = await mutexRegisterDokumen.acquire();
-                    try {
-                        _refreshToken(lokasiFile, progressElm, btnElm);
-
-                    } catch (error) {
-                        release();
-                    }
-                }   
+            if(error.response.status != undefined) {
+                if(error.response.status == 401) {
+                    if (!mutexRegisterDokumen.isLocked()) {
+                        const release = await mutexRegisterDokumen.acquire();
+                        try {
+                            _refreshToken(lokasiFile, progressElm, btnElm);
+    
+                        } catch (error) {
+                            release();
+                        }
+                    }   
+                    else {
+                        await mutexRegisterDokumen.waitForUnlock();
+                        _downloadDokumen(lokasiFile, progressElm, btnElm, token);
+                    }                  
+                }
                 else {
-                    await mutexRegisterDokumen.waitForUnlock();
-                    _downloadDokumen(lokasiFile, progressElm, btnElm, token);
-                }                  
+                    progressElm.remove();
+                    btnElm.style.display = 'inline-block';  
+                    alert("File tidak ditemukan silakan hubungi pihak DLHK");
+                }
             }
             else {
                 progressElm.remove();
-                btnElm.style.display = 'inline-block';  
-                alert("File tidak ditemukan silakan hubungi pihak DLHK");
+                btnElm.style.display = 'inline-block'; 
+                alert("Koneksi ke server mengalami gangguan");
             }
         });
     }
