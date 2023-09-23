@@ -3,19 +3,23 @@ import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IC
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
 import { utcFormatDateToDDMMYYYY } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-import { urlDocumenService } from "../../features/config/config";
+import { urlApiSikoling, urlDocumenService } from "../../features/config/config";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenAktaPendirian } from "../../features/entity/dokumen-akta-pendirian";
 import { RegisterDokumenAktaPendirianSchema } from "../../features/schema-resolver/zod-schema";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IDokumen } from "../../features/entity/dokumen";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import axios from "axios";
+import { IToken } from "../../features/entity/token";
+import { Mutex } from "async-mutex";
+import { resetToken, setToken } from "../../features/security/token-slice";
 
 
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
@@ -60,9 +64,12 @@ const toggleStyles = {
       width: '150px',
   },
 };
+const mutexDokumenAktaPendirian = new Mutex();
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => {
   const token = useAppSelector((state) => state.token); 
+  const dispatch = useAppDispatch();
+
   const [tempFile, setTempFile] = useState<string|null>(null);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
@@ -350,28 +357,15 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               formData = new FormData();
               formData.append('file', file);
               formData.append('idRegisterDokumen', dataLama?.id!);
-              parm = {
-                subPath: `/file/replace?fileNameParam=${namaFile}`,
-                dataForm: formData
-              };  
-              replaceFile(parm).unwrap()
-                .then((firstPromiseResult) => {
-                  setValue("lokasiFile", firstPromiseResult.uri);
-                  getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
-                    .then((secondPromiseResult) => {
-                      setDisableForm(false);
-                      let hasil = cloneDeep(secondPromiseResult);
-                      hasil.height = `${window.innerHeight - 195}px`;            
-                      hasil.width =  `${window.innerWidth - 360}px`; 
-                      setConfigOnlyOfficeEditor(hasil);
-                    })
-                    .catch((rejectedValueOrSerializedError) => {
-                      setDisableForm(false);
-                    });
-                })
-                .catch((rejectedValueOrSerializedError) => {
-                  setDisableForm(false);
-                }); 
+              const btnElm = document.getElementById("btnUploadAkta") as HTMLButtonElement;
+              const parentElm = btnElm?.parentElement;
+              const progressElm = document.createElement("progress");
+              progressElm.setAttribute("value", "0");
+              progressElm.setAttribute("max", "1");
+              progressElm.style.width = "100%";
+              progressElm.style.marginTop = "16px";
+              parentElm?.append(progressElm);
+              _uploadDokumen(namaFile, formData, token, progressElm);
               break;
             default:
               break;
@@ -449,6 +443,80 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     //   console.log('error', err);
     // }
   };
+
+  async function _uploadDokumen(namaFile: string, dataForm:FormData, _token: IToken, progressElm: HTMLProgressElement) {
+    setDisableForm(true);
+
+    axios({
+      url: `${urlApiSikoling}/file/replace?fileNameParam=${namaFile}`, 
+      method: 'POST',
+      responseType: 'json', 
+      data: dataForm,
+      headers: {
+          Authorization: `Bearer ${_token.accessToken}` 
+      },
+      onUploadProgress: progressEvent => {
+          progressElm.setAttribute("value", `${progressEvent.progress}`);
+      }                
+    }).then((response) => {      
+      setValue("lokasiFile", response.data.uri);   
+      getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${response.data.uri}`).unwrap().then((secondPromiseResult) => {
+        setDisableForm(false);
+        let hasil = cloneDeep(secondPromiseResult);
+        hasil.height = `${window.innerHeight - 195}px`;            
+        hasil.width =  `${window.innerWidth - 360}px`; 
+        setConfigOnlyOfficeEditor(hasil);
+        progressElm.remove();
+      }).catch((rejectedValueOrSerializedError) => {
+        setDisableForm(false);
+        progressElm.remove();
+      });    
+      dispatch(sikolingApi.util.invalidateTags(["RegisterDokumen"]));  
+    }).catch(async (error) => {   
+      if(error.response.status == 401) {
+          if (!mutexDokumenAktaPendirian.isLocked()) {
+              const release = await mutexDokumenAktaPendirian.acquire();
+              try {
+                  _refreshToken(namaFile, dataForm, progressElm);
+
+              } catch (error) {
+                  release();
+              }
+          }   
+          else {
+              await mutexDokumenAktaPendirian.waitForUnlock();
+              _uploadDokumen(namaFile, dataForm, token, progressElm);
+          }                  
+      }
+      else {
+          progressElm.remove();
+          alert("File gagal direupload");
+      }
+    });
+  };
+
+  function _refreshToken(namaFile: string, dataForm:FormData, progressElm: HTMLProgressElement) {
+    axios({
+        url: `${urlApiSikoling}/user/refresh_token/${token.userName}`, 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain',
+        },
+        responseType: 'json',
+        data: token.refreshToken      
+    }).then((responseRefreshToken) => {                 
+        const hasil = responseRefreshToken.data
+        localStorage.removeItem('token');
+        localStorage.setItem('token', JSON.stringify(hasil.token));
+        dispatch(setToken(hasil.token));
+        _uploadDokumen(namaFile, dataForm, hasil.token, progressElm);
+        mutexDokumenAktaPendirian.release();
+    }).catch((errorRefreshToken) => {
+        localStorage.removeItem('token');
+        dispatch(resetToken());
+        mutexDokumenAktaPendirian.release();
+    });
+}
 
   return (
     <Stack.Item> 
@@ -623,6 +691,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       text={'Upload ulang dokumen'} 
                       onClick={_bindClickEventInputFile}
                       disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                      id="btnUploadAkta"
                     />
                   }                  
                 </Stack>  
