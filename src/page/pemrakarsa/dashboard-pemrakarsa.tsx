@@ -59,7 +59,7 @@ export const KontenDashboardPemrakarsa: FC<IDashboatdPemrakarsaFluentUIProps> = 
                             initSelectedFilters={
                                 {
                                     pageNumber: 1,
-                                    pageSize: 50,
+                                    pageSize: 25,
                                     filters: [],
                                     sortOrders: [
                                         {
@@ -99,7 +99,7 @@ export const KontenDashboardPemrakarsa: FC<IDashboatdPemrakarsaFluentUIProps> = 
                             initSelectedFilters={
                                 {
                                     pageNumber: 1,
-                                    pageSize: 50,
+                                    pageSize: 25,
                                     filters: [
                                         {
                                             fieldName: 'kepemilikan',
@@ -123,7 +123,7 @@ export const KontenDashboardPemrakarsa: FC<IDashboatdPemrakarsaFluentUIProps> = 
                             initSelectedFilters={
                                 {
                                     pageNumber: 1,
-                                    pageSize: 50,
+                                    pageSize: 25,
                                     filters: [
                                         {
                                             fieldName: 'kepemilikan_perusahaan',

@@ -124,7 +124,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
             maxWidth: 350,
             isRowHeader: true,
             isResizable: true,             
-            isSortedDescending: false,
+            isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
             isSorted: true,
             onColumnClick: _onHandleColumnClick,
             data: 'string',
@@ -1075,7 +1075,7 @@ export const DataListPegawaiFluentUI: FC<IDataListPegawaiFluentUIProps> = ({init
                                 id={searchNamaPerusahaanId}
                                 style={{width: 200}} 
                                 disableAnimation
-                                placeholder="nama sesuai ktp" 
+                                placeholder="nama perusahaan" 
                                 underlined={false} 
                                 onChange={_onChangeSearchNamaPerusahaan}
                                 onSearch={_onSearchNamaPerusahaan}

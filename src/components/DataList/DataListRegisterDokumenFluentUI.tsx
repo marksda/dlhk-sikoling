@@ -1056,7 +1056,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="ketik nama depan perusahaan" 
+                                    placeholder="ketik nama perusahaan" 
                                     underlined={false} 
                                     onChange={_onChangeSearchNamaPerusahaan}
                                     onSearch={_onSearchNamaPerusahaan}

@@ -689,11 +689,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                   />
                   { mode == 'edit' &&
                     <DefaultButton 
+                      id="btnUploadAkta"
                       style={{marginTop: 4, width: '100%'}}
                       text={'Upload ulang dokumen'} 
                       onClick={_bindClickEventInputFile}
                       disabled={configOnlyOfficeEditor == null ? true:disableForm}
-                      id="btnUploadAkta"
                     />
                   }                  
                 </Stack>  
