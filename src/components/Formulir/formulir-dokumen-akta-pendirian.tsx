@@ -365,7 +365,8 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
               progressElm.style.width = "100%";
               progressElm.style.marginTop = "16px";
               parentElm?.append(progressElm);
-              _uploadDokumen(namaFile, formData, token, progressElm);
+              const uriLocator = `${urlApiSikoling}/file/replace?fileNameParam=${namaFile}`;
+              _uploadDokumen(uriLocator, formData, token, progressElm);
               break;
             default:
               break;
@@ -444,11 +445,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     // }
   };
 
-  async function _uploadDokumen(namaFile: string, dataForm:FormData, _token: IToken, progressElm: HTMLProgressElement) {
+  async function _uploadDokumen(uriUploadLocator: string, dataForm:FormData, _token: IToken, progressElm: HTMLProgressElement) {
     setDisableForm(true);
 
     axios({
-      url: `${urlApiSikoling}/file/replace?fileNameParam=${namaFile}`, 
+      url: uriUploadLocator, 
       method: 'POST',
       responseType: 'json', 
       data: dataForm,
@@ -476,8 +477,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
       if(error.response.status == 401) {
           if (!mutexDokumenAktaPendirian.isLocked()) {
               const release = await mutexDokumenAktaPendirian.acquire();
+              const refreshTokenUriLocator = `${urlApiSikoling}/user/refresh_token/${token.userName}`;
               try {
-                  _refreshToken(namaFile, dataForm, progressElm);
+                  _refreshToken(refreshTokenUriLocator, uriUploadLocator, dataForm, progressElm);
 
               } catch (error) {
                   release();
@@ -485,7 +487,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           }   
           else {
               await mutexDokumenAktaPendirian.waitForUnlock();
-              _uploadDokumen(namaFile, dataForm, token, progressElm);
+              _uploadDokumen(uriUploadLocator, dataForm, token, progressElm);
           }                  
       }
       else {
@@ -495,9 +497,9 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     });
   };
 
-  function _refreshToken(namaFile: string, dataForm:FormData, progressElm: HTMLProgressElement) {
+  function _refreshToken(refreshTokenUriLocator: string, uriUploadLocator: string, dataForm:FormData, progressElm: HTMLProgressElement) {
     axios({
-        url: `${urlApiSikoling}/user/refresh_token/${token.userName}`, 
+        url: refreshTokenUriLocator, 
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain',
@@ -509,7 +511,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         localStorage.removeItem('token');
         localStorage.setItem('token', JSON.stringify(hasil.token));
         dispatch(setToken(hasil.token));
-        _uploadDokumen(namaFile, dataForm, hasil.token, progressElm);
+        _uploadDokumen(uriUploadLocator, dataForm, hasil.token, progressElm);
         mutexDokumenAktaPendirian.release();
     }).catch((errorRefreshToken) => {
         localStorage.removeItem('token');
