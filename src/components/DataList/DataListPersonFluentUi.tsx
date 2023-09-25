@@ -132,7 +132,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
             isPadded: true,
-            isSortedDescending: false,
+            isSortedDescending: initSelectedFilters.sortOrders![0].value == 'DESC' ? true:false,
             isSorted: true,
             onRender: (item: IItemPerson) => {
                 return item.nik;

@@ -3,15 +3,20 @@ import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
-import { useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenGenerikSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
-import { urlDocumenService } from "../../features/config/config";
+import { urlApiSikoling, urlDocumenService } from "../../features/config/config";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
+import axios from "axios";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { IToken } from "../../features/entity/token";
+import { resetToken, setToken } from "../../features/security/token-slice";
+import { Mutex } from "async-mutex";
 
 interface IFormulirRegisterDokumenGenerikFluentUIProps {
     mode?: string;
@@ -65,8 +70,12 @@ const dateStyle: IStyleFunctionOrObject<IDatePickerStyleProps, IDatePickerStyles
   }
 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
+const mutexDokumenGenerik = new Mutex();
 
 export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
+    const token = useAppSelector((state) => state.token); 
+    const dispatch = useAppDispatch();
+
     const [tempFile, setTempFile] = useState<string|null>(null);
     const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
     const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? dataLama.dokumen?.tanggal != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined:undefined);
@@ -152,7 +161,7 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
         () => {
           return () => {
             if(tempFile != null && mode == "add") {
-              let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
+              let pathFile = "/file/delete?fileNameParam=" + decodeURIComponent(tempFile.split("=")[1]);
               deleteFile(pathFile);
             }
           }      
@@ -216,24 +225,16 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                     subPath: `/file/replace?fileNameParam=${namaFile}`,
                     dataForm: formData
                     };  
-                    replaceFile(parm).unwrap()
-                    .then((firstPromiseResult) => {
-                        setValue("lokasiFile", firstPromiseResult.uri);
-                        getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${firstPromiseResult.uri}`).unwrap()
-                        .then((secondPromiseResult) => {
-                            setDisableForm(false);
-                            let hasil = cloneDeep(secondPromiseResult);
-                            hasil.height = `${window.innerHeight - 195}px`;            
-                            hasil.width =  `${window.innerWidth - 580}px`; 
-                            setConfigOnlyOfficeEditor(hasil);
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            setDisableForm(false);
-                        });
-                    })
-                    .catch((rejectedValueOrSerializedError) => {
-                        setDisableForm(false);
-                    }); 
+                    const btnElm = document.getElementById("btnUploadFileGenerik") as HTMLButtonElement;
+                    const parentElm = btnElm?.parentElement;
+                    const progressElm = document.createElement("progress");
+                    progressElm.setAttribute("value", "0");
+                    progressElm.setAttribute("max", "1");
+                    progressElm.style.width = "100%";
+                    progressElm.style.marginTop = "16px";
+                    parentElm?.append(progressElm);
+                    const uriLocator = `${urlApiSikoling}/file/replace?fileNameParam=${namaFile}`;
+                    _uploadDokumen(uriLocator, formData, token, progressElm);
                     break;
                 default:
                     break;
@@ -282,6 +283,81 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
 
     const onError: SubmitErrorHandler<IRegisterDokumen<IDokumenGenerik>> = async (err) => {
         console.log('error', err);
+    };
+
+    async function _uploadDokumen(uriUploadLocator: string, dataForm:FormData, _token: IToken, progressElm: HTMLProgressElement) {
+        setDisableForm(true);
+
+        axios({
+            url: uriUploadLocator, 
+            method: 'POST',
+            responseType: 'json', 
+            data: dataForm,
+            headers: {
+                Authorization: `Bearer ${_token.accessToken}` 
+            },
+            onUploadProgress: progressEvent => {
+                progressElm.setAttribute("value", `${progressEvent.progress}`);
+            }                
+        }).then((response) => {      
+            setValue("lokasiFile", response.data.uri);   
+            getOnlyofficeConfigEditor(`/onlyoffice/config?fileNameParam=${response.data.uri}`).unwrap().then((secondPromiseResult) => {
+            setDisableForm(false);
+            let hasil = cloneDeep(secondPromiseResult);
+            hasil.height = `${window.innerHeight - 195}px`;            
+            hasil.width =  `${window.innerWidth - 580}px`; 
+            setConfigOnlyOfficeEditor(hasil);
+            progressElm.remove();
+            }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+            progressElm.remove();
+            });    
+            dispatch(sikolingApi.util.invalidateTags(["RegisterDokumen"]));  
+        }).catch(async (error) => {   
+            if(error.response.status == 401) {
+                if (!mutexDokumenGenerik.isLocked()) {
+                    const release = await mutexDokumenGenerik.acquire();
+                    const refreshTokenUriLocator = `${urlApiSikoling}/user/refresh_token/${token.userName}`;
+                    try {
+                        _refreshToken(refreshTokenUriLocator, uriUploadLocator, dataForm, progressElm);
+
+                    } catch (error) {
+                        release();
+                    }
+                }   
+                else {
+                    await mutexDokumenGenerik.waitForUnlock();
+                    _uploadDokumen(uriUploadLocator, dataForm, token, progressElm);
+                }                  
+            }
+            else {
+                progressElm.remove();
+                alert("File gagal direupload");
+            }
+        });
+    };
+
+    function _refreshToken(refreshTokenUriLocator: string, uriUploadLocator: string, dataForm:FormData, progressElm: HTMLProgressElement) {
+        axios({
+            url: refreshTokenUriLocator, 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            responseType: 'json',
+            data: token.refreshToken      
+        }).then((responseRefreshToken) => {                 
+            const hasil = responseRefreshToken.data
+            localStorage.removeItem('token');
+            localStorage.setItem('token', JSON.stringify(hasil.token));
+            dispatch(setToken(hasil.token));
+            _uploadDokumen(uriUploadLocator, dataForm, hasil.token, progressElm);
+            mutexDokumenGenerik.release();
+        }).catch((errorRefreshToken) => {
+            localStorage.removeItem('token');
+            dispatch(resetToken());
+            mutexDokumenGenerik.release();
+        });
     };
       
     return (
@@ -399,7 +475,8 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
                                     onClick={handleSubmit(onSubmit, onError)}
                                     />
                                 { mode == 'edit' &&
-                                <DefaultButton 
+                                <DefaultButton                                 
+                                    id="btnUploadFileGenerik"
                                     style={{marginTop: 4, width: '100%'}}
                                     text={'Upload ulang dokumen'} 
                                     onClick={_bindClickEventInputFile}

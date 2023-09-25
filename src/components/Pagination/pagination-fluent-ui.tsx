@@ -87,6 +87,7 @@ const nextIcon: IIconProps = { iconName: 'Next' };
 const stackTokens = { childrenGap: 1 };
 
 const dropDownPageSizeOptions = [
+    { key: '25', text: '25' },
     { key: '50', text: '50' },
     { key: '100', text: '100' },
     { key: '500', text: '500' },

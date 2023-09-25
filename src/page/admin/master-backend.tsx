@@ -320,12 +320,12 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
                                     fieldName: 'tanggalRegistrasi',
-                                    value: 'ASC'
+                                    value: 'DESC'
                                 },
                             ],
                         }
@@ -338,7 +338,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -357,7 +357,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -374,7 +374,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -392,7 +392,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -410,7 +410,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -428,7 +428,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -446,7 +446,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -464,7 +464,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -482,7 +482,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -500,7 +500,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -518,7 +518,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -536,7 +536,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -554,7 +554,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -572,7 +572,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -592,7 +592,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -609,7 +609,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -627,7 +627,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -645,7 +645,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -663,7 +663,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -681,7 +681,7 @@ export const MasterBackEnd: FC = () => {
                     initSelectedFilters={
                         {
                             pageNumber: 1,
-                            pageSize: 50,
+                            pageSize: 25,
                             filters: [],
                             sortOrders: [
                                 {
@@ -699,7 +699,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -717,7 +717,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {
@@ -735,7 +735,7 @@ export const MasterBackEnd: FC = () => {
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
-                                pageSize: 50,
+                                pageSize: 25,
                                 filters: [],
                                 sortOrders: [
                                     {

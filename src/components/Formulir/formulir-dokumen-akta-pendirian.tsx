@@ -307,7 +307,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     () => {
       return () => {
         if(tempFile != null && mode == "add") {
-          let pathFile = "/file/delete?fileNameParam=" + tempFile.split("=")[1];
+          let pathFile = "/file/delete?fileNameParam=" + decodeURIComponent(tempFile.split("=")[1]);
           deleteFile(pathFile);
         }
       }      
@@ -518,7 +518,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
         dispatch(resetToken());
         mutexDokumenAktaPendirian.release();
     });
-}
+  };
 
   return (
     <Stack.Item> 
