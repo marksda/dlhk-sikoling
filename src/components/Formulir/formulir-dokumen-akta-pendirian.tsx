@@ -387,6 +387,14 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
     [disableForm]
   );
 
+  const _onHandleBtnAddDirektur = useCallback(
+    (e) => {            
+        e.stopPropagation();
+        document.getElementById('fileUpload')!.click();
+    },
+    [disableForm]
+  );
+
   const _onChangeApproved = useCallback(
     (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
       setValue("statusVerified", checked!);             
@@ -664,7 +672,12 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                     />                
                   </Stack.Item>
                   <Stack.Item>
-                    <ActionButton iconProps={addIcon} allowDisabledFocus disabled={selectedDate==undefined ? true:disableForm}>
+                    <ActionButton 
+                      iconProps={addIcon} 
+                      allowDisabledFocus 
+                      disabled={selectedDate==undefined ? true:disableForm}
+                      onClick={_bindClickEventInputFile}
+                    >
                     Add pilihan direktur
                     </ActionButton>
                   </Stack.Item>
