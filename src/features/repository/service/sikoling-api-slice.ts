@@ -797,14 +797,14 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
             }),
-            replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
-                query: ({subPath, dataForm}) => ({
-                    url: encodeURI(subPath),
-                    method: 'POST',
-                    body: dataForm,
-                }),
-                invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
-            }),
+            // replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
+            //     query: ({subPath, dataForm}) => ({
+            //         url: encodeURI(subPath),
+            //         method: 'POST',
+            //         body: dataForm,
+            //     }),
+            //     invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
+            // }),
             deleteFile: builder.mutation<{hasil:string}, string>({
                 query: (subPath) => ({
                     url: encodeURI(subPath),
@@ -862,6 +862,5 @@ export const {
     useDeleteKbliMutation, useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery,
     useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
-    useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation,
-    useDeleteFileMutation, 
+    useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
 } = sikolingApi;

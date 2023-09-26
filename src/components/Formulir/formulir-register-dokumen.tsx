@@ -13,6 +13,7 @@ import { FormulirRegisterDokumenNibOss } from "./formulir-dokumen-nib";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { FormulirRegisterDokumenGenerik } from "./formulir-dokumen-generik";
 import { IDokumenGenerik } from "../../features/entity/dokumen-generik";
+import { useAppSelector } from "../../app/hooks";
 
 interface IFormulirRegisterDokumenFluentUIProps {
   title: string|undefined;
@@ -75,14 +76,19 @@ const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } 
 const stackTokens = { childrenGap: 8 };
 
 export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+  const token = useAppSelector((state) => state.token);
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:undefined);  
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
-    pageSize: 50,
+    pageSize: 25,
     filters: dataLama != undefined ? [{
       fieldName: 'nama',
       value: dataLama.registerPerusahaan?.perusahaan?.nama!
+    }]
+    : token.hakAkses == 'Umum' ? [{
+      fieldName: 'kepemilikan',
+      value: token.userId!
     }]:[],
     sortOrders: [
       {
@@ -406,7 +412,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                   <ComboBox
                     componentRef={comboBoxRegisterPerusahaanRef}
                     label="Perusahaan"
-                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                    placeholder="klik atau ketik minimal 3 abjad untuk menampilkan pilihan"
                     allowFreeform={true}
                     options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
                     selectedKey={selectedKeyRegisterPerusahaan}

@@ -1,9 +1,9 @@
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, IIconProps, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, ITooltipHostStyles, IconButton, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, TooltipHost, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataPegawaiQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IPegawai } from "../../features/entity/pegawai";
@@ -20,6 +20,7 @@ import axios from "axios";
 import { IToken } from "../../features/entity/token";
 import { Mutex } from "async-mutex";
 import { resetToken, setToken } from "../../features/security/token-slice";
+import { useId } from "@fluentui/react-hooks";
 
 
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
@@ -65,6 +66,7 @@ const toggleStyles = {
   },
 };
 const mutexDokumenAktaPendirian = new Mutex();
+const addIcon: IIconProps = { iconName: 'AddFriend' };
 
 export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAktaPendirianFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => {
   const token = useAppSelector((state) => state.token); 
@@ -109,7 +111,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
   const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
-  const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
   const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   
@@ -643,7 +644,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                           <ComboBox
                             componentRef={comboBoxPenanggungJawabRef}
                             label="Direktur"
-                            placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                            placeholder="silahkan pilih"
                             allowFreeform={true}
                             options={optionsPegawai != undefined ? optionsPegawai:[]}
                             selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
@@ -661,6 +662,11 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                         )
                       }
                     />                
+                  </Stack.Item>
+                  <Stack.Item>
+                    <ActionButton iconProps={addIcon} allowDisabledFocus disabled={selectedDate==undefined ? true:disableForm}>
+                    Add pilihan direktur
+                    </ActionButton>
                   </Stack.Item>
                   {token.hakAkses == 'Administrator' ?
                   <Stack.Item>

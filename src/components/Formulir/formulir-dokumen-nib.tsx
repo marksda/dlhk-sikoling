@@ -4,7 +4,7 @@ import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IDropdownOption, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, mergeStyleSets } from "@fluentui/react";
-import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetDaftarDataKbliQuery, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenNibSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -109,7 +109,6 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
   });
   //rtk query
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
-  const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
   const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
   const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
   const { data: listKbli, isFetching: isFetchingDataKbli, isError: isErrorKbli } = useGetDaftarDataKbliQuery(queryParamsKbli);

@@ -3,7 +3,7 @@ import { IDokumen } from "../../features/entity/dokumen";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 import { IRegisterDokumen } from "../../features/entity/register-dokumen";
 import { DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IDatePickerStyleProps, IDatePickerStyles, IStyleFunctionOrObject, ITextFieldStyles, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
-import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useReplaceFileMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
+import { sikolingApi, useDeleteFileMutation, useDeleteRegisterDokumenMutation, useGetOnlyofficeConfigEditorMutation, useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUploadFileMutation } from "../../features/repository/service/sikoling-api-slice";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterDokumenGenerikSchema } from "../../features/schema-resolver/zod-schema";
 import cloneDeep from "lodash.clonedeep";
@@ -95,7 +95,6 @@ export const FormulirRegisterDokumenGenerik: FC<IFormulirRegisterDokumenGenerikF
     });
     //rtk query
     const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
-    const [ replaceFile, {isLoading: isLoadingReplaceFile}] = useReplaceFileMutation();
     const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
     const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
     const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
