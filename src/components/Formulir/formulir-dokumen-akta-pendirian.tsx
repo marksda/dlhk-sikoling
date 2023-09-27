@@ -1,5 +1,5 @@
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { ActionButton, ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IComboBoxStyles, IDatePickerStyleProps, IDatePickerStyles, IIconProps, ISelectableOption, IStyleFunctionOrObject, ITextFieldStyles, ITooltipHostStyles, IconButton, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, TooltipHost, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, ComboBox, DatePicker, DayOfWeek, DefaultButton, FontIcon, IComboBox, IComboBoxOption, IDatePickerStyleProps, IDatePickerStyles, IIconProps, ISelectableOption, IStyleFunctionOrObject, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField, Toggle, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +20,8 @@ import axios from "axios";
 import { IToken } from "../../features/entity/token";
 import { Mutex } from "async-mutex";
 import { resetToken, setToken } from "../../features/security/token-slice";
-import { useId } from "@fluentui/react-hooks";
+import { useBoolean } from "@fluentui/react-hooks";
+import { FormulirAddDirektur } from "./formulir-add-direktur";
 
 
 interface IFormulirRegisterDokumenAktaPendirianFluentUIProps {
@@ -72,6 +73,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const token = useAppSelector((state) => state.token); 
   const dispatch = useAppDispatch();
 
+  const [isModalFormulirPegawaiOpen, {setTrue: showModalFormulirPegawai, setFalse: hideModalFormulirPegawai}] = useBoolean(false);
   const [tempFile, setTempFile] = useState<string|null>(null);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(DayOfWeek.Sunday);
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(dataLama != undefined ? new Date(dataLama.dokumen?.tanggal!):undefined); 
@@ -107,12 +109,12 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   });
   //rtk query
   const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams);
-  const [ saveRegisterDokumen, {isLoading: isLoadingSaveRegisterDokumen}] = useSaveRegisterDokumenMutation();
-  const [ updateRegisterDokumen, {isLoading: isLoadingUpdateRegisterDokumen}] = useUpdateRegisterDokumenMutation();
-  const [ deleteRegisterDokumen, {isLoading: isLoadingDeleteRegisterDokumen}] = useDeleteRegisterDokumenMutation();
+  const [ saveRegisterDokumen] = useSaveRegisterDokumenMutation();
+  const [ updateRegisterDokumen] = useUpdateRegisterDokumenMutation();
+  const [ deleteRegisterDokumen] = useDeleteRegisterDokumenMutation();
   const [ uploadFile, {isLoading: isLoadingUploadFile}] = useUploadFileMutation();
-  const [ deleteFile, {isLoading: isLoadingDeleteFile}] = useDeleteFileMutation();
-  const [ getOnlyofficeConfigEditor, {isLoading: isLoadingGetOnlyofficeConfigEditor}] = useGetOnlyofficeConfigEditorMutation();
+  const [ deleteFile] = useDeleteFileMutation();
+  const [ getOnlyofficeConfigEditor] = useGetOnlyofficeConfigEditorMutation();
   
   const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
     () => (
@@ -390,7 +392,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
   const _onHandleBtnAddDirektur = useCallback(
     (e) => {            
         e.stopPropagation();
-        document.getElementById('fileUpload')!.click();
+        showModalFormulirPegawai();
     },
     [disableForm]
   );
@@ -531,205 +533,212 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
 
   return (
     <Stack.Item> 
-        <Stack>
-          <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
-          { configOnlyOfficeEditor == null && mode == 'add' && !isLoadingUploadFile &&
-          <Stack.Item align="center">                          
-            <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
-              <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-              <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
-              <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-            </div>                        
-          </Stack.Item> 
-          } 
-          { configOnlyOfficeEditor &&
-          <Stack.Item>
-            <Stack horizontal tokens={stackTokens}>
-              <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
-                <Stack>
-                  <Stack.Item>
-                    <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
-                  </Stack.Item>
-                  {mode != 'add' &&
-                    <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
-                      <Label style={{padding: 4}}>
-                        {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
-                        `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
-                        `${registerPerusahaan?.perusahaan?.nama}`}
+      <Stack>
+        <input type="file" id="fileUpload" style={{display: 'none'}} onChange={_handleFile} />
+        { configOnlyOfficeEditor == null && mode == 'add' && !isLoadingUploadFile &&
+        <Stack.Item align="center">                          
+          <div className={contentStyles.fileViewContainer} onClick={_bindClickEventInputFile}> 
+            <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+            <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih file {dokumen?.nama}</Label>
+            <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+          </div>                        
+        </Stack.Item> 
+        } 
+        { configOnlyOfficeEditor &&
+        <Stack.Item>
+          <Stack horizontal tokens={stackTokens}>
+            <Stack.Item style={{background: 'rgb(241 241 241)', padding: '0px 8px 8px 8px', border: '1px solid rgb(187 190 194)'}}>
+              <Stack>
+                <Stack.Item>
+                  <Label style={{borderBottom: '1px solid grey', marginBottom: 4}}>Meta file - {dokumen?.nama}</Label>
+                </Stack.Item>
+                {mode != 'add' &&
+                  <Stack.Item align="center" style={{background: '#fdab2de6', width: '100%'}}>
+                    <Label style={{padding: 4}}>
+                      {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
+                      `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
+                      `${registerPerusahaan?.perusahaan?.nama}`}
 
-                      </Label>
-                    </Stack.Item>
-                  }
-                  <Stack.Item>
-                    <Controller 
-                      name="dokumen.tanggal"
-                      control={control}
-                      render={
-                        ({field: {onChange}, fieldState: { error }}) => (                      
-                          <DatePicker
-                            label="Tgl. penetapan/penerbitan"
-                            firstDayOfWeek={firstDayOfWeek}
-                            placeholder="Pilih tanggal"
-                            ariaLabel="Pilih tanggal"
-                            strings={DayPickerIndonesiaStrings}
-                            formatDate={utcFormatDateToDDMMYYYY}
-                            onSelectDate={
-                              (date) => {         
-                                onChange(utcFormatDateToYYYYMMDD(date!));
-                                setSelectedDate(date!);
-                              }
+                    </Label>
+                  </Stack.Item>
+                }
+                <Stack.Item>
+                  <Controller 
+                    name="dokumen.tanggal"
+                    control={control}
+                    render={
+                      ({field: {onChange}, fieldState: { error }}) => (                      
+                        <DatePicker
+                          label="Tgl. penetapan/penerbitan"
+                          firstDayOfWeek={firstDayOfWeek}
+                          placeholder="Pilih tanggal"
+                          ariaLabel="Pilih tanggal"
+                          strings={DayPickerIndonesiaStrings}
+                          formatDate={utcFormatDateToDDMMYYYY}
+                          onSelectDate={
+                            (date) => {         
+                              onChange(utcFormatDateToYYYYMMDD(date!));
+                              setSelectedDate(date!);
                             }
-                            value={selectedDate}
-                            disabled={mode == 'delete' ? true:disableForm}
-                            styles={dateStyle}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="dokumen.nomor"
-                      control={control}
-                      render={
-                        ({field: {onChange}, fieldState: { error }}) => (
-                          <TextField
-                            label="Nomor"
-                            placeholder="isikan nomor dokumen"
-                            value={nomorTextFieldValue}
-                            onChange={
-                              (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                if(newValue!.length > 0) {
-                                  onChange(newValue!);
-                                }
-                                else {
-                                  resetField("dokumen.nomor");
-                                }
-                                setNomorTextFieldValue(newValue||'');
-                              }
-                            }
-                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>         
-                  <Stack.Item>
-                    <Controller 
-                      name="dokumen.namaNotaris"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <TextField
-                            label="Notaris"
-                            placeholder="isikan nama notaris"
-                            value={notarisTextFieldValue}
-                            onChange={
-                              (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                if(newValue!.length > 0) {
-                                  onChange(newValue!);
-                                }
-                                else {
-                                  resetField("dokumen.namaNotaris");
-                                }
-                                setNotarisTextFieldValue(newValue || '');
-                              }
-                            }
-                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                          />
-                        )
-                      }
-                    />
-                  </Stack.Item>
-                  <Stack.Item>
-                    <Controller 
-                      name="dokumen.penanggungJawab"
-                      control={control}
-                      render={
-                        ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                          <ComboBox
-                            componentRef={comboBoxPenanggungJawabRef}
-                            label="Direktur"
-                            placeholder="silahkan pilih"
-                            allowFreeform={true}
-                            options={optionsPegawai != undefined ? optionsPegawai:[]}
-                            selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
-                            useComboBoxAsMenuWidth={true}
-                            onRenderOption={_onRenderPegawaiOption}   
-                            onInputValueChange={_onInputComboBoxPegawaiValueChange}    
-                            onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                              let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
-                              onChange(penanggungJawab);
-                              setSelectedKeyPegawai(option?.key as string);
-                            }}
-                            disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
-                            errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
-                          />
-                        )
-                      }
-                    />                
-                  </Stack.Item>
-                  <Stack.Item>
-                    <ActionButton 
-                      iconProps={addIcon} 
-                      allowDisabledFocus 
-                      disabled={selectedDate==undefined ? true:disableForm}
-                      onClick={_bindClickEventInputFile}
-                    >
-                    Add pilihan direktur
-                    </ActionButton>
-                  </Stack.Item>
-                  {token.hakAkses == 'Administrator' ?
-                  <Stack.Item>
-                    <Stack horizontal tokens={stackTokens} style={{marginTop: 16}}>
-                        <Stack.Item>
-                            <span>Approved</span>
-                        </Stack.Item>            
-                        <Stack.Item>
-                            <Toggle
-                              checked={isApproved}
-                              onChange={_onChangeApproved}
-                              styles={toggleStyles}
-                              onText="Sudah"
-                              offText="Belum"
-                              disabled={mode == 'delete' ? true:disableForm}
-                            />
-                        </Stack.Item>
-                    </Stack>
-                  </Stack.Item>:null        
-                  }   
-                  <PrimaryButton 
-                    style={{marginTop: 16, width: '100%'}}
-                    text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
-                    onClick={handleSubmit(onSubmit, onError)}
-                    disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true : disableForm}
+                          }
+                          value={selectedDate}
+                          disabled={mode == 'delete' ? true:disableForm}
+                          styles={dateStyle}
+                        />
+                      )
+                    }
                   />
-                  { mode == 'edit' &&
-                    <DefaultButton 
-                      id="btnUploadAkta"
-                      style={{marginTop: 4, width: '100%'}}
-                      text={'Upload ulang dokumen'} 
-                      onClick={_bindClickEventInputFile}
-                      disabled={configOnlyOfficeEditor == null ? true:disableForm}
-                    />
-                  }                  
-                </Stack>  
-              </Stack.Item>
-              <Stack.Item>
-                {officeEditor}
-              </Stack.Item>       
-            </Stack>            
-          </Stack.Item>         
-          }     
-          {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
-          <Stack.Item align="center">
-            <Label>Please wait...</Label>
-            <Spinner size={SpinnerSize.large} />
-          </Stack.Item>
-          }
-        </Stack>        
+                </Stack.Item>
+                <Stack.Item>
+                  <Controller 
+                    name="dokumen.nomor"
+                    control={control}
+                    render={
+                      ({field: {onChange}, fieldState: { error }}) => (
+                        <TextField
+                          label="Nomor"
+                          placeholder="isikan nomor dokumen"
+                          value={nomorTextFieldValue}
+                          onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                              if(newValue!.length > 0) {
+                                onChange(newValue!);
+                              }
+                              else {
+                                resetField("dokumen.nomor");
+                              }
+                              setNomorTextFieldValue(newValue||'');
+                            }
+                          }
+                          disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                          errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                        />
+                      )
+                    }
+                  />
+                </Stack.Item>         
+                <Stack.Item>
+                  <Controller 
+                    name="dokumen.namaNotaris"
+                    control={control}
+                    render={
+                      ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                        <TextField
+                          label="Notaris"
+                          placeholder="isikan nama notaris"
+                          value={notarisTextFieldValue}
+                          onChange={
+                            (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                              if(newValue!.length > 0) {
+                                onChange(newValue!);
+                              }
+                              else {
+                                resetField("dokumen.namaNotaris");
+                              }
+                              setNotarisTextFieldValue(newValue || '');
+                            }
+                          }
+                          disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                          errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                        />
+                      )
+                    }
+                  />
+                </Stack.Item>
+                <Stack.Item>
+                  <Controller 
+                    name="dokumen.penanggungJawab"
+                    control={control}
+                    render={
+                      ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                        <ComboBox
+                          componentRef={comboBoxPenanggungJawabRef}
+                          label="Direktur"
+                          placeholder="silahkan pilih"
+                          allowFreeform={true}
+                          options={optionsPegawai != undefined ? optionsPegawai:[]}
+                          selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
+                          useComboBoxAsMenuWidth={true}
+                          onRenderOption={_onRenderPegawaiOption}   
+                          onInputValueChange={_onInputComboBoxPegawaiValueChange}    
+                          onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                            let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
+                            onChange(penanggungJawab);
+                            setSelectedKeyPegawai(option?.key as string);
+                          }}
+                          disabled={mode == 'delete'||selectedDate==undefined ? true:disableForm}
+                          errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+                        />
+                      )
+                    }
+                  />                
+                </Stack.Item>
+                <Stack.Item>
+                  <ActionButton 
+                    iconProps={addIcon} 
+                    allowDisabledFocus 
+                    disabled={selectedDate==undefined ? true:disableForm}
+                    onClick={_onHandleBtnAddDirektur}
+                  >
+                  Add pilihan direktur
+                  </ActionButton>
+                </Stack.Item>
+                {token.hakAkses == 'Administrator' ?
+                <Stack.Item>
+                  <Stack horizontal tokens={stackTokens} style={{marginTop: 16}}>
+                      <Stack.Item>
+                          <span>Approved</span>
+                      </Stack.Item>            
+                      <Stack.Item>
+                          <Toggle
+                            checked={isApproved}
+                            onChange={_onChangeApproved}
+                            styles={toggleStyles}
+                            onText="Sudah"
+                            offText="Belum"
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                      </Stack.Item>
+                  </Stack>
+                </Stack.Item>:null        
+                }   
+                <PrimaryButton 
+                  style={{marginTop: 16, width: '100%'}}
+                  text={mode == 'delete' ? 'Hapus dokumen': mode == 'add' ? 'Simpan':'Update meta file'} 
+                  onClick={handleSubmit(onSubmit, onError)}
+                  disabled={mode == 'delete' ? disableForm : configOnlyOfficeEditor == null ? true : disableForm}
+                />
+                { mode == 'edit' &&
+                  <DefaultButton 
+                    id="btnUploadAkta"
+                    style={{marginTop: 4, width: '100%'}}
+                    text={'Upload ulang dokumen'} 
+                    onClick={_bindClickEventInputFile}
+                    disabled={configOnlyOfficeEditor == null ? true:disableForm}
+                  />
+                }                  
+              </Stack>  
+            </Stack.Item>
+            <Stack.Item>
+              {officeEditor}
+            </Stack.Item>       
+          </Stack>            
+        </Stack.Item>         
+        }     
+        {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
+        <Stack.Item align="center">
+          <Label>Please wait...</Label>
+          <Spinner size={SpinnerSize.large} />
+        </Stack.Item>
+        }
+      </Stack>  
+      { isModalFormulirPegawaiOpen == true ?
+        <FormulirAddDirektur
+            title="Add Direktur"
+            isModalOpen={isModalFormulirPegawaiOpen}
+            hideModal={hideModalFormulirPegawai}
+        />:null
+      }       
     </Stack.Item>
   );
 }

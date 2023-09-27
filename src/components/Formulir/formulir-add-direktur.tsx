@@ -11,13 +11,10 @@ import { getFileType } from "../../features/config/helper-function";
 import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 
 
-interface IFormulirPersonFluentUIProps {
+interface IFormulirAddDirekturFluentUIProps {
   title: string|undefined;
-  mode: string|undefined;
   isModalOpen: boolean;
-  showModal: () => void;
   hideModal: () => void;
-  dataLama?: IPerson;
 };
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -106,18 +103,20 @@ const iconButtonStyles = {
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 140 } };
 const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 
-export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({title, isModalOpen, hideModal}) => { 
   // local state
-  const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
-  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
-  const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.telepone!:'');
-  const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
-  const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.alamat?.keterangan!:'');
-  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
-  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
-  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
-  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
-  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.desa?.id!:undefined);
+  const [mode, setMode] = useState<string>('add');
+  const [dataLama, setDataLama] = useState<IPerson|undefined>(undefined);
+  const [nikTextFieldValue, setNikTextFieldValue] = useState<string>('');
+  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>('');
+  const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>('');
+  const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>('');
+  const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>('');
+  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(undefined);
+  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(undefined);
+  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(undefined);
+  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(undefined);
+  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined|null>(undefined);
   const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
@@ -132,10 +131,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [queryKabupatenParams, setQueryKabupatenParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'propinsi',
-      value: dataLama.alamat?.propinsi?.id as string
-    }],
+    filters: [],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -146,10 +142,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [queryKecamatanParams, setQueryKecamatanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'kabupaten',
-      value: dataLama.alamat?.kabupaten?.id as string
-    }],
+    filters: [],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -160,10 +153,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [queryDesaParams, setQueryDesaParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'kecamatan',
-      value: dataLama.alamat?.kecamatan?.id as string
-    }],
+    filters: [],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -177,7 +167,6 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
   const {control, handleSubmit, resetField} = useForm<IPerson>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
     resolver: zodResolver(PersonSchema),
   });
   // rtk query
@@ -286,49 +275,49 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
       let formData = new FormData();
       switch (mode) {
         case 'add':          
-          formData.append('imageKtp', selectedFiles?.item(0)!);
-          formData.append('personData', JSON.stringify(data));
-          await savePerson(formData).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+        //   formData.append('imageKtp', selectedFiles?.item(0)!);
+        //   formData.append('personData', JSON.stringify(data));
+        //   await savePerson(formData).unwrap().then((originalPromiseResult) => {
+        //     setDisableForm(false);
+        //   }).catch((rejectedValueOrSerializedError) => {
+        //     setDisableForm(false);
+        //   }); 
+        //   hideModal();
           break;
         case 'edit':
-          if(dataLama?.nik == data.nik) { //update non id
-            if(selectedFiles != undefined && selectedFiles?.length > 0) {
-              formData.append('imageKtp', selectedFiles?.item(0)!);
-              data.scanKTP = dataLama?.scanKTP!;
-            }
-            formData.append('personData', JSON.stringify(data));
-            await updatePerson(formData).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            });             
-          }
-          else { //updare id
-            if(selectedFiles != null && selectedFiles?.length > 0) {
-              formData.append('imageKtp', selectedFiles?.item(0)!);
-              data.scanKTP = dataLama?.scanKTP!;
-            }
-            formData.append('personData', JSON.stringify(data));
-            await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            }); 
-          }     
-          hideModal();     
+        //   if(dataLama?.nik == data.nik) { //update non id
+        //     if(selectedFiles != undefined && selectedFiles?.length > 0) {
+        //       formData.append('imageKtp', selectedFiles?.item(0)!);
+        //       data.scanKTP = dataLama?.scanKTP!;
+        //     }
+        //     formData.append('personData', JSON.stringify(data));
+        //     await updatePerson(formData).unwrap().then((originalPromiseResult) => {
+        //       setDisableForm(false);
+        //     }).catch((rejectedValueOrSerializedError) => {
+        //       setDisableForm(false);
+        //     });             
+        //   }
+        //   else { //updare id
+        //     if(selectedFiles != null && selectedFiles?.length > 0) {
+        //       formData.append('imageKtp', selectedFiles?.item(0)!);
+        //       data.scanKTP = dataLama?.scanKTP!;
+        //     }
+        //     formData.append('personData', JSON.stringify(data));
+        //     await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
+        //       setDisableForm(false);
+        //     }).catch((rejectedValueOrSerializedError) => {
+        //       setDisableForm(false);
+        //     }); 
+        //   }     
+        //   hideModal();     
           break;
         case 'delete':
-          await deletePerson(data).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+        //   await deletePerson(data).unwrap().then((originalPromiseResult) => {
+        //     setDisableForm(false);
+        //   }).catch((rejectedValueOrSerializedError) => {
+        //     setDisableForm(false);
+        //   }); 
+        //   hideModal();
           break;
         default:
           break;

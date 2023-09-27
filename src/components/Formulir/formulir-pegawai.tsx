@@ -70,7 +70,7 @@ const iconButtonStyles = {
 };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
-export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
