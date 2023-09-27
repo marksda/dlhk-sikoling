@@ -177,7 +177,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     const titleId = useId('title');
     const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
     //hook-form
-    const {control, handleSubmit, resetField} = useForm<IPerson>({
+    const {control, setValue, handleSubmit, reset, resetField} = useForm<IPerson>({
         resolver: zodResolver(PersonSchema),
     });
     // rtk query
@@ -290,10 +290,17 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                     setNamaTextFieldValue('');
                     setTeleponeTextFieldValue('');
                     setEmailTextFieldValue('');
+                    setSelectedKeyJenisKelamin(null);
+                    setSelectedKeyPropinsi(undefined);
+                    setSelectedKeyKabupaten(undefined);
+                    setSelectedKeyKecamatan(undefined);
+                    setSelectedKeyDesa(undefined);
+                    setKeteranganAlamatTextFieldValue('');
                     setDisableForm(false);
                 }
                 else {
                     let tempPersonData = cloneDeep(postsPerson[0]);
+                    reset(tempPersonData);
                     setDataLama(tempPersonData);
                     setNamaTextFieldValue(tempPersonData.nama!);
                     setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
