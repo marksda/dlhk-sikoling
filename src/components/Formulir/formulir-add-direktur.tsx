@@ -300,7 +300,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                 }
                 else {
                     let tempPersonData = cloneDeep(postsPerson[0]);
-                    reset(tempPersonData);
+                    reset(tempPersonData);  //isi dengan data yang varu diambil via restfull
                     setDataLama(tempPersonData);
                     setNamaTextFieldValue(tempPersonData.nama!);
                     setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
