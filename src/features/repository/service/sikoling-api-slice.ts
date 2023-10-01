@@ -29,7 +29,7 @@ export const sikolingApi = createApi({
         return {
             getDataImage: builder.query<any, string>({
                 query: (path) => ({
-                    url:`/files${path}`,
+                    url:`/file/download?fileNameParam=${path}`,
                     method: 'GET',
                     responseHandler: (response) => response.blob()
                 }),

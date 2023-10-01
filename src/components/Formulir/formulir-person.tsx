@@ -406,7 +406,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     (e) => {            
         e.stopPropagation();
         if(!disableForm) {
-          document.getElementById('fileUpload')!.click();
+          document.getElementById('fileKtpUpload')!.click();
         }        
     },
     [disableForm]
@@ -836,7 +836,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                 }) => (
                   <>
                     <Label>Upload File gambar ktp</Label>
-                    <input type="file" id="fileUpload" style={{display: 'none'}} onChange={
+                    <input type="file" id="fileKtpUpload" style={{display: 'none'}} onChange={
                       (e) => {_handleFile(e, onChange);}
                     }
                     /> 

@@ -205,7 +205,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
     {skip: dataLama == undefined ? true:dataLama.scanKTP == undefined?true:false});
 
-    console.log(postsPerson);
+    // console.log(postsPerson);
 
     const dragOptions = useMemo(
         (): IDragOptions => ({
@@ -287,6 +287,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
         () => {
             if(postsPerson != undefined) {
                 if(postsPerson.length == 0) {
+                    setValue("nik", nikTextFieldValue);
                     setNamaTextFieldValue('');
                     setTeleponeTextFieldValue('');
                     setEmailTextFieldValue('');
@@ -296,22 +297,96 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                     setSelectedKeyKecamatan(undefined);
                     setSelectedKeyDesa(undefined);
                     setKeteranganAlamatTextFieldValue('');
-                    setDisableForm(false);
+                    setDisableForm(false);                    
                 }
                 else {
-                    let tempPersonData = cloneDeep(postsPerson[0]);
-                    reset(tempPersonData);  //isi dengan data yang varu diambil via restfull
-                    setDataLama(tempPersonData);
+                    let tempPersonData = cloneDeep(postsPerson[0]);                    
+                    
                     setNamaTextFieldValue(tempPersonData.nama!);
                     setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
                     setEmailTextFieldValue(tempPersonData.kontak?.email!);
                     setSelectedKeyJenisKelamin(tempPersonData.jenisKelamin?.id);
                     setSelectedKeyPropinsi(tempPersonData.alamat?.propinsi?.id);
+                    _resetKabupaten();
+                    setQueryKabupatenParams(
+                        prev => {
+                            let tmp = cloneDeep(prev);
+                            let filters = cloneDeep(tmp.filters);
+                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
+                                                                
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'propinsi',
+                                    value: tempPersonData.alamat?.propinsi?.id!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'propinsi',
+                                    value: tempPersonData.alamat?.propinsi?.id!
+                                })
+                            }
+                            
+                            tmp.pageNumber = 1;
+                            tmp.filters = filters;             
+                            return tmp;
+                        }
+                    );
                     setSelectedKeyKabupaten(tempPersonData.alamat?.kabupaten?.id!);
-                    setSelectedKeyKecamatan(tempPersonData.alamat?.kecamatan?.id);
+                    setQueryKecamatanParams(
+                        prev => {
+                            let tmp = cloneDeep(prev);
+                            let filters = cloneDeep(tmp.filters);
+                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                                
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'kabupaten',
+                                    value: tempPersonData.alamat?.kabupaten?.id!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'kabupaten',
+                                    value: tempPersonData.alamat?.kabupaten?.id!
+                                })
+                            }
+                            
+                            tmp.pageNumber = 1;
+                            tmp.filters = filters;             
+                            return tmp;
+                        }
+                    );
+                    setSelectedKeyKecamatan(tempPersonData.alamat?.kecamatan?.id!);
+                    setQueryDesaParams(
+                        prev => {
+                            let tmp = cloneDeep(prev);
+                            let filters = cloneDeep(tmp.filters);
+                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
+                                                                
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'kecamatan',
+                                    value: tempPersonData.alamat?.kecamatan?.id!
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'kecamatan',
+                                    value: tempPersonData.alamat?.kecamatan?.id!
+                                })
+                            }
+                            
+                            tmp.pageNumber = 1;
+                            tmp.filters = filters;             
+                            return tmp;
+                        }
+                    );
                     setSelectedKeyDesa(tempPersonData.alamat?.desa?.id);
                     setKeteranganAlamatTextFieldValue(tempPersonData.alamat?.keterangan!);
 
+                    setDataLama(tempPersonData);
+                    reset(tempPersonData);  //isi dengan data yang baru diambil via restfull
                     setDisableForm(false);
                 }
             }
@@ -320,60 +395,38 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     );
 
     const onSubmit: SubmitHandler<IPerson> = async (data) => {
-        setDisableForm(true);
+        console.log(dataLama);
+        console.log(data);
+        // setDisableForm(true);
         try {
-            let formData = new FormData();
-            switch (mode) {
-                case 'add':          
-                //   formData.append('imageKtp', selectedFiles?.item(0)!);
-                //   formData.append('personData', JSON.stringify(data));
-                //   await savePerson(formData).unwrap().then((originalPromiseResult) => {
-                //     setDisableForm(false);
-                //   }).catch((rejectedValueOrSerializedError) => {
-                //     setDisableForm(false);
-                //   }); 
-                //   hideModal();
-                break;
-                case 'edit':
-                //   if(dataLama?.nik == data.nik) { //update non id
-                //     if(selectedFiles != undefined && selectedFiles?.length > 0) {
-                //       formData.append('imageKtp', selectedFiles?.item(0)!);
-                //       data.scanKTP = dataLama?.scanKTP!;
-                //     }
-                //     formData.append('personData', JSON.stringify(data));
-                //     await updatePerson(formData).unwrap().then((originalPromiseResult) => {
-                //       setDisableForm(false);
-                //     }).catch((rejectedValueOrSerializedError) => {
-                //       setDisableForm(false);
-                //     });             
-                //   }
-                //   else { //update id
-                //     if(selectedFiles != null && selectedFiles?.length > 0) {
-                //       formData.append('imageKtp', selectedFiles?.item(0)!);
-                //       data.scanKTP = dataLama?.scanKTP!;
-                //     }
-                //     formData.append('personData', JSON.stringify(data));
-                //     await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
-                //       setDisableForm(false);
-                //     }).catch((rejectedValueOrSerializedError) => {
-                //       setDisableForm(false);
-                //     }); 
-                //   }     
-                //   hideModal();
-                break;
-                case 'delete':
-                //   await deletePerson(data).unwrap().then((originalPromiseResult) => {
-                //     setDisableForm(false);
-                //   }).catch((rejectedValueOrSerializedError) => {
-                //     setDisableForm(false);
-                //   }); 
-                //   hideModal();
-                break;
-                default:
-                break;
-            }      
+            // let formData = new FormData();            
+            // if(dataLama?.nik == data.nik) { //update non id
+            // if(selectedFiles != undefined && selectedFiles?.length > 0) {
+            //     formData.append('imageKtp', selectedFiles?.item(0)!);
+            //     data.scanKTP = dataLama?.scanKTP!;
+            // }
+            // formData.append('personData', JSON.stringify(data));
+            // await updatePerson(formData).unwrap().then((originalPromiseResult) => {
+            //     setDisableForm(false);
+            // }).catch((rejectedValueOrSerializedError) => {
+            //     setDisableForm(false);
+            // });             
+            // }
+            // else { //update id
+            // if(selectedFiles != null && selectedFiles?.length > 0) {
+            //     formData.append('imageKtp', selectedFiles?.item(0)!);
+            //     data.scanKTP = dataLama?.scanKTP!;
+            // }
+            // formData.append('personData', JSON.stringify(data));
+            // await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
+            //     setDisableForm(false);
+            // }).catch((rejectedValueOrSerializedError) => {
+            //     setDisableForm(false);
+            // }); 
+            // }     
+            // hideModal();
         } catch (error) {
-            setDisableForm(false);
+            // setDisableForm(false);
         }
     };
 
@@ -445,7 +498,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
         (e) => {            
             e.stopPropagation();
             if(!disableForm) {
-            document.getElementById('fileUpload')!.click();
+            document.getElementById('fileKtpUpload')!.click();
             }        
         },
         [disableForm]
@@ -479,7 +532,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                         tmp.filters = filters;             
                         return tmp;
                     }
-                );
+                );                
             }
             else if(textNik.length < 16) {
                 setNikTextFieldValue(textNik);
@@ -680,28 +733,28 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                                         setSelectedKeyPropinsi(option?.key as string);
                                         _resetKabupaten();
                                         setQueryKabupatenParams(
-                                        prev => {
-                                            let tmp = cloneDeep(prev);
-                                            let filters = cloneDeep(tmp.filters);
-                                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
-                                                                                
-                                            if(found == -1) {
-                                                filters?.push({
-                                                    fieldName: 'propinsi',
-                                                    value: option?.key as string
-                                                });
+                                            prev => {
+                                                let tmp = cloneDeep(prev);
+                                                let filters = cloneDeep(tmp.filters);
+                                                let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
+                                                                                    
+                                                if(found == -1) {
+                                                    filters?.push({
+                                                        fieldName: 'propinsi',
+                                                        value: option?.key as string
+                                                    });
+                                                }
+                                                else {
+                                                    filters?.splice(found, 1, {
+                                                        fieldName: 'propinsi',
+                                                        value: option?.key as string
+                                                    })
+                                                }
+                                                
+                                                tmp.pageNumber = 1;
+                                                tmp.filters = filters;             
+                                                return tmp;
                                             }
-                                            else {
-                                                filters?.splice(found, 1, {
-                                                    fieldName: 'propinsi',
-                                                    value: option?.key as string
-                                                })
-                                            }
-                                            
-                                            tmp.pageNumber = 1;
-                                            tmp.filters = filters;             
-                                            return tmp;
-                                        }
                                         );
                                     }
                                     }
@@ -739,28 +792,28 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                                         setSelectedKeyKabupaten(option?.key as string);
                                         _resetKecamatan();
                                         setQueryKecamatanParams(
-                                        prev => {
-                                            let tmp = cloneDeep(prev);
-                                            let filters = cloneDeep(tmp.filters);
-                                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
-                                                                                
-                                            if(found == -1) {
-                                                filters?.push({
-                                                    fieldName: 'kabupaten',
-                                                    value: option?.key as string
-                                                });
+                                            prev => {
+                                                let tmp = cloneDeep(prev);
+                                                let filters = cloneDeep(tmp.filters);
+                                                let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                                                    
+                                                if(found == -1) {
+                                                    filters?.push({
+                                                        fieldName: 'kabupaten',
+                                                        value: option?.key as string
+                                                    });
+                                                }
+                                                else {
+                                                    filters?.splice(found, 1, {
+                                                        fieldName: 'kabupaten',
+                                                        value: option?.key as string
+                                                    })
+                                                }
+                                                
+                                                tmp.pageNumber = 1;
+                                                tmp.filters = filters;             
+                                                return tmp;
                                             }
-                                            else {
-                                                filters?.splice(found, 1, {
-                                                    fieldName: 'kabupaten',
-                                                    value: option?.key as string
-                                                })
-                                            }
-                                            
-                                            tmp.pageNumber = 1;
-                                            tmp.filters = filters;             
-                                            return tmp;
-                                        }
                                         );
                                     }
                                     }
@@ -798,28 +851,28 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                                         setSelectedKeyKecamatan(option?.key as string);
                                         _resetDesa();
                                         setQueryDesaParams(
-                                        prev => {
-                                            let tmp = cloneDeep(prev);
-                                            let filters = cloneDeep(tmp.filters);
-                                            let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
-                                                                                
-                                            if(found == -1) {
-                                                filters?.push({
-                                                    fieldName: 'kecamatan',
-                                                    value: option?.key as string
-                                                });
+                                            prev => {
+                                                let tmp = cloneDeep(prev);
+                                                let filters = cloneDeep(tmp.filters);
+                                                let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
+                                                                                    
+                                                if(found == -1) {
+                                                    filters?.push({
+                                                        fieldName: 'kecamatan',
+                                                        value: option?.key as string
+                                                    });
+                                                }
+                                                else {
+                                                    filters?.splice(found, 1, {
+                                                        fieldName: 'kecamatan',
+                                                        value: option?.key as string
+                                                    })
+                                                }
+                                                
+                                                tmp.pageNumber = 1;
+                                                tmp.filters = filters;             
+                                                return tmp;
                                             }
-                                            else {
-                                                filters?.splice(found, 1, {
-                                                    fieldName: 'kecamatan',
-                                                    value: option?.key as string
-                                                })
-                                            }
-                                            
-                                            tmp.pageNumber = 1;
-                                            tmp.filters = filters;             
-                                            return tmp;
-                                        }
                                         );
                                     }
                                     }
@@ -904,60 +957,60 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
             </Stack.Item>
             <Stack.Item>
                 <Controller 
-                name="scanKTP"
-                control={control}
-                render={
-                    ({
-                    field: {onChange, onBlur}, 
-                    fieldState: { error }
-                    }) => (
-                    <>
-                        <Label>Upload File gambar ktp</Label>
-                        <input type="file" id="fileUpload" style={{display: 'none'}} onChange={
-                        (e) => {_handleFile(e, onChange);}
-                        }
-                        /> 
-                        <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
-                        {
-                            (selectedFiles == undefined && postDataImage == undefined ) ? (
-                            <>                  
-                                <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
-                                <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
-                                <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
-                                {
-                                error && (
-                                    <Label disabled style={{paddingTop: 0, color: 'red'}}>Error: Anda harus menyertakan file gambar ktp</Label>
+                    name="scanKTP"
+                    control={control}
+                    render={
+                        ({
+                        field: {onChange, onBlur}, 
+                        fieldState: { error }
+                        }) => (
+                        <>
+                            <Label>Upload File gambar ktp</Label>
+                            <input type="file" id="fileKtpUpload" style={{display: 'none'}} onChange={
+                                (e) => {_handleFile(e, onChange);}
+                            }
+                            /> 
+                            <div className={contentStyles.imageContainer} onClick={bindClickEventInputFile}> 
+                            {
+                                (selectedFiles == undefined && postDataImage == undefined ) ? (
+                                <>                  
+                                    <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
+                                    <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
+                                    <Label disabled style={{paddingTop: 0}}>(ukuran maksimal file 4MB)</Label><br/>
+                                    {
+                                    error && (
+                                        <Label disabled style={{paddingTop: 0, color: 'red'}}>Error: Anda harus menyertakan file gambar ktp</Label>
+                                    )
+                                    }
+                                </>
+                                ) : null
+                            }
+                            {
+                                selectedFiles && (
+                                <img
+                                    width={400}
+                                    height={226}
+                                    style={{objectFit: 'contain'}}
+                                    // imageFit={ImageFit.centerContain}
+                                    src={URL.createObjectURL(selectedFiles[0])}
+                                />
                                 )
-                                }
-                            </>
-                            ) : null
-                        }
-                        {
-                            selectedFiles && (
-                            <img
-                                width={400}
-                                height={226}
-                                style={{objectFit: 'contain'}}
-                                // imageFit={ImageFit.centerContain}
-                                src={URL.createObjectURL(selectedFiles[0])}
-                            />
-                            )
-                        }
-                        {
-                            postDataImage && !selectedFiles && (
-                            <img
-                                width={400}
-                                height={226}
-                                style={{objectFit: 'contain'}}
-                                // imageFit={ImageFit.centerContain}
-                                src={postDataImage}
-                            />
-                            )
-                        }
-                        </div>  
-                    </>                  
-                    )
-                }
+                            }
+                            {
+                                postDataImage && !selectedFiles && (
+                                <img
+                                    width={400}
+                                    height={226}
+                                    style={{objectFit: 'contain'}}
+                                    // imageFit={ImageFit.centerContain}
+                                    src={postDataImage}
+                                />
+                                )
+                            }
+                            </div>  
+                        </>                  
+                        )
+                    }
                 />    
                 <div className={contentStyles.infoBoxContainer}>
                 <p style={{textAlign: 'justify',textJustify: 'inter-word'}}>
@@ -968,10 +1021,10 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
             </Stack.Item>
             </Stack>
             <PrimaryButton 
-            style={{marginTop: 16, width: '100%'}}
-            text={mode == 'delete' ? 'Hapus':'Simpan'} 
-            onClick={handleSubmit(onSubmit, onError)}
-            disabled={disableForm}
+                style={{marginTop: 16, width: '100%'}}
+                text={mode == 'delete' ? 'Hapus':'Simpan'} 
+                onClick={handleSubmit(onSubmit, onError)}
+                disabled={disableForm}
             />
         </div>
         </Modal>
