@@ -6,6 +6,7 @@ export interface IPerson {
     nik: string|null;
     nama: string|null;
     jenisKelamin: Partial<IJenisKelamin>|null;
+    statusVerified: boolean|null;
     alamat: Partial<IAlamat>|null;
     kontak: Partial<IKontak>|null;
     scanKTP: string|null;

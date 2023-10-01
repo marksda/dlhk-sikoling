@@ -31,12 +31,22 @@ export const sikolingApi = createApi({
                 query: (path) => ({
                     url:`/file/download?fileNameParam=${path}`,
                     method: 'GET',
-                    responseHandler: (response) => response.blob()
+                    responseHandler: (response) => {
+                        if(response.status == 500) {
+                            return response.json();
+                        }
+                        else {
+                            return response.blob();
+                        }
+                    }
                 }),
                 providesTags: ['Image'],
                 transformResponse: (response:Blob): any|null => {
                     return URL.createObjectURL(response);
-                },                
+                },     
+                transformErrorResponse: (response, meta, arg) => {
+                    // console.log(response);
+                }           
             }),
             saveJenisKelamin: builder.mutation<IJenisKelamin, Partial<IJenisKelamin>>({
                 query: (body) => ({

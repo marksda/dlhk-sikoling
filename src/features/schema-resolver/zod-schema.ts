@@ -50,6 +50,7 @@ export const PersonSchema = object({
     nik: z.string().regex(/^\d+$/, 'format salah').length(16, 'harus 16 digit'),
     nama: z.string().nullable(),
     jenisKelamin: JenisKelaminSchema.nullable(),
+    statusVerified: z.boolean(),
     alamat: AlamatSchema.nullable(),
     kontak: KontakSchema.nullable(),
     scanKTP: z.string()
