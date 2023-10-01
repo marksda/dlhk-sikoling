@@ -322,58 +322,58 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     const onSubmit: SubmitHandler<IPerson> = async (data) => {
         setDisableForm(true);
         try {
-        let formData = new FormData();
-        switch (mode) {
-            case 'add':          
-            //   formData.append('imageKtp', selectedFiles?.item(0)!);
-            //   formData.append('personData', JSON.stringify(data));
-            //   await savePerson(formData).unwrap().then((originalPromiseResult) => {
-            //     setDisableForm(false);
-            //   }).catch((rejectedValueOrSerializedError) => {
-            //     setDisableForm(false);
-            //   }); 
-            //   hideModal();
-            break;
-            case 'edit':
-            //   if(dataLama?.nik == data.nik) { //update non id
-            //     if(selectedFiles != undefined && selectedFiles?.length > 0) {
-            //       formData.append('imageKtp', selectedFiles?.item(0)!);
-            //       data.scanKTP = dataLama?.scanKTP!;
-            //     }
-            //     formData.append('personData', JSON.stringify(data));
-            //     await updatePerson(formData).unwrap().then((originalPromiseResult) => {
-            //       setDisableForm(false);
-            //     }).catch((rejectedValueOrSerializedError) => {
-            //       setDisableForm(false);
-            //     });             
-            //   }
-            //   else { //updare id
-            //     if(selectedFiles != null && selectedFiles?.length > 0) {
-            //       formData.append('imageKtp', selectedFiles?.item(0)!);
-            //       data.scanKTP = dataLama?.scanKTP!;
-            //     }
-            //     formData.append('personData', JSON.stringify(data));
-            //     await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
-            //       setDisableForm(false);
-            //     }).catch((rejectedValueOrSerializedError) => {
-            //       setDisableForm(false);
-            //     }); 
-            //   }     
-            //   hideModal();     
-            break;
-            case 'delete':
-            //   await deletePerson(data).unwrap().then((originalPromiseResult) => {
-            //     setDisableForm(false);
-            //   }).catch((rejectedValueOrSerializedError) => {
-            //     setDisableForm(false);
-            //   }); 
-            //   hideModal();
-            break;
-            default:
-            break;
-        }      
+            let formData = new FormData();
+            switch (mode) {
+                case 'add':          
+                //   formData.append('imageKtp', selectedFiles?.item(0)!);
+                //   formData.append('personData', JSON.stringify(data));
+                //   await savePerson(formData).unwrap().then((originalPromiseResult) => {
+                //     setDisableForm(false);
+                //   }).catch((rejectedValueOrSerializedError) => {
+                //     setDisableForm(false);
+                //   }); 
+                //   hideModal();
+                break;
+                case 'edit':
+                //   if(dataLama?.nik == data.nik) { //update non id
+                //     if(selectedFiles != undefined && selectedFiles?.length > 0) {
+                //       formData.append('imageKtp', selectedFiles?.item(0)!);
+                //       data.scanKTP = dataLama?.scanKTP!;
+                //     }
+                //     formData.append('personData', JSON.stringify(data));
+                //     await updatePerson(formData).unwrap().then((originalPromiseResult) => {
+                //       setDisableForm(false);
+                //     }).catch((rejectedValueOrSerializedError) => {
+                //       setDisableForm(false);
+                //     });             
+                //   }
+                //   else { //update id
+                //     if(selectedFiles != null && selectedFiles?.length > 0) {
+                //       formData.append('imageKtp', selectedFiles?.item(0)!);
+                //       data.scanKTP = dataLama?.scanKTP!;
+                //     }
+                //     formData.append('personData', JSON.stringify(data));
+                //     await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
+                //       setDisableForm(false);
+                //     }).catch((rejectedValueOrSerializedError) => {
+                //       setDisableForm(false);
+                //     }); 
+                //   }     
+                //   hideModal();
+                break;
+                case 'delete':
+                //   await deletePerson(data).unwrap().then((originalPromiseResult) => {
+                //     setDisableForm(false);
+                //   }).catch((rejectedValueOrSerializedError) => {
+                //     setDisableForm(false);
+                //   }); 
+                //   hideModal();
+                break;
+                default:
+                break;
+            }      
         } catch (error) {
-        setDisableForm(false);
+            setDisableForm(false);
         }
     };
 
