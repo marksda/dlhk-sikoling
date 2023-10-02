@@ -324,14 +324,16 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                 }
                 else {
                     let tempPersonData = cloneDeep(postsPerson[0]); 
+                    console.log(tempPersonData);
+                    reset();
                     setNamaTextFieldValue(tempPersonData.nama!);
                     setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
                     setEmailTextFieldValue(tempPersonData.kontak?.email!);
                     setSelectedKeyJenisKelamin(tempPersonData.jenisKelamin?.id);
                     setIsApproved(tempPersonData.statusVerified!);
-                    setSelectedKeyPropinsi(tempPersonData.alamat?.propinsi?.id);
+                    setSelectedKeyPropinsi(tempPersonData.alamat?.propinsi ? tempPersonData.alamat?.propinsi?.id:null);
                     _resetKabupaten();
-                    setQueryKabupatenParams(
+                    tempPersonData.alamat?.propinsi ? setQueryKabupatenParams(
                         prev => {
                             let tmp = cloneDeep(prev);
                             let filters = cloneDeep(tmp.filters);
@@ -354,9 +356,9 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                             tmp.filters = filters;             
                             return tmp;
                         }
-                    );
-                    setSelectedKeyKabupaten(tempPersonData.alamat?.kabupaten?.id!);
-                    setQueryKecamatanParams(
+                    ):null;
+                    setSelectedKeyKabupaten(tempPersonData.alamat?.kabupaten ? tempPersonData.alamat?.kabupaten?.id!:null);
+                    tempPersonData.alamat?.kabupaten ? setQueryKecamatanParams(
                         prev => {
                             let tmp = cloneDeep(prev);
                             let filters = cloneDeep(tmp.filters);
@@ -379,9 +381,9 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                             tmp.filters = filters;             
                             return tmp;
                         }
-                    );
-                    setSelectedKeyKecamatan(tempPersonData.alamat?.kecamatan?.id!);
-                    setQueryDesaParams(
+                    ):null;
+                    setSelectedKeyKecamatan(tempPersonData.alamat?.kecamatan ? tempPersonData.alamat?.kecamatan?.id!:null);
+                    tempPersonData.alamat?.kecamatan ? setQueryDesaParams(
                         prev => {
                             let tmp = cloneDeep(prev);
                             let filters = cloneDeep(tmp.filters);
@@ -404,8 +406,8 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                             tmp.filters = filters;             
                             return tmp;
                         }
-                    );
-                    setSelectedKeyDesa(tempPersonData.alamat?.desa?.id);
+                    ):null;
+                    setSelectedKeyDesa(tempPersonData.alamat?.desa ? tempPersonData.alamat?.desa?.id:null);
                     setKeteranganAlamatTextFieldValue(tempPersonData.alamat?.keterangan!);
 
                     setDataLama(tempPersonData);
@@ -495,7 +497,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
 
     const _handleOnDismissed = useCallback(
         () => {
-        setDisableForm(false);
+            setDisableForm(false);
         },
         []
     );
