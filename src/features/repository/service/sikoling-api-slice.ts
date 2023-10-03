@@ -359,13 +359,13 @@ export const sikolingApi = createApi({
             getJumlahDataPegawai: builder.query<number, qFilters>({
                 query: (queryFilters) => `/pegawai_perusahaan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            addDirektur: builder.mutation<string, FormData>({
+            addDirektur: builder.mutation<IPegawai, FormData>({
                 query: (dataForm) => ({
                     url: '/pegawai_perusahaan/add_direktur',
                     method: 'POST',
                     body: dataForm,
                 }),
-                invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
+                invalidatesTags: (result) => result ? ['Pegawai']:['Kosong']
             }),
             saveRegisterPerusahaan: builder.mutation<IRegisterPerusahaan, Partial<IRegisterPerusahaan>>({
                 query: (registerPerusahaan) => ({

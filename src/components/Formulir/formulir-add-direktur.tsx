@@ -8,12 +8,14 @@ import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useAddDirekturMutation, useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 import { useAppSelector } from "../../app/hooks";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
 
 
 interface IFormulirAddDirekturFluentUIProps {
   title: string|undefined;
+  registerPerusahaan?: IRegisterPerusahaan;
   isModalOpen: boolean;
   hideModal: () => void;
 };
@@ -110,7 +112,7 @@ const toggleStyles = {
     },
 };
 
-export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({title, isModalOpen, hideModal}) => { 
+export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({title, registerPerusahaan, isModalOpen, hideModal}) => { 
     const token = useAppSelector((state) => state.token);
     // local state
     const [mode, setMode] = useState<string>('add');
@@ -206,6 +208,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
         ],
     });  
     const { data: postsPerson, isLoading: isLoadingCheckNik } = useGetDaftarDataPersonQuery(queryParams, {skip: nikTextFieldValue.length == 16 ? false:true}); 
+    const [ addDirektur, {isLoading: isLoadingAddDirektur}] = useAddDirekturMutation();
     const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
     const [ updatePerson, { isLoading: isLoadingUpdatePerson}] = useUpdatePersonMutation();
     const [ updateIdPerson, { isLoading: isLoadingUpdateIdPerson}] = useUpdateIdPersonMutation();
@@ -422,21 +425,25 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     const onSubmit: SubmitHandler<IPerson> = async (data) => {
         // console.log(dataLama);
         // console.log(data);
-        // setDisableForm(true);
+        setDisableForm(true);
         try {
-            // let formData = new FormData();            
-            // if(dataLama?.nik == data.nik) { //update non id
-            // if(selectedFiles != undefined && selectedFiles?.length > 0) {
-            //     formData.append('imageKtp', selectedFiles?.item(0)!);
-            //     data.scanKTP = dataLama?.scanKTP!;
-            // }
-            // formData.append('personData', JSON.stringify(data));
-            // await updatePerson(formData).unwrap().then((originalPromiseResult) => {
-            //     setDisableForm(false);
-            // }).catch((rejectedValueOrSerializedError) => {
-            //     setDisableForm(false);
-            // });             
-            // }
+            let formData = new FormData();    
+
+            if(selectedFiles != undefined && selectedFiles?.length > 0) {
+                formData.append('imageKtp', selectedFiles?.item(0)!);
+                data.scanKTP = dataLama?.scanKTP!;
+            }
+
+            formData.append('personData', JSON.stringify(data));
+            formData.append('registerPerusahaanData', JSON.stringify(registerPerusahaan));
+
+            await addDirektur(formData).unwrap().then((originalPromiseResult) => {
+                setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+                setDisableForm(false);
+            });        
+
+            
             // else { //update id
             // if(selectedFiles != null && selectedFiles?.length > 0) {
             //     formData.append('imageKtp', selectedFiles?.item(0)!);
@@ -449,9 +456,9 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
             //     setDisableForm(false);
             // }); 
             // }     
-            // hideModal();
+            hideModal();
         } catch (error) {
-            // setDisableForm(false);
+            setDisableForm(false);
         }
     };
 

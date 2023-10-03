@@ -735,6 +735,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
       { isModalFormulirPegawaiOpen == true ?
         <FormulirAddDirektur
             title="Add Direktur"
+            registerPerusahaan={registerPerusahaan}
             isModalOpen={isModalFormulirPegawaiOpen}
             hideModal={hideModalFormulirPegawai}
         />:null
