@@ -116,7 +116,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     const token = useAppSelector((state) => state.token);
     // local state
     const [mode, setMode] = useState<string>('add');
-    const [dataLama, setDataLama] = useState<IPerson|undefined>(undefined);
+    const [dataLama, setDataLama] = useState<IPerson|undefined|null>(undefined);
     const [nikTextFieldValue, setNikTextFieldValue] = useState<string>('');
     const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>('');
     const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>('');
@@ -321,13 +321,12 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                     setSelectedKeyDesa(undefined);
                     setKeteranganAlamatTextFieldValue('');
 
-                    setDataLama(undefined);
+                    setDataLama(null);
                     reset();
                     setDisableForm(false);                    
                 }
                 else {
                     let tempPersonData = cloneDeep(postsPerson[0]); 
-                    console.log(tempPersonData);
                     reset();
                     setNamaTextFieldValue(tempPersonData.nama!);
                     setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
@@ -441,21 +440,8 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                 setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
                 setDisableForm(false);
-            });        
-
+            });     
             
-            // else { //update id
-            // if(selectedFiles != null && selectedFiles?.length > 0) {
-            //     formData.append('imageKtp', selectedFiles?.item(0)!);
-            //     data.scanKTP = dataLama?.scanKTP!;
-            // }
-            // formData.append('personData', JSON.stringify(data));
-            // await updateIdPerson({idLama: `${dataLama?.nik}`, dataForm: formData}).unwrap().then((originalPromiseResult) => {
-            //     setDisableForm(false);
-            // }).catch((rejectedValueOrSerializedError) => {
-            //     setDisableForm(false);
-            // }); 
-            // }     
             hideModal();
         } catch (error) {
             setDisableForm(false);

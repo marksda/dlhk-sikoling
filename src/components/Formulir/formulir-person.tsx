@@ -308,7 +308,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
               setDisableForm(false);
             });             
           }
-          else { //updare id
+          else { //update id
             if(selectedFiles != null && selectedFiles?.length > 0) {
               formData.append('imageKtp', selectedFiles?.item(0)!);
               data.scanKTP = dataLama?.scanKTP!;
