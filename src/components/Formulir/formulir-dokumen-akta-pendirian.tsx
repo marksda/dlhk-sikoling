@@ -725,7 +725,7 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
           </Stack>            
         </Stack.Item>         
         }     
-        {(configOnlyOfficeEditor == null && mode != 'add') || isLoadingUploadFile &&
+        {(configOnlyOfficeEditor == null || isLoadingUploadFile) &&
         <Stack.Item align="center">
           <Label>Please wait...</Label>
           <Spinner size={SpinnerSize.large} />
