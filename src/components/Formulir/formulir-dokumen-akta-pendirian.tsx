@@ -558,7 +558,6 @@ export const FormulirRegisterDokumenAktaPendirian: FC<IFormulirRegisterDokumenAk
                       {registerPerusahaan?.perusahaan?.pelakuUsaha != undefined ?
                       `${registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${registerPerusahaan?.perusahaan?.nama}`:
                       `${registerPerusahaan?.perusahaan?.nama}`}
-
                     </Label>
                   </Stack.Item>
                 }
