@@ -1028,7 +1028,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                             /> 
                             <div className={contentStyles.imageContainer} onClick={_bindClickEventInputFile}> 
                             {
-                                (selectedFiles == undefined && dataLama == undefined || imageKtp == undefined) ? (
+                                (selectedFiles == undefined && dataLama == undefined) ? (
                                 <>                  
                                     <FontIcon aria-label="Icon" iconName="OpenFile" className={contentStyles.iconContainer}/>
                                     <Label disabled style={{paddingBottom: 0}}>Clik untuk memilih / mengganti file</Label>
