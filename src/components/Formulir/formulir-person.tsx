@@ -89,7 +89,7 @@ const contentStyles = mergeStyleSets({
   },
 });
 const stackTokens = { childrenGap: 8 };
-const textFieldKtpStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 140 } };
+const textFieldKtpStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 350 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
@@ -103,7 +103,7 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const basicStyles: Partial<IComboBoxStyles> = { root: { width: 140 } };
+const basicStyles: Partial<IComboBoxStyles> = { root: { width: 250 } };
 const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
 
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
@@ -555,20 +555,20 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                     }) => (
                       <ComboBox
                         label="Jenis kelamin"
-                      placeholder="Pilih"
-                      allowFreeform={true}
-                      options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
-                      selectedKey={selectedKeyJenisKelamin}
-                      useComboBoxAsMenuWidth={true} 
-                      styles={basicStyles}           
-                      errorMessage={error && 'harus diisi'}
-                      onChange={
-                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                          let hasil = cloneDeep(postsJenisKelamin?.at(index!));
-                          onChange(hasil);
-                          setSelectedKeyJenisKelamin(option?.key as string);
+                        placeholder="Pilih"
+                        allowFreeform={true}
+                        options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                        selectedKey={selectedKeyJenisKelamin}
+                        useComboBoxAsMenuWidth={true} 
+                        styles={basicStyles}           
+                        errorMessage={error && 'harus diisi'}
+                        onChange={
+                          (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                            let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                            onChange(hasil);
+                            setSelectedKeyJenisKelamin(option?.key as string);
+                          }
                         }
-                      }
                         disabled={mode == 'delete' ? true:disableForm}
                       />
                     )}
