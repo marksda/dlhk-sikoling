@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Modal , PrimaryButton, Stack, TextField, Toggle, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { PersonSchema } from "../../features/schema-resolver/zod-schema";
@@ -9,6 +9,7 @@ import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
 import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useAppSelector } from "../../app/hooks";
 
 
 interface IFormulirPersonFluentUIProps {
@@ -105,8 +106,15 @@ const iconButtonStyles = {
 };
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 250 } };
 const alamatStyles: Partial<IComboBoxStyles> = { root: { width: 253 } };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '150px',
+    },
+};
 
 export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+  const token = useAppSelector((state) => state.token);
   // local state
   const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
@@ -114,6 +122,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
   const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.alamat?.keterangan!:'');
   const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
   const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
   const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
@@ -176,7 +185,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
   const titleId = useId('title');
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
-  const {control, handleSubmit, resetField} = useForm<IPerson>({
+  const {control, handleSubmit, setValue, resetField} = useForm<IPerson>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
     resolver: zodResolver(PersonSchema),
   });
@@ -410,7 +419,15 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         }        
     },
     [disableForm]
-);
+  );
+
+  const _onChangeApproved = useCallback(
+    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
+      setValue("statusVerified", checked!);             
+      setIsApproved(checked!);  
+    },
+    []
+  );
 
   return (
     <Modal
@@ -545,34 +562,57 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
             </Stack>
             <Stack horizontal tokens={stackTokens}>
               <Stack.Item>
-                <Controller 
-                  name="jenisKelamin"
-                  control={control}
-                  render={
-                    ({
-                      field: {onChange, onBlur}, 
-                      fieldState: { error }
-                    }) => (
-                      <ComboBox
-                        label="Jenis kelamin"
-                        placeholder="Pilih"
-                        allowFreeform={true}
-                        options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
-                        selectedKey={selectedKeyJenisKelamin}
-                        useComboBoxAsMenuWidth={true} 
-                        styles={basicStyles}           
-                        errorMessage={error && 'harus diisi'}
-                        onChange={
-                          (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                            let hasil = cloneDeep(postsJenisKelamin?.at(index!));
-                            onChange(hasil);
-                            setSelectedKeyJenisKelamin(option?.key as string);
-                          }
-                        }
-                        disabled={mode == 'delete' ? true:disableForm}
-                      />
-                    )}
-                />
+                <Stack>
+                  <Stack.Item>
+                    <Controller 
+                      name="jenisKelamin"
+                      control={control}
+                      render={
+                        ({
+                          field: {onChange, onBlur}, 
+                          fieldState: { error }
+                        }) => (
+                          <ComboBox
+                            label="Jenis kelamin"
+                            placeholder="Pilih"
+                            allowFreeform={true}
+                            options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                            selectedKey={selectedKeyJenisKelamin}
+                            useComboBoxAsMenuWidth={true} 
+                            styles={basicStyles}           
+                            errorMessage={error && 'harus diisi'}
+                            onChange={
+                              (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                onChange(hasil);
+                                setSelectedKeyJenisKelamin(option?.key as string);
+                              }
+                            }
+                            disabled={mode == 'delete' ? true:disableForm}
+                          />
+                        )}
+                    />
+                  </Stack.Item>
+                  {token.hakAkses == 'Administrator' ?
+                  <Stack.Item>
+                      <Stack horizontal tokens={stackTokens} style={{marginTop: 16}}>
+                          <Stack.Item>
+                              <span>Approved</span>
+                          </Stack.Item>            
+                          <Stack.Item>
+                              <Toggle
+                                  checked={isApproved}
+                                  onChange={_onChangeApproved}
+                                  styles={toggleStyles}
+                                  onText="Sudah"
+                                  offText="Belum"
+                                  disabled={disableForm}
+                              />
+                          </Stack.Item>
+                      </Stack>
+                  </Stack.Item>:null        
+                  } 
+                </Stack>
               </Stack.Item>
               <Stack.Item>
                 <Label>Alamat</Label>

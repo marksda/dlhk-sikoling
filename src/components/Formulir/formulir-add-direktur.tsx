@@ -422,8 +422,6 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
     );
 
     const onSubmit: SubmitHandler<IPerson> = async (data) => {
-        // console.log(dataLama);
-        // console.log(data);
         setDisableForm(true);
         try {
             let formData = new FormData();    
@@ -705,32 +703,32 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                         <Stack>                
                             <Stack.Item>
                                 <Controller 
-                                name="jenisKelamin"
-                                control={control}
-                                render={
-                                    ({
-                                    field: {onChange, onBlur}, 
-                                    fieldState: { error }
-                                    }) => (
-                                    <ComboBox
-                                        label="Jenis kelamin"
-                                    placeholder="Pilih"
-                                    allowFreeform={true}
-                                    options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
-                                    selectedKey={selectedKeyJenisKelamin}
-                                    useComboBoxAsMenuWidth={true} 
-                                    styles={basicStyles}           
-                                    errorMessage={error && 'harus diisi'}
-                                    onChange={
-                                        (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-                                        let hasil = cloneDeep(postsJenisKelamin?.at(index!));
-                                        onChange(hasil);
-                                        setSelectedKeyJenisKelamin(option?.key as string);
+                                    name="jenisKelamin"
+                                    control={control}
+                                    render={
+                                        ({
+                                        field: {onChange, onBlur}, 
+                                        fieldState: { error }
+                                        }) => (
+                                        <ComboBox
+                                            label="Jenis kelamin"
+                                        placeholder="Pilih"
+                                        allowFreeform={true}
+                                        options={optionsJenisKelamin != undefined ? optionsJenisKelamin:[]}
+                                        selectedKey={selectedKeyJenisKelamin}
+                                        useComboBoxAsMenuWidth={true} 
+                                        styles={basicStyles}           
+                                        errorMessage={error && 'harus diisi'}
+                                        onChange={
+                                            (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                                            let hasil = cloneDeep(postsJenisKelamin?.at(index!));
+                                            onChange(hasil);
+                                            setSelectedKeyJenisKelamin(option?.key as string);
+                                            }
                                         }
-                                    }
-                                        disabled={isApproved ? true:disableForm}
-                                    />
-                                    )}
+                                            disabled={isApproved ? true:disableForm}
+                                        />
+                                        )}
                                 />                        
                             </Stack.Item>
                             {token.hakAkses == 'Administrator' ?
