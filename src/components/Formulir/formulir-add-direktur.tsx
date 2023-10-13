@@ -1077,7 +1077,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                 style={{marginTop: 16, width: '100%'}}
                 text={mode == 'delete' ? 'Hapus':'Simpan'} 
                 onClick={handleSubmit(onSubmit, onError)}
-                disabled={isApproved == true ? true:disableForm}
+                disabled={disableForm}
             />
         </div>
         </Modal>
