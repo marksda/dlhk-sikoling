@@ -309,7 +309,6 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
         () => {
             if(postsPerson != undefined) {
                 if(postsPerson.length == 0) {
-                    setValue("nik", nikTextFieldValue);
                     setNamaTextFieldValue('');
                     setTeleponeTextFieldValue('');
                     setEmailTextFieldValue('');
@@ -323,6 +322,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
 
                     setDataLama(null);
                     reset();
+                    setValue("nik", nikTextFieldValue);
                     setDisableForm(false);                    
                 }
                 else {
@@ -418,7 +418,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                 }
             }
         },
-        [postsPerson]
+        [postsPerson, nikTextFieldValue]
     );
 
     const onSubmit: SubmitHandler<IPerson> = async (data) => {
@@ -604,7 +604,7 @@ export const FormulirAddDirektur: FC<IFormulirAddDirekturFluentUIProps> = ({titl
                                 value={nikTextFieldValue}
                                 onChange={
                                     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                    onChange(newValue || '');
+                                    // onChange(newValue || '');
                                     _handleNikChange(newValue || '');
                                     // setNikTextFieldValue(newValue || '');
                                     }
