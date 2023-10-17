@@ -1,6 +1,6 @@
 import { ComboBox, ContextualMenu, FontIcon, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Label, Modal , PrimaryButton, Stack, TextField, Toggle, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, FormEvent, useCallback, useMemo, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { PersonSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import cloneDeep from "lodash.clonedeep";
 import { IPerson } from "../../features/entity/person";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { getFileType } from "../../features/config/helper-function";
-import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeletePersonMutation, useGetDaftarDataDesaQuery, useGetDaftarDataJenisKelaminQuery, useGetDaftarDataKabupatenQuery, useGetDaftarDataKecamatanQuery, useGetDaftarDataPersonQuery, useGetDaftarDataPropinsiQuery, useGetDataImageQuery, useSavePersonMutation, useUpdateIdPersonMutation, useUpdatePersonMutation } from "../../features/repository/service/sikoling-api-slice";
 import { useAppSelector } from "../../app/hooks";
 
 
@@ -18,7 +18,7 @@ interface IFormulirPersonFluentUIProps {
   isModalOpen: boolean;
   showModal: () => void;
   hideModal: () => void;
-  dataLama?: IPerson;
+  nik?: string;
 };
 const theme = getTheme();
 const contentStyles = mergeStyleSets({
@@ -85,7 +85,7 @@ const contentStyles = mergeStyleSets({
     border: '1px dashed rgb(231 10 10)',
     marginTop: 16,
     width: 400,
-    height: 135,
+    height: 170,
     padding: 4,
   },
 });
@@ -113,20 +113,21 @@ const toggleStyles = {
     },
 };
 
-export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModalOpen, hideModal, nik, mode}) => { 
   const token = useAppSelector((state) => state.token);
   // local state
-  const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nik!:'');
-  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>(dataLama != undefined ? dataLama.nama!:'');
-  const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.telepone!:'');
-  const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kontak?.email!:'');
-  const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.alamat?.keterangan!:'');
-  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(dataLama != undefined ? dataLama.jenisKelamin?.id!:undefined);
+  const [dataLama, setDataLama] = useState<IPerson|undefined|null>(undefined);
+  const [nikTextFieldValue, setNikTextFieldValue] = useState<string>(nik != undefined ? nik:'');
+  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string|undefined>('');
+  const [teleponeTextFieldValue, setTeleponeTextFieldValue] = useState<string>('');
+  const [emailTextFieldValue, setEmailTextFieldValue] = useState<string>('');
+  const [keteranganAlamatTextFieldValue, setKeteranganAlamatTextFieldValue] = useState<string>('');
+  const [selectedKeyJenisKelamin, setSelectedKeyJenisKelamin] = useState<string|undefined|null>(undefined);
   const [isApproved, setIsApproved] = useState<boolean>(false);
-  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.propinsi?.id!:undefined);
-  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kabupaten?.id!:undefined);
-  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.kecamatan?.id!:undefined);
-  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined|null>(dataLama != undefined ? dataLama.alamat?.desa?.id!:undefined);
+  const [selectedKeyPropinsi, setSelectedKeyPropinsi] = useState<string|undefined|null>(undefined);
+  const [selectedKeyKabupaten, setSelectedKeyKabupaten] = useState<string|undefined|null>(undefined);
+  const [selectedKeyKecamatan, setSelectedKeyKecamatan] = useState<string|undefined|null>(undefined);
+  const [selectedKeyDesa, setSelectedKeyDesa] = useState<string|undefined|null>(undefined);
   const [queryPropinsiParams, setQueryPropinsiParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 100,
@@ -139,54 +140,59 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     ],
   });
   const [queryKabupatenParams, setQueryKabupatenParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'propinsi',
-      value: dataLama.alamat?.propinsi?.id as string
-    }],
-    sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
-    ],
+      pageNumber: 1,
+      pageSize: 100,
+      filters: [],
+      sortOrders: [
+          {
+              fieldName: 'nama',
+              value: 'ASC'
+          },
+      ],
   });
   const [queryKecamatanParams, setQueryKecamatanParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'kabupaten',
-      value: dataLama.alamat?.kabupaten?.id as string
-    }],
-    sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
-    ],
+      pageNumber: 1,
+      pageSize: 100,
+      filters: [],
+      sortOrders: [
+          {
+              fieldName: 'nama',
+              value: 'ASC'
+          },
+      ],
   });
   const [queryDesaParams, setQueryDesaParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'kecamatan',
-      value: dataLama.alamat?.kecamatan?.id as string
-    }],
-    sortOrders: [
-        {
-            fieldName: 'nama',
+      pageNumber: 1,
+      pageSize: 100,
+      filters: [],
+      sortOrders: [
+          {
+              fieldName: 'nama',
+              value: 'ASC'
+          },
+      ],
+  });
+  const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
+      pageNumber: 1,
+      pageSize: 0,
+      filters: nik != undefined ? 
+      [{
+        fieldName: 'nik',
+        value: nik
+      }]:[],
+      sortOrders: [
+          {
+            fieldName: 'nik',
             value: 'ASC'
-        },
-    ],
+          },
+      ],
   });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   const [selectedFiles, setSelectedFiles] = useState<FileList|undefined|null>(undefined);
   //hook-form
-  const {control, handleSubmit, setValue, resetField} = useForm<IPerson>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
+  const {control, setValue, handleSubmit, reset, resetField} = useForm<IPerson>({
     resolver: zodResolver(PersonSchema),
   });
   // rtk query
@@ -205,13 +211,14 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
         },
     ],
   });  
+  const { data: postsPerson, isLoading: isLoadingCheckNik } = useGetDaftarDataPersonQuery(queryParams, {skip: nikTextFieldValue.length == 16 ? false:true});
   const [ savePerson, {isLoading: isLoadingSaveHakAkses}] = useSavePersonMutation();
   const [ updatePerson, { isLoading: isLoadingUpdatePerson}] = useUpdatePersonMutation();
   const [ updateIdPerson, { isLoading: isLoadingUpdateIdPerson}] = useUpdateIdPersonMutation();
   const [ deletePerson, { isLoading: isLoadingDeletePerson}] = useDeletePersonMutation();
-  const { data: postDataImage, isLoading: isLoadingDataImage } = useGetDataImageQuery(
-    dataLama == undefined ? '':(dataLama.scanKTP == undefined?'':dataLama.scanKTP),
-    {skip: dataLama == undefined ? true:dataLama.scanKTP == undefined?true:false});
+  const { data: postDataImage, isLoading: isLoadingDataImage, error } = useGetDataImageQuery(
+    dataLama == undefined ? '':(dataLama.scanKTP == undefined ? 'kosong':dataLama.scanKTP),
+    {skip: dataLama == undefined ? true:false});
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -222,6 +229,18 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
       dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
     }),
     [keepInBounds],
+  );
+
+  const imageKtp = useMemo(
+    () => {
+        if(error == undefined) {
+            return postDataImage;
+        }
+        else {
+            return undefined;
+        }
+    },
+    [postDataImage, error]
   );
 
   const optionsJenisKelamin: IComboBoxOption[]|undefined = useMemo(
@@ -289,6 +308,122 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     [postsDesa]
   );
 
+  useEffect(
+    () => {
+        if(postsPerson != undefined) {
+            if(postsPerson.length == 0) {
+                setNamaTextFieldValue('');
+                setTeleponeTextFieldValue('');
+                setEmailTextFieldValue('');
+                setSelectedKeyJenisKelamin(null);
+                setIsApproved(false);
+                setSelectedKeyPropinsi(undefined);
+                setSelectedKeyKabupaten(undefined);
+                setSelectedKeyKecamatan(undefined);
+                setSelectedKeyDesa(undefined);
+                setKeteranganAlamatTextFieldValue('');
+
+                setDataLama(null);
+                reset();
+                setValue("nik", nikTextFieldValue);
+                setDisableForm(false);                    
+            }
+            else {
+                let tempPersonData = cloneDeep(postsPerson[0]); 
+                reset();
+                setNamaTextFieldValue(tempPersonData.nama!);
+                setTeleponeTextFieldValue(tempPersonData.kontak?.telepone!);
+                setEmailTextFieldValue(tempPersonData.kontak?.email!);
+                setSelectedKeyJenisKelamin(tempPersonData.jenisKelamin?.id);
+                setIsApproved(tempPersonData.statusVerified!);
+                setSelectedKeyPropinsi(tempPersonData.alamat?.propinsi ? tempPersonData.alamat?.propinsi?.id:null);
+                _resetKabupaten();
+                tempPersonData.alamat?.propinsi ? setQueryKabupatenParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'propinsi'}) as number;     
+                                                            
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'propinsi',
+                                value: tempPersonData.alamat?.propinsi?.id!
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'propinsi',
+                                value: tempPersonData.alamat?.propinsi?.id!
+                            })
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                ):null;
+                setSelectedKeyKabupaten(tempPersonData.alamat?.kabupaten ? tempPersonData.alamat?.kabupaten?.id!:null);
+                tempPersonData.alamat?.kabupaten ? setQueryKecamatanParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'kabupaten'}) as number;     
+                                                            
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'kabupaten',
+                                value: tempPersonData.alamat?.kabupaten?.id!
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'kabupaten',
+                                value: tempPersonData.alamat?.kabupaten?.id!
+                            })
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                ):null;
+                setSelectedKeyKecamatan(tempPersonData.alamat?.kecamatan ? tempPersonData.alamat?.kecamatan?.id!:null);
+                tempPersonData.alamat?.kecamatan ? setQueryDesaParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'kecamatan'}) as number;     
+                                                            
+                        if(found == -1) {
+                            filters?.push({
+                                fieldName: 'kecamatan',
+                                value: tempPersonData.alamat?.kecamatan?.id!
+                            });
+                        }
+                        else {
+                            filters?.splice(found, 1, {
+                                fieldName: 'kecamatan',
+                                value: tempPersonData.alamat?.kecamatan?.id!
+                            })
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                ):null;
+                setSelectedKeyDesa(tempPersonData.alamat?.desa ? tempPersonData.alamat?.desa?.id:null);
+                setKeteranganAlamatTextFieldValue(tempPersonData.alamat?.keterangan!);
+
+                setDataLama(tempPersonData);
+                reset(tempPersonData);  //isi dengan data yang baru diambil via restfull
+                setDisableForm(false);
+            }
+        }
+    },
+    [postsPerson, nikTextFieldValue]
+  );
+  
   const onSubmit: SubmitHandler<IPerson> = async (data) => {
     setDisableForm(true);
     try {
@@ -429,6 +564,43 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
     []
   );
 
+  const _handleNikChange = useCallback(
+    (textNik) => {
+        if(textNik.length == 16) {
+            setNikTextFieldValue(textNik);
+            setDisableForm(true);
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                                            
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nik',
+                            value: textNik
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nik',
+                            value: textNik
+                        })
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );                
+        }
+        else if(textNik.length < 16) {
+            setNikTextFieldValue(textNik);
+        }             
+    },
+    []
+);
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -468,8 +640,9 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                               value={nikTextFieldValue}
                               onChange={
                                 (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                                  onChange(newValue || '');
-                                  setNikTextFieldValue(newValue || '');
+                                  // onChange(newValue || '');
+                                  // setNikTextFieldValue(newValue || '');
+                                  _handleNikChange(newValue || '');
                                 }
                               }
                               styles={textFieldKtpStyles}
@@ -499,7 +672,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                               }
                           }
                           styles={textFieldStyles}
-                          disabled={mode == 'delete' ? true:disableForm}
+                          disabled={(mode == 'delete' || isApproved == true) ? true:disableForm}
                           errorMessage={error && 'harus diisi'}
                           />
                       )}
@@ -849,7 +1022,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 }
                                 }
                                 multiline 
-                                rows={5}
+                                rows={7}
                                 resizable={false}
                                 styles={alamatStyles}
                                 disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}
@@ -907,7 +1080,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                         )
                       }
                       {
-                        postDataImage && !selectedFiles && (
+                        dataLama != undefined && selectedFiles == undefined && imageKtp != undefined && (
                           <img
                             width={400}
                             height={226}
@@ -923,10 +1096,11 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
               }
             />    
             <div className={contentStyles.infoBoxContainer}>
-              <p style={{textAlign: 'justify',textJustify: 'inter-word'}}>
-                <span style={{display: 'inline-block', marginBottom: 6}}><b>Perhatian!!</b></span><br />
-                Harap diisi dengan data yang bisa dipertanggung jawabkan. Data isian anda akan diverifikasi oleh sistem, dan hasilnya akan diberitahukan melalui email user akun yang anda pakai.
-              </p>
+                <span style={{display: 'inline-block'}}><b>Perhatian!!</b></span><br />
+                <ol style={{margin: 0, paddingLeft: 24, paddingRight: 8}}>
+                  <li>Harap diisi dengan data yang bisa dipertanggung jawabkan. Data isian anda akan diverifikasi oleh sistem, dan hasilnya akan diberitahukan melalui email user akun yang anda pakai.</li>
+                  <li>Detail alamat isikan selain nama propinsi, kabupaten, kecamatan, dan desa. Seperti: nama jalan, komplek, blok, atau rt dan rw</li>
+                </ol>
             </div>   
           </Stack.Item>
         </Stack>

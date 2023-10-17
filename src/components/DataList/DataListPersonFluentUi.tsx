@@ -275,7 +275,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                         let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
                         if(dataTerpilih.scanKTP == undefined) {
                             dataTerpilih.scanKTP = '';
-                        }
+                        }                        
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
@@ -820,7 +820,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                     showModal={showModalFormulirPerson}
                     hideModal={hideModalFormulirPerson}
                     mode={modeForm}
-                    dataLama={dataLama}
+                    nik={dataLama?.nik!}
                 />:null
             }
         </Stack>
