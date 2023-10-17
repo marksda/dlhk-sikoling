@@ -188,6 +188,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
             key: 'alamat', 
             name: 'Alamat', 
             minWidth: 100, 
+            maxWidth: 450, 
             isResizable: true,
             onRender: (item: IItemPerson) => {
                 return (
@@ -220,6 +221,20 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                 ); 
             },
             isPadded: true,
+        },
+        { 
+            key: 'statusVerified', 
+            name: 'Approved', 
+            minWidth: 100, 
+            isResizable: false,          
+            onColumnClick: _onHandleColumnClick,  
+            onRender: (item: IItemPerson) => {
+                return (
+                    <span>{
+                        item.statusVerified != undefined ? item.statusVerified == true ? 'Sudah':'Belum': null 
+                    }</span>
+                );
+            },
         },
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
