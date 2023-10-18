@@ -8,6 +8,7 @@ import { IPerson } from "../../features/entity/person";
 import find from "lodash.find";
 import { FormulirPerson } from "../Formulir/formulir-person";
 import { useGetDaftarDataPersonQuery, useGetJumlahDataPersonQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useAppSelector } from "../../app/hooks";
 
 interface IDataListPersonFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -53,6 +54,7 @@ const toggleStyles = {
 };
 
 export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSelectedFilters, title}) => {   
+    const token = useAppSelector((state) => state.token);
     const _onHandleColumnClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
             const items = [
@@ -265,56 +267,110 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
     );
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
-        () => {            
-            return [
-                { 
-                    key: 'newItem', 
-                    text: 'Add', 
-                    iconProps: { iconName: 'Add' }, 
-                    onClick: () => {
-                        setFormulirTitle('Add person');
-                        setModeForm('add');
-                        showModalFormulirPerson();
-                        setDataLama(undefined);
-                    }
-                },
-                { 
-                    key: 'editItem', 
-                    text: 'Edit', 
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Edit' }, 
-                    onClick: () => {
-                        setFormulirTitle('Edit person');
-                        setModeForm('edit');
-                        showModalFormulirPerson();
-                        let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
-                        if(dataTerpilih.scanKTP == undefined) {
-                            dataTerpilih.scanKTP = '';
-                        }                        
-                        setDataLama(dataTerpilih);
-                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
-                    }
-                },
-                { 
-                    key: 'deleteItem', 
-                    text: 'Hapus', 
-                    renderedInOverflow: false,
-                    disabled: !isSelectedItem,
-                    iconProps: { iconName: 'Delete' }, 
-                    onClick: () => {
-                        setFormulirTitle('Hapus person');
-                        setModeForm('delete');
-                        showModalFormulirPerson();
-                        let dataTerpilih: IPerson = cloneDeep(find(postsPerson, (i: IPerson) => i.nik == selection.getSelection()[0].key) as IPerson);
-                        if(dataTerpilih.scanKTP == undefined) {
-                            dataTerpilih.scanKTP = '';
-                        }
-                        setDataLama(dataTerpilih);
-                    }
-                },
-            ];
+        () => {      
+            let hasil = null; 
+            const dataTerpilih = isSelectedItem ? cloneDeep(find(postsPerson, (i) => i.nik == selection.getSelection()[0].key)) : undefined;
+
+            switch (token.hakAkses) {
+                case 'Administrator':
+                    hasil = [
+                        { 
+                            key: 'newItem', 
+                            text: 'Add', 
+                            iconProps: { iconName: 'Add' }, 
+                            onClick: () => {
+                                setFormulirTitle('Add person');
+                                setModeForm('add');
+                                showModalFormulirPerson();
+                                setDataLama(undefined);
+                            }
+                        },
+                        { 
+                            key: 'editItem', 
+                            text: 'Edit', 
+                            disabled: !isSelectedItem,
+                            iconProps: { iconName: 'Edit' }, 
+                            onClick: () => {
+                                setFormulirTitle('Edit person');
+                                setModeForm('edit');
+                                showModalFormulirPerson();
+                                if(dataTerpilih!.scanKTP == undefined) {
+                                    dataTerpilih!.scanKTP = '';
+                                }                        
+                                setDataLama(dataTerpilih);
+                                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                            }
+                        },
+                        { 
+                            key: 'deleteItem', 
+                            text: 'Hapus', 
+                            renderedInOverflow: false,
+                            disabled: !isSelectedItem,
+                            iconProps: { iconName: 'Delete' }, 
+                            onClick: () => {
+                                setFormulirTitle('Hapus person');
+                                setModeForm('delete');
+                                showModalFormulirPerson();
+                                if(dataTerpilih!.scanKTP == undefined) {
+                                    dataTerpilih!.scanKTP = '';
+                                }
+                                setDataLama(dataTerpilih);
+                            }
+                        },
+                    ];
+                    break;            
+                default:
+                    hasil = [
+                        { 
+                            key: 'newItem', 
+                            text: 'Add', 
+                            iconProps: { iconName: 'Add' }, 
+                            onClick: () => {
+                                setFormulirTitle('Add person');
+                                setModeForm('add');
+                                showModalFormulirPerson();
+                                setDataLama(undefined);
+                            }
+                        },
+                        { 
+                            key: 'editItem', 
+                            text: 'Edit', 
+                            disabled: dataTerpilih?.statusVerified == true ? true : !isSelectedItem,
+                            iconProps: { iconName: 'Edit' }, 
+                            onClick: () => {
+                                setFormulirTitle('Edit person');
+                                setModeForm('edit');
+                                showModalFormulirPerson();
+                                if(dataTerpilih!.scanKTP == undefined) {
+                                    dataTerpilih!.scanKTP = '';
+                                }                        
+                                setDataLama(dataTerpilih);
+                                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                            }
+                        },
+                        { 
+                            key: 'deleteItem', 
+                            text: 'Hapus', 
+                            renderedInOverflow: false,
+                            disabled: dataTerpilih?.statusVerified == true ? true : !isSelectedItem,
+                            iconProps: { iconName: 'Delete' }, 
+                            onClick: () => {
+                                setFormulirTitle('Hapus person');
+                                setModeForm('delete');
+                                showModalFormulirPerson();
+                                if(dataTerpilih!.scanKTP == undefined) {
+                                    dataTerpilih!.scanKTP = '';
+                                }
+                                setDataLama(dataTerpilih);
+                            }
+                        },
+                    ];
+                    break;
+            }
+
+            return hasil;
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, token]
     );
 
     const _onSearch = useCallback(
