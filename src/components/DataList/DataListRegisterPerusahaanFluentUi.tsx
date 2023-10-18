@@ -124,8 +124,9 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
     );
 
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
-    const [selectedKeyItem, setSelectedKeyItem] = useState<string|undefined>(undefined);
+    // const [selectedKeyItem, setSelectedKeyItem] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirRegisterPerusahaanOpen, {setTrue: showModalFormulirRegisterPerusahaan, setFalse: hideModalFormulirRegisterPerusahaan}] = useBoolean(false);
     const [dataLama, setDataLama]= useState<IRegisterPerusahaan|undefined>(undefined);
@@ -274,9 +275,12 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
         () => {
             return new Selection({
                 onSelectionChanged: () => {
-                    if(selection.getSelection().length > 0) {
-                        setSelectedKeyItem(selection.getSelection()[0].key as string);
-                    }                    
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
                 },           
                 getKey: (item, index) => {
                     return item.key as string;
@@ -288,164 +292,290 @@ export const DataListRegisterPerusahaanFluentUI: FC<IDataListRegisterPerusahaanF
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
-            const dataTerpilih = selection.getSelection()[0] != undefined ? 
-                cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selectedKeyItem)) as IRegisterPerusahaan : undefined;
-            if(dataTerpilih == undefined) {
-                return [
-                    { 
-                        key: 'newItem', 
-                        text: 'Add', 
-                        iconProps: { iconName: 'Add' }, 
-                        onClick: () => {
-                            setFormulirTitle('Add register perusahaan');
-                            setModeForm('add');
-                            showModalFormulirRegisterPerusahaan();
-                            setDataLama(undefined);
-                        }
-                    },
-                    { 
-                        key: 'editItem', 
-                        text: 'Edit', 
-                        disabled: true,
-                        iconProps: { iconName: 'Edit' },
-                    },
-                    { 
-                        key: 'deleteItem', 
-                        text: 'Hapus', 
-                        renderedInOverflow: false,
-                        disabled: true,
-                        iconProps: { iconName: 'Delete' }, 
-                    },
-                ];
-            }
-            else {
-                let hasil = null;                
-                switch (token.hakAkses) {
-                    case 'Administrator':
-                        hasil = [
-                            { 
-                                key: 'newItem', 
-                                text: 'Add', 
-                                iconProps: { iconName: 'Add' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Add register perusahaan');
-                                    setModeForm('add');
-                                    showModalFormulirRegisterPerusahaan();
-                                    setDataLama(undefined);
-                                }
-                            },
-                            { 
-                                key: 'editItem', 
-                                text: 'Edit', 
-                                disabled: !selectedKeyItem,
-                                iconProps: { iconName: 'Edit' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Edit register perusahaan');
-                                    setModeForm('edit');
-                                    showModalFormulirRegisterPerusahaan();                       
-                                    if(dataTerpilih.kreator == undefined) {
-                                        dataTerpilih.kreator = null;
-                                    }
-                                    if(dataTerpilih.verifikator == undefined) {
-                                        dataTerpilih.verifikator = null;
-                                    }
-                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
-                                        dataTerpilih.tanggalRegistrasi = null;
-                                    }
-                                    setDataLama(dataTerpilih);
-                                    selection.toggleKeySelected(selection.getSelection()[0].key as string);
-                                }
-                            },
-                            { 
-                                key: 'deleteItem', 
-                                text: 'Hapus', 
-                                renderedInOverflow: false,
-                                disabled: !selectedKeyItem,
-                                iconProps: { iconName: 'Delete' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Hapus pegawai');
-                                    setModeForm('delete');
-                                    showModalFormulirRegisterPerusahaan();
-                                    if(dataTerpilih.kreator == undefined) {
-                                        dataTerpilih.kreator = null;
-                                    }
-                                    if(dataTerpilih.verifikator == undefined) {
-                                        dataTerpilih.verifikator = null;
-                                    }
-                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
-                                        dataTerpilih.tanggalRegistrasi = null;
-                                    }
-                                    setDataLama(dataTerpilih);
-                                }
-                            },
-                        ];
-                        break;                
-                    default:
-                        hasil = [
-                            { 
-                                key: 'newItem', 
-                                text: 'Add', 
-                                iconProps: { iconName: 'Add' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Add register perusahaan');
-                                    setModeForm('add');
-                                    showModalFormulirRegisterPerusahaan();
-                                    setDataLama(undefined);
-                                }
-                            },
-                            { 
-                                key: 'editItem', 
-                                text: 'Edit', 
-                                disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
-                                iconProps: { iconName: 'Edit' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Edit register perusahaan');
-                                    setModeForm('edit');
-                                    showModalFormulirRegisterPerusahaan();                     
-                                    if(dataTerpilih.kreator == undefined) {
-                                        dataTerpilih.kreator = null;
-                                    }
-                                    if(dataTerpilih.verifikator == undefined) {
-                                        dataTerpilih.verifikator = null;
-                                    }
-                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
-                                        dataTerpilih.tanggalRegistrasi = null;
-                                    }
-                                    setDataLama(dataTerpilih);
-                                    selection.toggleKeySelected(selection.getSelection()[0].key as string);
-                                }
-                            },
-                            { 
-                                key: 'deleteItem', 
-                                text: 'Hapus', 
-                                renderedInOverflow: false,
-                                disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
-                                iconProps: { iconName: 'Delete' }, 
-                                onClick: () => {
-                                    setFormulirTitle('Hapus pegawai');
-                                    setModeForm('delete');
-                                    showModalFormulirRegisterPerusahaan();
+            // const dataTerpilih = selection.getSelection()[0] != undefined ? 
+            //     cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selectedKeyItem)) as IRegisterPerusahaan : undefined;
+            // if(dataTerpilih == undefined) {
+            //     return [
+            //         { 
+            //             key: 'newItem', 
+            //             text: 'Add', 
+            //             iconProps: { iconName: 'Add' }, 
+            //             onClick: () => {
+            //                 setFormulirTitle('Add register perusahaan');
+            //                 setModeForm('add');
+            //                 showModalFormulirRegisterPerusahaan();
+            //                 setDataLama(undefined);
+            //             }
+            //         },
+            //         { 
+            //             key: 'editItem', 
+            //             text: 'Edit', 
+            //             disabled: true,
+            //             iconProps: { iconName: 'Edit' },
+            //         },
+            //         { 
+            //             key: 'deleteItem', 
+            //             text: 'Hapus', 
+            //             renderedInOverflow: false,
+            //             disabled: true,
+            //             iconProps: { iconName: 'Delete' }, 
+            //         },
+            //     ];
+            // }
+            // else {
+            //     let hasil = null;                
+            //     switch (token.hakAkses) {
+            //         case 'Administrator':
+            //             hasil = [
+            //                 { 
+            //                     key: 'newItem', 
+            //                     text: 'Add', 
+            //                     iconProps: { iconName: 'Add' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Add register perusahaan');
+            //                         setModeForm('add');
+            //                         showModalFormulirRegisterPerusahaan();
+            //                         setDataLama(undefined);
+            //                     }
+            //                 },
+            //                 { 
+            //                     key: 'editItem', 
+            //                     text: 'Edit', 
+            //                     disabled: !selectedKeyItem,
+            //                     iconProps: { iconName: 'Edit' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Edit register perusahaan');
+            //                         setModeForm('edit');
+            //                         showModalFormulirRegisterPerusahaan();                       
+            //                         if(dataTerpilih.kreator == undefined) {
+            //                             dataTerpilih.kreator = null;
+            //                         }
+            //                         if(dataTerpilih.verifikator == undefined) {
+            //                             dataTerpilih.verifikator = null;
+            //                         }
+            //                         if(dataTerpilih.tanggalRegistrasi == undefined) {
+            //                             dataTerpilih.tanggalRegistrasi = null;
+            //                         }
+            //                         setDataLama(dataTerpilih);
+            //                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            //                     }
+            //                 },
+            //                 { 
+            //                     key: 'deleteItem', 
+            //                     text: 'Hapus', 
+            //                     renderedInOverflow: false,
+            //                     disabled: !selectedKeyItem,
+            //                     iconProps: { iconName: 'Delete' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Hapus pegawai');
+            //                         setModeForm('delete');
+            //                         showModalFormulirRegisterPerusahaan();
+            //                         if(dataTerpilih.kreator == undefined) {
+            //                             dataTerpilih.kreator = null;
+            //                         }
+            //                         if(dataTerpilih.verifikator == undefined) {
+            //                             dataTerpilih.verifikator = null;
+            //                         }
+            //                         if(dataTerpilih.tanggalRegistrasi == undefined) {
+            //                             dataTerpilih.tanggalRegistrasi = null;
+            //                         }
+            //                         setDataLama(dataTerpilih);
+            //                     }
+            //                 },
+            //             ];
+            //             break;                
+            //         default:
+            //             hasil = [
+            //                 { 
+            //                     key: 'newItem', 
+            //                     text: 'Add', 
+            //                     iconProps: { iconName: 'Add' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Add register perusahaan');
+            //                         setModeForm('add');
+            //                         showModalFormulirRegisterPerusahaan();
+            //                         setDataLama(undefined);
+            //                     }
+            //                 },
+            //                 { 
+            //                     key: 'editItem', 
+            //                     text: 'Edit', 
+            //                     disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
+            //                     iconProps: { iconName: 'Edit' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Edit register perusahaan');
+            //                         setModeForm('edit');
+            //                         showModalFormulirRegisterPerusahaan();                     
+            //                         if(dataTerpilih.kreator == undefined) {
+            //                             dataTerpilih.kreator = null;
+            //                         }
+            //                         if(dataTerpilih.verifikator == undefined) {
+            //                             dataTerpilih.verifikator = null;
+            //                         }
+            //                         if(dataTerpilih.tanggalRegistrasi == undefined) {
+            //                             dataTerpilih.tanggalRegistrasi = null;
+            //                         }
+            //                         setDataLama(dataTerpilih);
+            //                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            //                     }
+            //                 },
+            //                 { 
+            //                     key: 'deleteItem', 
+            //                     text: 'Hapus', 
+            //                     renderedInOverflow: false,
+            //                     disabled: dataTerpilih.statusVerifikasi == true ? true : !selectedKeyItem,
+            //                     iconProps: { iconName: 'Delete' }, 
+            //                     onClick: () => {
+            //                         setFormulirTitle('Hapus pegawai');
+            //                         setModeForm('delete');
+            //                         showModalFormulirRegisterPerusahaan();
 
-                                    if(dataTerpilih.kreator == undefined) {
-                                        dataTerpilih.kreator = null;
-                                    }
-                                    if(dataTerpilih.verifikator == undefined) {
-                                        dataTerpilih.verifikator = null;
-                                    }
-                                    if(dataTerpilih.tanggalRegistrasi == undefined) {
-                                        dataTerpilih.tanggalRegistrasi = null;
-                                    }
-                                    setDataLama(dataTerpilih);
-                                }
-                            },
-                        ];
-                        break;
-                }
+            //                         if(dataTerpilih.kreator == undefined) {
+            //                             dataTerpilih.kreator = null;
+            //                         }
+            //                         if(dataTerpilih.verifikator == undefined) {
+            //                             dataTerpilih.verifikator = null;
+            //                         }
+            //                         if(dataTerpilih.tanggalRegistrasi == undefined) {
+            //                             dataTerpilih.tanggalRegistrasi = null;
+            //                         }
+            //                         setDataLama(dataTerpilih);
+            //                     }
+            //                 },
+            //             ];
+            //             break;
+            //     }
 
-                return hasil;
+            //     return hasil;
+            // }
+
+            let hasil = null; 
+            const dataTerpilih = isSelectedItem ? cloneDeep(find(postsRegisterPerusahaan, (i) => i.id == selection.getSelection()[0].key)) : undefined;
+            switch (token.hakAkses) {
+                case 'Administrator':
+                    hasil = [
+                        { 
+                            key: 'newItem', 
+                            text: 'Add', 
+                            iconProps: { iconName: 'Add' }, 
+                            onClick: () => {
+                                setFormulirTitle('Add register perusahaan');
+                                setModeForm('add');
+                                showModalFormulirRegisterPerusahaan();
+                                setDataLama(undefined);
+                            }
+                        },
+                        { 
+                            key: 'editItem', 
+                            text: 'Edit', 
+                            disabled: !isSelectedItem,
+                            iconProps: { iconName: 'Edit' }, 
+                            onClick: () => {
+                                setFormulirTitle('Edit register perusahaan');
+                                setModeForm('edit');
+                                showModalFormulirRegisterPerusahaan();                       
+                                if(dataTerpilih!.kreator == undefined) {
+                                    dataTerpilih!.kreator = null;
+                                }
+                                if(dataTerpilih!.verifikator == undefined) {
+                                    dataTerpilih!.verifikator = null;
+                                }
+                                if(dataTerpilih!.tanggalRegistrasi == undefined) {
+                                    dataTerpilih!.tanggalRegistrasi = null;
+                                }
+                                setDataLama(dataTerpilih);
+                                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                            }
+                        },
+                        { 
+                            key: 'deleteItem', 
+                            text: 'Hapus', 
+                            renderedInOverflow: false,
+                            disabled: !isSelectedItem,
+                            iconProps: { iconName: 'Delete' }, 
+                            onClick: () => {
+                                setFormulirTitle('Hapus pegawai');
+                                setModeForm('delete');
+                                showModalFormulirRegisterPerusahaan();
+                                if(dataTerpilih!.kreator == undefined) {
+                                    dataTerpilih!.kreator = null;
+                                }
+                                if(dataTerpilih!.verifikator == undefined) {
+                                    dataTerpilih!.verifikator = null;
+                                }
+                                if(dataTerpilih!.tanggalRegistrasi == undefined) {
+                                    dataTerpilih!.tanggalRegistrasi = null;
+                                }
+                                setDataLama(dataTerpilih);
+                            }
+                        },
+                    ];
+                    break;                
+                default:
+                    hasil = [
+                        { 
+                            key: 'newItem', 
+                            text: 'Add', 
+                            iconProps: { iconName: 'Add' }, 
+                            onClick: () => {
+                                setFormulirTitle('Add register perusahaan');
+                                setModeForm('add');
+                                showModalFormulirRegisterPerusahaan();
+                                setDataLama(undefined);
+                            }
+                        },
+                        { 
+                            key: 'editItem', 
+                            text: 'Edit', 
+                            disabled: dataTerpilih?.statusVerifikasi == true ? true : !isSelectedItem,
+                            iconProps: { iconName: 'Edit' }, 
+                            onClick: () => {
+                                setFormulirTitle('Edit register perusahaan');
+                                setModeForm('edit');
+                                showModalFormulirRegisterPerusahaan();                     
+                                if(dataTerpilih!.kreator == undefined) {
+                                    dataTerpilih!.kreator = null;
+                                }
+                                if(dataTerpilih!.verifikator == undefined) {
+                                    dataTerpilih!.verifikator = null;
+                                }
+                                if(dataTerpilih!.tanggalRegistrasi == undefined) {
+                                    dataTerpilih!.tanggalRegistrasi = null;
+                                }
+                                setDataLama(dataTerpilih);
+                                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                            }
+                        },
+                        { 
+                            key: 'deleteItem', 
+                            text: 'Hapus', 
+                            renderedInOverflow: false,
+                            disabled: dataTerpilih?.statusVerifikasi == true ? true : !isSelectedItem,
+                            iconProps: { iconName: 'Delete' }, 
+                            onClick: () => {
+                                setFormulirTitle('Hapus pegawai');
+                                setModeForm('delete');
+                                showModalFormulirRegisterPerusahaan();
+
+                                if(dataTerpilih!.kreator == undefined) {
+                                    dataTerpilih!.kreator = null;
+                                }
+                                if(dataTerpilih!.verifikator == undefined) {
+                                    dataTerpilih!.verifikator = null;
+                                }
+                                if(dataTerpilih!.tanggalRegistrasi == undefined) {
+                                    dataTerpilih!.tanggalRegistrasi = null;
+                                }
+                                setDataLama(dataTerpilih);
+                            }
+                        },
+                    ];
+                    break;
             }
+
+            return hasil;
         }, 
-        [selectedKeyItem, selection, postsRegisterPerusahaan, token]
+        [isSelectedItem, selection, postsRegisterPerusahaan, token]
     );
 
     const _onChangeSearchNama = useCallback(

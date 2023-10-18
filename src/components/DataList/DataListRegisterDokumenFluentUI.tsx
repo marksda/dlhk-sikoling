@@ -301,14 +301,11 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
     const selection: Selection = useMemo(
         () => {
             return new Selection({
-                onSelectionChanged: () => {                  
-                    // if(selection.getSelection().length > 0) {
+                onSelectionChanged: () => {
                     if(selection.count >= 1) {
-                        // setSelectedKeyItem(selection.getSelection()[0].key as string);
                         setIsSelectedItem(true);
                     }
                     else {
-                        // setSelectedKeyItem(null);
                         setIsSelectedItem(false);
                     }
                 },           
