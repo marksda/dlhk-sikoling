@@ -1,4 +1,4 @@
-import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection } from "@fluentui/react";
+import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection, Toggle } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
@@ -40,6 +40,12 @@ const classNames = mergeStyleSets({
     deepRed: [{ color: '#E81123' }, iconClass],
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSelectedFilters, title}) => { 
 
@@ -69,7 +75,6 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                 target: ev.currentTarget as HTMLElement,
                 directionalHint: DirectionalHint.bottomLeftEdge,
                 gapSpace: 2,
-                // isBeakVisible: true,
                 onDismiss: _onContextualMenuDismissed,                  
             });
         },
@@ -78,13 +83,22 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
 
     const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                        };
+                    }
+                    else {
+                        return undefined;
+                    }
+                }              
+            );
         },
         []
     );
@@ -93,6 +107,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [isModalFormulirOtoritasOpen, { setTrue: showModalFormulirOtoritas, setFalse: hideModalFormulirOtoritas }] = useBoolean(false);
     const [dataLama, setDataLama]= useState<IOtoritas|undefined>(undefined);    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -264,7 +279,6 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                         setIsSelectedItem(false);
                     }
                 },           
-                selectionMode: SelectionMode.single,
                 getKey: (item, index) => {
                     return item.key as string;
                 }
@@ -318,14 +332,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             ];
         }, 
         [isSelectedItem, selection]
-    );    
-
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
-        },
-        []
-    );
+    ); 
 
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
@@ -1045,18 +1052,49 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         []
     );
+
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
     
     return (
         <Stack grow verticalFill>
-            <Stack.Item>
+            <Stack.Item style={{marginRight: 16}}>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item style={{paddingLeft: 16}}>
+                    <Stack.Item style={{paddingLeft: 16}} align="center">
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            } 
                             <Stack.Item>
-                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
@@ -1095,12 +1133,13 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
@@ -1119,8 +1158,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            {
-                contextualMenuFilterProps && 
+            {contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
@@ -1207,7 +1245,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                     </Stack>
                 </Callout>                
             }
-            { isModalFormulirOtoritasOpen== true ?
+            {isModalFormulirOtoritasOpen && (
                 <FormulirOtoritas
                     title={formulirTitle}
                     isModalOpen={isModalFormulirOtoritasOpen}
@@ -1215,8 +1253,8 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                     hideModal={hideModalFormulirOtoritas}
                     mode={modeForm}
                     dataLama={dataLama}
-                />:null
-            }
+                />
+            )}
         </Stack>
     );
 }
