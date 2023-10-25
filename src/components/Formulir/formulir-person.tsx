@@ -672,7 +672,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                               }
                           }
                           styles={textFieldStyles}
-                          disabled={(mode == 'delete' || isApproved == true) ? true:disableForm}
+                          disabled={(mode == 'delete' || isApproved == true) ? true: (nikTextFieldValue == undefined || nikTextFieldValue.length < 16) ? true:disableForm}
                           errorMessage={error && 'harus diisi'}
                           />
                       )}
@@ -700,7 +700,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 }
                                 }
                                 styles={textFieldKtpStyles}
-                                disabled={mode == 'delete' ? true:disableForm}
+                                disabled={(mode == 'delete' || isApproved == true) ? true:(nikTextFieldValue == undefined || nikTextFieldValue.length < 16) ? true:disableForm}
                                 errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                             />
                         )}
@@ -726,7 +726,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 }
                             }
                             styles={textFieldStyles}
-                            disabled={mode == 'delete' ? true:disableForm}
+                            disabled={(mode == 'delete' || isApproved == true) ? true:(nikTextFieldValue == undefined || nikTextFieldValue.length < 16) ? true:disableForm}
                             errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
                           />
                         )}
@@ -761,7 +761,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 setSelectedKeyJenisKelamin(option?.key as string);
                               }
                             }
-                            disabled={mode == 'delete' ? true:disableForm}
+                            disabled={(mode == 'delete'|| isApproved == true) ? true:(nikTextFieldValue == undefined || nikTextFieldValue.length < 16) ? true:disableForm}
                           />
                         )}
                     />
@@ -841,7 +841,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                     );
                                   }
                                 }
-                                disabled={mode == 'delete' ? true:disableForm}
+                                disabled={(mode == 'delete'|| isApproved == true) ? true:(nikTextFieldValue == undefined || nikTextFieldValue.length < 16) ? true:disableForm}
                               />
                             )
                           }
@@ -900,7 +900,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                     );
                                   }
                                 }
-                                disabled={mode == 'delete'||selectedKeyPropinsi == null ? true:disableForm}
+                                disabled={(mode == 'delete'||selectedKeyPropinsi == null || isApproved == true) ? true:disableForm}
                               />
                             )
                           }
@@ -959,7 +959,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                     );
                                   }
                                 }
-                                disabled={mode == 'delete'||selectedKeyKabupaten == null ? true:disableForm}
+                                disabled={(mode == 'delete'||selectedKeyKabupaten == null || isApproved == true) ? true:disableForm}
                               />
                             )
                           }
@@ -993,7 +993,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                     setSelectedKeyDesa(option?.key as string);
                                   }
                                 }
-                                disabled={mode == 'delete'||selectedKeyKecamatan == null ? true:disableForm}
+                                disabled={(mode == 'delete'||selectedKeyKecamatan == null || isApproved == true) ? true:disableForm}
                               />
                             )
                           }
@@ -1025,7 +1025,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 rows={8}
                                 resizable={false}
                                 styles={alamatStyles}
-                                disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}
+                                disabled={(mode == 'delete' || selectedKeyDesa == null || isApproved == true) ? true:disableForm}
                                 errorMessage={error && 'harus diisi'}
                               />                          
                             )

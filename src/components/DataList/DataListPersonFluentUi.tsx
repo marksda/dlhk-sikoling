@@ -593,7 +593,74 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
 
     const _onChangeSearchNik = useCallback(
         (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
-            setSearchNik(newValue);          
+            if(newValue?.length == 16) {
+                setSearchNik(newValue);   
+                setQueryFilters(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'nik',
+                                    value: newValue
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'nik',
+                                    value: newValue
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+    
+                setQueryParams(
+                    prev => {
+                        let tmp = cloneDeep(prev);
+                        let filters = cloneDeep(tmp.filters);
+                        let found = filters?.findIndex((obj) => {return obj.fieldName == 'nik'}) as number;     
+                        
+                        if(newValue != '') {
+                            if(found == -1) {
+                                filters?.push({
+                                    fieldName: 'nik',
+                                    value: newValue
+                                });
+                            }
+                            else {
+                                filters?.splice(found, 1, {
+                                    fieldName: 'nik',
+                                    value: newValue
+                                })
+                            }
+                        }
+                        else {
+                            if(found > -1) {
+                                filters?.splice(found, 1);
+                            }
+                        }
+                        
+                        tmp.pageNumber = 1;
+                        tmp.filters = filters;             
+                        return tmp;
+                    }
+                );
+            }
+            else {
+                setSearchNik(newValue);   
+            }                   
         },
         []
     );
