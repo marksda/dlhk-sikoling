@@ -85,7 +85,7 @@ const contentStyles = mergeStyleSets({
     border: '1px dashed rgb(231 10 10)',
     marginTop: 16,
     width: 400,
-    height: 170,
+    height: 187,
     padding: 4,
   },
 });
@@ -1022,7 +1022,7 @@ export const FormulirPerson: FC<IFormulirPersonFluentUIProps> = ({title, isModal
                                 }
                                 }
                                 multiline 
-                                rows={7}
+                                rows={8}
                                 resizable={false}
                                 styles={alamatStyles}
                                 disabled={mode == 'delete'||selectedKeyDesa == null ? true:disableForm}

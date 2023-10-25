@@ -63,7 +63,7 @@ export const HakAksesSchema = object({
 });
 
 export const OtoritasSchema = object({
-    id: z.string().nullable(),
+    id: z.string(),
     tanggal: z.string().nullable(),
     hakAkses: HakAksesSchema.optional(),
     person: PersonSchema.optional(),

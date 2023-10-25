@@ -556,7 +556,7 @@ export const FormulirPegawai: FC<IFormulirPegawaiFluentUIProps> = ({title, isMod
               <ComboBox
                 componentRef={comboBoxPersonRef}
                 label="Person"
-                placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                placeholder="ketik minimal 4 abjad untuk menampilkan pilihan"
                 allowFreeform={true}
                 autoComplete={'off'}
                 options={optionsPerson != undefined ? optionsPerson:[]}
