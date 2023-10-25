@@ -57,7 +57,7 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { minWidth: 350 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -311,7 +311,33 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
         />
       </div>
       <div className={contentStyles.body}>
-        <Stack>
+        <Stack>  
+          <Stack.Item>
+            <Controller 
+              name="userName"
+              control={control}
+              render={
+                ({
+                  field: {onChange, onBlur}, 
+                  fieldState: { error }
+                }) => (
+                    <TextField
+                      label="User name"
+                      placeholder="Isi dengan alamat email yang masih aktif"
+                      value={userNameTextFieldValue}
+                      onChange={
+                        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                          onChange(newValue || '');
+                          setUserNameTextFieldValue(newValue || '');
+                        }
+                      }
+                      styles={textFieldStyles}
+                      disabled={mode == 'delete' ? true:disableForm}
+                      errorMessage={error && 'harus diisi'}
+                    />
+                )}
+            />
+          </Stack.Item>
           <Stack.Item>
             <Controller 
               name="person"
@@ -324,7 +350,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                   <ComboBox
                     componentRef={comboBoxPersonRef}
                     label="Person"
-                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan"
+                    placeholder="ketik minimal 3 abjad untuk menampilkan pilihan person"
                     allowFreeform={true}
                     autoComplete={'off'}
                     options={optionsPerson != undefined ? optionsPerson:[]}
@@ -375,32 +401,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                   )}
               />
             </Stack.Item>
-          }  
-          <Stack.Item>      
-            <Controller 
-              name="userName"
-              control={control}
-              render={
-                ({
-                  field: {onChange, onBlur}, 
-                  fieldState: { error }
-                }) => (
-                    <TextField
-                      label="User name"
-                      value={userNameTextFieldValue}
-                      onChange={
-                        (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                          onChange(newValue || '');
-                          setUserNameTextFieldValue(newValue || '');
-                        }
-                      }
-                      styles={textFieldStyles}
-                      disabled={mode == 'delete' ? true:disableForm}
-                      errorMessage={error && 'harus diisi'}
-                    />
-                )}
-            />
-          </Stack.Item>
+          }
           <PrimaryButton 
             style={{marginTop: 16, width: '100%'}}
             text={mode == 'delete' ? 'Hapus':'Simpan'} 

@@ -295,7 +295,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add pengakses');
+                        setFormulirTitle('Add Pengguna');
                         setModeForm('add');
                         showModalFormulirOtoritas();
                         setDataLama(undefined);
