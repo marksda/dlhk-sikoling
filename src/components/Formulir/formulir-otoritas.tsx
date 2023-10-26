@@ -1,4 +1,4 @@
-import { ActionButton, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Checkbox, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { OtoritasSchema } from "../../features/schema-resolver/zod-schema";
@@ -58,6 +58,7 @@ const contentStyles = mergeStyleSets({
   },
 });
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { minWidth: 350 } };
+const textPasswordFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -70,14 +71,16 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
-const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
+// const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 const addIcon: IIconProps = { iconName: 'AddFriend' };
+const containerPasswordStackTokens: IStackTokens = { childrenGap: 12 };
 
 export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [userNameTextFieldValue, setUserNameTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.userName!:'');
+  const [passwordValue, setPasswordValue] = useState<string>('');
   const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
   const [queryPersonParams, setQueryPersonParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
@@ -96,6 +99,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
 //   const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.keterangan!:'');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
+  const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
   const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
@@ -290,6 +294,13 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     [disableForm]
   );
 
+  const onChangeGeneratePassword = useCallback(
+    (ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean): void => {
+      setIsGeneratePassword(!!checked);
+    },
+    [],
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -337,6 +348,27 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                     />
                 )}
             />
+          </Stack.Item>
+          <Stack.Item>
+            <Stack horizontal  tokens={containerPasswordStackTokens}>
+              <Stack.Item align="center">
+                <TextField
+                  label="Password"
+                  placeholder="Isikan password"
+                  value={passwordValue}
+                  onChange={
+                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                      setPasswordValue(newValue || '');
+                    }
+                  }
+                  styles={textPasswordFieldStyles}
+                  disabled={(mode == 'delete'||isGeneratedPassword == true) ? true:disableForm}
+                />
+              </Stack.Item>
+              <Stack.Item align="center" style={{paddingTop: 28}}>
+                <Checkbox label="Generate password" checked={isGeneratedPassword} onChange={onChangeGeneratePassword} />
+              </Stack.Item>
+            </Stack>
           </Stack.Item>
           <Stack.Item>
             <Controller 

@@ -61,7 +61,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'otoritas',
-                                name: 'Pengakses',
+                                name: 'Pengguna',
                                 iconProps: { iconName: 'ContactCard'},
                                 onClick: () => {
                                     _onHandleMasterMenu('otoritas');
@@ -588,7 +588,7 @@ export const MasterBackEnd: FC = () => {
                 case 'otoritas':
                 konten =             
                     <DataListOtoritasFluentUI
-                        title="Pengakses"
+                        title="Pengguna"
                         initSelectedFilters={
                             {
                                 pageNumber: 1,
