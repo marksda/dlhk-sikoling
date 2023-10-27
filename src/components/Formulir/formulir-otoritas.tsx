@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { IOtoritas } from "../../features/entity/otoritas";
-import { useDeleteHakAksesMutation, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { FormulirPerson } from "./formulir-person";
 
@@ -82,6 +82,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [userNameTextFieldValue, setUserNameTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.userName!:'');
   const [passwordValue, setPasswordValue] = useState<string>('');
   const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
+  const [selectedKeyHakAkses, setSelectedKeyHakAkses] = useState<string|undefined|null>(dataLama != undefined ? dataLama.hakAkses?.id!:undefined);
   const [queryPersonParams, setQueryPersonParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 25,
@@ -96,23 +97,39 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
         },
     ],
   });
+  const [queryHakAksesParams, setQueryHakAksesParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 25,
+    filters: dataLama != undefined ? [{
+      fieldName: 'nama',
+      value: dataLama.hakAkses?.nama!
+    }]:[],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
 //   const [keteranganTextFieldValue, setKeteranganTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.keterangan!:'');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
+  const comboBoxHakAksesRef = useRef<IComboBox>(null);
   const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
   //hook-form
-  const {handleSubmit, control, setValue} = useForm<IOtoritas>({
+  const {handleSubmit, control, setValue, resetField} = useForm<IOtoritas>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
     resolver: zodResolver(OtoritasSchema),
   });
   // rtk query
-  const [ saveHakAkses, {isLoading: isLoadingSaveHakAkses}] = useSaveHakAksesMutation();
-  const [ updateHakAkses, {isLoading: isLoadingUpdateHakAkses}] = useUpdateHakAksesMutation();
-  const [ deleteHakAkses, {isLoading: isLoadingDeleteHakAkses}] = useDeleteHakAksesMutation();
+  const [ saveHakAkses ] = useSaveHakAksesMutation();
+  const [ updateHakAkses ] = useUpdateHakAksesMutation();
+  const [ deleteHakAkses ] = useDeleteHakAksesMutation();
   const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
+  const { data: postsHakAkses, isLoading: isLoadingPostsHakakses } = useGetDaftarDataHakAksesQuery(queryHakAksesParams);
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -136,6 +153,19 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
             })
     ),
     [postsPerson]
+  );
+
+  const optionsHakAkses: IComboBoxOption[]|undefined = useMemo(
+    () => (
+      postsHakAkses?.map((item):IComboBoxOption => {
+              return {
+                key: item.id!,
+                text: item.nama!,
+                data: item
+              };
+            })
+    ),
+    [postsHakAkses]
   );
   
   const onSubmit: SubmitHandler<IOtoritas> = async (data) => {
@@ -300,6 +330,74 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     },
     [],
   );
+  
+  const _onInputComboBoxHakAksesValueChange = useCallback(
+    (newValue: string) => {
+      if(newValue.length > 2) {
+        comboBoxHakAksesRef.current?.focus(true);
+        setQueryHakAksesParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
+      else if(newValue.length == 0) {
+        setSelectedKeyHakAkses(undefined);
+        resetField("hakAkses");
+        setQueryHakAksesParams(
+          prev => {
+            let tmp = cloneDeep(prev);
+            let filters = cloneDeep(tmp.filters);
+            let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;
+            
+            if(found > -1) {
+              filters?.splice(found, 1);
+            }
+            
+            tmp.pageNumber = 1;
+            tmp.filters = filters;             
+            return tmp;
+          }
+        );
+      }
+    },
+    []
+  );
+
+  const _onHandleOnChangeHakAksesComboBox = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+        let hakAkses = cloneDeep(postsHakAkses?.at(index!));
+        setValue('hakAkses', hakAkses!);
+        setSelectedKeyHakAkses(option?.key as string);
+      },
+      [postsHakAkses]
+  );
 
   return (
     <Modal
@@ -393,6 +491,34 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                     styles={basicComboBoxStyles}           
                     errorMessage={error && 'harus diisi'}
                     onChange={_onHandleOnChangePersonComboBox}
+                    disabled={mode == 'delete' ? true:disableForm}
+                  />
+                )}
+            />
+          </Stack.Item>
+          <Stack.Item>
+            <Controller 
+              name="hakAkses"
+              control={control}
+              render={
+                ({
+                  field: {onChange, onBlur}, 
+                  fieldState: { error }
+                }) => (
+                  <ComboBox
+                    componentRef={comboBoxHakAksesRef}
+                    label="Hak akses"
+                    placeholder="pilihan hak akses"
+                    allowFreeform={true}
+                    autoComplete={'off'}
+                    options={optionsHakAkses != undefined ? optionsHakAkses:[]}
+                    selectedKey={selectedKeyHakAkses==undefined?null:selectedKeyHakAkses}
+                    useComboBoxAsMenuWidth={true}
+                    // onRenderOption={_onRenderHakAksesOption}   
+                    onInputValueChange={_onInputComboBoxHakAksesValueChange}      
+                    styles={basicComboBoxStyles}           
+                    errorMessage={error && 'harus diisi'}
+                    onChange={_onHandleOnChangeHakAksesComboBox}
                     disabled={mode == 'delete' ? true:disableForm}
                   />
                 )}
