@@ -1,4 +1,4 @@
-import { ActionButton, Checkbox, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Checkbox, ComboBox, ContextualMenu, Dropdown, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IDropdownOption, IDropdownStyles, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { OtoritasSchema } from "../../features/schema-resolver/zod-schema";
@@ -72,6 +72,7 @@ const iconButtonStyles = {
     },
 };
 // const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
+const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 400 } };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 const addIcon: IIconProps = { iconName: 'AddFriend' };
 const containerPasswordStackTokens: IStackTokens = { childrenGap: 12 };
@@ -100,10 +101,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [queryHakAksesParams, setQueryHakAksesParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
     pageSize: 25,
-    filters: dataLama != undefined ? [{
-      fieldName: 'nama',
-      value: dataLama.hakAkses?.nama!
-    }]:[],
+    filters: [],
     sortOrders: [
         {
             fieldName: 'nama',
@@ -117,7 +115,6 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
-  const comboBoxHakAksesRef = useRef<IComboBox>(null);
   const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
   //hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<IOtoritas>({
@@ -330,68 +327,9 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     },
     [],
   );
-  
-  const _onInputComboBoxHakAksesValueChange = useCallback(
-    (newValue: string) => {
-      if(newValue.length > 2) {
-        comboBoxHakAksesRef.current?.focus(true);
-        setQueryHakAksesParams(
-            prev => {
-                let tmp = cloneDeep(prev);
-                let filters = cloneDeep(tmp.filters);
-                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
-                
-                if(newValue != '') {
-                    if(found == -1) {
-                        filters?.push({
-                            fieldName: 'nama',
-                            value: newValue
-                        });
-                    }
-                    else {
-                        filters?.splice(found, 1, {
-                            fieldName: 'nama',
-                            value: newValue
-                        })
-                    }
-                }
-                else {
-                    if(found > -1) {
-                        filters?.splice(found, 1);
-                    }
-                }
-                
-                tmp.pageNumber = 1;
-                tmp.filters = filters;             
-                return tmp;
-            }
-        );
-      }
-      else if(newValue.length == 0) {
-        setSelectedKeyHakAkses(undefined);
-        resetField("hakAkses");
-        setQueryHakAksesParams(
-          prev => {
-            let tmp = cloneDeep(prev);
-            let filters = cloneDeep(tmp.filters);
-            let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;
-            
-            if(found > -1) {
-              filters?.splice(found, 1);
-            }
-            
-            tmp.pageNumber = 1;
-            tmp.filters = filters;             
-            return tmp;
-          }
-        );
-      }
-    },
-    []
-  );
 
-  const _onHandleOnChangeHakAksesComboBox = useCallback(
-    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+  const _onHandleOnChangeHakAksesDropdown = useCallback(
+    (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<any> | undefined, index?: number | undefined) => {
         let hakAkses = cloneDeep(postsHakAkses?.at(index!));
         setValue('hakAkses', hakAkses!);
         setSelectedKeyHakAkses(option?.key as string);
@@ -505,21 +443,14 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                   field: {onChange, onBlur}, 
                   fieldState: { error }
                 }) => (
-                  <ComboBox
-                    componentRef={comboBoxHakAksesRef}
+                  <Dropdown
                     label="Hak akses"
-                    placeholder="pilihan hak akses"
-                    allowFreeform={true}
-                    autoComplete={'off'}
-                    options={optionsHakAkses != undefined ? optionsHakAkses:[]}
                     selectedKey={selectedKeyHakAkses==undefined?null:selectedKeyHakAkses}
-                    useComboBoxAsMenuWidth={true}
-                    // onRenderOption={_onRenderHakAksesOption}   
-                    onInputValueChange={_onInputComboBoxHakAksesValueChange}      
-                    styles={basicComboBoxStyles}           
-                    errorMessage={error && 'harus diisi'}
-                    onChange={_onHandleOnChangeHakAksesComboBox}
-                    disabled={mode == 'delete' ? true:disableForm}
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange={_onHandleOnChangeHakAksesDropdown}
+                    placeholder="pilih hak akses"
+                    options={optionsHakAkses != undefined ? optionsHakAkses:[]}
+                    styles={dropdownStyles}
                   />
                 )}
             />
