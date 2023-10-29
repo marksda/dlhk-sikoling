@@ -210,25 +210,25 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             },
             isPadded: true,
         },
-        { 
-            key: 'status_internal', 
-            name: 'Tipe pengguna', 
-            minWidth: 100, 
-            maxWidth: 100, 
-            isResizable: true,
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemAuthority) => {
-                return (
-                    <span>
-                        {
-                            item.statusInternal != undefined ? item.statusInternal == true ? 'Petugas':'Pemohon':null
-                        }
-                    </span>
-                );
-            },
-            isPadded: true,
-        },
+        // { 
+        //     key: 'status_internal', 
+        //     name: 'Tipe pengguna', 
+        //     minWidth: 100, 
+        //     maxWidth: 100, 
+        //     isResizable: true,
+        //     onColumnClick: _onHandleColumnClick,
+        //     data: 'string',
+        //     onRender: (item: IItemAuthority) => {
+        //         return (
+        //             <span>
+        //                 {
+        //                     item.statusInternal != undefined ? item.statusInternal == true ? 'Petugas':'Pemohon':null
+        //                 }
+        //             </span>
+        //         );
+        //     },
+        //     isPadded: true,
+        // },
         { 
             key: 'is_verified', 
             name: 'Approved', 

@@ -64,11 +64,11 @@ export const HakAksesSchema = object({
 
 export const OtoritasSchema = object({
     id: z.string(),
-    tanggal: z.string().nullable(),
-    hakAkses: HakAksesSchema.optional(),
-    person: PersonSchema.optional(),
-    statusInternal: z.boolean().nullable(),
-    userName: z.string().optional(),
+    tanggal: z.string().optional(),
+    hakAkses: HakAksesSchema,
+    person: PersonSchema,
+    // statusInternal: z.boolean().nullable(),
+    userName: z.string(),
     isVerified: z.boolean().nullable(),
 });
 

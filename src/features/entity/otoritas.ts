@@ -6,7 +6,7 @@ export interface IOtoritas {
     tanggal: string|null;
     hakAkses: Partial<IHakAkses>|null;
     person: Partial<IPerson>|null;
-    statusInternal: boolean|null;
+    // statusInternal: boolean|null;
     userName: string|null;
     isVerified: boolean|null;
 };

@@ -1,4 +1,4 @@
-import { ActionButton, Checkbox, ComboBox, ContextualMenu, Dropdown, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IDropdownOption, IDropdownStyles, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Checkbox, ComboBox, ContextualMenu, Dropdown, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IDropdownOption, IDropdownStyles, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, IconButton, Modal , PrimaryButton, Stack, TextField, Toggle, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { OtoritasSchema } from "../../features/schema-resolver/zod-schema";
@@ -76,6 +76,13 @@ const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 400 } };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 const addIcon: IIconProps = { iconName: 'AddFriend' };
 const containerPasswordStackTokens: IStackTokens = { childrenGap: 12 };
+const stackApproveTokens = { childrenGap: 8 };
+const toggleStyles = {
+  root: {
+      marginBottom: 0,
+      width: '150px',
+  },
+};
 
 export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
@@ -113,12 +120,16 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
   const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
   //hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<IOtoritas>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):undefined,
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
+      id: '',
+      isVerified: false
+    },
     resolver: zodResolver(OtoritasSchema),
   });
   // rtk query
@@ -338,6 +349,14 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
       [postsHakAkses]
   );
 
+  const _onChangeApproved = useCallback(
+    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
+      setValue("isVerified", checked!);             
+      setIsApproved(checked!);  
+    },
+    []
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -436,6 +455,15 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
             />
           </Stack.Item>
           <Stack.Item>
+            <ActionButton 
+              iconProps={addIcon} 
+              allowDisabledFocus 
+              onClick={_onHandleBtnAddPerson}
+            >
+            Add pilihan person
+            </ActionButton>
+          </Stack.Item>
+          <Stack.Item>
             <Controller 
               name="hakAkses"
               control={control}
@@ -457,13 +485,21 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
             />
           </Stack.Item>
           <Stack.Item>
-            <ActionButton 
-              iconProps={addIcon} 
-              allowDisabledFocus 
-              onClick={_onHandleBtnAddPerson}
-            >
-            Add pilihan person
-            </ActionButton>
+            <Stack horizontal tokens={stackApproveTokens} style={{marginTop: 16}}>
+                <Stack.Item>
+                    <span>Approved</span>
+                </Stack.Item>            
+                <Stack.Item>
+                    <Toggle
+                        checked={isApproved}
+                        onChange={_onChangeApproved}
+                        styles={toggleStyles}
+                        onText="Sudah"
+                        offText="Belum"
+                        disabled={disableForm}
+                    />
+                </Stack.Item>
+            </Stack>
           </Stack.Item>
           {mode == 'add' ? null:
             <Stack.Item>
