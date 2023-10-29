@@ -20,11 +20,12 @@ import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 import { IRegisterDokumen } from "../../entity/register-dokumen";
 import { IKbli } from "../../entity/kbli";
 import { IRegisterKbli } from "../../entity/register-kbli";
+import { IOtoritas } from "../../entity/otoritas";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha',  'ConfigEditor'],
+    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha',  'ConfigEditor'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -807,6 +808,23 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterKbli: builder.query<number, qFilters>({
                 query: (queryFilters) => `/register_kbli/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveRegisterOtoritas: builder.mutation<IOtoritas, Partial<IOtoritas>>({
+                query: (body) => ({
+                    url: '/otoritas',
+                    method: 'POST',
+                    body
+                }),
+                invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
+            }),
+            updateRegisterOtoritas: builder.mutation<void, Partial<IOtoritas>>({
+                query: (body) => ({
+                    url: '/otoritas',
+                    method: 'PUT',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
+            }),
+
             uploadFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({
                     url: encodeURI(subPath),
@@ -880,6 +898,7 @@ export const {
     useDeleteKbliMutation, useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery,
     useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
+    useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
     useAddDirekturMutation,
 } = sikolingApi;

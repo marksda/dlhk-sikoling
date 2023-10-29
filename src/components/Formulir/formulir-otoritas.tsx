@@ -166,43 +166,44 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   );
   
   const onSubmit: SubmitHandler<IOtoritas> = async (data) => {
-    setDisableForm(true);
-    try {
-      switch (mode) {
-        case 'add':
-          await saveHakAkses(data as IOtoritas).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
-          break;
-        case 'edit':
-        //   await updateHakAkses({
-        //     id: dataLama?.id, 
-        //     nama: namaTextFieldValue,
-        //     keterangan: keteranganTextFieldValue
-        //   }).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
-          break;
-        case 'delete':
-        //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
-          break;
-        default:
-          break;
-      }      
-    } catch (error) {
-      setDisableForm(false);
-    }
+    console.log(data);
+    // setDisableForm(true);
+    // try {
+    //   switch (mode) {
+    //     case 'add':
+    //       await saveHakAkses(data as IOtoritas).unwrap().then((originalPromiseResult) => {
+    //         setDisableForm(false);
+    //       }).catch((rejectedValueOrSerializedError) => {
+    //         setDisableForm(false);
+    //       }); 
+    //       hideModal();
+    //       break;
+    //     case 'edit':
+    //     //   await updateHakAkses({
+    //     //     id: dataLama?.id, 
+    //     //     nama: namaTextFieldValue,
+    //     //     keterangan: keteranganTextFieldValue
+    //     //   }).unwrap().then((originalPromiseResult) => {
+    //     //     setDisableForm(false);
+    //     //   }).catch((rejectedValueOrSerializedError) => {
+    //     //     setDisableForm(false);
+    //     //   }); 
+    //     //   hideModal();
+    //       break;
+    //     case 'delete':
+    //     //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
+    //     //     setDisableForm(false);
+    //     //   }).catch((rejectedValueOrSerializedError) => {
+    //     //     setDisableForm(false);
+    //     //   }); 
+    //     //   hideModal();
+    //       break;
+    //     default:
+    //       break;
+    //   }      
+    // } catch (error) {
+    //   setDisableForm(false);
+    // }
   };
 
   const onError: SubmitErrorHandler<IHakAkses> = (err) => {
@@ -427,7 +428,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                     onRenderOption={_onRenderPersonOption}   
                     onInputValueChange={_onInputComboBoxPersonValueChange}      
                     styles={basicComboBoxStyles}           
-                    errorMessage={error && 'harus diisi'}
+                    errorMessage={error && 'person belum divalidasi'}
                     onChange={_onHandleOnChangePersonComboBox}
                     disabled={mode == 'delete' ? true:disableForm}
                   />
