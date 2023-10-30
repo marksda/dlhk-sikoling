@@ -824,7 +824,31 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
             }),
-
+            updateIdRegisterOtoritas: builder.mutation<IOtoritas, {idLama: string; otoritas: Partial<IOtoritas>}>({
+                query: ({idLama, otoritas}) => ({
+                    url: `/otoritas/id/${idLama}`,
+                    method: 'PUT',
+                    body: otoritas,
+                }),
+                invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
+            }),
+            deleteRegisterOtoritas: builder.mutation<Partial<IOtoritas>, Partial<IOtoritas>>({
+                query(otoritas) {
+                  return {
+                    url: '/otoritas',
+                    method: 'DELETE',
+                    body: otoritas
+                  }
+                },
+                invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
+            }),
+            getDaftarDataRegisterOtoritas: builder.query<IOtoritas[], IQueryParamFilters>({
+                query: (queryParams) => `/otoritas?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['Otoritas'],
+            }),
+            getJumlahDataRegisterOtoritas: builder.query<number, qFilters>({
+                query: (queryFilters) => `/otoritas/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             uploadFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({
                     url: encodeURI(subPath),
@@ -898,7 +922,8 @@ export const {
     useDeleteKbliMutation, useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery,
     useSaveRegisterKbliMutation, useUpdateRegisterKbliMutation, useUpdateIdRegisterKbliMutation,
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
-    useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation,
+    useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation, useUpdateIdRegisterOtoritasMutation,
+    useDeleteRegisterOtoritasMutation, useGetDaftarDataRegisterOtoritasQuery, useGetJumlahDataRegisterOtoritasQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
     useAddDirekturMutation,
 } = sikolingApi;

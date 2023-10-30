@@ -1,7 +1,6 @@
 import { IIconProps, Stack, mergeStyleSets, Text, SearchBox, ActionButton, ScrollablePane, DetailsList, IColumn, DirectionalHint, IContextualMenuListProps, IRenderFunction, mergeStyles, DetailsListLayoutMode, SelectionMode, Sticky, StickyPositionType, IDetailsHeaderProps, ContextualMenu, Callout, DatePicker, DayOfWeek, Label, Dropdown, IDropdownOption, PrimaryButton, CommandBar, ICommandBarItemProps, Selection, Toggle } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import { useGetDaftarDataQuery as getDaftarOtoritas, useGetJumlahDataQuery as getJumlahOtoritas } from "../../features/repository/service/otoritas-api-slice";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
@@ -9,7 +8,7 @@ import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-
 import { IOtoritas } from "../../features/entity/otoritas";
 import find from "lodash.find";
 import { FormulirOtoritas } from "../Formulir/formulir-otoritas";
-import { useGetDaftarDataHakAksesQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataHakAksesQuery, useGetDaftarDataRegisterOtoritasQuery, useGetJumlahDataRegisterOtoritasQuery } from "../../features/repository/service/sikoling-api-slice";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 
 interface IDataListOtoritasUIProps {
@@ -210,25 +209,6 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
             },
             isPadded: true,
         },
-        // { 
-        //     key: 'status_internal', 
-        //     name: 'Tipe pengguna', 
-        //     minWidth: 100, 
-        //     maxWidth: 100, 
-        //     isResizable: true,
-        //     onColumnClick: _onHandleColumnClick,
-        //     data: 'string',
-        //     onRender: (item: IItemAuthority) => {
-        //         return (
-        //             <span>
-        //                 {
-        //                     item.statusInternal != undefined ? item.statusInternal == true ? 'Petugas':'Pemohon':null
-        //                 }
-        //             </span>
-        //         );
-        //     },
-        //     isPadded: true,
-        // },
         { 
             key: 'is_verified', 
             name: 'Approved', 
@@ -254,8 +234,8 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
     const searchNamaId = useId('searchNama');
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCountPosts } = getJumlahOtoritas(queryFilters);
-    const { data: postsOtoritas, isLoading: isLoadingPostsOtoritas } = getDaftarOtoritas(queryParams);
+    const { data: postsCount, isLoading: isLoadingCountPosts } = useGetJumlahDataRegisterOtoritasQuery(queryFilters);
+    const { data: postsOtoritas, isLoading: isLoadingPostsOtoritas } = useGetDaftarDataRegisterOtoritasQuery(queryParams);
     const { data: postsHakAkses, isLoading: isLoadingPostsHakAkses } = useGetDaftarDataHakAksesQuery({
         pageNumber: 1,
         pageSize: 0,
