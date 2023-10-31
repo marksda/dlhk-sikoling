@@ -808,11 +808,11 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterKbli: builder.query<number, qFilters>({
                 query: (queryFilters) => `/register_kbli/count?filters=${JSON.stringify(queryFilters)}`,
             }),
-            saveRegisterOtoritas: builder.mutation<IOtoritas, Partial<IOtoritas>>({
-                query: (body) => ({
+            saveRegisterOtoritas: builder.mutation<IOtoritas, FormData>({
+                query: (dataForm) => ({
                     url: '/otoritas',
                     method: 'POST',
-                    body
+                    body: dataForm
                 }),
                 invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
             }),
