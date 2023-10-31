@@ -400,7 +400,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                       }
                       styles={textFieldStyles}
                       disabled={mode == 'delete' ? true:disableForm}
-                      errorMessage={error && 'harus diisi'}
+                      errorMessage={error && 'harus diisi sesuai dengan format penulisan email'}
                     />
                 )}
             />

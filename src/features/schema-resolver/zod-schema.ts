@@ -67,7 +67,7 @@ export const OtoritasSchema = object({
     tanggal: z.string().optional(),
     hakAkses: HakAksesSchema,
     person: PersonSchema,
-    userName: z.string(),
+    userName: z.string().email(),
     isVerified: z.boolean().nullable(),
 });
 
