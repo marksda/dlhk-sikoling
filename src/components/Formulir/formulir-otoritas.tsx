@@ -7,9 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { IOtoritas } from "../../features/entity/otoritas";
-import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useSaveRegisterOtoritasMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { FormulirPerson } from "./formulir-person";
+import { ICredential } from "../../features/entity/credential";
 
 interface IFormulirOtoritasFluentUIProps {
   title: string|undefined;
@@ -133,9 +134,9 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     resolver: zodResolver(OtoritasSchema),
   });
   // rtk query
-  const [ saveHakAkses ] = useSaveHakAksesMutation();
-  const [ updateHakAkses ] = useUpdateHakAksesMutation();
-  const [ deleteHakAkses ] = useDeleteHakAksesMutation();
+  const [ saveRegisterOtoritas ] = useSaveRegisterOtoritasMutation();
+  // const [ updateHakAkses ] = useUpdateHakAksesMutation();
+  // const [ deleteHakAkses ] = useDeleteHakAksesMutation();
   const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
   const { data: postsHakAkses, isLoading: isLoadingPostsHakakses } = useGetDaftarDataHakAksesQuery(queryHakAksesParams);
 
@@ -178,43 +179,50 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   
   const onSubmit: SubmitHandler<IOtoritas> = async (data) => {
     console.log(data);
-    // setDisableForm(true);
-    // try {
-    //   switch (mode) {
-    //     case 'add':
-    //       await saveHakAkses(data as IOtoritas).unwrap().then((originalPromiseResult) => {
-    //         setDisableForm(false);
-    //       }).catch((rejectedValueOrSerializedError) => {
-    //         setDisableForm(false);
-    //       }); 
-    //       hideModal();
-    //       break;
-    //     case 'edit':
-    //     //   await updateHakAkses({
-    //     //     id: dataLama?.id, 
-    //     //     nama: namaTextFieldValue,
-    //     //     keterangan: keteranganTextFieldValue
-    //     //   }).unwrap().then((originalPromiseResult) => {
-    //     //     setDisableForm(false);
-    //     //   }).catch((rejectedValueOrSerializedError) => {
-    //     //     setDisableForm(false);
-    //     //   }); 
-    //     //   hideModal();
-    //       break;
-    //     case 'delete':
-    //     //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
-    //     //     setDisableForm(false);
-    //     //   }).catch((rejectedValueOrSerializedError) => {
-    //     //     setDisableForm(false);
-    //     //   }); 
-    //     //   hideModal();
-    //       break;
-    //     default:
-    //       break;
-    //   }      
-    // } catch (error) {
-    //   setDisableForm(false);
-    // }
+    setDisableForm(true);
+    try {
+      switch (mode) {
+        case 'add':
+          let formData = new FormData();
+          let credential: ICredential = {
+            userName: userNameTextFieldValue,
+            password: passwordValue
+          }
+          formData.append('credentialData', JSON.stringify(credential));
+          formData.append('otoritasData', JSON.stringify(data));
+          await saveRegisterOtoritas(formData).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
+          break;
+        case 'edit':
+        //   await updateHakAkses({
+        //     id: dataLama?.id, 
+        //     nama: namaTextFieldValue,
+        //     keterangan: keteranganTextFieldValue
+        //   }).unwrap().then((originalPromiseResult) => {
+        //     setDisableForm(false);
+        //   }).catch((rejectedValueOrSerializedError) => {
+        //     setDisableForm(false);
+        //   }); 
+        //   hideModal();
+          break;
+        case 'delete':
+        //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
+        //     setDisableForm(false);
+        //   }).catch((rejectedValueOrSerializedError) => {
+        //     setDisableForm(false);
+        //   }); 
+        //   hideModal();
+          break;
+        default:
+          break;
+      }      
+    } catch (error) {
+      setDisableForm(false);
+    }
   };
 
   const onError: SubmitErrorHandler<IHakAkses> = (err) => {
