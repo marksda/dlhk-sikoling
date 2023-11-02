@@ -128,7 +128,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   //hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<IOtoritas>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{
-      id: '',
+      id: null,
       isVerified: false
     },
     resolver: zodResolver(OtoritasSchema),
