@@ -287,7 +287,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit');
+                        setFormulirTitle('Edit pengguna');
                         setModeForm('edit');
                         showModalFormulirOtoritas();
                         let dataTerpilih: IOtoritas = find(postsOtoritas, (i) => i.id == selection.getSelection()[0].key) as IOtoritas;
