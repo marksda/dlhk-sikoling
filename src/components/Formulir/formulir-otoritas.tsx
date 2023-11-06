@@ -59,7 +59,7 @@ const contentStyles = mergeStyleSets({
   },
 });
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { minWidth: 350 } };
-const textPasswordFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 250 } };
+const textPasswordFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 240 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -81,13 +81,13 @@ const stackApproveTokens = { childrenGap: 8 };
 const toggleStyles = {
   root: {
       marginBottom: 0,
-      width: '150px',
+      width: '110px',
   },
 };
 
 export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
   // local state
-  const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
+  // const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [userNameTextFieldValue, setUserNameTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.userName!:'');
   const [passwordValue, setPasswordValue] = useState<string>('');
   const [selectedKeyPerson, setSelectedKeyPerson] = useState<string|undefined>(dataLama != undefined ? dataLama.person?.nik!:undefined);
@@ -122,6 +122,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
   const [isApproved, setIsApproved] = useState<boolean>(false);
+  const [isUbahPassword, setIsUbahPassword] = useState<boolean>(false);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
   const [isModalFormulirPersonOpen, {setTrue: showModalFormulirPerson, setFalse: hideModalFormulirPerson}] = useBoolean(false);
@@ -365,6 +366,13 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     []
   );
 
+  const _onChangeUbahPassword = useCallback(
+    (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => { 
+      setIsUbahPassword(checked!);  
+    },
+    []
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -413,27 +421,29 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                 )}
             />
           </Stack.Item>
-          <Stack.Item>
-            <Stack horizontal  tokens={containerPasswordStackTokens}>
-              <Stack.Item align="center">
-                <TextField
-                  label="Password"
-                  placeholder="Isikan password"
-                  value={passwordValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      setPasswordValue(newValue || '');
+          { (mode == 'add'|| isUbahPassword == true) ? 
+            <Stack.Item>
+              <Stack horizontal  tokens={containerPasswordStackTokens}>
+                <Stack.Item align="center">
+                  <TextField
+                    label="Password"
+                    placeholder="Isikan password"
+                    value={passwordValue}
+                    onChange={
+                      (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+                        setPasswordValue(newValue || '');
+                      }
                     }
-                  }
-                  styles={textPasswordFieldStyles}
-                  disabled={(mode == 'delete'||isGeneratedPassword == true) ? true:disableForm}
-                />
-              </Stack.Item>
-              <Stack.Item align="center" style={{paddingTop: 28}}>
-                <Checkbox label="Generate password" checked={isGeneratedPassword} onChange={onChangeGeneratePassword} />
-              </Stack.Item>
-            </Stack>
-          </Stack.Item>
+                    styles={textPasswordFieldStyles}
+                    disabled={(mode == 'delete'||isGeneratedPassword == true) ? true:disableForm}
+                  />
+                </Stack.Item>
+                <Stack.Item align="center" style={{paddingTop: 28}}>
+                  <Checkbox label="Generate password" checked={isGeneratedPassword} onChange={onChangeGeneratePassword} />
+                </Stack.Item>
+              </Stack>
+            </Stack.Item>:null
+          }
           <Stack.Item>
             <Controller 
               name="person"
@@ -507,35 +517,24 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                         disabled={disableForm}
                     />
                 </Stack.Item>
+                { mode == 'edit' && <>
+                  <Stack.Item>
+                      <span>Ubah password</span>
+                  </Stack.Item>            
+                  <Stack.Item>
+                      <Toggle
+                          checked={isUbahPassword}
+                          onChange={_onChangeUbahPassword}
+                          styles={toggleStyles}
+                          onText="Ya"
+                          offText="Tidak"
+                          disabled={disableForm}
+                      />
+                  </Stack.Item>
+                  </>
+                }
             </Stack>
           </Stack.Item>
-          {mode == 'add' ? null:
-            <Stack.Item>
-              <Controller 
-                name="id"
-                control={control}
-                render={
-                  ({
-                    field: {onChange, onBlur}, 
-                    fieldState: { error }
-                  }) => (
-                      <TextField
-                        label="Id"
-                        value={idTextFieldValue}
-                        onChange={
-                          (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                            onChange(newValue || '');
-                            setIdTextFieldValue(newValue || '');
-                          }
-                        }
-                        styles={textFieldStyles}
-                        disabled={mode == 'delete'|| mode == 'edit' ? true:disableForm}
-                        errorMessage={error && 'harus diisi'}
-                      />
-                  )}
-              />
-            </Stack.Item>
-          }
           <PrimaryButton 
             style={{marginTop: 16, width: '100%'}}
             text={mode == 'delete' ? 'Hapus':'Simpan'} 
