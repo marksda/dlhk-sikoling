@@ -7,10 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { IOtoritas } from "../../features/entity/otoritas";
-import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useSaveRegisterOtoritasMutation, useUpdateHakAksesMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useSaveRegisterOtoritasMutation, useUpdateHakAksesMutation, useUpdateRegisterOtoritasMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { FormulirPerson } from "./formulir-person";
 import { ICredential } from "../../features/entity/credential";
+import { generateRandomString } from "../../features/config/helper-function";
 
 interface IFormulirOtoritasFluentUIProps {
   title: string|undefined;
@@ -121,7 +122,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [isGeneratedPassword, setIsGeneratePassword] = useState<boolean>(true);
-  const [isApproved, setIsApproved] = useState<boolean>(false);
+  const [isApproved, setIsApproved] = useState<boolean>(dataLama != undefined ? dataLama.isVerified != null ? dataLama.isVerified:false:false);
   const [isUbahPassword, setIsUbahPassword] = useState<boolean>(false);
   const titleId = useId('title');
   const comboBoxPersonRef = useRef<IComboBox>(null);
@@ -136,6 +137,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   });
   // rtk query
   const [ saveRegisterOtoritas ] = useSaveRegisterOtoritasMutation();
+  const [ updateRegisterOtoritas ] = useUpdateRegisterOtoritasMutation();
   // const [ updateHakAkses ] = useUpdateHakAksesMutation();
   // const [ deleteHakAkses ] = useDeleteHakAksesMutation();
   const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
@@ -182,13 +184,19 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
     console.log(data);
     setDisableForm(true);
     try {
+      let formData = new FormData();
+      let credential: ICredential|null = null;
       switch (mode) {
-        case 'add':
-          let formData = new FormData();
-          let credential: ICredential = {
+        case 'add':          
+          credential = {
             userName: userNameTextFieldValue,
             password: passwordValue
           }
+
+          if(isGeneratedPassword == true) {
+            credential.password = generateRandomString(8);
+          }
+
           formData.append('credentialData', JSON.stringify(credential));
           formData.append('otoritasData', JSON.stringify(data));
           await saveRegisterOtoritas(formData).unwrap().then((originalPromiseResult) => {
@@ -199,16 +207,33 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
           hideModal();
           break;
         case 'edit':
-        //   await updateHakAkses({
-        //     id: dataLama?.id, 
-        //     nama: namaTextFieldValue,
-        //     keterangan: keteranganTextFieldValue
-        //   }).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+          if(isUbahPassword == true) {
+            credential = {
+              userName: userNameTextFieldValue,
+              password: passwordValue
+            }
+  
+            if(isGeneratedPassword == true) {
+              credential.password = generateRandomString(8);
+            }
+
+            formData.append('otoritasData', JSON.stringify(data));
+            formData.append('otoritasData', JSON.stringify(data));
+            await updateRegisterOtoritas(formData).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            });   
+          }
+          else {
+            formData.append('otoritasData', JSON.stringify(data));
+            await updateRegisterOtoritas(formData).unwrap().then((originalPromiseResult) => {
+              setDisableForm(false);
+            }).catch((rejectedValueOrSerializedError) => {
+              setDisableForm(false);
+            }); 
+          }
+          hideModal();
           break;
         case 'delete':
         //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
@@ -345,6 +370,9 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   const onChangeGeneratePassword = useCallback(
     (ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean): void => {
       setIsGeneratePassword(!!checked);
+      if(checked) {
+        setPasswordValue('');
+      }
     },
     [],
   );

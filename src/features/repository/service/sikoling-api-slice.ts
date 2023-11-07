@@ -816,11 +816,11 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
             }),
-            updateRegisterOtoritas: builder.mutation<void, Partial<IOtoritas>>({
-                query: (body) => ({
+            updateRegisterOtoritas: builder.mutation<void, FormData>({
+                query: (dataForm) => ({
                     url: '/otoritas',
                     method: 'PUT',
-                    body,
+                    body: dataForm
                 }),
                 invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
             }),

@@ -193,3 +193,14 @@ export const utcFormatStringToDDMMYYYY = (tglStr: string) => {
 export const utcFormatDateToYYYYMMDD = (date?: Date): string => {
     return !date ? '' : date.getFullYear() + '-' + addZeroDigitInFront(date.getMonth() + 1) + '-' + addZeroDigitInFront(date.getDate());
 };
+
+export const generateRandomString = (length:number) => {
+    let result = '';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+};
