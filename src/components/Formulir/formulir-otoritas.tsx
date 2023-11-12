@@ -181,7 +181,6 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   );
   
   const onSubmit: SubmitHandler<IOtoritas> = async (data) => {
-    console.log(data);
     setDisableForm(true);
     try {
       let formData = new FormData();
