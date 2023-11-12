@@ -217,7 +217,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
               credential.password = generateRandomString(8);
             }
 
-            formData.append('otoritasData', JSON.stringify(data));
+            formData.append('credentialData', JSON.stringify(credential));
             formData.append('otoritasData', JSON.stringify(data));
             await updateRegisterOtoritas(formData).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
