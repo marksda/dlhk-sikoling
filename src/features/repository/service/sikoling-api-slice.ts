@@ -835,9 +835,8 @@ export const sikolingApi = createApi({
             deleteRegisterOtoritas: builder.mutation<Partial<IOtoritas>, Partial<IOtoritas>>({
                 query(otoritas) {
                   return {
-                    url: '/otoritas',
-                    method: 'DELETE',
-                    body: otoritas
+                    url: `/otoritas/${otoritas.id}`,
+                    method: 'DELETE'
                   }
                 },
                 invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],

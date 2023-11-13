@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IHakAkses } from "../../features/entity/hak-akses";
 import { IOtoritas } from "../../features/entity/otoritas";
-import { useDeleteHakAksesMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useSaveRegisterOtoritasMutation, useUpdateHakAksesMutation, useUpdateRegisterOtoritasMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteHakAksesMutation, useDeleteRegisterOtoritasMutation, useGetDaftarDataHakAksesQuery, useGetDaftarDataPersonQuery, useSaveHakAksesMutation, useSaveRegisterOtoritasMutation, useUpdateHakAksesMutation, useUpdateRegisterOtoritasMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { FormulirPerson } from "./formulir-person";
 import { ICredential } from "../../features/entity/credential";
@@ -138,8 +138,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
   // rtk query
   const [ saveRegisterOtoritas ] = useSaveRegisterOtoritasMutation();
   const [ updateRegisterOtoritas ] = useUpdateRegisterOtoritasMutation();
-  // const [ updateHakAkses ] = useUpdateHakAksesMutation();
-  // const [ deleteHakAkses ] = useDeleteHakAksesMutation();
+  const [ deleteRegisterOtoritas ] = useDeleteRegisterOtoritasMutation();
   const { data: postsPerson, isLoading: isLoadingPostsPerson } = useGetDaftarDataPersonQuery(queryPersonParams);
   const { data: postsHakAkses, isLoading: isLoadingPostsHakakses } = useGetDaftarDataHakAksesQuery(queryHakAksesParams);
 
@@ -235,12 +234,12 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
           hideModal();
           break;
         case 'delete':
-        //   await deleteHakAkses(dataLama?.id!).unwrap().then((originalPromiseResult) => {
-        //     setDisableForm(false);
-        //   }).catch((rejectedValueOrSerializedError) => {
-        //     setDisableForm(false);
-        //   }); 
-        //   hideModal();
+          await deleteRegisterOtoritas(data).unwrap().then((originalPromiseResult) => {
+            setDisableForm(false);
+          }).catch((rejectedValueOrSerializedError) => {
+            setDisableForm(false);
+          }); 
+          hideModal();
           break;
         default:
           break;
@@ -504,6 +503,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
               iconProps={addIcon} 
               allowDisabledFocus 
               onClick={_onHandleBtnAddPerson}
+              disabled={mode == 'delete' ? true:disableForm}
             >
             Add pilihan person
             </ActionButton>
@@ -525,6 +525,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                     placeholder="pilih hak akses"
                     options={optionsHakAkses != undefined ? optionsHakAkses:[]}
                     styles={dropdownStyles}
+                    disabled={mode == 'delete' ? true:disableForm}
                   />
                 )}
             />
@@ -541,7 +542,7 @@ export const FormulirOtoritas: FC<IFormulirOtoritasFluentUIProps> = ({title, isM
                         styles={toggleStyles}
                         onText="Sudah"
                         offText="Belum"
-                        disabled={disableForm}
+                        disabled={mode == 'delete' ? true:disableForm}
                     />
                 </Stack.Item>
                 { mode == 'edit' && <>
