@@ -848,6 +848,15 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterOtoritas: builder.query<number, qFilters>({
                 query: (queryFilters) => `/otoritas/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            logout: builder.mutation<string, string>({
+                query(sessionId) {
+                  return {
+                    url: `/user/${sessionId}`,
+                    method: 'DELETE'
+                  }
+                },                
+                // invalidatesTags: (result) => result ? ['Otoritas']:['Kosong'],
+            }),
             uploadFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
                 query: ({subPath, dataForm}) => ({
                     url: encodeURI(subPath),
@@ -924,5 +933,5 @@ export const {
     useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation, useUpdateIdRegisterOtoritasMutation,
     useDeleteRegisterOtoritasMutation, useGetDaftarDataRegisterOtoritasQuery, useGetJumlahDataRegisterOtoritasQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
-    useAddDirekturMutation,
+    useAddDirekturMutation, useLogoutMutation,
 } = sikolingApi;

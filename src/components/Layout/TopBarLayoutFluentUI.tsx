@@ -1,9 +1,10 @@
 import { DefaultButton, FocusTrapZone, FontIcon, getTheme, IconButton, IIconProps, IStackItemStyles, IStackStyles, ITooltipHostStyles, Layer, mergeStyles, mergeStyleSets, Overlay, Popup, Stack, TooltipHost } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback } from "react";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { resetCredential } from "../../features/security/authentication-slice";
 import { resetToken } from "../../features/security/token-slice";
+import { useLogoutMutation } from "../../features/repository/service/sikoling-api-slice";
 
 
 interface ITopBarUIProps {
@@ -62,15 +63,19 @@ const popupStyles = mergeStyleSets({
 
 
 export const TopBarLayoutFluentUI: FC<ITopBarUIProps> = ({appTitleContainer, subTitle}) => {
+    const token = useAppSelector((state) => state.token);
     const [isPopupVisible, { setTrue: showPopup, setFalse: hidePopup }] = useBoolean(false);
     const tooltipId = useId('tooltip');
+
+    const [ logout ] = useLogoutMutation();
 
     //redux action creator
     const dispatch = useAppDispatch();
     
     const handleLogOut = useCallback(
-        () => {
+        async () => {
             hidePopup();
+            await logout(token.sessionId!);
             localStorage.removeItem('token');
             dispatch(resetToken());
         },

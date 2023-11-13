@@ -17,6 +17,7 @@ JSON.parse(localStorage.getItem('token') as string) :
     accessToken: null,
     refreshToken: null,
     expireIn: null,
+    sessionId: null,
 };
 
 export const tokenSlice = createSlice({
@@ -31,6 +32,7 @@ export const tokenSlice = createSlice({
             state.refreshToken = action.payload.refreshToken;
             state.expireIn = action.payload.expireIn;
             state.hakAkses = action.payload.hakAkses;
+            state.sessionId = action.payload.sessionId;
         },
         setUserId: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
@@ -55,6 +57,7 @@ export const tokenSlice = createSlice({
             state.refreshToken = null;
             state.expireIn = null;
             state.hakAkses = null;
+            state.sessionId = null;
         },
     },
 });

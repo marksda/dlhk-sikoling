@@ -6,4 +6,5 @@ export interface IToken {
     accessToken: string|null;
     refreshToken: string|null;
     expireIn: string|null;
+    sessionId: string|null;
 };
