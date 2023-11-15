@@ -136,7 +136,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         },
         { 
             key: 'user_name', 
-            name: 'User name', 
+            name: 'Username', 
             fieldName: 'user_name', 
             minWidth: 200, 
             maxWidth: 200, 
@@ -365,7 +365,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         []
     );    
 
-    const _onSearch = useCallback(
+    const _onSearchNamaPengguna = useCallback(
         (newValue) => {
             setCurrentPage(1);
 
@@ -436,7 +436,20 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
         []
     );
 
-    const _onClearSearch= useCallback(
+    const _onChangeSearchNamaPengguna = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearchNamaPengguna();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearchNamaPengguna(newValue);
+            }
+        },
+        []
+    );
+
+    const _onClearSearchNamaPengguna= useCallback(
         () => {
             setCurrentPage(1);
 
@@ -1079,10 +1092,11 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
-                                    placeholder="pencarian user" 
+                                    placeholder="pencarian username" 
                                     underlined={false} 
-                                    onSearch={_onSearch}
-                                    onClear= {_onClearSearch}
+                                    onChange={_onChangeSearchNamaPengguna}
+                                    onSearch={_onSearchNamaPengguna}
+                                    onClear= {_onClearSearchNamaPengguna}
                                     disableAnimation
                                 />
                             </Stack.Item>

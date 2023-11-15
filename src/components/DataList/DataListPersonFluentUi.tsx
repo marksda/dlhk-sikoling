@@ -373,7 +373,7 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         [isSelectedItem, selection, token]
     );
 
-    const _onSearch = useCallback(
+    const _onSearchNama = useCallback(
         (newValue) => {
             setCurrentPage(1);
 
@@ -443,7 +443,20 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
         []
     );
 
-    const _onClearSearch= useCallback(
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearchNama();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearchNama(newValue);
+            }
+        },
+        []
+    );
+
+    const _onClearSearchNama = useCallback(
         () => {
             setCurrentPage(1);
 
@@ -867,8 +880,9 @@ export const DataListPersonFluentUI: FC<IDataListPersonFluentUIProps> = ({initSe
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
-                                    onSearch={_onSearch}
-                                    onClear= {_onClearSearch}
+                                    onChange={_onChangeSearchNama}
+                                    onSearch={_onSearchNama}
+                                    onClear= {_onClearSearchNama}
                                 />
                             </Stack.Item>
                             <Stack.Item>
