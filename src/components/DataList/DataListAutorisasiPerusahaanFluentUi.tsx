@@ -1,5 +1,5 @@
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DefaultEffects, DetailsList, DetailsListLayoutMode, DirectionalHint, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IIconProps, IRenderFunction, Label, MaskedTextField, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { useBoolean, useId } from "@fluentui/react-hooks";
@@ -8,6 +8,7 @@ import { invertParseNpwp, parseNpwp } from "../../features/config/helper-functio
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
+import find from "lodash.find";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -60,6 +61,12 @@ const classNames = mergeStyleSets({
 });
 const stackTokens = { childrenGap: 8 };
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentUIProps> = ({initSelectedFilters, title}) => { 
 
@@ -122,6 +129,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [npwpTerparsing, setNpwpTerparsing] = useState<string|undefined>(undefined);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [dataLama, setDataLama]= useState<IOtoritasPerusahaan|undefined>(undefined);
     const [isModalFormulirPengaksesPerusahaanOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -215,6 +223,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const { data: postsOtoritasPerusahaan, isLoading: isLoadingPostsOtoritasPerusahaan } = useGetDaftarDataQuery(queryParams);
     const { data: postsCountOtoritasPerusahaan, isLoading: isLoadingCountOtoritasPerusahaan } = useGetJumlahDataQuery(queryFilters);
 
+
     const selection: Selection = useMemo(
         () => {
             return new Selection({
@@ -226,30 +235,23 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                         setIsSelectedItem(false);
                     }
                 },           
-                selectionMode: SelectionMode.single,
                 getKey: (item, index) => {
                     return item.key as string;
                 }
             });
         },
         []
-    ); 
+    );
     
     const itemsBar: ICommandBarItemProps[] = useMemo(
-        () => {
-            // const CoachmarkButtonWrapper: IComponentAs<ICommandBarItemProps> = (p: IComponentAsProps<ICommandBarItemProps>) => {
-            //   return (
-            //     <CoachmarkCommandBarButton {...p} isCoachmarkVisible={isCoachmarkVisible} onDismiss={onDismissCoachmark} />
-            //   );
-            // };
-        
+        () => {  
             return [
                 { 
                     key: 'newItem', 
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add');
+                        setFormulirTitle('Add otoritas perusahaan');
                         setModeForm('add');
                         showModalFormulirPengaksesPerusahaan();
                         setDataLama(undefined);
@@ -261,12 +263,13 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit');
+                        setFormulirTitle('Edit otoritas perusahaan');
                         setModeForm('edit');
                         showModalFormulirPengaksesPerusahaan();
-                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
-                        delete dataTerpilih.key;
-                        setDataLama(dataTerpilih as IOtoritasPerusahaan);
+                        let key = selection.getSelection()[0].key as string;
+                        let splitKey = key.split('-');
+                        let dataTerpilih = find(postsOtoritasPerusahaan, (i) => i.otoritas!.id == splitKey[0] && i.registerPerusahaan?.id == splitKey[1] );
+                        setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
                 },
@@ -277,11 +280,12 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Delete' }, 
                     onClick: () => {
-                        setFormulirTitle('Hapus item');
+                        setFormulirTitle('Hapus otoritas perusahaan');
                         setModeForm('delete');
                         showModalFormulirPengaksesPerusahaan();
-                        let dataTerpilih = cloneDeep(selection.getSelection()[0]);
-                        delete dataTerpilih.key;
+                        let key = selection.getSelection()[0].key as string;
+                        let splitKey = key.split('-');
+                        let dataTerpilih = find(postsOtoritasPerusahaan, (i) => i.otoritas!.id == splitKey[0] && i.registerPerusahaan?.id == splitKey[1] );
                         setDataLama(dataTerpilih as IOtoritasPerusahaan);
                     }
                 },
@@ -289,8 +293,19 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         }, 
         [isSelectedItem, selection]
     );
+
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
     
-    const _onSearch = useCallback(
+    const _onSearchNamaPerusahaan = useCallback(
         (newValue) => {
             setCurrentPage(1);
 
@@ -360,7 +375,20 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
         []
     );
 
-    const _onClearSearch= useCallback(
+    const _onChangeSearchNamaPerusahaan = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearchNamaPerusahaan();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearchNamaPerusahaan(newValue);
+            }
+        },
+        []
+    );
+
+    const _onClearSearchNamaPerusahaan= useCallback(
         () => {
             setCurrentPage(1);
 
@@ -801,18 +829,39 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>                        
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            } 
                             <Stack.Item>
-                                <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
                             </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 250}} 
                                     placeholder="pencarian perusahaan" 
                                     underlined={false} 
-                                    onSearch={_onSearch}
-                                    onClear= {_onClearSearch}
+                                    onChange={_onChangeSearchNamaPerusahaan}
+                                    onSearch={_onSearchNamaPerusahaan}
+                                    onClear= {_onClearSearchNamaPerusahaan}
                                 />
                             </Stack.Item>
                             <Stack.Item>
@@ -843,6 +892,7 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
                                     ) : []
                                 }
                                 selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
                                 selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
