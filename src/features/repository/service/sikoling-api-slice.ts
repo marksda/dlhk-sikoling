@@ -21,11 +21,12 @@ import { IRegisterDokumen } from "../../entity/register-dokumen";
 import { IKbli } from "../../entity/kbli";
 import { IRegisterKbli } from "../../entity/register-kbli";
 import { IOtoritas } from "../../entity/otoritas";
+import { IStatusFlowLog } from "../../entity/status-flow-log";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha',  'ConfigEditor'],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog' ],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -679,7 +680,7 @@ export const sikolingApi = createApi({
                     method: 'DELETE',
                   }
                 },
-                invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
+                invalidatesTags: (result) => result ? ['KategoriDokumen']:['Kosong'],
             }),
             getDaftarDataKategoriDokumen: builder.query<IKategoriDokumen[], IQueryParamFilters>({
                 query: (queryParams) => `/kategori_dokumen?filters=${JSON.stringify(queryParams)}`,
@@ -848,6 +849,46 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterOtoritas: builder.query<number, qFilters>({
                 query: (queryFilters) => `/otoritas/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveStatusFlowLog: builder.mutation<IStatusFlowLog, Partial<IStatusFlowLog>>({
+                query: (body) => ({
+                    url: '/status_flow_log',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ?['StatusFlowLog']:['Kosong'],
+            }),
+            updateStatusFlowLog: builder.mutation<IStatusFlowLog, Partial<IStatusFlowLog>>({
+                query: (statusFlowLog) => ({
+                    url: '/status_flow_log',
+                    method: 'PUT',
+                    body: statusFlowLog,
+                }),
+                invalidatesTags: (result) => result ?['StatusFlowLog']:['Kosong'],
+            }),
+            updateIdStatusFlowLog: builder.mutation<IStatusFlowLog, {idLama: string; statusFlowLog: Partial<IStatusFlowLog>}>({
+                query: ({idLama, statusFlowLog}) => ({
+                    url: `/status_flow_log/id/${idLama}`,
+                    method: 'PUT',
+                    body: statusFlowLog,
+                }),
+                invalidatesTags: (result) => result ? ['StatusFlowLog']:['Kosong'],
+            }),
+            deleteStatusFlowLog: builder.mutation<Partial<IStatusFlowLog>, Partial<IStatusFlowLog>>({
+                query(statusFlowLog) {
+                  return {
+                    url: `/status_flow_log/${statusFlowLog.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['StatusFlowLog']:['Kosong'],
+            }),
+            getDaftarDataStatusFlowLog: builder.query<IStatusFlowLog[], IQueryParamFilters>({
+                query: (queryParams) => `/status_flow_log?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['StatusFlowLog'],
+            }),
+            getJumlahDataStatusFlowLog: builder.query<number, qFilters>({
+                query: (queryFilters) => `/status_flow_log/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             logout: builder.mutation<string, string>({
                 query(sessionId) {
                   return {
@@ -865,14 +906,6 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
             }),
-            // replaceFile: builder.mutation<{uri:string}, {subPath: string; dataForm:FormData}>({
-            //     query: ({subPath, dataForm}) => ({
-            //         url: encodeURI(subPath),
-            //         method: 'POST',
-            //         body: dataForm,
-            //     }),
-            //     invalidatesTags: (result) => result ? ['RegisterDokumen']:['Kosong']
-            // }),
             deleteFile: builder.mutation<{hasil:string}, string>({
                 query: (subPath) => ({
                     url: encodeURI(subPath),
@@ -932,6 +965,8 @@ export const {
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
     useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation, useUpdateIdRegisterOtoritasMutation,
     useDeleteRegisterOtoritasMutation, useGetDaftarDataRegisterOtoritasQuery, useGetJumlahDataRegisterOtoritasQuery,
+    useSaveStatusFlowLogMutation, useUpdateStatusFlowLogMutation, useUpdateIdStatusFlowLogMutation,
+    useDeleteStatusFlowLogMutation, useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
     useAddDirekturMutation, useLogoutMutation,
 } = sikolingApi;

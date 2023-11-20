@@ -1,9 +1,12 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu } from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, CommandBar, Selection, ICommandBarItemProps } from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IStatusFlowLog, useGetDaftarStatusFlowLogByFiltersQuery, useGetTotalCountStatusFlowLogQuery } from "../../features/log/status-flow-log-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { useBoolean } from "@fluentui/react-hooks";
+import { IStatusFlowLog } from "../../features/entity/status-flow-log";
+import { useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
+import find from "lodash.find";
 
 interface IDataListStatusFlowLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -76,8 +79,14 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
     );
     
     //local state
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirStatusFlowLogOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [dataLama, setDataLama]= useState<IStatusFlowLog|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });
@@ -114,14 +123,73 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountStatusFlowLogQuery(queryFilters);
-    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarStatusFlowLogByFiltersQuery(queryParams);    
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataStatusFlowLogQuery(queryFilters);
+    const { data: postsStatusFlowLog, isLoading: isLoadingPosts } = useGetDaftarDataStatusFlowLogQuery(queryParams);    
 
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {  
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add otoritas perusahaan');
+                        setModeForm('add');
+                        showModalFormulirPengaksesPerusahaan();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit otoritas perusahaan');
+                        setModeForm('edit');
+                        showModalFormulirPengaksesPerusahaan();                        
+                        let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus otoritas perusahaan');
+                        setModeForm('delete');
+                        showModalFormulirPengaksesPerusahaan();
+                        let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
 
     const _onSortColumn = useCallback(
@@ -343,8 +411,15 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            } 
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
