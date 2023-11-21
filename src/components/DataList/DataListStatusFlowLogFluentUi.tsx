@@ -7,6 +7,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { IStatusFlowLog } from "../../features/entity/status-flow-log";
 import { useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import omit from "lodash.omit";
 
 interface IDataListStatusFlowLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -439,18 +440,19 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    postsKategoriLog != undefined ? postsKategoriLog?.map(
+                                    postsStatusFlowLog != undefined ? postsStatusFlowLog?.map(
                                         (t) => (
-                                            {key: t.id as string, ...t}
+                                            {key: t.id as string, ...omit(t, ['id'])}
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
