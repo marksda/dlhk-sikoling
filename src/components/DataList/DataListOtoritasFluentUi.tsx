@@ -22,7 +22,7 @@ const iconClass = mergeStyles({
     height: 24,
     width: 24,
     margin: '0 4px',
-  });
+});
 const classNames = mergeStyleSets({
     container: {
         width: "100%",

@@ -1,4 +1,4 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, CommandBar, Selection, ICommandBarItemProps } from "@fluentui/react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, CommandBar, Selection, ICommandBarItemProps, Toggle } from "@fluentui/react";
 import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
@@ -7,7 +7,6 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { IStatusFlowLog } from "../../features/entity/status-flow-log";
 import { useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
-import omit from "lodash.omit";
 
 interface IDataListStatusFlowLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -44,6 +43,12 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -405,6 +410,17 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill style={{marginTop: 2}}>
             <Stack.Item>
@@ -421,6 +437,22 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                                     </Stack.Item>
                                 )
                             } 
+                            <Stack.Item>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
@@ -442,7 +474,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                                 items={
                                     postsStatusFlowLog != undefined ? postsStatusFlowLog?.map(
                                         (t) => (
-                                            {key: t.id as string, ...omit(t, ['id'])}
+                                            {key: t.id as string, ...t}
                                         )
                                     ) : []
                                 }
