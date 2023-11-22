@@ -160,7 +160,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add otoritas perusahaan');
+                        setFormulirTitle('Add status flow log');
                         setModeForm('add');
                         showModalFormulirStatusFlowLog();
                         setDataLama(undefined);
@@ -172,7 +172,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit otoritas perusahaan');
+                        setFormulirTitle('Edit status flow log');
                         setModeForm('edit');
                         showModalFormulirStatusFlowLog();                        
                         let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
@@ -187,7 +187,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Delete' }, 
                     onClick: () => {
-                        setFormulirTitle('Hapus otoritas perusahaan');
+                        setFormulirTitle('Hapus item');
                         setModeForm('delete');
                         showModalFormulirStatusFlowLog();
                         let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
