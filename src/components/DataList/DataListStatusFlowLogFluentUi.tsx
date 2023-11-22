@@ -7,6 +7,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { IStatusFlowLog } from "../../features/entity/status-flow-log";
 import { useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import { FormulirStatusFlowLog } from "../Formulir/formulir-status-flow-log";
 
 interface IDataListStatusFlowLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -87,7 +88,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
     //local state
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
-    const [isModalFormulirStatusFlowLogOpen, { setTrue: showModalFormulirPengaksesPerusahaan, setFalse: hideModalFormulirPengaksesPerusahaan }] = useBoolean(false);
+    const [isModalFormulirStatusFlowLogOpen, { setTrue: showModalFormulirStatusFlowLog, setFalse: hideModalFormulirStatusFlowLog}] = useBoolean(false);
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [dataLama, setDataLama]= useState<IStatusFlowLog|undefined>(undefined);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
@@ -161,7 +162,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     onClick: () => {
                         setFormulirTitle('Add otoritas perusahaan');
                         setModeForm('add');
-                        showModalFormulirPengaksesPerusahaan();
+                        showModalFormulirStatusFlowLog();
                         setDataLama(undefined);
                     }
                 },
@@ -173,7 +174,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     onClick: () => {
                         setFormulirTitle('Edit otoritas perusahaan');
                         setModeForm('edit');
-                        showModalFormulirPengaksesPerusahaan();                        
+                        showModalFormulirStatusFlowLog();                        
                         let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
@@ -188,7 +189,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                     onClick: () => {
                         setFormulirTitle('Hapus otoritas perusahaan');
                         setModeForm('delete');
-                        showModalFormulirPengaksesPerusahaan();
+                        showModalFormulirStatusFlowLog();
                         let dataTerpilih = find(postsStatusFlowLog, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                     }
@@ -330,6 +331,19 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
+        },
+        []
+    );
+
     const _onClearSearch= useCallback(
         () => {
             setCurrentPage(1);
@@ -338,7 +352,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -353,7 +367,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     
                     if(found > -1) {
@@ -458,6 +472,7 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
@@ -503,6 +518,15 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {isModalFormulirStatusFlowLogOpen && (
+                <FormulirStatusFlowLog
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirStatusFlowLogOpen}
+                    hideModal={hideModalFormulirStatusFlowLog}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 }
