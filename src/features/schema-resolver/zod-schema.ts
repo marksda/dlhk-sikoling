@@ -210,5 +210,10 @@ export const RegisterDokumenAktaPendirianSchema = RegisterDokumenSchema.extend({
 export const RegisterDokumenNibSchema = RegisterDokumenSchema.extend({dokumen: DokumenNibSchema});
 export const RegisterDokumenGenerikSchema = RegisterDokumenSchema.extend({dokumen: DokumenGenerikSchema});
 
+export const StatusFlowLogSchema = object({
+    id: z.string().nullable(),
+    nama: z.string(),
+});
+
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

@@ -1,19 +1,20 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { PropinsiSchema } from "../../features/schema-resolver/zod-schema";
+import { PropinsiSchema, StatusFlowLogSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
 import { IPropinsi } from "../../features/entity/propinsi"; 
-import { useDeletePropinsiMutation, useSavePropinsiMutation, useUpdatePropinsiMutation, useUpdateIdPropinsiMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useSaveStatusFlowLogMutation, useUpdateStatusFlowLogMutation, useUpdateIdStatusFlowLogMutation, useDeleteStatusFlowLogMutation } from "../../features/repository/service/sikoling-api-slice";
+import { IStatusFlowLog } from "../../features/entity/status-flow-log";
 
 interface IFormulirStatusFlowLogFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   hideModal: () => void;
-  dataLama?: IPropinsi;
+  dataLama?: IStatusFlowLog;
 };
 
 const theme = getTheme();
@@ -75,15 +76,15 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IPropinsi>({
-    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: undefined, nama: undefined},
-    resolver: zodResolver(PropinsiSchema),
+  const {handleSubmit, control, resetField, watch} = useForm<IStatusFlowLog>({
+    defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined},
+    resolver: zodResolver(StatusFlowLogSchema),
   });
   // rtk query
-  const [ savePropinsi, {isLoading: isLoadingSavePropinsi}] = useSavePropinsiMutation();
-  const [ updatePropinsi, {isLoading: isLoadingUpdatePropinsi}] = useUpdatePropinsiMutation();
-  const [ updateIdPropinsi, {isLoading: isLoadingUpdateIdPropinsi}] = useUpdateIdPropinsiMutation();
-  const [ deletePropinsi, {isLoading: isLoadingDeletePropinsi}] = useDeletePropinsiMutation();
+  const [ saveStatusFlowLog, {isLoading: isLoadingSavePropinsi}] = useSaveStatusFlowLogMutation();
+  const [ updateStatusFlowLog, {isLoading: isLoadingUpdatePropinsi}] = useUpdateStatusFlowLogMutation();
+  const [ updateIdStatusFlowLog, {isLoading: isLoadingUpdateIdPropinsi}] = useUpdateIdStatusFlowLogMutation();
+  const [ deleteStatusFlowLog, {isLoading: isLoadingDeletePropinsi}] = useDeleteStatusFlowLogMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -101,7 +102,7 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
     try {
       switch (mode) {
         case 'add':
-          await savePropinsi(data as IPropinsi).unwrap().then((originalPromiseResult) => {
+          await saveStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -110,14 +111,14 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updatePropinsi(data).unwrap().then((originalPromiseResult) => {
+            await updateStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdPropinsi({idLama: dataLama?.id!, propinsi: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdStatusFlowLog({idLama: dataLama?.id!, statusFlowLog: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -126,7 +127,7 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
           hideModal();
           break;
         case 'delete':
-          await deletePropinsi(data).unwrap().then((originalPromiseResult) => {
+          await deleteStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -143,7 +144,7 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
 
   const onError: SubmitErrorHandler<IPropinsi> = async (err) => {
     if(mode == 'delete') {
-      await deletePropinsi(dataLama as IPropinsi).unwrap().then((originalPromiseResult) => {
+      await deleteStatusFlowLog(dataLama as IPropinsi).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
@@ -182,8 +183,9 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
             onClick={hideModal}
         />
       </div>
-      <div className={contentStyles.body}>        
-        <Controller 
+      <div className={contentStyles.body}>     
+        {mode != 'add' ?
+          <Controller 
             name="id"
             control={control}
             render={
@@ -204,8 +206,9 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
                         disabled={mode == 'delete' ? true:disableForm}
                         errorMessage={error && 'harus diisi'}
                     />
-                )}
-        />   
+            )}
+          />:null  
+        } 
         <Controller 
           name="nama"
           control={control}
