@@ -72,9 +72,9 @@ export const OtoritasSchema = object({
 });
 
 export const ModelPerizinanSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional(),
-    singkatan: z.string().optional()
+    id: z.string().nullable(),
+    nama: z.string(),
+    singkatan: z.string()
 });
 
 export const SkalaUsahaSchema = object({
