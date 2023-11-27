@@ -2,8 +2,9 @@ import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IR
 import { FC, useCallback, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { IKategoriFlowLog, useGetDaftarKategoriFlowLogByFiltersQuery, useGetTotalCountKategoriLogQuery } from "../../features/log/kategori-flow-log-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
+import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
+import { useGetDaftarDataKategoriFlowLogQuery, useGetJumlahDataKategoriFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListKategoriLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -114,8 +115,8 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCount, isLoading: isLoadingCount } = useGetTotalCountKategoriLogQuery(queryFilters);
-    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarKategoriFlowLogByFiltersQuery(queryParams);   
+    const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataKategoriFlowLogQuery(queryFilters);
+    const { data: postsKategoriLog, isLoading: isLoadingPosts } = useGetDaftarDataKategoriFlowLogQuery(queryParams);   
     
 
     const _getKey = useCallback(

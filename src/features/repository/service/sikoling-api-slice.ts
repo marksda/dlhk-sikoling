@@ -22,11 +22,12 @@ import { IKbli } from "../../entity/kbli";
 import { IRegisterKbli } from "../../entity/register-kbli";
 import { IOtoritas } from "../../entity/otoritas";
 import { IStatusFlowLog } from "../../entity/status-flow-log";
+import { IKategoriFlowLog } from "../../entity/kategori-flow-log";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog' ],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog' ],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -849,13 +850,53 @@ export const sikolingApi = createApi({
             getJumlahDataRegisterOtoritas: builder.query<number, qFilters>({
                 query: (queryFilters) => `/otoritas/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveKategoriFlowLog: builder.mutation<IKategoriFlowLog, Partial<IKategoriFlowLog>>({
+                query: (body) => ({
+                    url: '/kategori_log',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriFlowLog']:['Kosong'],
+            }),
+            updateKategoriFlowLog: builder.mutation<IKategoriFlowLog, Partial<IKategoriFlowLog>>({
+                query: (kategoriFlowLog) => ({
+                    url: '/kategori_log',
+                    method: 'PUT',
+                    body: kategoriFlowLog,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriFlowLog']:['Kosong'],
+            }),
+            updateIdKategoriFlowLog: builder.mutation<IKategoriFlowLog, {idLama: string; kategoriFlowLog: Partial<IKategoriFlowLog>}>({
+                query: ({idLama, kategoriFlowLog}) => ({
+                    url: `/kategori_log/id/${idLama}`,
+                    method: 'PUT',
+                    body: kategoriFlowLog,
+                }),
+                invalidatesTags: (result) => result ? ['KategoriFlowLog']:['Kosong'],
+            }),
+            deleteKategoriFlowLog: builder.mutation<Partial<IKategoriFlowLog>, Partial<IKategoriFlowLog>>({
+                query(kategoriFlowLog) {
+                  return {
+                    url: `/kategori_log/${kategoriFlowLog.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['KategoriFlowLog']:['Kosong'],
+            }),
+            getDaftarDataKategoriFlowLog: builder.query<IKategoriFlowLog[], IQueryParamFilters>({
+                query: (queryParams) => `/kategori_log?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['KategoriFlowLog'],
+            }),
+            getJumlahDataKategoriFlowLog: builder.query<number, qFilters>({
+                query: (queryFilters) => `/kategori_log/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             saveStatusFlowLog: builder.mutation<IStatusFlowLog, Partial<IStatusFlowLog>>({
                 query: (body) => ({
                     url: '/status_flow_log',
                     method: 'POST',
                     body,
                 }),
-                invalidatesTags: (result) => result ?['StatusFlowLog']:['Kosong'],
+                invalidatesTags: (result) => result ? ['StatusFlowLog']:['Kosong'],
             }),
             updateStatusFlowLog: builder.mutation<IStatusFlowLog, Partial<IStatusFlowLog>>({
                 query: (statusFlowLog) => ({
@@ -965,6 +1006,8 @@ export const {
     useDeleteRegisterKbliMutation, useGetDaftarDataRegisterKbliQuery, useGetJumlahDataRegisterKbliQuery,
     useSaveRegisterOtoritasMutation, useUpdateRegisterOtoritasMutation, useUpdateIdRegisterOtoritasMutation,
     useDeleteRegisterOtoritasMutation, useGetDaftarDataRegisterOtoritasQuery, useGetJumlahDataRegisterOtoritasQuery,
+    useSaveKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation, useUpdateIdKategoriFlowLogMutation,
+    useDeleteKategoriFlowLogMutation, useGetDaftarDataKategoriFlowLogQuery, useGetJumlahDataKategoriFlowLogQuery,
     useSaveStatusFlowLogMutation, useUpdateStatusFlowLogMutation, useUpdateIdStatusFlowLogMutation,
     useDeleteStatusFlowLogMutation, useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
