@@ -1,19 +1,19 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { StatusFlowLogSchema } from "../../features/schema-resolver/zod-schema";
+import { KategoriFlowLogSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveStatusFlowLogMutation, useUpdateStatusFlowLogMutation, useUpdateIdStatusFlowLogMutation, useDeleteStatusFlowLogMutation } from "../../features/repository/service/sikoling-api-slice";
-import { IStatusFlowLog } from "../../features/entity/status-flow-log";
+import { useSaveKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation, useUpdateIdKategoriFlowLogMutation, useDeleteKategoriFlowLogMutation } from "../../features/repository/service/sikoling-api-slice";
+import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
 
-interface IFormulirStatusFlowLogFluentUIProps {
+interface IFormulirKategoriFlowLogFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   hideModal: () => void;
-  dataLama?: IStatusFlowLog;
+  dataLama?: IKategoriFlowLog;
 };
 
 const theme = getTheme();
@@ -67,7 +67,7 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirKategoriFlowLog: FC<IFormulirKategoriFlowLogFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
@@ -75,15 +75,15 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IStatusFlowLog>({
+  const {handleSubmit, control, resetField, watch} = useForm<IKategoriFlowLog>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined},
-    resolver: zodResolver(StatusFlowLogSchema),
+    resolver: zodResolver(KategoriFlowLogSchema),
   });
   // rtk query
-  const [ saveStatusFlowLog] = useSaveStatusFlowLogMutation();
-  const [ updateStatusFlowLog] = useUpdateStatusFlowLogMutation();
-  const [ updateIdStatusFlowLog] = useUpdateIdStatusFlowLogMutation();
-  const [ deleteStatusFlowLog] = useDeleteStatusFlowLogMutation();
+  const [ saveKategoriFlowLog] = useSaveKategoriFlowLogMutation();
+  const [ updateKategoriFlowLog] = useUpdateKategoriFlowLogMutation();
+  const [ updateIdKategoriFlowLog] = useUpdateIdKategoriFlowLogMutation();
+  const [ deleteKategoriFlowLog] = useDeleteKategoriFlowLogMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -96,12 +96,12 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
     [keepInBounds],
   );
   
-  const onSubmit: SubmitHandler<IStatusFlowLog> = async (data) => {
+  const onSubmit: SubmitHandler<IKategoriFlowLog> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await saveKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -110,14 +110,14 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updateStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
+            await updateKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdStatusFlowLog({idLama: dataLama?.id!, statusFlowLog: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdKategoriFlowLog({idLama: dataLama?.id!, kategoriFlowLog: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -126,7 +126,7 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
           hideModal();
           break;
         case 'delete':
-          await deleteStatusFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await deleteKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -141,9 +141,9 @@ export const FormulirStatusFlowLog: FC<IFormulirStatusFlowLogFluentUIProps> = ({
     }
   };
 
-  const onError: SubmitErrorHandler<IStatusFlowLog> = async (err) => {
+  const onError: SubmitErrorHandler<IKategoriFlowLog> = async (err) => {
     if(mode == 'delete') {
-      await deleteStatusFlowLog(dataLama!).unwrap().then((originalPromiseResult) => {
+      await deleteKategoriFlowLog(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);

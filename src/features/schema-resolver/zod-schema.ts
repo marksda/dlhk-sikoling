@@ -215,5 +215,10 @@ export const StatusFlowLogSchema = object({
     nama: z.string(),
 });
 
+export const KategoriFlowLogSchema = object({
+    id: z.string().nullable(),
+    nama: z.string(),
+});
+
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 
