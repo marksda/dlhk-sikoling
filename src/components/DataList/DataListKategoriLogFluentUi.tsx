@@ -160,7 +160,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add status flow log');
+                        setFormulirTitle('Add kategori flow log');
                         setModeForm('add');
                         showModalFormulirKategoriFlowLog();
                         setDataLama(undefined);
@@ -172,7 +172,7 @@ export const DataListKategoriLogFluentUI: FC<IDataListKategoriLogFluentUIProps> 
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit status flow log');
+                        setFormulirTitle('Edit kategori flow log');
                         setModeForm('edit');
                         showModalFormulirKategoriFlowLog();                        
                         let dataTerpilih = find(postsKategoriLog, (i) => i.id == selection.getSelection()[0].key);
