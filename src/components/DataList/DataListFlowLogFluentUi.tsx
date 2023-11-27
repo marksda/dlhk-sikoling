@@ -1,5 +1,5 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, Sticky, StickyPositionType, Text, mergeStyleSets } from "@fluentui/react";
-import { FC, FormEvent, useCallback, useState } from "react";
+import { ActionButton, Callout, CommandBar, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
@@ -8,6 +8,9 @@ import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatStringToDDMMYYYY, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
 import { useGetDaftarDataKategoriFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useBoolean } from "@fluentui/react-hooks";
+import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
+import find from "lodash.find";
 
 
 interface IDataListFlowLogFluentUIProps {
@@ -30,6 +33,12 @@ const classNames = mergeStyleSets({
     },
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -67,18 +76,33 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
 
     const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                        };
+                    }
+                    else {
+                        return undefined;
+                    }
+                }              
+            );
         },
         []
     );
 
     //local state
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirKategoriFlowLogOpen, { setTrue: showModalFormulirKategoriFlowLog, setFalse: hideModalFormulirKategoriFlowLog}] = useBoolean(false);
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [dataLama, setDataLama]= useState<IKategoriFlowLog|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);    
@@ -275,12 +299,71 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             },
         ],
     });
-    
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {  
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add status flow log');
+                        setModeForm('add');
+                        showModalFormulirKategoriFlowLog();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit status flow log');
+                        setModeForm('edit');
+                        showModalFormulirKategoriFlowLog();                        
+                        let dataTerpilih = find(postsFlowLog, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirKategoriFlowLog();
+                        let dataTerpilih = find(postsFlowLog, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
 
     const _onSearch = useCallback(
@@ -349,6 +432,19 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     return tmp;
                 }
             );
+        },
+        []
+    );
+
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
         },
         []
     );
@@ -814,6 +910,17 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item>
@@ -821,13 +928,37 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            } 
+                            <Stack.Item>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian pemrakarsa" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
@@ -856,12 +987,13 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />

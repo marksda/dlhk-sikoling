@@ -138,7 +138,7 @@ export const MasterBackEnd: FC = () => {
                             {
                                 key: 'status_flow_log',
                                 name: 'Status flow log',
-                                iconProps: { iconName: 'StatusCircleRing' },
+                                iconProps: { iconName: 'Event' },
                                 onClick: () => {
                                     _onHandleMasterMenu('status_flow_log');
                                 }
