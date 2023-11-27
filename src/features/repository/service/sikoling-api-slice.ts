@@ -454,7 +454,7 @@ export const sikolingApi = createApi({
                 query: (modelPerizinan) => ({
                     url: '/model_perizinan',
                     method: 'POST',
-                    modelPerizinan,
+                    body: modelPerizinan,
                 }),
                 invalidatesTags: (result) => result ? ['ModelPerizinan']:['Kosong']
             }),

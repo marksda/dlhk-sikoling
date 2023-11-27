@@ -1,12 +1,11 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { KategoriFlowLogSchema, ModelPerizinanSchema } from "../../features/schema-resolver/zod-schema";
+import { ModelPerizinanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation, useUpdateIdKategoriFlowLogMutation, useDeleteKategoriFlowLogMutation } from "../../features/repository/service/sikoling-api-slice";
-import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
+import { useSaveModelPerizinanMutation, useUpdateModelPerizinanMutation, useUpdateIdModelPerizinanMutation, useDeleteModelPerizinanMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IModelPerizinan } from "../../features/entity/model-perizinan";
 
 interface IFormulirModelPerizinanFluentUIProps {
@@ -82,10 +81,10 @@ export const FormulirModelPerizinan: FC<IFormulirModelPerizinanFluentUIProps> = 
     resolver: zodResolver(ModelPerizinanSchema),
   });
   // rtk query
-  const [ saveKategoriFlowLog] = useSaveKategoriFlowLogMutation();
-  const [ updateKategoriFlowLog] = useUpdateKategoriFlowLogMutation();
-  const [ updateIdKategoriFlowLog] = useUpdateIdKategoriFlowLogMutation();
-  const [ deleteKategoriFlowLog] = useDeleteKategoriFlowLogMutation();
+  const [ saveModelPerizinan] = useSaveModelPerizinanMutation();
+  const [ updateModelPerizinan] = useUpdateModelPerizinanMutation();
+  const [ updateIdModelPerizinan] = useUpdateIdModelPerizinanMutation();
+  const [ deleteModelPerizinan] = useDeleteModelPerizinanMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -98,12 +97,12 @@ export const FormulirModelPerizinan: FC<IFormulirModelPerizinanFluentUIProps> = 
     [keepInBounds],
   );
   
-  const onSubmit: SubmitHandler<IKategoriFlowLog> = async (data) => {
+  const onSubmit: SubmitHandler<IModelPerizinan> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await saveModelPerizinan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -112,14 +111,14 @@ export const FormulirModelPerizinan: FC<IFormulirModelPerizinanFluentUIProps> = 
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updateKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+            await updateModelPerizinan(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdKategoriFlowLog({idLama: dataLama?.id!, kategoriFlowLog: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdModelPerizinan({idLama: dataLama?.id!, modelPerizinan: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -128,7 +127,7 @@ export const FormulirModelPerizinan: FC<IFormulirModelPerizinanFluentUIProps> = 
           hideModal();
           break;
         case 'delete':
-          await deleteKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await deleteModelPerizinan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -143,9 +142,9 @@ export const FormulirModelPerizinan: FC<IFormulirModelPerizinanFluentUIProps> = 
     }
   };
 
-  const onError: SubmitErrorHandler<IKategoriFlowLog> = async (err) => {
+  const onError: SubmitErrorHandler<IModelPerizinan> = async (err) => {
     if(mode == 'delete') {
-      await deleteKategoriFlowLog(dataLama!).unwrap().then((originalPromiseResult) => {
+      await deleteModelPerizinan(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
