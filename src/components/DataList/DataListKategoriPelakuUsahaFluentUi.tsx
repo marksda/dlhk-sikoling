@@ -1,10 +1,12 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Dropdown, IDropdownOption, PrimaryButton, ActionButton } from "@fluentui/react";
-import { FC, FormEvent, useCallback, useState } from "react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps, IIconProps, IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, Callout, Dropdown, IDropdownOption, PrimaryButton, ActionButton, CommandBar, Selection, ICommandBarItemProps, Toggle } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usaha";
 import { useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataKategoriPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useBoolean } from "@fluentui/react-hooks";
+import find from "lodash.find";
 
 interface IDataListKategoriPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -42,6 +44,12 @@ const classNames = mergeStyleSets({
     },
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsahaFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -79,18 +87,33 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
 
     const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                        };
+                    }
+                    else {
+                        return undefined;
+                    }
+                }              
+            );
         },
         []
     );
     
     //local state
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalFormulirKategoriPelakuUsahaOpen, { setTrue: showModalFormulirKategoriPelakuUsaha, setFalse: hideModalFormulirKategoriPelakuUsaha}] = useBoolean(false);
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [dataLama, setDataLama]= useState<IKategoriPelakuUsaha|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -144,7 +167,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
     const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(null);    
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataKategoriPelakuUsahaQuery(queryFilters);
-    const { data: posts, isLoading: isLoadingPosts } = useGetDaftarDataKategoriPelakuUsahaQuery(queryParams);    
+    const { data: postsKategoriPelakuUsaha, isLoading: isLoadingPosts } = useGetDaftarDataKategoriPelakuUsahaQuery(queryParams);    
     const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery({
         pageNumber: 0,
         pageSize: 0,
@@ -157,11 +180,70 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         ],
     });    
 
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {  
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add status flow log');
+                        setModeForm('add');
+                        showModalFormulirKategoriPelakuUsaha();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit status flow log');
+                        setModeForm('edit');
+                        showModalFormulirKategoriPelakuUsaha();                        
+                        let dataTerpilih = find(postsKategoriPelakuUsaha, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirKategoriPelakuUsaha();
+                        let dataTerpilih = find(postsKategoriPelakuUsaha, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection]
     );
 
     const _onSortColumn = useCallback(
@@ -303,6 +385,19 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
+        },
+        []
+    );
+
     const _onClearSearch= useCallback(
         () => {
             setCurrentPage(1);
@@ -311,7 +406,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -326,7 +421,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     
                     if(found > -1) {
@@ -489,6 +584,17 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill style={{marginTop: 2}}>
             <Stack.Item>
@@ -496,13 +602,37 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            }
+                            <Stack.Item>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
@@ -528,18 +658,19 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    posts != undefined ? posts?.map(
+                                    postsKategoriPelakuUsaha != undefined ? postsKategoriPelakuUsaha?.map(
                                         (t) => (
                                             {key: t.id as string, ...t}
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
@@ -558,14 +689,14 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
-            {
-                contextualMenuFilterProps && 
+            {contextualMenuFilterProps && 
                 <Callout {...contextualMenuFilterProps} style={{padding: 16}}> 
                     <Stack>
                         <Stack.Item>
                             <Dropdown 
                                 label="Skala usaha"
-                                style={{width: 200}}
+                                style={{minWidth: 200}}
+                                dropdownWidth="auto"
                                 placeholder="--Pilih--"
                                 options={
                                     postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(

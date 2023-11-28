@@ -197,7 +197,7 @@ export const FormulirKabupaten: FC<IFormulirKabupatenFluentUIProps> = ({title, i
       setSelectedKeyPropinsi(option?.key as string);
     },
     [postsPropinsi]
-);
+  );
 
   return (
     <Modal

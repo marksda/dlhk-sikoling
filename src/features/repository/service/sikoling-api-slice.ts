@@ -547,9 +547,9 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['KategoriPelakuUsaha']:['Kosong'],
             }),
-            updateIdKategoriPelakuUsaha: builder.mutation<IKategoriPelakuUsaha, {id: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
-                query: ({id, kategoriPelakuUsaha}) => ({
-                    url: `/kategori_pelaku_usaha/id/${id}`,
+            updateIdKategoriPelakuUsaha: builder.mutation<IKategoriPelakuUsaha, {idLama: string; kategoriPelakuUsaha: IKategoriPelakuUsaha}>({
+                query: ({idLama, kategoriPelakuUsaha}) => ({
+                    url: `/kategori_pelaku_usaha/id/${idLama}`,
                     method: 'PUT',
                     body: kategoriPelakuUsaha,
                 }),

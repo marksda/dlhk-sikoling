@@ -91,9 +91,9 @@ export const DataListStatusFlowLogFluentUI: FC<IDataListStatusFlowLogFluentUIPro
     const [isModalFormulirStatusFlowLogOpen, { setTrue: showModalFormulirStatusFlowLog, setFalse: hideModalFormulirStatusFlowLog}] = useBoolean(false);
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [dataLama, setDataLama]= useState<IStatusFlowLog|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
-    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
     });

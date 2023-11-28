@@ -1,19 +1,22 @@
-import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { SkalaUsahaSchema } from "../../features/schema-resolver/zod-schema";
+import { KategoriPelakuUsahaSchema, SkalaUsahaSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveSkalaUsahaMutation, useUpdateSkalaUsahaMutation, useUpdateIdSkalaUsahaMutation, useDeleteSkalaUsahaMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useSaveSkalaUsahaMutation, useUpdateSkalaUsahaMutation, useUpdateIdSkalaUsahaMutation, useDeleteSkalaUsahaMutation, useGetDaftarDataSkalaUsahaQuery, useSaveKategoriPelakuUsahaMutation, useUpdateKategoriPelakuUsahaMutation, useUpdateIdKategoriPelakuUsahaMutation, useDeleteKategoriPelakuUsahaMutation } from "../../features/repository/service/sikoling-api-slice";
+import { IModelPerizinan } from "../../features/entity/model-perizinan";
 import { ISkalaUsaha } from "../../features/entity/skala-usaha";
+import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usaha";
+import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 
-interface IFormulirSkalaUsahaFluentUIProps {
+interface IFormulirKategoriPelakuUsahaFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   hideModal: () => void;
-  dataLama?: ISkalaUsaha;
+  dataLama?: IKategoriPelakuUsaha;
 };
 
 const theme = getTheme();
@@ -67,24 +70,36 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirKategoriPelakuUsaha: FC<IFormulirKategoriPelakuUsahaFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
-  const [singkatanTextFieldValue, setSingkatanTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.singkatan!:'');
+  const [selectedKeySkalaUsaha, setSelectedKeySkalaUsaha] = useState<string|undefined|null>(dataLama != undefined ? dataLama.skalaUsaha?.id!:undefined);
+  const [querySkalaUsahaParams, setQuerySkalaUsahaParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 100,
+    filters: [],
+    sortOrders: [
+        {
+            fieldName: 'nama',
+            value: 'ASC'
+        },
+    ],
+  });
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<ISkalaUsaha>({
+  const {handleSubmit, control, setValue} = useForm<IKategoriPelakuUsaha>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined},
-    resolver: zodResolver(SkalaUsahaSchema),
+    resolver: zodResolver(KategoriPelakuUsahaSchema),
   });
   // rtk query
-  const [ saveSkalaUsaha] = useSaveSkalaUsahaMutation();
-  const [ updateSkalaUsaha] = useUpdateSkalaUsahaMutation();
-  const [ updateIdSkalaUsaha] = useUpdateIdSkalaUsahaMutation();
-  const [ deleteSkalaUsaha] = useDeleteSkalaUsahaMutation();
+  const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery(querySkalaUsahaParams);    
+  const [ saveKategoriPelakuUsaha] = useSaveKategoriPelakuUsahaMutation();
+  const [ updateKategoriPelakuUsaha] = useUpdateKategoriPelakuUsahaMutation();
+  const [ updateIdKategoriPelakuUsaha] = useUpdateIdKategoriPelakuUsahaMutation();
+  const [ deleteKategoriPelakuUsaha] = useDeleteKategoriPelakuUsahaMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -96,13 +111,26 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
     }),
     [keepInBounds],
   );
+
+  const optionsSkalaUsaha: IComboBoxOption[]|undefined = useMemo(
+    () => (
+        postsSkalaUsaha?.map((item):IComboBoxOption => {
+              return {
+                key: item.id!,
+                text: item.nama!,
+                data: item
+              };
+            })
+    ),
+    [postsSkalaUsaha]
+  );
   
-  const onSubmit: SubmitHandler<ISkalaUsaha> = async (data) => {
+  const onSubmit: SubmitHandler<IKategoriPelakuUsaha> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveSkalaUsaha(data).unwrap().then((originalPromiseResult) => {
+          await saveKategoriPelakuUsaha(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -111,14 +139,14 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updateSkalaUsaha(data).unwrap().then((originalPromiseResult) => {
+            await updateKategoriPelakuUsaha(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdSkalaUsaha({idLama: dataLama?.id!, skalaUsaha: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdKategoriPelakuUsaha({idLama: dataLama?.id!, kategoriPelakuUsaha: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -127,7 +155,7 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
           hideModal();
           break;
         case 'delete':
-          await deleteSkalaUsaha(data).unwrap().then((originalPromiseResult) => {
+          await deleteKategoriPelakuUsaha(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -142,9 +170,9 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
     }
   };
 
-  const onError: SubmitErrorHandler<ISkalaUsaha> = async (err) => {
+  const onError: SubmitErrorHandler<IKategoriPelakuUsaha> = async (err) => {
     if(mode == 'delete') {
-      await deleteSkalaUsaha(dataLama!).unwrap().then((originalPromiseResult) => {
+      await deleteKategoriPelakuUsaha(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
@@ -161,6 +189,15 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
       setDisableForm(false);
     },
     []
+  );
+
+  const _onHandleOnChangeSkalaUsaha = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+      let skalaUsaha = cloneDeep(postsSkalaUsaha?.at(index!));
+      setValue('skalaUsaha', skalaUsaha!);
+      setSelectedKeySkalaUsaha(option?.key as string);
+    },
+    [postsSkalaUsaha]
   );
 
   return (
@@ -233,27 +270,23 @@ export const FormulirSkalaUsaha: FC<IFormulirSkalaUsahaFluentUIProps> = ({title,
             )}
         />
         <Controller 
-          name="singkatan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <TextField
-                  label="Singkatan"
-                  value={singkatanTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setSingkatanTextFieldValue(newValue || '');
-                    }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
+            name="skalaUsaha"
+            control={control}
+            render={
+            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+                <ComboBox
+                    label="Skala usaha"
+                    placeholder="Pilih"
+                    allowFreeform={true}
+                    options={optionsSkalaUsaha != undefined ? optionsSkalaUsaha:[]}
+                    selectedKey={selectedKeySkalaUsaha}
+                    useComboBoxAsMenuWidth={true}     
+                    errorMessage={error && 'harus diisi'}
+                    onChange={_onHandleOnChangeSkalaUsaha}
+                    disabled={mode == 'delete' ? true:disableForm}
                 />
-            )}
+            )
+            }
         />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
