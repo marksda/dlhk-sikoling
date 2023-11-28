@@ -6,9 +6,10 @@ import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FormulirAutorityPerusahaan } from "../Formulir/formulir-autority-perusahaan";
 import { invertParseNpwp, parseNpwp } from "../../features/config/helper-function";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
-import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
+// import { useGetDaftarDataQuery, useGetJumlahDataQuery } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
 import find from "lodash.find";
+import { useGetDaftarDataRegisterOtoritasPerusahaanQuery, useGetJumlahDataRegisterOtoritasPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPerusahaanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -220,8 +221,8 @@ export const DataListAutorisasiPerusahaanFluentUI: FC<IDataListPerusahaanFluentU
     const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
     const searchNikId = useId('searchNik');
     // rtk hook state
-    const { data: postsOtoritasPerusahaan, isLoading: isLoadingPostsOtoritasPerusahaan } = useGetDaftarDataQuery(queryParams);
-    const { data: postsCountOtoritasPerusahaan, isLoading: isLoadingCountOtoritasPerusahaan } = useGetJumlahDataQuery(queryFilters);
+    const { data: postsOtoritasPerusahaan, isLoading: isLoadingPostsOtoritasPerusahaan } = useGetDaftarDataRegisterOtoritasPerusahaanQuery(queryParams);
+    const { data: postsCountOtoritasPerusahaan, isLoading: isLoadingCountOtoritasPerusahaan } = useGetJumlahDataRegisterOtoritasPerusahaanQuery(queryFilters);
 
 
     const selection: Selection = useMemo(

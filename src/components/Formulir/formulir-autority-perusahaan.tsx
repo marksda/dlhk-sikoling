@@ -1,15 +1,14 @@
 import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IconButton, Modal, PrimaryButton, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { OtoritasPerusahaanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { invertParseNpwp } from "../../features/config/helper-function";
 import cloneDeep from "lodash.clonedeep";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
-import { useDeleteMutation, useSaveMutation, useUpdateIdMutation } from "../../features/repository/service/register-otoritas-perusahaan-api-slice";
 import { IOtoritasPerusahaan } from "../../features/entity/otoritas-perusahaan";
-import { useGetDaftarDataRegisterOtoritasQuery, useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useDeleteRegisterOtoritasPerusahaanMutation, useGetDaftarDataRegisterOtoritasQuery, useGetDaftarDataRegisterPerusahaanQuery, useSaveRegisterOtoritasPerusahaanMutation, useUpdateIdRegisterOtoritasPerusahaanMutation } from "../../features/repository/service/sikoling-api-slice";
 
 interface IFormulirAutorityPerusahaanFluentUIProps {
   title: string|undefined;
@@ -116,9 +115,9 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
   // rtk query
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryPerusahaanParams);
   const { data: postsAuthority, isLoading: isLoadingPostsAuthority } = useGetDaftarDataRegisterOtoritasQuery(queryPengaksesParams);
-  const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveMutation();
-  const [ updateIdOtoritasPerusahaan, {isLoading: isLoadingUpdateIdOtoritasPerusahaan}] = useUpdateIdMutation();
-  const [ deleteOtoritasPerusahaan, {isLoading: isLoadingDeleteOtoritasPerusahaan}] = useDeleteMutation();
+  const [ saveOtoritasPerusahaan, {isLoading: isLoadingSaveOtoritasPerusahaan}] = useSaveRegisterOtoritasPerusahaanMutation();
+  const [ updateIdOtoritasPerusahaan, {isLoading: isLoadingUpdateIdOtoritasPerusahaan}] = useUpdateIdRegisterOtoritasPerusahaanMutation();
+  const [ deleteOtoritasPerusahaan, {isLoading: isLoadingDeleteOtoritasPerusahaan}] = useDeleteRegisterOtoritasPerusahaanMutation();
   
 
   const optionsPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -172,8 +171,8 @@ export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIP
           break;
         case 'edit':
           await updateIdOtoritasPerusahaan({
-            idLamaAutority: dataLama?.otoritas?.id!, 
-            idLamaRegisterPerusahaan: dataLama?.registerPerusahaan?.id!, 
+            idRegisterOtoritasLama: dataLama?.otoritas?.id!, 
+            idRegisterPerusahaanLama: dataLama?.registerPerusahaan?.id!, 
             registerOtoritasPerusahaan: data as IOtoritasPerusahaan
           }).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
