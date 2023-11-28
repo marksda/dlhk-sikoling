@@ -117,7 +117,7 @@ export const FormulirKategoriPelakuUsaha: FC<IFormulirKategoriPelakuUsahaFluentU
         postsSkalaUsaha?.map((item):IComboBoxOption => {
               return {
                 key: item.id!,
-                text: item.nama!,
+                text: item.singkatan!,
                 data: item
               };
             })

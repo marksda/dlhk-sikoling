@@ -84,8 +84,9 @@ export const SkalaUsahaSchema = object({
 });
 
 export const KategoriPelakuUsahaSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional()
+    id: z.string().nullable(),
+    nama: z.string(),
+    skalaUsaha: SkalaUsahaSchema.pick({id:true})
 });
 
 export const PelakuUsahaSchema = object({

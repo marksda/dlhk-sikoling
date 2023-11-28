@@ -7,6 +7,7 @@ import { IKategoriPelakuUsaha } from "../../features/entity/kategori-pelaku-usah
 import { useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataKategoriPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
+import { FormulirKategoriPelakuUsaha } from "../Formulir/formulit-kategori-pelaku-usaha";
 
 interface IDataListKategoriPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -720,6 +721,15 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                     </Stack>
                 </Callout>                
             }
+            {isModalFormulirKategoriPelakuUsahaOpen && (
+                <FormulirKategoriPelakuUsaha
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirKategoriPelakuUsahaOpen}
+                    hideModal={hideModalFormulirKategoriPelakuUsaha}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 }
