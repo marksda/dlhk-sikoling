@@ -73,6 +73,7 @@ const iconButtonStyles = {
 const basicStyles: Partial<IComboBoxStyles> = { root: { width: 400 } };
 
 export const FormulirAutorityPerusahaan: FC<IFormulirAutorityPerusahaanFluentUIProps> = ({title, isModalOpen, showModal, hideModal, dataLama, mode}) => { 
+  console.log(dataLama);
   //local state
   const [selectedKeyPerusahaan, setSelectedKeyPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyOtoritas, setSelectedKeyOtoritas] = useState<string|undefined>(dataLama != undefined ? dataLama.otoritas?.id!:undefined);
