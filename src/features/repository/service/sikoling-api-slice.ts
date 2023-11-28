@@ -507,9 +507,9 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['SkalaUsaha']:['Kosong'],
             }),
-            updateIdSkalaUsaha: builder.mutation<ISkalaUsaha, {id: string; skalaUsaha: ISkalaUsaha}>({
-                query: ({id, skalaUsaha}) => ({
-                    url: `/skala_usaha/id/${id}`,
+            updateIdSkalaUsaha: builder.mutation<ISkalaUsaha, {idLama: string; skalaUsaha: ISkalaUsaha}>({
+                query: ({idLama, skalaUsaha}) => ({
+                    url: `/skala_usaha/id/${idLama}`,
                     method: 'PUT',
                     body: skalaUsaha,
                 }),
