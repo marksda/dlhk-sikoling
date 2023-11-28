@@ -179,7 +179,7 @@ export const MasterBackEnd: FC = () => {
                             },
                             {
                                 key: 'pelaku_usaha',
-                                name: 'Kategori badan usaha',
+                                name: 'Pelaku usaha',
                                 iconProps: {iconName:'ContactInfo'},
                                 onClick: () => {
                                     _onHandleMasterMenu('pelaku_usaha');
@@ -637,7 +637,7 @@ export const MasterBackEnd: FC = () => {
                                 ],
                             }
                         }
-                        title="Kategori badan usaha"
+                        title="Pelaku usaha"
                     />;
                 break;
                 case 'pemrakarsa':

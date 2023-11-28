@@ -208,7 +208,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add status flow log');
+                        setFormulirTitle('Add kategori pelaku usaha');
                         setModeForm('add');
                         showModalFormulirKategoriPelakuUsaha();
                         setDataLama(undefined);
@@ -220,7 +220,7 @@ export const DataListKategoriPelakuUsahaFluentUI: FC<IDataListKategoriPelakuUsah
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit status flow log');
+                        setFormulirTitle('Edit kategori pelaku usaha');
                         setModeForm('edit');
                         showModalFormulirKategoriPelakuUsaha();                        
                         let dataTerpilih = find(postsKategoriPelakuUsaha, (i) => i.id == selection.getSelection()[0].key);

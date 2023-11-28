@@ -207,7 +207,7 @@ export const DataListSkalaUsahaFluentUI: FC<IDataListSkalaUsahaFluentUIProps> = 
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsSkalaUsaha]
     );
 
     const _onSortColumn = useCallback(

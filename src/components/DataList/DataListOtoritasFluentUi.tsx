@@ -311,7 +311,7 @@ export const DataListOtoritasFluentUI: FC<IDataListOtoritasUIProps> = ({initSele
                 },
             ];
         }, 
-        [isSelectedItem, selection]
+        [isSelectedItem, selection, postsOtoritas], 
     ); 
 
     const _onSortColumn = useCallback(
