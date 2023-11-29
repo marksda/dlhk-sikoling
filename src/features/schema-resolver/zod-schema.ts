@@ -90,7 +90,7 @@ export const KategoriPelakuUsahaSchema = object({
 });
 
 export const PelakuUsahaSchema = object({
-    id: z.string(),
+    id: z.string().nullable(),
     nama: z.string(),
     singkatan: z.string(),
     kategoriPelakuUsaha: KategoriPelakuUsahaSchema.pick({id: true})

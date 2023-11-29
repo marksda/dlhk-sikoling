@@ -253,7 +253,7 @@ export const FormulirPelakuUsaha: FC<IFormulirPelakuUsahaFluentUIProps> = ({titl
             tmp.filters = filters;             
             return tmp;
         }
-    );
+      );
       setSelectedKeySkalaUsaha(option?.key as string);
     },
     []

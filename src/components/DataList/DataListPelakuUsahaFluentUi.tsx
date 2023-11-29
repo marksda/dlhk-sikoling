@@ -4,7 +4,7 @@ import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IPelakuUsaha } from "../../features/entity/pelaku-usaha";
-import { useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriPelakuUsahaQuery, useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
 import { FormulirPelakuUsaha } from "../Formulir/formulir-pelaku-usaha";
@@ -119,7 +119,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
         ...initSelectedFilters, pageNumber: currentPage, pageSize
-    });
+    });    
     const [queryFilters, setQueryFilters] = useState<qFilters>({filters: initSelectedFilters.filters}); 
     const [columns, setColumns] = useState<IColumn[]>([    
         { 
@@ -193,10 +193,23 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     const [selectedSkalaUsaha, setSelectedSkalaUsaha] = useState<IDropdownOption|null|undefined>(null);
+    const [selectedKategoriPelakuUsaha, setSelectedKategoriPelakuUsaha] = useState<IDropdownOption|null|undefined>(null);
+    const [queryKategoriPelakuUsahaParams, setQueryKategoriPelakuUsahaParams] = useState<IQueryParamFilters>({
+        pageNumber: 1,
+        pageSize: 100,
+        filters: [],
+        sortOrders: [
+            {
+                fieldName: 'nama',
+                value: 'ASC'
+            },
+        ],
+      });
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataPelakuUsahaQuery(queryFilters);
     const { data: postsPelakuUsaha, isLoading: isLoadingPosts } = useGetDaftarDataPelakuUsahaQuery(queryParams); 
     const { data: postsSkalaUsaha, isLoading: isLoadingPostsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery(queryParams);    
+    const { data: postsKategoriPelakuUsaha } = useGetDaftarDataKategoriPelakuUsahaQuery(queryKategoriPelakuUsahaParams, {skip: selectedSkalaUsaha == null ? true:false});
     
     const selection: Selection = useMemo(
         () => {
@@ -517,7 +530,13 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                             fieldName: 'skala_usaha',
                             value: item?.key as string
                         })
-                    }                    
+                    }   
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;
+
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
                     
                     tmp.filters = filters;            
                     return tmp;
@@ -541,6 +560,96 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                             fieldName: 'skala_usaha',
                             value: item?.key as string
                         })
+                    }  
+                    
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;
+
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryKategoriPelakuUsahaParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;     
+                                                        
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'id_skala_usaha',
+                            value:item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'id_skala_usaha',
+                            value: item?.key as string
+                        })
+                    }
+                    
+                    tmp.pageNumber = 1;
+                    tmp.filters = filters;             
+                    return tmp;
+                }
+            );
+
+            setSelectedSkalaUsaha(item);
+            setSelectedKategoriPelakuUsaha(null);
+        },
+        []
+    );
+
+    const _onChangeKategoriPelakuUsaha = useCallback(
+        (event: FormEvent<HTMLDivElement>, item: IDropdownOption<any>|undefined) => {
+            setCurrentPage(1);
+
+            setQueryFilters(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kategori_pelaku_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kategori_pelaku_usaha',
+                            value: item?.key as string
+                        })
+                    }                    
+                    
+                    tmp.filters = filters;            
+                    return tmp;
+                }
+            );
+
+            setQueryParams(
+                prev => {
+                    let tmp = cloneDeep(prev);
+                    let filters = cloneDeep(tmp.filters);
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;   
+                    
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'kategori_pelaku_usaha',
+                            value: item?.key as string
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'kategori_pelaku_usaha',
+                            value: item?.key as string
+                        })
                     }                    
                     
                     tmp.pageNumber = 1;
@@ -549,7 +658,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                 }
             );
 
-            setSelectedSkalaUsaha(item);
+            setSelectedKategoriPelakuUsaha(item);
         },
         []
     );
@@ -564,6 +673,12 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     let filters = cloneDeep(tmp.filters);
                     let found = filters?.findIndex((obj) => {return obj.fieldName == 'skala_usaha'}) as number;
                     
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;
+
                     if(found != -1) {
                         filters?.splice(found, 1);
                     }
@@ -584,6 +699,12 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                         filters?.splice(found, 1);
                     }
 
+                    found = filters?.findIndex((obj) => {return obj.fieldName == 'kategori_pelaku_usaha'}) as number;
+
+                    if(found != -1) {
+                        filters?.splice(found, 1);
+                    }
+
                     tmp.pageNumber = 1;
                     tmp.filters = filters;
 
@@ -592,6 +713,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
             );                
             
             setSelectedSkalaUsaha(null);
+            setSelectedKategoriPelakuUsaha(null);
         },
         []
     );
@@ -723,7 +845,25 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                                 onChange={_onChangeSkalaUsaha}
                             />
                         </Stack.Item>
-                        
+                        <Stack.Item>
+                            <Dropdown 
+                                label="Kategori pelaku usaha"
+                                style={{minWidth: 200}}
+                                dropdownWidth="auto"
+                                placeholder="--Pilih--"
+                                options={
+                                    postsKategoriPelakuUsaha != undefined ? postsKategoriPelakuUsaha?.map(
+                                        (t) => ({
+                                            key: t.id!, 
+                                            text: t.nama!
+                                        })
+                                    ) : []
+                                }
+                                selectedKey={selectedKategoriPelakuUsaha ? selectedKategoriPelakuUsaha.key : null}
+                                onChange={_onChangeKategoriPelakuUsaha}
+                                disabled={selectedSkalaUsaha == null ? true:false}
+                            />
+                        </Stack.Item>
                         <Stack.Item>
                             <PrimaryButton 
                                 style={{marginTop: 16, width: '100%'}}
