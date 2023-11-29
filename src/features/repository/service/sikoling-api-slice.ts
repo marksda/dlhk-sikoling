@@ -587,9 +587,9 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ? ['PelakuUsaha']:['Kosong'],
             }),
-            updateIdPelakuUsaha: builder.mutation<IPelakuUsaha, {id: string; pelakuUsaha: IPelakuUsaha}>({
-                query: ({id, pelakuUsaha}) => ({
-                    url: `/pelaku_usaha/id/${id}`,
+            updateIdPelakuUsaha: builder.mutation<IPelakuUsaha, {idLama: string; pelakuUsaha: IPelakuUsaha}>({
+                query: ({idLama, pelakuUsaha}) => ({
+                    url: `/pelaku_usaha/id/${idLama}`,
                     method: 'PUT',
                     body: pelakuUsaha,
                 }),

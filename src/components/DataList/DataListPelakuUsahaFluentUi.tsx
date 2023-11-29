@@ -7,6 +7,7 @@ import { IPelakuUsaha } from "../../features/entity/pelaku-usaha";
 import { useGetDaftarDataPelakuUsahaQuery, useGetDaftarDataSkalaUsahaQuery, useGetJumlahDataPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
+import { FormulirPelakuUsaha } from "../Formulir/formulir-pelaku-usaha";
 
 interface IDataListPelakuUsahaFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -112,7 +113,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
-    const [isModalFormulirOtoritasOpen, { setTrue: showModalFormulirOtoritas, setFalse: hideModalFormulirOtoritas }] = useBoolean(false);
+    const [isModalFormulirPelakuUsahaOpen, { setTrue: showModalFormulirPelakuUsaha, setFalse: hideModalFormulirPelakuUsaha}] = useBoolean(false);
     const [dataLama, setDataLama]= useState<IPelakuUsaha|undefined>(undefined);    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
@@ -226,7 +227,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     onClick: () => {
                         setFormulirTitle('Add pelaku usaha');
                         setModeForm('add');
-                        showModalFormulirOtoritas();
+                        showModalFormulirPelakuUsaha();
                         setDataLama(undefined);
                     }
                 },
@@ -238,7 +239,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     onClick: () => {
                         setFormulirTitle('Edit pelaku usaha');
                         setModeForm('edit');
-                        showModalFormulirOtoritas();
+                        showModalFormulirPelakuUsaha();
                         let dataTerpilih = find(postsPelakuUsaha, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
@@ -253,7 +254,7 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     onClick: () => {
                         setFormulirTitle('Hapus item');
                         setModeForm('delete');
-                        showModalFormulirOtoritas();
+                        showModalFormulirPelakuUsaha();
                         let dataTerpilih = find(postsPelakuUsaha, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                     }
@@ -707,7 +708,8 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                         <Stack.Item>
                             <Dropdown 
                                 label="Skala usaha"
-                                style={{width: 200}}
+                                style={{minWidth: 200}}
+                                dropdownWidth="auto"
                                 placeholder="--Pilih--"
                                 options={
                                     postsSkalaUsaha != undefined ? postsSkalaUsaha?.map(
@@ -732,6 +734,15 @@ export const DataListPelakuUsahaFluentUI: FC<IDataListPelakuUsahaFluentUIProps> 
                     </Stack>
                 </Callout>                
             }
+            {isModalFormulirPelakuUsahaOpen && (
+                <FormulirPelakuUsaha
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirPelakuUsahaOpen}
+                    hideModal={hideModalFormulirPelakuUsaha}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 }
