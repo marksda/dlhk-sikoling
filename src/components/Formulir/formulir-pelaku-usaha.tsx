@@ -263,6 +263,7 @@ export const FormulirPelakuUsaha: FC<IFormulirPelakuUsahaFluentUIProps> = ({titl
   const _onHandleOnKategoriPelakuUsaha = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
       let hasil = cloneDeep(postsKategoriPelakuUsaha?.at(index!));
+      console.log(hasil);
       setValue('kategoriPelakuUsaha', hasil!);     
       setSelectedKeyKategoriPelakuUsaha(option?.key as string);  
     },

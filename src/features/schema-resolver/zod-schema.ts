@@ -93,7 +93,7 @@ export const PelakuUsahaSchema = object({
     id: z.string().nullable(),
     nama: z.string(),
     singkatan: z.string(),
-    kategoriPelakuUsaha: KategoriPelakuUsahaSchema.pick({id: true})
+    kategoriPelakuUsaha: KategoriPelakuUsahaSchema.required()
 });
 
 export const PerusahaanSchema = object({
