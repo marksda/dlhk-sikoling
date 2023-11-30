@@ -154,6 +154,7 @@ export const FormulirPelakuUsaha: FC<IFormulirPelakuUsahaFluentUIProps> = ({titl
   );
   
   const onSubmit: SubmitHandler<IPelakuUsaha> = async (data) => {
+    console.log(data);
     setDisableForm(true);
     try {
       switch (mode) {
