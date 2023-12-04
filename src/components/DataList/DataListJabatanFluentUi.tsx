@@ -1,10 +1,13 @@
-import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu} from "@fluentui/react";
-import { FC, useCallback, useState } from "react";
+import { DefaultEffects, DirectionalHint, IColumn, IContextualMenuListProps,  IRenderFunction, Stack, mergeStyleSets, Text, SearchBox, ScrollablePane, DetailsList, DetailsListLayoutMode, SelectionMode, IDetailsHeaderProps, Sticky, StickyPositionType, ContextualMenu, CommandBar, Selection, ICommandBarItemProps, Toggle} from "@fluentui/react";
+import { FC, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { IJabatan } from "../../features/entity/jabatan";
 import { useGetDaftarDataJabatanQuery, useGetJumlahDataJabatanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useBoolean } from "@fluentui/react-hooks";
+import find from "lodash.find";
+import { FormulirJabatan } from "../Formulir/formulir-jabatan";
 
 
 interface IDataListJabatanFluentUIProps {
@@ -42,6 +45,12 @@ const classNames = mergeStyleSets({
         color: 'white'
     },
 });
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({initSelectedFilters, title}) => {   
     const _onHandleColumnClick = useCallback(
@@ -78,6 +87,12 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
     );
     
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
+    const [isModalFormulirJabatanOpen, { setTrue: showModalFormulirJabatan, setFalse: hideModalFormulirJabatan}] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IJabatan|undefined>(undefined);    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [queryParams, setQueryParams] = useState<IQueryParamFilters>({
@@ -119,13 +134,71 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataJabatanQuery(queryFilters);
     const { data: postsJabatan, isLoading: isLoadingPosts } = useGetDaftarDataJabatanQuery(queryParams);   
     
-
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
         },
         []
     );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add pelaku usaha');
+                        setModeForm('add');
+                        showModalFormulirJabatan();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit pelaku usaha');
+                        setModeForm('edit');
+                        showModalFormulirJabatan();
+                        let dataTerpilih = find(postsJabatan, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirJabatan();
+                        let dataTerpilih = find(postsJabatan, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection, postsJabatan]
+    ); 
 
     const _onSortColumn = useCallback(
         (key, isAsc: boolean) => {
@@ -259,6 +332,19 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
+        },
+        []
+    );
+
     const _onClearSearch= useCallback(
         () => {
             setCurrentPage(1);
@@ -267,7 +353,7 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;  
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;  
                     
                     if(found > -1) {
                         filters?.splice(found, 1);
@@ -282,7 +368,7 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
                 prev => {
                     let tmp = cloneDeep(prev);
                     let filters = cloneDeep(tmp.filters);
-                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan'}) as number;     
+                    let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
                     
                     
                     if(found > -1) {
@@ -339,6 +425,17 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item style={{marginTop: 2}}>
@@ -346,13 +443,37 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
                     <Stack.Item style={{paddingLeft: 16}}>
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            } 
+                            <Stack.Item>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
@@ -373,12 +494,13 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />
@@ -396,7 +518,16 @@ export const DataListJabatanFluentUI: FC<IDataListJabatanFluentUIProps> = ({init
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}          
+            {isModalFormulirJabatanOpen && (
+                <FormulirJabatan
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirJabatanOpen}
+                    hideModal={hideModalFormulirJabatan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}  
         </Stack>
     );
 }
