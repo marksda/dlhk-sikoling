@@ -385,6 +385,19 @@ export const DataListKabupatenFluentUI: FC<IDataKabupatenFluentUIProps> = ({init
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
+        },
+        []
+    );
+
     const _onClearSearch= useCallback(
         () => {
             setCurrentPage(1);
@@ -615,6 +628,7 @@ export const DataListKabupatenFluentUI: FC<IDataKabupatenFluentUIProps> = ({init
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />

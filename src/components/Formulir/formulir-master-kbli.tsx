@@ -72,7 +72,7 @@ export const FormulirMasterKbli: FC<IFormulirMasterKbliFluentUIProps> = ({title,
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kode!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
-  const [singkatanTextFieldValue, setSingkatanTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kategori!:'');
+  const [kategoriTextFieldValue, setKategoriTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.kategori!:'');
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
@@ -185,8 +185,7 @@ export const FormulirMasterKbli: FC<IFormulirMasterKbliFluentUIProps> = ({title,
         />
       </div>
       <div className={contentStyles.body}>     
-        {mode != 'add' ?
-          <Controller 
+        <Controller 
             name="kode"
             control={control}
             render={
@@ -208,8 +207,7 @@ export const FormulirMasterKbli: FC<IFormulirMasterKbliFluentUIProps> = ({title,
                         errorMessage={error && 'harus diisi'}
                     />
             )}
-          />:null  
-        } 
+        />
         <Controller 
           name="nama"
           control={control}
@@ -221,6 +219,7 @@ export const FormulirMasterKbli: FC<IFormulirMasterKbliFluentUIProps> = ({title,
                 <TextField
                   label="Nama"
                   value={namaTextFieldValue}
+                  multiline rows={3}
                   onChange={
                     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
                       onChange(newValue || '');
@@ -242,12 +241,12 @@ export const FormulirMasterKbli: FC<IFormulirMasterKbliFluentUIProps> = ({title,
               fieldState: { error }
             }) => (
                 <TextField
-                  label="Singkatan"
-                  value={singkatanTextFieldValue}
+                  label="Kategori"
+                  value={kategoriTextFieldValue}
                   onChange={
                     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
                       onChange(newValue?.toUpperCase() || '');
-                      setSingkatanTextFieldValue(newValue?.toUpperCase() || '');
+                      setKategoriTextFieldValue(newValue?.toUpperCase() || '');
                     }
                   }
                   styles={textFieldStyles}

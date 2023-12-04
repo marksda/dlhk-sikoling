@@ -317,6 +317,19 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
         []
     );
 
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
+        },
+        []
+    );
+
     const _onClearSearch= useCallback(
         () => {
             setCurrentPage(1);
@@ -444,7 +457,8 @@ export const DataListPropinsiFluentUI: FC<IDataPropinsiFluentUIProps> = ({initSe
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian nama" 
-                                    underlined={false} 
+                                    underlined={false}
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />

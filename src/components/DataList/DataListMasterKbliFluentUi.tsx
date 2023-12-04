@@ -7,6 +7,7 @@ import { IKbli } from "../../features/entity/kbli";
 import { useGetDaftarDataKbliQuery, useGetJumlahDataKbliQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
+import { FormulirMasterKbli } from "../Formulir/formulir-master-kbli";
 // import { useGetDaftarDataQuery as getDaftarKbli, useGetJumlahDataQuery as getJumlahKbli} from "../../features/repository/service/kbli-api-slice";
 
 interface IDataListMasterKbliFluentUIProps {
@@ -172,7 +173,7 @@ export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = 
                     text: 'Add', 
                     iconProps: { iconName: 'Add' }, 
                     onClick: () => {
-                        setFormulirTitle('Add skala usaha');
+                        setFormulirTitle('Add master kbli');
                         setModeForm('add');
                         showModalFormulirKbli();
                         setDataLama(undefined);
@@ -184,7 +185,7 @@ export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = 
                     disabled: !isSelectedItem,
                     iconProps: { iconName: 'Edit' }, 
                     onClick: () => {
-                        setFormulirTitle('Edit skala usaha');
+                        setFormulirTitle('Edit master kbli');
                         setModeForm('edit');
                         showModalFormulirKbli();                        
                         let dataTerpilih = find(postsKbli, (i) => i.kode == selection.getSelection()[0].key);
@@ -530,6 +531,15 @@ export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = 
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {isModalFormulirKbliOpen && (
+                <FormulirMasterKbli
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirKbliOpen}
+                    hideModal={hideModalFormulirKbli}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 }
