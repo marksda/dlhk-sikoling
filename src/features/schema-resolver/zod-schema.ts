@@ -168,7 +168,7 @@ export const DokumenSchema = object({
 });
 
 export const KbliSchema = object({
-    kode: z.string(),
+    kode: z.string().nullable(),
     nama: z.string(),
     kategori: z.string(),
 });

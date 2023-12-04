@@ -130,8 +130,8 @@ export const DataListMasterKbliFluentUI: FC<IDataListMasterKbliFluentUIProps> = 
         { 
             key: 'kategori', 
             name: 'Kategori', 
-            minWidth: 60, 
-            maxWidth: 60,
+            minWidth: 100, 
+            maxWidth: 100,
             isResizable: true,
             onColumnClick: _onHandleColumnClick,
             onRender: (item: IItemKbli) => {

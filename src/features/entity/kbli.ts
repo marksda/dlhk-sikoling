@@ -1,5 +1,5 @@
 export interface IKbli {
-    kode: string|undefined;
-    nama: string|undefined;
-    kategori: string|undefined;
+    kode: string|null;
+    nama: string|null;
+    kategori: string|null;
 };
