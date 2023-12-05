@@ -7,6 +7,7 @@ import { IKategoriPermohonan } from "../../features/entity/kategori-permohonan";
 import { useBoolean } from "@fluentui/react-hooks";
 import { useGetDaftarDataKategoriPermohonanQuery, useGetJumlahDataKategoriPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import { FormulirKategoriPermohonan } from "../Formulir/formulir-kategori-permohonan";
     
 
 interface IDataListKategoriPermohonanFluentUIProps {
@@ -517,7 +518,16 @@ export const DataListKategoriPermohonanFluentUI: FC<IDataListKategoriPermohonanF
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {isModalFormulirKategoriPermohonanOpen && (
+                <FormulirKategoriPermohonan
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirKategoriPermohonanOpen}
+                    hideModal={hideModalFormulirKategoriPermohonan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}   
         </Stack>
     );
 }

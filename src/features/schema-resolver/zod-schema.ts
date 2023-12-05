@@ -221,5 +221,10 @@ export const KategoriFlowLogSchema = object({
     nama: z.string(),
 });
 
+export const KategoriPermohonanSchema = object({
+    id: z.string().nullable(),
+    nama: z.string(),
+});
+
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

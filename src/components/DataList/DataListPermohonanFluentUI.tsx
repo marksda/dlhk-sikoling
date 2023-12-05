@@ -4,10 +4,10 @@ import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCount
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarKategoriPermohonanByFiltersQuery } from "../../features/permohonan/kategori-permohonan-api-slice";
 import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
+import { useGetDaftarDataKategoriPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -210,7 +210,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     // rtk hook state
     const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);
     const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetTotalCountRegisterPermohonanQuery(queryFilters);
-    const { data: postsJenisPermohonan } = useGetDaftarKategoriPermohonanByFiltersQuery({
+    const { data: postsJenisPermohonan } = useGetDaftarDataKategoriPermohonanQuery({
         pageNumber: 0,
         pageSize: 0,
         filters: [],
