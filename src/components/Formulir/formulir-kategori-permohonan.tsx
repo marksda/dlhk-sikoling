@@ -5,7 +5,7 @@ import { KategoriPermohonanSchema } from "../../features/schema-resolver/zod-sch
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation, useUpdateIdKategoriFlowLogMutation, useDeleteKategoriFlowLogMutation } from "../../features/repository/service/sikoling-api-slice";
+import { useSaveKategoriFlowLogMutation, useUpdateKategoriFlowLogMutation, useUpdateIdKategoriFlowLogMutation, useDeleteKategoriFlowLogMutation, useSaveKategoriPermohonanMutation, useUpdateKategoriPermohonanMutation, useUpdateIdKategoriPermohonanMutation, useDeleteKategoriPermohonanMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IKategoriPermohonan } from "../../features/entity/kategori-permohonan";
 
 interface IFormulirKategoriPermohonanFluentUIProps {
@@ -80,10 +80,10 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
     resolver: zodResolver(KategoriPermohonanSchema),
   });
   // rtk query
-  const [ saveKategoriFlowLog] = useSaveKategoriFlowLogMutation();
-  const [ updateKategoriFlowLog] = useUpdateKategoriFlowLogMutation();
-  const [ updateIdKategoriFlowLog] = useUpdateIdKategoriFlowLogMutation();
-  const [ deleteKategoriFlowLog] = useDeleteKategoriFlowLogMutation();
+  const [ saveKategoriPermohonan] = useSaveKategoriPermohonanMutation();
+  const [ updateKategoriPermohonan] = useUpdateKategoriPermohonanMutation();
+  const [ updateIdKategoriPermohonan] = useUpdateIdKategoriPermohonanMutation();
+  const [ deleteKategoriPermohonan] = useDeleteKategoriPermohonanMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -101,7 +101,7 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
     try {
       switch (mode) {
         case 'add':
-          await saveKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await saveKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -110,14 +110,14 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updateKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+            await updateKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdKategoriFlowLog({idLama: dataLama?.id!, kategoriFlowLog: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdKategoriPermohonan({idLama: dataLama?.id!, kategoriPermohonan: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -126,7 +126,7 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
           hideModal();
           break;
         case 'delete':
-          await deleteKategoriFlowLog(data).unwrap().then((originalPromiseResult) => {
+          await deleteKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -143,7 +143,7 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
 
   const onError: SubmitErrorHandler<IKategoriPermohonan> = async (err) => {
     if(mode == 'delete') {
-      await deleteKategoriFlowLog(dataLama!).unwrap().then((originalPromiseResult) => {
+      await deleteKategoriPermohonan(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
