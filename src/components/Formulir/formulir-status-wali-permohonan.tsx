@@ -53,7 +53,7 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 450 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {

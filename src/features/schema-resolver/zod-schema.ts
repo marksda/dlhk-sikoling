@@ -126,8 +126,8 @@ export const JenisPermohonanArahanSchema = object({
 });
 
 export const StatusWaliPermohonanSchema = object({
-    id: z.string().optional(),
-    nama: z.string().optional()
+    id: z.string().nullable(),
+    nama: z.string()
 });
 
 export const JabatanSchema = object({
