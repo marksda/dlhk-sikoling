@@ -8,7 +8,6 @@ import simpleResponseReducer from "../features/message/simple-response-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { FlowLogApiSlice } from "../features/log/flow-log-api-slice";
-import { PosisiTahapPemberkasanApiSlice } from "../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { sikolingApi } from "../features/repository/service/sikoling-api-slice";
 
 // import counterReducer from "../features/counter/counter-slice"
@@ -25,7 +24,6 @@ export const store = configureStore({
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
-        [PosisiTahapPemberkasanApiSlice.reducerPath]: PosisiTahapPemberkasanApiSlice.reducer,
         [FlowLogApiSlice.reducerPath]: FlowLogApiSlice.reducer,
         [sikolingApi.reducerPath]: sikolingApi.reducer,
         login: loginReducer,
@@ -37,7 +35,6 @@ export const store = configureStore({
                                             .concat(RegisterPermohonanApiSlice.middleware)
                                             .concat(FlowLogApiSlice.middleware)
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
-                                            .concat(PosisiTahapPemberkasanApiSlice.middleware)
                                             .concat(sikolingApi.middleware)
 });
 

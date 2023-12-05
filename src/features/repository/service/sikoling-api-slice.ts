@@ -26,11 +26,12 @@ import { IKategoriFlowLog } from "../../entity/kategori-flow-log";
 import { IOtoritasPerusahaan } from "../../entity/otoritas-perusahaan";
 import { IKategoriPermohonan } from "../../entity/kategori-permohonan";
 import { IStatusWaliPermohonan } from "../../entity/status-wali-permohonan";
+import { IPosisiTahapPemberkasan } from "../../entity/posisi-tahap-pemberkasan";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'PosisiTahapPemberkasan', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -1053,6 +1054,46 @@ export const sikolingApi = createApi({
             getJumlahDataStatusWaliPermohonan: builder.query<number, qFilters>({
                 query: (queryFilters) => `/status_pengurus_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            savePosisiTahapPemberkasan: builder.mutation<IPosisiTahapPemberkasan, Partial<IPosisiTahapPemberkasan>>({
+                query: (body) => ({
+                    url: '/posisi_tahap_pemberkasan',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['PosisiTahapPemberkasan']:['Kosong'],
+            }),
+            updatePosisiTahapPemberkasan: builder.mutation<IPosisiTahapPemberkasan, Partial<IPosisiTahapPemberkasan>>({
+                query: (posisiTahapPemberkasan) => ({
+                    url: '/posisi_tahap_pemberkasan',
+                    method: 'PUT',
+                    body: posisiTahapPemberkasan,
+                }),
+                invalidatesTags: (result) => result ? ['PosisiTahapPemberkasan']:['Kosong'],
+            }),
+            updateIdPosisiTahapPemberkasan: builder.mutation<IPosisiTahapPemberkasan, {idLama: string; posisiTahapPemberkasan: Partial<IPosisiTahapPemberkasan>}>({
+                query: ({idLama, posisiTahapPemberkasan}) => ({
+                    url: `/posisi_tahap_pemberkasan/id/${idLama}`,
+                    method: 'PUT',
+                    body: posisiTahapPemberkasan,
+                }),
+                invalidatesTags: (result) => result ? ['PosisiTahapPemberkasan']:['Kosong'],
+            }),
+            deletePosisiTahapPemberkasan: builder.mutation<Partial<IPosisiTahapPemberkasan>, Partial<IPosisiTahapPemberkasan>>({
+                query(posisiTahapPemberkasan) {
+                  return {
+                    url: `/posisi_tahap_pemberkasan/${posisiTahapPemberkasan.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['PosisiTahapPemberkasan']:['Kosong'],
+            }),
+            getDaftarDataPosisiTahapPemberkasan: builder.query<IPosisiTahapPemberkasan[], IQueryParamFilters>({
+                query: (queryParams) => `/posisi_tahap_pemberkasan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['PosisiTahapPemberkasan'],
+            }),
+            getJumlahDataPosisiTahapPemberkasan: builder.query<number, qFilters>({
+                query: (queryFilters) => `/posisi_tahap_pemberkasan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             logout: builder.mutation<string, string>({
                 query(sessionId) {
                   return {
@@ -1139,6 +1180,8 @@ export const {
     useDeleteKategoriPermohonanMutation, useGetDaftarDataKategoriPermohonanQuery, useGetJumlahDataKategoriPermohonanQuery,
     useSaveStatusWaliPermohonanMutation, useUpdateStatusWaliPermohonanMutation, useUpdateIdStatusWaliPermohonanMutation,
     useDeleteStatusWaliPermohonanMutation, useGetDaftarDataStatusWaliPermohonanQuery, useGetJumlahDataStatusWaliPermohonanQuery,
+    useSavePosisiTahapPemberkasanMutation, useUpdatePosisiTahapPemberkasanMutation, useUpdateIdPosisiTahapPemberkasanMutation,
+    useDeletePosisiTahapPemberkasanMutation, useGetDaftarDataPosisiTahapPemberkasanQuery, useGetJumlahDataPosisiTahapPemberkasanQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
     useAddDirekturMutation, useLogoutMutation,
 } = sikolingApi;
