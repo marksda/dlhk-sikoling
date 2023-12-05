@@ -25,11 +25,12 @@ import { IStatusFlowLog } from "../../entity/status-flow-log";
 import { IKategoriFlowLog } from "../../entity/kategori-flow-log";
 import { IOtoritasPerusahaan } from "../../entity/otoritas-perusahaan";
 import { IKategoriPermohonan } from "../../entity/kategori-permohonan";
+import { IStatusWaliPermohonan } from "../../entity/status-wali-permohonan";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog' ],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -1012,6 +1013,46 @@ export const sikolingApi = createApi({
             getJumlahDataKategoriPermohonan: builder.query<number, qFilters>({
                 query: (queryFilters) => `/kategori_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveStatusWaliPermohonan: builder.mutation<IStatusWaliPermohonan, Partial<IStatusWaliPermohonan>>({
+                query: (body) => ({
+                    url: '/status_pengurus_permohonan',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['StatusWaliPermohonan']:['Kosong'],
+            }),
+            updateStatusWaliPermohonan: builder.mutation<IStatusWaliPermohonan, Partial<IStatusWaliPermohonan>>({
+                query: (statusWaliPermohonan) => ({
+                    url: '/status_pengurus_permohonan',
+                    method: 'PUT',
+                    body: statusWaliPermohonan,
+                }),
+                invalidatesTags: (result) => result ? ['StatusWaliPermohonan']:['Kosong'], 
+            }),
+            updateIdStatusWaliPermohonan: builder.mutation<IStatusWaliPermohonan, {idLama: string; statusWaliPermohonan: Partial<IStatusWaliPermohonan>}>({
+                query: ({idLama, statusWaliPermohonan}) => ({
+                    url: `/kategori_permohonan/id/${idLama}`,
+                    method: 'PUT',
+                    body: statusWaliPermohonan,
+                }),
+                invalidatesTags: (result) => result ? ['StatusWaliPermohonan']:['Kosong'],
+            }),
+            deleteStatusWaliPermohonan: builder.mutation<Partial<IStatusWaliPermohonan>, Partial<IStatusWaliPermohonan>>({
+                query(statusWaliPermohonan) {
+                  return {
+                    url: `/status_pengurus_permohonan/${statusWaliPermohonan.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['StatusWaliPermohonan']:['Kosong'],
+            }),
+            getDaftarDataStatusWaliPermohonan: builder.query<IStatusWaliPermohonan[], IQueryParamFilters>({
+                query: (queryParams) => `/status_pengurus_permohonan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['StatusWaliPermohonan'],
+            }),
+            getJumlahDataStatusWaliPermohonan: builder.query<number, qFilters>({
+                query: (queryFilters) => `/status_pengurus_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             logout: builder.mutation<string, string>({
                 query(sessionId) {
                   return {
@@ -1096,6 +1137,8 @@ export const {
     useDeleteStatusFlowLogMutation, useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery,
     useSaveKategoriPermohonanMutation, useUpdateKategoriPermohonanMutation, useUpdateIdKategoriPermohonanMutation,
     useDeleteKategoriPermohonanMutation, useGetDaftarDataKategoriPermohonanQuery, useGetJumlahDataKategoriPermohonanQuery,
+    useSaveStatusWaliPermohonanMutation, useUpdateStatusWaliPermohonanMutation, useUpdateIdStatusWaliPermohonanMutation,
+    useDeleteStatusWaliPermohonanMutation, useGetDaftarDataStatusWaliPermohonanQuery, useGetJumlahDataStatusWaliPermohonanQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 
     useAddDirekturMutation, useLogoutMutation,
 } = sikolingApi;

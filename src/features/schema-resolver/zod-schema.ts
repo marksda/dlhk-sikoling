@@ -125,7 +125,7 @@ export const JenisPermohonanArahanSchema = object({
     keterangan: z.string().optional()
 });
 
-export const StatusWaliSchema = object({
+export const StatusWaliPermohonanSchema = object({
     id: z.string().optional(),
     nama: z.string().optional()
 });

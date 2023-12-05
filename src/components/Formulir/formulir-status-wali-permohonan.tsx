@@ -1,19 +1,19 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { KategoriPermohonanSchema } from "../../features/schema-resolver/zod-schema";
+import { StatusWaliPermohonanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveKategoriPermohonanMutation, useUpdateKategoriPermohonanMutation, useUpdateIdKategoriPermohonanMutation, useDeleteKategoriPermohonanMutation } from "../../features/repository/service/sikoling-api-slice";
-import { IKategoriPermohonan } from "../../features/entity/kategori-permohonan";
+import { useSaveStatusWaliPermohonanMutation, useUpdateStatusWaliPermohonanMutation, useUpdateIdStatusWaliPermohonanMutation, useDeleteStatusWaliPermohonanMutation } from "../../features/repository/service/sikoling-api-slice";
+import { IStatusWaliPermohonan } from "../../features/entity/status-wali-permohonan";
 
-interface IFormulirKategoriPermohonanFluentUIProps {
+interface IFormulirStatusWaliPermohonanFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
   hideModal: () => void;
-  dataLama?: IKategoriPermohonan;
+  dataLama?: IStatusWaliPermohonan;
 };
 
 const theme = getTheme();
@@ -67,7 +67,7 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirStatusWaliPermohonan: FC<IFormulirStatusWaliPermohonanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
@@ -75,15 +75,15 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IKategoriPermohonan>({
+  const {handleSubmit, control, resetField, watch} = useForm<IStatusWaliPermohonan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null},
-    resolver: zodResolver(KategoriPermohonanSchema),
+    resolver: zodResolver(StatusWaliPermohonanSchema),
   });
   // rtk query
-  const [ saveKategoriPermohonan] = useSaveKategoriPermohonanMutation();
-  const [ updateKategoriPermohonan] = useUpdateKategoriPermohonanMutation();
-  const [ updateIdKategoriPermohonan] = useUpdateIdKategoriPermohonanMutation();
-  const [ deleteKategoriPermohonan] = useDeleteKategoriPermohonanMutation();
+  const [ saveStatusWaliPermohonan] = useSaveStatusWaliPermohonanMutation();
+  const [ updateStatusWaliPermohonan] = useUpdateStatusWaliPermohonanMutation();
+  const [ updateIdStatusWaliPermohonan] = useUpdateIdStatusWaliPermohonanMutation();
+  const [ deleteStatusWaliPermohonan] = useDeleteStatusWaliPermohonanMutation();
 
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -96,12 +96,12 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
     [keepInBounds],
   );
   
-  const onSubmit: SubmitHandler<IKategoriPermohonan> = async (data) => {
+  const onSubmit: SubmitHandler<IStatusWaliPermohonan> = async (data) => {
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await saveKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
+          await saveStatusWaliPermohonan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -110,14 +110,14 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
           break;
         case 'edit':
           if(dataLama?.id == data.id) {
-            await updateKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
+            await updateStatusWaliPermohonan(data).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
             }); 
           }
           else {
-            await updateIdKategoriPermohonan({idLama: dataLama?.id!, kategoriPermohonan: data}).unwrap().then((originalPromiseResult) => {
+            await updateIdStatusWaliPermohonan({idLama: dataLama?.id!, statusWaliPermohonan: data}).unwrap().then((originalPromiseResult) => {
               setDisableForm(false);
             }).catch((rejectedValueOrSerializedError) => {
               setDisableForm(false);
@@ -126,7 +126,7 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
           hideModal();
           break;
         case 'delete':
-          await deleteKategoriPermohonan(data).unwrap().then((originalPromiseResult) => {
+          await deleteStatusWaliPermohonan(data).unwrap().then((originalPromiseResult) => {
             setDisableForm(false);
           }).catch((rejectedValueOrSerializedError) => {
             setDisableForm(false);
@@ -141,9 +141,9 @@ export const FormulirKategoriPermohonan: FC<IFormulirKategoriPermohonanFluentUIP
     }
   };
 
-  const onError: SubmitErrorHandler<IKategoriPermohonan> = async (err) => {
+  const onError: SubmitErrorHandler<IStatusWaliPermohonan> = async (err) => {
     if(mode == 'delete') {
-      await deleteKategoriPermohonan(dataLama!).unwrap().then((originalPromiseResult) => {
+      await deleteStatusWaliPermohonan(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
       }).catch((rejectedValueOrSerializedError) => {
         setDisableForm(false);
