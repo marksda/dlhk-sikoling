@@ -4,10 +4,9 @@ import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatStringToDDMMYYYY, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
-import { useGetDaftarDataKategoriFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriFlowLogQuery, useGetDaftarDataPosisiTahapPemberkasanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
 import find from "lodash.find";
@@ -288,7 +287,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             },
         ],
     });
-    const { data: postsPosisiTahapPemberkasan } = useGetDaftarPosisiTahapPemberkasanByFiltersQuery({
+    const { data: postsPosisiTahapPemberkasan } = useGetDaftarDataPosisiTahapPemberkasanQuery({
         pageNumber: 0,
         pageSize: 0,
         filters: [],
