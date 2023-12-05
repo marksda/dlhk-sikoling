@@ -5,7 +5,6 @@ import authorizationReducer from "../features/security/authorization-slice";
 import tokenReducer from "../features/security/token-slice";
 import { TokenApiSlice } from "../features/security/token-api-slice";
 import simpleResponseReducer from "../features/message/simple-response-slice";
-import { KategoriPermohonanApiSlice } from "../features/permohonan/kategori-permohonan-api-slice";
 import { RegisterPermohonanApiSlice } from "../features/permohonan/register-permohonan-api-slice";
 import { JenisPermohonanSuratArahanApiSlice } from "../features/permohonan/jenis-permohonan-surat-arahan-api-slice";
 import { FlowLogApiSlice } from "../features/log/flow-log-api-slice";
@@ -25,7 +24,6 @@ export const store = configureStore({
         simpleResponse: simpleResponseReducer,
         token: tokenReducer,
         [TokenApiSlice.reducerPath]: TokenApiSlice.reducer,
-        [KategoriPermohonanApiSlice.reducerPath]: KategoriPermohonanApiSlice.reducer,
         [RegisterPermohonanApiSlice.reducerPath]: RegisterPermohonanApiSlice.reducer,
         [JenisPermohonanSuratArahanApiSlice.reducerPath]: JenisPermohonanSuratArahanApiSlice.reducer,
         [StatusWaliPermohonanApiSlice.reducerPath]: StatusWaliPermohonanApiSlice.reducer,
@@ -43,7 +41,6 @@ export const store = configureStore({
                                             .concat(JenisPermohonanSuratArahanApiSlice.middleware)
                                             .concat(StatusWaliPermohonanApiSlice.middleware)
                                             .concat(PosisiTahapPemberkasanApiSlice.middleware)
-                                            .concat(KategoriPermohonanApiSlice.middleware)
                                             .concat(sikolingApi.middleware)
 });
 
