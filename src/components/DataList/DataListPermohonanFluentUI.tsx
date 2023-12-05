@@ -4,10 +4,9 @@ import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCount
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
-import { useGetDaftarPosisiTahapPemberkasanByFiltersQuery } from "../../features/permohonan/posisi-tahap-pemberkasan-api-slice";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
-import { useGetDaftarDataKategoriPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPemberkasanQuery } from "../../features/repository/service/sikoling-api-slice";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -221,7 +220,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
             },
         ],
     }); 
-    const { data: postsPosisiTahapPemberkasan } = useGetDaftarPosisiTahapPemberkasanByFiltersQuery({
+    const { data: postsPosisiTahapPemberkasan } = useGetDaftarDataPosisiTahapPemberkasanQuery({
         pageNumber: 0,
         pageSize: 0,
         filters: [],
