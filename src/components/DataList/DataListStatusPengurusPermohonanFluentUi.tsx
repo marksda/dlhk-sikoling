@@ -7,6 +7,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { IStatusWaliPermohonan } from "../../features/entity/status-wali-permohonan";
 import { useGetDaftarDataStatusWaliPermohonanQuery, useGetJumlahDataStatusWaliPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import { FormulirStatusWaliPermohonan } from "../Formulir/formulir-status-wali-permohonan";
     
 
 interface IDataListStatusPengurusPermohonanFluentUIProps {
@@ -88,7 +89,7 @@ export const DataListStatusPengurusPermohonanFluentUI: FC<IDataListStatusPenguru
     //local state
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
-    const [isModalFormulirSkalaUsahaOpen, { setTrue: showModalFormulirSkalaUsaha, setFalse: hideModalFormulirSkalaUsaha}] = useBoolean(false);
+    const [isModalFormulirStatusWaliPermohonanOpen, { setTrue: showModalFormulirStatusWaliPermohonan, setFalse: hideModalFormulirStatusWaliPermohonan}] = useBoolean(false);
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [dataLama, setDataLama]= useState<IStatusWaliPermohonan|undefined>(undefined);
@@ -162,7 +163,7 @@ export const DataListStatusPengurusPermohonanFluentUI: FC<IDataListStatusPenguru
                     onClick: () => {
                         setFormulirTitle('Add status pengurus permohonan');
                         setModeForm('add');
-                        showModalFormulirSkalaUsaha();
+                        showModalFormulirStatusWaliPermohonan();
                         setDataLama(undefined);
                     }
                 },
@@ -174,7 +175,7 @@ export const DataListStatusPengurusPermohonanFluentUI: FC<IDataListStatusPenguru
                     onClick: () => {
                         setFormulirTitle('Edit status pengurus permohonan');
                         setModeForm('edit');
-                        showModalFormulirSkalaUsaha();                        
+                        showModalFormulirStatusWaliPermohonan();                        
                         let dataTerpilih = find(postsStatusPengurusPermohonan, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
@@ -189,7 +190,7 @@ export const DataListStatusPengurusPermohonanFluentUI: FC<IDataListStatusPenguru
                     onClick: () => {
                         setFormulirTitle('Hapus item');
                         setModeForm('delete');
-                        showModalFormulirSkalaUsaha();
+                        showModalFormulirStatusWaliPermohonan();
                         let dataTerpilih = find(postsStatusPengurusPermohonan, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
                     }
@@ -517,7 +518,16 @@ export const DataListStatusPengurusPermohonanFluentUI: FC<IDataListStatusPenguru
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
-            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}            
+            {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {isModalFormulirStatusWaliPermohonanOpen && (
+                <FormulirStatusWaliPermohonan
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirStatusWaliPermohonanOpen}
+                    hideModal={hideModalFormulirStatusWaliPermohonan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}        
         </Stack>
     );
 }
