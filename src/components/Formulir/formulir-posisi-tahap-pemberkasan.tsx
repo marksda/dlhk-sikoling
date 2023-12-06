@@ -1,12 +1,11 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { ModelPerizinanSchema, PosisiTahapPemberkasanSchema } from "../../features/schema-resolver/zod-schema";
+import { PosisiTahapPemberkasanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useSaveModelPerizinanMutation, useUpdateModelPerizinanMutation, useUpdateIdModelPerizinanMutation, useDeleteModelPerizinanMutation, useSavePosisiTahapPemberkasanMutation, useUpdatePosisiTahapPemberkasanMutation, useUpdateIdPosisiTahapPemberkasanMutation, useDeletePosisiTahapPemberkasanMutation } from "../../features/repository/service/sikoling-api-slice";
-import { IModelPerizinan } from "../../features/entity/model-perizinan";
+import { useSavePosisiTahapPemberkasanMutation, useUpdatePosisiTahapPemberkasanMutation, useUpdateIdPosisiTahapPemberkasanMutation, useDeletePosisiTahapPemberkasanMutation } from "../../features/repository/service/sikoling-api-slice";
 import { IPosisiTahapPemberkasan } from "../../features/entity/posisi-tahap-pemberkasan";
 
 interface IFormulirPosisiTahapPemberkasanFluentUIProps {
@@ -54,7 +53,7 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
-const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 300 } };
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 400 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
 const iconButtonStyles = {
     root: {
@@ -68,7 +67,7 @@ const iconButtonStyles = {
     },
 };
 
-export const FormulirIPosisiTahapPemberkasan: FC<IFormulirPosisiTahapPemberkasanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirPosisiTahapPemberkasan: FC<IFormulirPosisiTahapPemberkasanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   // local state
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
   const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
@@ -242,7 +241,7 @@ export const FormulirIPosisiTahapPemberkasan: FC<IFormulirPosisiTahapPemberkasan
               fieldState: { error }
             }) => (
                 <TextField
-                  label="Singkatan"
+                  label="Keterangan"
                   value={keteranganTextFieldValue}
                   onChange={
                     (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {

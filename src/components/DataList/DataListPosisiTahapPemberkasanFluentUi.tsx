@@ -7,6 +7,7 @@ import { useBoolean } from "@fluentui/react-hooks";
 import { IPosisiTahapPemberkasan } from "../../features/entity/posisi-tahap-pemberkasan";
 import { useGetDaftarDataPosisiTahapPemberkasanQuery, useGetJumlahDataPosisiTahapPemberkasanQuery } from "../../features/repository/service/sikoling-api-slice";
 import find from "lodash.find";
+import { FormulirPosisiTahapPemberkasan } from "../Formulir/formulir-posisi-tahap-pemberkasan";
 
 interface IDataListPosisiTahapPemberkasanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -528,6 +529,15 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
                 </Stack>
             </Stack.Item>
             {contextualMenuProps && <ContextualMenu {...contextualMenuProps} />}
+            {isModalFormulirPosisiTahapPemberkasanOpen && (
+                <FormulirPosisiTahapPemberkasan
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirPosisiTahapPemberkasanOpen}
+                    hideModal={hideModalFormulirPosisiTahapPemberkasan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 }
