@@ -104,6 +104,8 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
             fieldName: 'id', 
             minWidth: 20, 
             maxWidth: 20, 
+            isSortedDescending: false,
+            isSorted: true,
             isRowHeader: true,
             isResizable: false,
             onColumnClick: _onHandleColumnClick,
@@ -118,8 +120,6 @@ export const DataListPosisiTahapPemberkasanFluentUI: FC<IDataListPosisiTahapPemb
             minWidth: 100, 
             maxWidth: 300, 
             isResizable: true, 
-            isSortedDescending: false,
-            isSorted: true,
             onColumnClick: _onHandleColumnClick,
             data: 'string',
             onRender: (item: IItemPosisiTahapPemberkasan) => {

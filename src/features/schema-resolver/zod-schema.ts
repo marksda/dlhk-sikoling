@@ -226,5 +226,11 @@ export const KategoriPermohonanSchema = object({
     nama: z.string(),
 });
 
+export const PosisiTahapPemberkasanSchema = object({
+    id: z.string().nullable(),
+    nama: z.string(),
+    keterangan: z.string(),
+});
+
 // export const DaftarKbliSchema = z.array(RegisterKbliSchema);
 

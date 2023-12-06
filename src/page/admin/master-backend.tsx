@@ -667,7 +667,7 @@ export const MasterBackEnd: FC = () => {
                             filters: [],
                             sortOrders: [
                                 {
-                                    fieldName: 'nama',
+                                    fieldName: 'id',
                                     value: 'ASC'
                                 },
                             ],
