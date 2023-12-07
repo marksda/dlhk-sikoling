@@ -127,19 +127,6 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
                 return item.nama; 
             },
             isPadded: true,
-        },
-        { 
-            key: 'kategori', 
-            name: 'Kategori', 
-            minWidth: 180, 
-            maxWidth: 180,
-            isResizable: true, 
-            onColumnClick: _onHandleColumnClick,
-            data: 'string',
-            onRender: (item: IItemDokumen) => {
-                return item.kategoriDokumen?.nama;
-            },
-            isPadded: true,
         }
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);

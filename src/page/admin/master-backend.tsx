@@ -288,14 +288,6 @@ export const MasterBackEnd: FC = () => {
                     subMenuProps: {
                         items: [
                             {
-                                key: 'kategori_dokumen',
-                                name: 'Kelompok dokumen',
-                                iconProps: { iconName: 'WebComponents' },
-                                onClick: () => {
-                                        _onHandleMasterMenu('kategori_dokumen');
-                                    }
-                            },
-                            {
                                 key: 'jenis_dokumen',
                                 name: 'Jenis dokumen',
                                 iconProps: { iconName: 'Group' },
@@ -421,24 +413,6 @@ export const MasterBackEnd: FC = () => {
                         }
                     }
                     title="Kabupaten"
-                />;
-                break;
-                case 'kategori_dokumen':
-                konten = <DataListKategoriDokumenFluentUI
-                    initSelectedFilters={
-                        {
-                            pageNumber: 1,
-                            pageSize: 25,
-                            filters: [],
-                            sortOrders: [
-                                {
-                                    fieldName: 'nama',
-                                    value: 'ASC'
-                                },
-                            ],
-                        }
-                    }
-                    title="Kelompok dokumen"
                 />;
                 break;
                 case 'kategori_log':
