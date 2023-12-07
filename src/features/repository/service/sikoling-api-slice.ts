@@ -631,8 +631,8 @@ export const sikolingApi = createApi({
                 invalidatesTags: (result) => result ?['Dokumen']:['Kosong'],
             }),
             updateIdDokumen: builder.mutation<IDokumen, {idLama: string; dokumen: IDokumen}>({
-                query: ({id, dokumen}) => ({
-                    url: `/dokumen/id/${id}`,
+                query: ({idLama, dokumen}) => ({
+                    url: `/dokumen/id/${idLama}`,
                     method: 'PUT',
                     body: dokumen,
                 }),
@@ -653,46 +653,6 @@ export const sikolingApi = createApi({
             }),
             getJumlahDataDokumen: builder.query<number, qFilters>({
                 query: (queryFilters) => `/dokumen/count?filters=${JSON.stringify(queryFilters)}`,
-            }),
-            saveKategoriDokumen: builder.mutation<IKategoriDokumen, Partial<IKategoriDokumen>>({
-                query: (kategoriDokumen) => ({
-                    url: '/kategori_dokumen',
-                    method: 'POST',
-                    body: kategoriDokumen,
-                }),
-                invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
-            }),
-            updateKategoriDokumen: builder.mutation<IKategoriDokumen, Partial<IKategoriDokumen>>({
-                query: (kategoriDokumen) => ({
-                    url: '/kategori_dokumen',
-                    method: 'PUT',
-                    body: kategoriDokumen,
-                }),
-                invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
-            }),
-            updateIdKategoriDokumen: builder.mutation<IKategoriDokumen, {id: string; kategoriDokumen: IKategoriDokumen}>({
-                query: ({id, kategoriDokumen}) => ({
-                    url: `/kategori_dokumen/id/${id}`,
-                    method: 'PUT',
-                    body: kategoriDokumen,
-                }),
-                invalidatesTags: (result) => result ?['KategoriDokumen']:['Kosong'],
-            }),
-            deleteKategoriDokumen: builder.mutation<Partial<IKategoriDokumen>, Partial<IKategoriDokumen>>({
-                query(kategoriDokumen) {
-                  return {
-                    url: `/kategori_dokumen/${kategoriDokumen.id}`,
-                    method: 'DELETE',
-                  }
-                },
-                invalidatesTags: (result) => result ? ['KategoriDokumen']:['Kosong'],
-            }),
-            getDaftarDataKategoriDokumen: builder.query<IKategoriDokumen[], IQueryParamFilters>({
-                query: (queryParams) => `/kategori_dokumen?filters=${JSON.stringify(queryParams)}`,
-                providesTags: ['KategoriDokumen'],
-            }),
-            getJumlahDataKategoriDokumen: builder.query<number, qFilters>({
-                query: (queryFilters) => `/kategori_dokumen/count?filters=${JSON.stringify(queryFilters)}`,
             }),
             saveRegisterDokumen: builder.mutation<IRegisterDokumen<any>, Partial<IRegisterDokumen<any>>>({
                 query: (kategoriDokumen) => ({
@@ -1160,8 +1120,6 @@ export const {
     useDeletePelakuUsahaMutation, useGetDaftarDataPelakuUsahaQuery, useGetJumlahDataPelakuUsahaQuery,
     useSaveDokumenMutation, useUpdateDokumenMutation, useUpdateIdDokumenMutation,
     useDeleteDokumenMutation, useGetDaftarDataDokumenQuery, useGetJumlahDataDokumenQuery,
-    useSaveKategoriDokumenMutation, useUpdateKategoriDokumenMutation, useUpdateIdKategoriDokumenMutation,
-    useDeleteKategoriDokumenMutation, useGetDaftarDataKategoriDokumenQuery, useGetJumlahDataKategoriDokumenQuery,
     useSaveRegisterDokumenMutation, useUpdateRegisterDokumenMutation, useUpdateIdRegisterDokumenMutation,
     useDeleteRegisterDokumenMutation, useGetDaftarDataRegisterDokumenQuery, useGetJumlahDataRegisterDokumenQuery,
     useSaveKbliMutation, useUpdateKbliMutation, useUpdateIdKbliMutation,

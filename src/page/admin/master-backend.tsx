@@ -16,7 +16,6 @@ import { DataListPosisiTahapPemberkasanFluentUI } from "../../components/DataLis
 import { DataListJabatanFluentUI } from "../../components/DataList/DataListJabatanFluentUi";
 import { DataListPegawaiFluentUI } from "../../components/DataList/DataListPegawaiFluentUi";
 import { DataListDokumenFluentUI } from "../../components/DataList/DataListDokumenFluentUi";
-import { DataListKategoriDokumenFluentUI } from "../../components/DataList/DataListKategoriDokumenFluentUi";
 import { DataListMasterKbliFluentUI } from "../../components/DataList/DataListMasterKbliFluentUi";
 import { DataListAutorisasiPerusahaanFluentUI } from "../../components/DataList/DataListAutorisasiPerusahaanFluentUi";
 import { DataListPropinsiFluentUI } from "../../components/DataList/DataListPropinsiFluentUI";

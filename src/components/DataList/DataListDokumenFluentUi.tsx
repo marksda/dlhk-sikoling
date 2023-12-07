@@ -130,11 +130,6 @@ export const DataListDokumenFluentUI: FC<IDataListDokumenFluentUIProps> = ({init
         }
     ]);   
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
-    const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
-    const [searchNamaPerusahaan, setSearchNamaPerusahaan] = useState<string|undefined>(undefined);
-    const [searchNik, setSearchNik] = useState<string|undefined>(undefined);
-    const searchNamaPerusahaanId = useId('searchNamaPerusahaan');
-    const searchNikId = useId('searchNik');
     // rtk hook state
     const { data: postsCount, isLoading: isLoadingCount } = useGetJumlahDataDokumenQuery(queryFilters);
     const { data: postsDokumen, isLoading: isLoadingPosts } = useGetDaftarDataDokumenQuery(queryParams);   
