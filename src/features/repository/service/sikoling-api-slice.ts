@@ -630,7 +630,7 @@ export const sikolingApi = createApi({
                 }),
                 invalidatesTags: (result) => result ?['Dokumen']:['Kosong'],
             }),
-            updateIdDokumen: builder.mutation<IDokumen, {id: string; dokumen: IDokumen}>({
+            updateIdDokumen: builder.mutation<IDokumen, {idLama: string; dokumen: IDokumen}>({
                 query: ({id, dokumen}) => ({
                     url: `/dokumen/id/${id}`,
                     method: 'PUT',

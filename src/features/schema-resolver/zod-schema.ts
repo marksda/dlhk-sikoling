@@ -162,9 +162,8 @@ export const KategoriDokumenSchema = object({
 });
 
 export const DokumenSchema = object({
-    id: z.string(),
-    nama: z.string().nullable(),
-    kategoriDokumen: KategoriDokumenSchema.pick({id:true})
+    id: z.string().nullable(),
+    nama: z.string()
 });
 
 export const KbliSchema = object({
