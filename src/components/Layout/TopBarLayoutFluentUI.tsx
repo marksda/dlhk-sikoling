@@ -1,8 +1,7 @@
-import { DefaultButton, FocusTrapZone, FontIcon, getTheme, IconButton, IIconProps, IStackItemStyles, IStackStyles, ITooltipHostStyles, Layer, mergeStyles, mergeStyleSets, Overlay, Popup, Stack, TooltipHost } from "@fluentui/react";
+import { ActionButton, DefaultButton, FocusTrapZone, FontIcon, getTheme, IconButton, IIconProps, IStackItemStyles, IStackStyles, ITooltipHostStyles, Label, Layer, mergeStyles, mergeStyleSets, Overlay, Popup, PrimaryButton, Stack, TooltipHost } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { resetCredential } from "../../features/security/authentication-slice";
 import { resetToken } from "../../features/security/token-slice";
 import { useLogoutMutation } from "../../features/repository/service/sikoling-api-slice";
 
@@ -21,7 +20,7 @@ const RootStackStyles: IStackStyles = {
     },
 };
 const calloutProps = { gapSpace: 0 };
-const userIcon: IIconProps = { iconName: 'Contact' };
+const userIcon: IIconProps = { iconName: 'Contact',  style: {color: 'white'}};
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const classNames = mergeStyleSets({
     titleStyles: {
@@ -38,7 +37,7 @@ const classNames = mergeStyleSets({
     deepSkyBlue: [{ color: 'deepskyblue' }],
     greenYellow: [{ color: 'greenyellow' }],
     salmon: [{ color: 'salmon' }],
-    white: [{ color: 'white' }],
+    white: [{ color: 'white', marginRight: 16 }],
 });
 const popupStyles = mergeStyleSets({
     root: {
@@ -91,16 +90,8 @@ export const TopBarLayoutFluentUI: FC<ITopBarUIProps> = ({appTitleContainer, sub
                 <Stack.Item grow>
                 <div className={classNames.subTitleStyles}>{subTitle}</div>
                 </Stack.Item>
-                <Stack.Item align="center" >
-                    <TooltipHost
-                        content="Log out"
-                        id={tooltipId}
-                        calloutProps={calloutProps}
-                        styles={hostStyles}
-                        setAriaDescribedBy={false}
-                    >
+                <Stack.Item align="center">
                         <IconButton iconProps={userIcon} aria-label="Emoji" className={classNames.white} onClick={showPopup}/>
-                    </TooltipHost>
                 </Stack.Item>            
             </Stack>
             {isPopupVisible && 
@@ -114,11 +105,11 @@ export const TopBarLayoutFluentUI: FC<ITopBarUIProps> = ({appTitleContainer, sub
                 >
                     <Overlay onClick={hidePopup} />
                     <div role="document" className={popupStyles.content}>
-                        <h2>Log out</h2>
+                        <h2>Log out - {token.userName}</h2>
                         <p>
-                            Silahkan Klik tombol keluar jika anda yakin untuk mengakhiri pengaksesan aplikasi sikoling.
+                            Silahkan Klik tombol keluar jika ingin mengakhiri pengaksesan aplikasi ini.
                         </p>
-                        <DefaultButton onClick={handleLogOut}>Keluar</DefaultButton>
+                        <PrimaryButton onClick={handleLogOut}>Keluar</PrimaryButton>
                     </div>
                 </Popup>
             </Layer>
