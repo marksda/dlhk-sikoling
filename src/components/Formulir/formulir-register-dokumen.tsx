@@ -350,7 +350,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
       }
       else {
         switch (selectedKeyDokumen) {
-          case '010101':
+          case '01':
             konten = <FormulirRegisterDokumenAktaPendirian 
                     mode={mode} 
                     dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian : dataLama?.dokumen as IDokumenAktaPendirian}
@@ -358,7 +358,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                     dataLama={dataLama}
                     closeWindow={hideModal}/>;
             break;
-          case '010301':
+          case '11':
             konten = <FormulirRegisterDokumenNibOss 
                     mode={mode} 
                     dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss : dataLama?.dokumen as IDokumenNibOss}
