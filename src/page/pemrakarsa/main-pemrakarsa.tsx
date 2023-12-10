@@ -38,15 +38,15 @@ const navLinkGroups: INavLinkGroup[] = [
   {
     links: [
       {
-        name: 'Dashboard',
+        name: 'Beranda',
         url: '',
         icon: 'Home',
-        key: 'Dashboard',
+        key: 'Beranda',
         isExpanded: true,
         target: '_self',
       },
       {
-        name: 'Permohonan',
+        name: 'Data Permohonan',
         url: '',
       //   url: 'http://localhost:3000/pemrakarsa/permohonan',
         icon: 'ChangeEntitlements',
@@ -55,7 +55,7 @@ const navLinkGroups: INavLinkGroup[] = [
         target: '_self',
       },
       {
-        name: 'Pelaporan',
+        name: 'Data Pelaporan',
         url: '',
         icon: 'ReportDocument',
         key: 'plp',
@@ -66,6 +66,20 @@ const navLinkGroups: INavLinkGroup[] = [
         url: '',
         icon: 'ComplianceAudit',
         key: 'key7',
+        target: '_blank',
+      },
+      {
+        name: 'Data Perusahaan',
+        url: '',
+        icon: 'CityNext',
+        key: 'Data Perusahaan',
+        target: '_blank',
+      },
+      {
+        name: 'Arsip Dokumen',
+        url: '',
+        icon: 'Boards',
+        key: 'Arsip Dokumen',
         target: '_blank',
       },
       {
@@ -91,7 +105,7 @@ export const PemrakarsaPage: FC = () => {
     () => {
       let konten = null;
       switch (idContentPage) {
-          case 'Dashboard':
+          case 'Beranda':
               konten =             
                 <KontenDashboardPemrakarsa idUser={token.userId!}/>;
               break; 
