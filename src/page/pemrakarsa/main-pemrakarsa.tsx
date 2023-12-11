@@ -7,6 +7,7 @@ import { TopBarLayoutFluentUI } from "../../components/Layout/TopBarLayoutFluent
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
+import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 
 const classNames = mergeStyleSets({
   container: {
@@ -46,9 +47,15 @@ const navLinkGroups: INavLinkGroup[] = [
         target: '_self',
       },
       {
+        name: 'Pesan & Notifikasi',
+        url: '',
+        icon: 'MailAlert',
+        key: 'plp',
+        target: '_blank',
+      },
+      {
         name: 'Data Permohonan',
         url: '',
-      //   url: 'http://localhost:3000/pemrakarsa/permohonan',
         icon: 'ChangeEntitlements',
         key: 'pmh',
         isExpanded: true,
@@ -106,18 +113,41 @@ export const PemrakarsaPage: FC = () => {
       let konten = null;
       switch (idContentPage) {
           case 'Beranda':
-              konten =             
-                <KontenDashboardPemrakarsa idUser={token.userId!}/>;
-              break; 
+            konten =             
+              <KontenDashboardPemrakarsa idUser={token.userId!}/>;
+            break; 
+          case 'Data Perusahaan':
+              konten = <DataListRegisterPerusahaanFluentUI 
+                initSelectedFilters={
+                  {
+                      pageNumber: 1,
+                      pageSize: 25,
+                      filters: [
+                          {
+                              fieldName: 'kepemilikan',
+                              value: token.userId!
+                          }
+                      ],
+                      sortOrders: [
+                          {
+                              fieldName: 'tanggal_registrasi',
+                              value: 'DESC'
+                          },
+                      ],
+                  }
+                }
+                title="Perusahaan"
+              />;
+            break;
           case 'pmh':
-              konten = <KontenPermohonanPemrakarsa />;   
-              break;
+            konten = <KontenPermohonanPemrakarsa />;   
+            break;
           case 'plp':
-              konten = <KontenPelaporanPemrakarsa />;   
-              break;
+            konten = <KontenPelaporanPemrakarsa />;   
+            break;
           default:
-              konten =null;
-              break;
+            konten =null;
+            break;
       }
       return konten;
     },
