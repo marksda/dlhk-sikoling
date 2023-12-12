@@ -147,13 +147,18 @@ export const PemrakarsaPage: FC = () => {
                 title="Perusahaan"
               />;
             break;
-            case 'Tracking & Log':
+          case 'Tracking & Log':
               konten = <DataListFlowLogFluentUI 
                 initSelectedFilters={
                     {
                         pageNumber: 1,
                         pageSize: 25,
-                        filters: [],
+                        filters: [
+                          {
+                              fieldName: 'kepemilikan',
+                              value: token.userId!
+                          }
+                        ],
                         sortOrders: [
                             {
                                 fieldName: 'tanggal',
