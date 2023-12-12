@@ -8,6 +8,7 @@ import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
+import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 
 const classNames = mergeStyleSets({
   container: {
@@ -50,22 +51,43 @@ const navLinkGroups: INavLinkGroup[] = [
         name: 'Pesan & Notifikasi',
         url: '',
         icon: 'MailAlert',
-        key: 'plp',
+        key: 'Pesan & Notifikasi',
         target: '_blank',
       },
       {
-        name: 'Data Permohonan',
+        name: 'Permohonan',
         url: '',
         icon: 'ChangeEntitlements',
-        key: 'pmh',
+        key: 'Permohonan',
         isExpanded: true,
         target: '_self',
       },
       {
-        name: 'Data Pelaporan',
+        name: 'Pelaporan',
         url: '',
         icon: 'ReportDocument',
-        key: 'plp',
+        key: 'Pelaporan',
+        target: '_blank',
+      },
+      {
+        name: 'Data perusahaan',
+        url: '',
+        icon: 'CityNext',
+        key: 'Data perusahaan',
+        target: '_blank',
+      },
+      {
+        name: 'Arsip dokumen',
+        url: '',
+        icon: 'Boards',
+        key: 'Arsip dokumen',
+        target: '_blank',
+      },
+      {
+        name: 'Tracking & Log',
+        url: '',
+        icon: 'History',
+        key: 'Tracking & Log',
         target: '_blank',
       },
       {
@@ -73,20 +95,6 @@ const navLinkGroups: INavLinkGroup[] = [
         url: '',
         icon: 'ComplianceAudit',
         key: 'key7',
-        target: '_blank',
-      },
-      {
-        name: 'Data Perusahaan',
-        url: '',
-        icon: 'CityNext',
-        key: 'Data Perusahaan',
-        target: '_blank',
-      },
-      {
-        name: 'Arsip Dokumen',
-        url: '',
-        icon: 'Boards',
-        key: 'Arsip Dokumen',
         target: '_blank',
       },
       {
@@ -116,7 +124,7 @@ export const PemrakarsaPage: FC = () => {
             konten =             
               <KontenDashboardPemrakarsa idUser={token.userId!}/>;
             break; 
-          case 'Data Perusahaan':
+          case 'Data perusahaan':
               konten = <DataListRegisterPerusahaanFluentUI 
                 initSelectedFilters={
                   {
@@ -139,10 +147,28 @@ export const PemrakarsaPage: FC = () => {
                 title="Perusahaan"
               />;
             break;
-          case 'pmh':
+            case 'Tracking & Log':
+              konten = <DataListFlowLogFluentUI 
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 25,
+                        filters: [],
+                        sortOrders: [
+                            {
+                                fieldName: 'tanggal',
+                                value: 'DESC'
+                            },
+                        ],
+                    }
+                }
+                title="Tracking & Log"
+              />;
+            break;
+          case 'Permohonan':
             konten = <KontenPermohonanPemrakarsa />;   
             break;
-          case 'plp':
+          case 'Pelaporan':
             konten = <KontenPelaporanPemrakarsa />;   
             break;
           default:
