@@ -154,11 +154,11 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
             data: 'string',
             onRender: (item: IItemRegisterPermohonan) => {
                 return (
-                    <span>
-                        {
-                            item.kategoriPermohonan?.nama
-                        }
-                    </span>
+                    <div>
+                        <span>Permohonan: <b>{item.kategoriPermohonan?.nama}</b></span><br/>
+                        <span>Nomor registrasi: <b>{item.key}</b></span>
+                    </div>
+                    
                 );
             },
             isPadded: true,

@@ -177,12 +177,7 @@ export const PemrakarsaPage: FC = () => {
                     {
                         pageNumber: 1,
                         pageSize: 50,
-                        filters: [
-                            {
-                                fieldName: 'posisi_tahap_pemberkasan_penerima',
-                                value: '1'
-                            }
-                        ],
+                        filters: [],
                         sortOrders: [
                             {
                                 fieldName: 'tanggal_registrasi',
