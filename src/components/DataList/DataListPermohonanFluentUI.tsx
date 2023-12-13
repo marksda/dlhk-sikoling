@@ -1,12 +1,12 @@
 import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useState } from "react";
-import { IRegisterPermohonan, useGetAllRegisterPermohonanQuery, useGetTotalCountRegisterPermohonanQuery } from "../../features/permohonan/register-permohonan-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
-import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPemberkasanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPemberkasanQuery, useGetDaftarDataRegisterPermohonanQuery, useGetJumlahDataRegisterPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -207,8 +207,8 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading } = useGetAllRegisterPermohonanQuery(queryParams);
-    const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetTotalCountRegisterPermohonanQuery(queryFilters);
+    const { data: posts, isLoading } = useGetDaftarDataRegisterPermohonanQuery(queryParams);
+    const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetJumlahDataRegisterPermohonanQuery(queryFilters);
     const { data: postsJenisPermohonan } = useGetDaftarDataKategoriPermohonanQuery({
         pageNumber: 0,
         pageSize: 0,

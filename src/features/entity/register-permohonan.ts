@@ -1,5 +1,10 @@
 import { IKategoriPermohonan } from "./kategori-permohonan";
+import { IPegawai } from "./pegawai";
+import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan";
+import { IRegisterDokumen } from "./register-dokumen";
 import { IRegisterPerusahaan } from "./register-perusahaan";
+import { IStatusFlowLog } from "./status-flow-log";
+import { IStatusWaliPermohonan } from "./status-wali-permohonan";
 
 export interface IRegisterPermohonan {
     id: string|null;
@@ -12,6 +17,6 @@ export interface IRegisterPermohonan {
     pengirimBerkas: Partial<IPosisiTahapPemberkasan>|null;
     penerimaBerkas: Partial<IPosisiTahapPemberkasan>|null;
     statusFlowLog: Partial<IStatusFlowLog>|null;
-    daftarDokumenSyarat: IRegisterDokumen[]|null;
-    daftarDokumenHasil: IRegisterDokumen[]|null;
+    daftarDokumenSyarat: IRegisterDokumen<any>[]|null;
+    daftarDokumenHasil: IRegisterDokumen<any>[]|null;
 };

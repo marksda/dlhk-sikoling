@@ -16,7 +16,6 @@ import { ISkalaUsaha } from "../../entity/skala-usaha";
 import { IKategoriPelakuUsaha } from "../../entity/kategori-pelaku-usaha";
 import { IPelakuUsaha } from "../../entity/pelaku-usaha";
 import { IDokumen } from "../../entity/dokumen";
-import { IKategoriDokumen } from "../../entity/kategori-dokumen";
 import { IRegisterDokumen } from "../../entity/register-dokumen";
 import { IKbli } from "../../entity/kbli";
 import { IRegisterKbli } from "../../entity/register-kbli";
@@ -27,11 +26,12 @@ import { IOtoritasPerusahaan } from "../../entity/otoritas-perusahaan";
 import { IKategoriPermohonan } from "../../entity/kategori-permohonan";
 import { IStatusWaliPermohonan } from "../../entity/status-wali-permohonan";
 import { IPosisiTahapPemberkasan } from "../../entity/posisi-tahap-pemberkasan";
+import { IRegisterPermohonan } from "../../entity/register-permohonan";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'PosisiTahapPemberkasan', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'PosisiTahapPemberkasan', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPermohonan', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -1014,6 +1014,46 @@ export const sikolingApi = createApi({
             getJumlahDataStatusWaliPermohonan: builder.query<number, qFilters>({
                 query: (queryFilters) => `/status_pengurus_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveRegisterPermohonan: builder.mutation<IRegisterPermohonan, Partial<IRegisterPermohonan>>({
+                query: (body) => ({
+                    url: '/register_permohonan',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPermohonan']:['Kosong'], 
+            }),
+            updateRegisterPermohonan: builder.mutation<IRegisterPermohonan, Partial<IRegisterPermohonan>>({
+                query: (registerPermohonan) => ({
+                    url: '/register_permohonan',
+                    method: 'PUT',
+                    body: registerPermohonan,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPermohonan']:['Kosong'], 
+            }),
+            updateIdRegisterPermohonan: builder.mutation<IRegisterPermohonan, {idLama: string; registerPermohonan: Partial<IRegisterPermohonan>}>({
+                query: ({idLama, registerPermohonan}) => ({
+                    url: `/register_permohonan/id/${idLama}`,
+                    method: 'PUT',
+                    body: registerPermohonan,
+                }),
+                invalidatesTags: (result) => result ? ['RegisterPermohonan']:['Kosong'],
+            }),
+            deleteRegisterPermohonan: builder.mutation<Partial<IRegisterPermohonan>, Partial<IRegisterPermohonan>>({
+                query(registerPermohonan) {
+                  return {
+                    url: `/register_permohonan/${registerPermohonan.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['RegisterPermohonan']:['Kosong'],
+            }),
+            getDaftarDataRegisterPermohonan: builder.query<IRegisterPermohonan[], IQueryParamFilters>({
+                query: (queryParams) => `/register_permohonan?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['RegisterPermohonan'],
+            }),
+            getJumlahDataRegisterPermohonan: builder.query<number, qFilters>({
+                query: (queryFilters) => `/register_permohonan/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             savePosisiTahapPemberkasan: builder.mutation<IPosisiTahapPemberkasan, Partial<IPosisiTahapPemberkasan>>({
                 query: (body) => ({
                     url: '/posisi_tahap_pemberkasan',
@@ -1138,6 +1178,8 @@ export const {
     useDeleteKategoriPermohonanMutation, useGetDaftarDataKategoriPermohonanQuery, useGetJumlahDataKategoriPermohonanQuery,
     useSaveStatusWaliPermohonanMutation, useUpdateStatusWaliPermohonanMutation, useUpdateIdStatusWaliPermohonanMutation,
     useDeleteStatusWaliPermohonanMutation, useGetDaftarDataStatusWaliPermohonanQuery, useGetJumlahDataStatusWaliPermohonanQuery,
+    useSaveRegisterPermohonanMutation, useUpdateRegisterPermohonanMutation, useUpdateIdRegisterPermohonanMutation,
+    useDeleteRegisterPermohonanMutation, useGetDaftarDataRegisterPermohonanQuery, useGetJumlahDataRegisterPermohonanQuery,
     useSavePosisiTahapPemberkasanMutation, useUpdatePosisiTahapPemberkasanMutation, useUpdateIdPosisiTahapPemberkasanMutation,
     useDeletePosisiTahapPemberkasanMutation, useGetDaftarDataPosisiTahapPemberkasanQuery, useGetJumlahDataPosisiTahapPemberkasanQuery,
     useUploadFileMutation, useGetOnlyofficeConfigEditorMutation, useDeleteFileMutation, 

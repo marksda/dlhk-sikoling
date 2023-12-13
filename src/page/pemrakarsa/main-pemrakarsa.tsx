@@ -191,7 +191,7 @@ export const PemrakarsaPage: FC = () => {
                         ],
                     }
                 }
-                title="Berkas masuk"
+                title=""
             />
             break;
           case 'Pelaporan':
