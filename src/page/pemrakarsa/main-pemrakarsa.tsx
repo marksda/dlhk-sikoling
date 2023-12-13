@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
+import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
 
 const classNames = mergeStyleSets({
   container: {
@@ -171,7 +172,27 @@ export const PemrakarsaPage: FC = () => {
               />;
             break;
           case 'Permohonan':
-            konten = <KontenPermohonanPemrakarsa />;   
+            konten = <DataListPermohonanFluentUI
+                initSelectedFilters={
+                    {
+                        pageNumber: 1,
+                        pageSize: 50,
+                        filters: [
+                            {
+                                fieldName: 'posisi_tahap_pemberkasan_penerima',
+                                value: '1'
+                            }
+                        ],
+                        sortOrders: [
+                            {
+                                fieldName: 'tanggal_registrasi',
+                                value: 'DESC'
+                            },
+                        ],
+                    }
+                }
+                title="Berkas masuk"
+            />
             break;
           case 'Pelaporan':
             konten = <KontenPelaporanPemrakarsa />;   

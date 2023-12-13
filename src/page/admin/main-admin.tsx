@@ -125,7 +125,7 @@ export const AdminPage: FC = () => {
             konten = <span>Settings</span>;   
             break;
           default:
-              konten = <KontenDashboardPemrakarsa />;
+              konten = <KontenDashboardPemrakarsa idUser=""/>;
               break;
         }
         return konten;
