@@ -379,13 +379,13 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         { 
                             key: 'editItem', 
                             text: 'Edit', 
-                            disabled: dataTerpilih!.statusVerified == true ? true : !isSelectedItem,
+                            disabled: !isSelectedItem,
                             iconProps: { iconName: 'Edit' }, 
                             onClick: () => {
                                 setFormulirTitle('Edit dokumen');
                                 setModeForm('edit');
                                 setDataLama(dataTerpilih);
-                                selection.toggleKeySelected(selection.getSelection()[0].key as string);                        
+                                selection.toggleKeySelected(selection.getSelection()[0].key as string);               
                                 showModalFormulirRegisterDokumen();
                             }
                         },
@@ -393,7 +393,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             key: 'deleteItem', 
                             text: 'Hapus', 
                             renderedInOverflow: false,
-                            disabled: dataTerpilih!.statusVerified == true ? true : !isSelectedItem,
+                            disabled: !isSelectedItem,
                             iconProps: { iconName: 'Delete' }, 
                             onClick: () => {
                                 setFormulirTitle('Hapus dokumen');

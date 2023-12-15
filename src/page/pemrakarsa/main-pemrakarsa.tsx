@@ -10,6 +10,7 @@ import { LeftMenuFluentUI } from "../../components/Menu/LeftMenuFluentUI";
 import { DataListRegisterPerusahaanFluentUI } from "../../components/DataList/DataListRegisterPerusahaanFluentUi";
 import { DataListFlowLogFluentUI } from "../../components/DataList/DataListFlowLogFluentUi";
 import { DataListPermohonanFluentUI } from "../../components/DataList/DataListPermohonanFluentUI";
+import { DataListRegisterDokumenFluentUI } from "../../components/DataList/DataListRegisterDokumenFluentUI";
 
 const classNames = mergeStyleSets({
   container: {
@@ -71,10 +72,10 @@ const navLinkGroups: INavLinkGroup[] = [
         target: '_blank',
       },
       {
-        name: 'Data perusahaan',
+        name: 'Perusahaan',
         url: '',
         icon: 'CityNext',
-        key: 'Data perusahaan',
+        key: 'Perusahaan',
         target: '_blank',
       },
       {
@@ -121,11 +122,29 @@ export const PemrakarsaPage: FC = () => {
     () => {
       let konten = null;
       switch (idContentPage) {
+          case 'Arsip dokumen':
+            konten = <DataListRegisterDokumenFluentUI
+              initSelectedFilters={
+                  {
+                      pageNumber: 1,
+                      pageSize: 25,
+                      filters: [],
+                      sortOrders: [
+                          {
+                              fieldName: 'tanggalRegistrasi',
+                              value: 'DESC'
+                          },
+                      ],
+                  }
+              }
+              title="Dokumen"
+            />;
+            break;
           case 'Beranda':
             konten =             
               <KontenDashboardPemrakarsa idUser={token.userId!}/>;
             break; 
-          case 'Data perusahaan':
+          case 'Perusahaan':
               konten = <DataListRegisterPerusahaanFluentUI 
                 initSelectedFilters={
                   {
@@ -145,7 +164,7 @@ export const PemrakarsaPage: FC = () => {
                       ],
                   }
                 }
-                title="Perusahaan"
+                title=""
               />;
             break;
           case 'Tracking & Log':
