@@ -128,7 +128,12 @@ export const PemrakarsaPage: FC = () => {
                   {
                       pageNumber: 1,
                       pageSize: 25,
-                      filters: [],
+                      filters: [
+                        {
+                          fieldName: 'kepemilikan',
+                          value: token.userId!
+                        }
+                      ],
                       sortOrders: [
                           {
                               fieldName: 'tanggalRegistrasi',
