@@ -12,6 +12,6 @@ export interface IFlowLog<Type> {
     statusFlowLog: Partial<IStatusFlowLog>|null;
     keterangan: string|null;
     pengakses: Partial<IOtoritas>|null;
-    data: Type|null;
+    data: Type|null;  //data bisa permohonan atau laporan
 };
 
