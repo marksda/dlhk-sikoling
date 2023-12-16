@@ -180,7 +180,7 @@ export const PemrakarsaPage: FC = () => {
                         pageSize: 25,
                         filters: [
                           {
-                              fieldName: 'kepemilikan',
+                              fieldName: 'kepemilikan_flow_log_permohonan',
                               value: token.userId!
                           }
                         ],

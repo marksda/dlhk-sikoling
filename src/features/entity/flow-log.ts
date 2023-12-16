@@ -14,4 +14,3 @@ export interface IFlowLog<Type> {
     pengakses: Partial<IOtoritas>|null;
     data: Type|null;  //data bisa permohonan atau laporan
 };
-
