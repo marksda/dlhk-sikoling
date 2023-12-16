@@ -27,11 +27,12 @@ import { IKategoriPermohonan } from "../../entity/kategori-permohonan";
 import { IStatusWaliPermohonan } from "../../entity/status-wali-permohonan";
 import { IPosisiTahapPemberkasan } from "../../entity/posisi-tahap-pemberkasan";
 import { IRegisterPermohonan } from "../../entity/register-permohonan";
+import { IFlowLog } from "../../entity/flow-log";
 
 export const sikolingApi = createApi({
     reducerPath: 'sikolingApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'PosisiTahapPemberkasan', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPermohonan', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
+    tagTypes: ['ConfigEditor', 'Desa', 'Dokumen', 'FlowLog', 'Jabatan', 'Image', 'HakAkses', 'Kabupaten', 'KategoriDokumen', 'KategoriFlowLog', 'KategoriPelakuUsaha', 'KategoriPermohonan', 'Kbli', 'Kecamatan', 'Kosong', 'ModelPerizinan', 'Otoritas', 'OtoritasPerusahaan', 'Pegawai', 'PelakuUsaha', 'Person', 'PosisiTahapPemberkasan', 'Propinsi', 'RegisterDokumen', 'RegisterKbli', 'RegisterPermohonan', 'RegisterPerusahaan', 'Sex', 'SkalaUsaha', 'StatusFlowLog', 'StatusWaliPermohonan'],
     endpoints: builder => {
         return {
             getDataImage: builder.query<any, string>({
@@ -934,6 +935,46 @@ export const sikolingApi = createApi({
             getJumlahDataStatusFlowLog: builder.query<number, qFilters>({
                 query: (queryFilters) => `/status_flow_log/count?filters=${JSON.stringify(queryFilters)}`,
             }),
+            saveRegisterFlowLog: builder.mutation<IFlowLog<any>, Partial<IFlowLog<any>>>({
+                query: (body) => ({
+                    url: '/flow_log',
+                    method: 'POST',
+                    body,
+                }),
+                invalidatesTags: (result) => result ? ['FlowLog']:['Kosong'],
+            }),
+            updateRegisterFlowLog: builder.mutation<IFlowLog<any>, Partial<IFlowLog<any>>>({
+                query: (flowLog) => ({
+                    url: '/flow_log',
+                    method: 'PUT',
+                    body: flowLog,
+                }),
+                invalidatesTags: (result) => result ? ['FlowLog']:['Kosong'],
+            }),
+            updateIdRegisterFlowLog: builder.mutation<IFlowLog<any>, {idLama: string; flowLog: Partial<IFlowLog<any>>}>({
+                query: ({idLama, flowLog}) => ({
+                    url: `/flow_log/id/${idLama}`,
+                    method: 'PUT',
+                    body: flowLog,
+                }),
+                invalidatesTags: (result) => result ? ['FlowLog']:['Kosong'],
+            }),
+            deleteRegisterFlowLog: builder.mutation<Partial<IFlowLog<any>>, Partial<IFlowLog<any>>>({
+                query(flowLog) {
+                  return {
+                    url: `/flow_log/${flowLog.id}`,
+                    method: 'DELETE',
+                  }
+                },
+                invalidatesTags: (result) => result ? ['FlowLog']:['Kosong'],
+            }),
+            getDaftarDataRegisterFlowLog: builder.query<IFlowLog<any>[], IQueryParamFilters>({
+                query: (queryParams) => `/flow_log?filters=${JSON.stringify(queryParams)}`,
+                providesTags: ['StatusFlowLog'],
+            }),
+            getJumlahDataRegisterFlowLog: builder.query<number, qFilters>({
+                query: (queryFilters) => `flow_log/count?filters=${JSON.stringify(queryFilters)}`,
+            }),
             saveKategoriPermohonan: builder.mutation<IKategoriPermohonan, Partial<IKategoriPermohonan>>({
                 query: (body) => ({
                     url: '/kategori_permohonan',
@@ -1174,6 +1215,8 @@ export const {
     useDeleteKategoriFlowLogMutation, useGetDaftarDataKategoriFlowLogQuery, useGetJumlahDataKategoriFlowLogQuery,
     useSaveStatusFlowLogMutation, useUpdateStatusFlowLogMutation, useUpdateIdStatusFlowLogMutation,
     useDeleteStatusFlowLogMutation, useGetDaftarDataStatusFlowLogQuery, useGetJumlahDataStatusFlowLogQuery,
+    useSaveRegisterFlowLogMutation, useUpdateRegisterFlowLogMutation, useUpdateIdRegisterFlowLogMutation,
+    useDeleteRegisterFlowLogMutation, useGetDaftarDataRegisterFlowLogQuery, useGetJumlahDataRegisterFlowLogQuery,
     useSaveKategoriPermohonanMutation, useUpdateKategoriPermohonanMutation, useUpdateIdKategoriPermohonanMutation,
     useDeleteKategoriPermohonanMutation, useGetDaftarDataKategoriPermohonanQuery, useGetJumlahDataKategoriPermohonanQuery,
     useSaveStatusWaliPermohonanMutation, useUpdateStatusWaliPermohonanMutation, useUpdateIdStatusWaliPermohonanMutation,

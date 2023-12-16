@@ -1,22 +1,23 @@
 import { ActionButton, Callout, CommandBar, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, ICommandBarItemProps, IContextualMenuListProps, IDetailsHeaderProps, IDropdownOption, IIconProps, IRenderFunction, PrimaryButton, ScrollablePane, SearchBox, Selection, SelectionMode, Stack, Sticky, StickyPositionType, Text, Toggle, mergeStyleSets } from "@fluentui/react";
 import { FC, FormEvent, useCallback, useMemo, useState } from "react";
-import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
+// import { IFlowLogPermohonan, useGetAllFlowLogQuery, useGetTotalCountFlowLogQuery } from "../../features/log/flow-log-api-slice";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
 import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-filters";
 import { DayPickerIndonesiaStrings, utcFormatStringToDDMMYYYY, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD } from "../../features/config/helper-function";
-import { useGetDaftarDataKategoriFlowLogQuery, useGetDaftarDataPosisiTahapPemberkasanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataKategoriFlowLogQuery, useGetDaftarDataPosisiTahapPemberkasanQuery, useGetDaftarDataRegisterDokumenQuery, useGetDaftarDataRegisterFlowLogQuery, useGetJumlahDataRegisterDokumenQuery, useGetJumlahDataRegisterFlowLogQuery } from "../../features/repository/service/sikoling-api-slice";
 import { useBoolean } from "@fluentui/react-hooks";
 import { IKategoriFlowLog } from "../../features/entity/kategori-flow-log";
 import find from "lodash.find";
+import { IFlowLog } from "../../features/entity/flow-log";
 
 
 interface IDataListFlowLogFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
     title?: string;
 };
-type IItemFlowLogPermohonan = {key: string|null;} & Partial<IFlowLogPermohonan>;
+type IItemFlowLog = {key: string|null;} & Partial<IFlowLog<any>>;
 const stackTokens = { childrenGap: 8 };
 const classNames = mergeStyleSets({
     container: {
@@ -100,7 +101,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
     const [isModalFormulirKategoriFlowLogOpen, { setTrue: showModalFormulirKategoriFlowLog, setFalse: hideModalFormulirKategoriFlowLog}] = useBoolean(false);
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
-    const [dataLama, setDataLama]= useState<IKategoriFlowLog|undefined>(undefined);
+    const [dataLama, setDataLama]= useState<IFlowLog<any>|undefined>(undefined);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
@@ -126,7 +127,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             isPadded: true,
             isSortedDescending: true,
             isSorted: true,
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 return utcFormatStringToDDMMYYYY(item.tanggal!);
             }
         },
@@ -138,29 +139,29 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 return (
                     <div>
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}` : `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.nama}`
+                            item.data?.registerPerusahaan?.perusahaan?.pelakuUsaha !== undefined ?
+                            `${item.data?.registerPerusahaan?.perusahaan?.pelakuUsaha?.singkatan}. ${item.data?.registerPerusahaan?.perusahaan?.nama}` : `${item.data?.registerPerusahaan?.perusahaan?.nama}`
                             }
                         </span><br />
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.id !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.id}`: null
+                            item.data?.registerPerusahaan?.perusahaan?.id !== undefined ?
+                            `${item.data?.registerPerusahaan?.perusahaan?.id}`: null
                             }
                         </span><br />
                         <span>
                             {
-                            item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
-                            `${item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama}`: null
+                            item.data?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
+                            `${item.data?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama}`: null
                             }
                             {
-                                item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
-                                `, ${item.registerPermohonan?.registerPerusahaan?.perusahaan?.alamat?.kecamatan?.nama}`: null
+                                item.data?.registerPerusahaan?.perusahaan?.alamat?.desa?.nama !== undefined ?
+                                `, ${item.data?.registerPerusahaan?.perusahaan?.alamat?.kecamatan?.nama}`: null
                             }
                         </span>
                     </div>
@@ -177,20 +178,20 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             isResizable: true, 
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 if(item.kategoriFlowLog?.id === '1') {
                     return (
                         <>
                             <span style={{color: 'green'}}>
                                 {
-                                    `${item.kategoriFlowLog?.nama} : ${item.registerPermohonan?.kategoriPermohonan?.nama?.toLowerCase()}`
+                                    `${item.kategoriFlowLog?.nama} : ${item.data?.kategoriPermohonan?.nama?.toLowerCase()}`
                                 } 
                             </span><br/>
                             <span>
                                 {
                                     `Tanggal registrasi: ${
-                                        item.registerPermohonan != undefined ?
-                                        utcFormatStringToDDMMYYYY(item.registerPermohonan?.tanggalRegistrasi!): '-'
+                                        item.data != undefined ?
+                                        utcFormatStringToDDMMYYYY(item.data?.tanggalRegistrasi!): '-'
                                     }`
                                 }
                             </span><br/>
@@ -198,8 +199,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
                             Nomor registrasi: <b>
                             {
                                 `${
-                                    item.registerPermohonan != undefined ?
-                                    item.registerPermohonan.id: '-'
+                                    item.data != undefined ?
+                                    item.data.id: '-'
                                 }`
                             }
                             </b>
@@ -225,7 +226,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             isResizable: true,
             onColumnClick: _onHandleColumnClick,
             data: 'string',
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 return (
                     <span>
                         {
@@ -243,7 +244,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             maxWidth: 100, 
             isResizable: true,
             onColumnClick: _onHandleColumnClick,
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 return (
                     <span>{item.penerimaBerkas?.nama}</span>
                 );
@@ -255,7 +256,7 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
             name: 'Keterangan', 
             minWidth: 100, 
             isResizable: true,
-            onRender: (item: IItemFlowLogPermohonan) => {
+            onRender: (item: IItemFlowLog) => {
                 return (
                     <>
                     <span>
@@ -274,8 +275,8 @@ export const DataListFlowLogFluentUI: FC<IDataListFlowLogFluentUIProps> = ({init
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: postsCountFlowLog, isLoading: isLoadingCountPosts } = useGetTotalCountFlowLogQuery(queryFilters);
-    const { data: postsFlowLog, isLoading: isLoadingPosts } = useGetAllFlowLogQuery(queryParams);    
+    const { data: postsCountFlowLog, isLoading: isLoadingCountPosts } = useGetJumlahDataRegisterFlowLogQuery(queryFilters);
+    const { data: postsFlowLog, isLoading: isLoadingPosts } = useGetDaftarDataRegisterFlowLogQuery(queryParams);    
     const { data: kategoriLogPosts, isLoading: isLOadingKategoriLog } = useGetDaftarDataKategoriFlowLogQuery({
         pageNumber: 0,
         pageSize: 0,
