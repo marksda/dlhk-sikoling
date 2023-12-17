@@ -1,5 +1,5 @@
-import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType } from "@fluentui/react";
-import { FC, FormEvent, useCallback, useState } from "react";
+import { ActionButton, Callout, ContextualMenu, DatePicker, DayOfWeek, DetailsList, DetailsListLayoutMode, DirectionalHint, Dropdown, IColumn, IContextualMenuListProps, IDropdownOption, IIconProps, IRenderFunction, IconButton, PrimaryButton, ScrollablePane, SearchBox, SelectionMode, Stack, mergeStyleSets, Text, IDetailsHeaderProps, Sticky, StickyPositionType, CommandBar, Selection, ICommandBarItemProps, Toggle } from "@fluentui/react";
+import { FC, FormEvent, useCallback, useMemo, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 import omit from "lodash.omit";
 import { Pagination } from "../Pagination/pagination-fluent-ui";
@@ -7,6 +7,8 @@ import { IQueryParamFilters, qFilters } from "../../features/entity/query-param-
 import { DayPickerIndonesiaStrings, utcFormatDateToDDMMYYYY, utcFormatDateToYYYYMMDD, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPemberkasanQuery, useGetDaftarDataRegisterPermohonanQuery, useGetJumlahDataRegisterPermohonanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
+import { useBoolean } from "@fluentui/react-hooks";
+import find from "lodash.find";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -28,6 +30,12 @@ const classNames = mergeStyleSets({
     },
 });
 const filterIcon: IIconProps = { iconName: 'Filter' };
+const toggleStyles = {
+    root: {
+        marginBottom: 0,
+        width: '80px',
+    },
+};
 
 export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = ({initSelectedFilters, title}) => {    
     
@@ -64,20 +72,35 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
-    const handleButtonFilterClick = useCallback(
+    const _onHandleButtonFilterClick = useCallback(
         (ev: React.MouseEvent<HTMLElement>): void => {  
-            setContextualMenuFilterProps({         
-                target: ev.currentTarget as HTMLElement,
-                directionalHint: DirectionalHint.bottomRightEdge,
-                gapSpace: 2,
-                isBeakVisible: true,
-                onDismiss: _onContextualMenuFilterDismissed,                  
-            });
+            setContextualMenuFilterProps(
+                (prev: any) => {
+                    if(prev == undefined){
+                        return {         
+                            target: ev.currentTarget as HTMLElement,
+                            directionalHint: DirectionalHint.bottomRightEdge,
+                            gapSpace: 2,
+                            isBeakVisible: true,
+                            onDismiss: _onContextualMenuFilterDismissed,                  
+                        };
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+            );
         },
         []
     );
 
     //local state
+    const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
+    const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
+    const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
+    const [isModalFormulirRegisterPermohonanOpen, { setTrue: showModalFormulirRegisterPermohonan, setFalse: hideModalFormulirRegisterPermohonan}] = useBoolean(false);
+    const [dataLama, setDataLama]= useState<IRegisterPermohonan|undefined>(undefined);    
     const [currentPage, setCurrentPage] = useState<number>(initSelectedFilters.pageNumber!);
     const [pageSize, setPageSize] = useState<number>(initSelectedFilters.pageSize!);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -207,7 +230,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [contextualMenuProps, setContextualMenuProps] = useState<any|undefined>(undefined);
     const [contextualMenuFilterProps, setContextualMenuFilterProps] = useState<any|undefined>(undefined);
     // rtk hook state
-    const { data: posts, isLoading } = useGetDaftarDataRegisterPermohonanQuery(queryParams);
+    const { data: postsRegisterPermohonan, isLoading } = useGetDaftarDataRegisterPermohonanQuery(queryParams);
     const { data: postCountRegisterPermohonan, isLoading: isLoadingCount } = useGetJumlahDataRegisterPermohonanQuery(queryFilters);
     const { data: postsJenisPermohonan } = useGetDaftarDataKategoriPermohonanQuery({
         pageNumber: 0,
@@ -230,7 +253,73 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                 value: 'ASC'
             },
         ],
-    });  
+    }); 
+    
+    const selection: Selection = useMemo(
+        () => {
+            return new Selection({
+                onSelectionChanged: () => {
+                    if(selection.count >= 1) {
+                        setIsSelectedItem(true);
+                    }
+                    else {
+                        setIsSelectedItem(false);
+                    }
+                },           
+                getKey: (item, index) => {
+                    return item.key as string;
+                }
+            });
+        },
+        []
+    );
+
+    const itemsBar: ICommandBarItemProps[] = useMemo(
+        () => {            
+            return [
+                { 
+                    key: 'newItem', 
+                    text: 'Add', 
+                    iconProps: { iconName: 'Add' }, 
+                    onClick: () => {
+                        setFormulirTitle('Add pelaku usaha');
+                        setModeForm('add');
+                        showModalFormulirRegisterPermohonan();
+                        setDataLama(undefined);
+                    }
+                },
+                { 
+                    key: 'editItem', 
+                    text: 'Edit', 
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Edit' }, 
+                    onClick: () => {
+                        setFormulirTitle('Edit pelaku usaha');
+                        setModeForm('edit');
+                        showModalFormulirRegisterPermohonan();
+                        let dataTerpilih = find(postsRegisterPermohonan, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                        selection.toggleKeySelected(selection.getSelection()[0].key as string);
+                    }
+                },
+                { 
+                    key: 'deleteItem', 
+                    text: 'Hapus', 
+                    renderedInOverflow: false,
+                    disabled: !isSelectedItem,
+                    iconProps: { iconName: 'Delete' }, 
+                    onClick: () => {
+                        setFormulirTitle('Hapus item');
+                        setModeForm('delete');
+                        showModalFormulirRegisterPermohonan();
+                        let dataTerpilih = find(postsRegisterPermohonan, (i) => i.id == selection.getSelection()[0].key);
+                        setDataLama(dataTerpilih);
+                    }
+                },
+            ];
+        }, 
+        [isSelectedItem, selection, postsRegisterPermohonan]
+    ); 
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
@@ -241,13 +330,6 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
           );
         },
         [],
-    );
-
-    const _getKey = useCallback(
-        (item: any, index?: number): string => {
-            return item.key;
-        },
-        []
     );
 
     const _onContextualMenuDismissed = useCallback(
@@ -373,6 +455,19 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                     return tmp;
                 }
             );
+        },
+        []
+    );
+
+    const _onChangeSearchNama = useCallback(
+        (event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+            if(newValue!.length == 0) {
+                _onClearSearch();
+            }
+
+            if(newValue!.length > 1) {
+                _onSearch(newValue);
+            }
         },
         []
     );
@@ -621,20 +716,55 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         []
     );
 
+    const _onChangeModalSelection = useCallback(
+        (ev: React.MouseEvent<HTMLElement>, checked?: boolean|undefined): void => {            
+            if(selection.getSelectedCount() > 0) {
+                selection.toggleKeySelected(selection.getSelection()[0].key as string);
+            }
+            
+            setIsModalSelection(checked!);  
+        },
+        [selection]
+    );
+
     return (
         <Stack grow verticalFill>
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
-                    <Stack.Item style={{paddingLeft: 16}}>
+                    <Stack.Item style={{paddingLeft: 16}} align="center">
                         <Text variant="xLarge">{title}</Text> 
                     </Stack.Item>
-                    <Stack.Item>
-                        <Stack horizontal horizontalAlign="end" verticalAlign="center">
+                    <Stack.Item align="center">
+                        <Stack horizontal horizontalAlign="end" verticalAlign="center" style={{height: 44}}>
+                            {
+                                isModalSelection && (
+                                    <Stack.Item>
+                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                    </Stack.Item>
+                                )
+                            }  
+                            <Stack.Item>
+                                <Stack horizontal tokens={stackTokens}>
+                                    <Stack.Item>
+                                        <span style={{width: 60}}>Mode edit</span>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Toggle
+                                            checked={isModalSelection}
+                                            onChange={_onChangeModalSelection}
+                                            styles={toggleStyles}
+                                            onText="on"
+                                            offText="off"
+                                        />
+                                    </Stack.Item>
+                                </Stack>                                
+                            </Stack.Item>
                             <Stack.Item>
                                 <SearchBox 
                                     style={{width: 300}} 
                                     placeholder="pencarian pemrakarsa" 
                                     underlined={false} 
+                                    onChange={_onChangeSearchNama}
                                     onSearch={_onSearch}
                                     onClear= {_onClearSearch}
                                 />
@@ -642,7 +772,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             <Stack.Item>
                                 <ActionButton 
                                     iconProps={filterIcon} 
-                                    onClick={handleButtonFilterClick}
+                                    onClick={_onHandleButtonFilterClick}
                                 > 
                                     Filter
                                 </ActionButton>       
@@ -657,18 +787,19 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         <ScrollablePane scrollbarVisibility="auto">
                             <DetailsList
                                 items={
-                                    posts != undefined ? posts?.map(
+                                    postsRegisterPermohonan != undefined ? postsRegisterPermohonan?.map(
                                         (t) => (
                                             {key: t.id as string, ...omit(t, ['id'])}
                                         )
                                     ) : []
                                 }
+                                selection={selection}
+                                selectionMode={isModalSelection == false ? SelectionMode.none:SelectionMode.single}
+                                selectionPreservedOnEmptyClick={true}
                                 compact={false}
                                 columns={columns}
                                 setKey="none"
-                                getKey={_getKey}
                                 layoutMode={DetailsListLayoutMode.justified}
-                                selectionMode={SelectionMode.none}
                                 isHeaderVisible={true}
                                 onRenderDetailsHeader={_onRenderDetailsHeader}
                             />

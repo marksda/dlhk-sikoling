@@ -200,7 +200,7 @@ export const PemrakarsaPage: FC = () => {
                 initSelectedFilters={
                     {
                         pageNumber: 1,
-                        pageSize: 50,
+                        pageSize: 25,
                         filters: [],
                         sortOrders: [
                             {
