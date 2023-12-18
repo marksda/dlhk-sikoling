@@ -363,7 +363,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
             }) => (
               <ComboBox
                 componentRef={comboBoxRegisterPerusahaanRef}
-                label="Perusahaan/Nama usaha"
+                label="Pemrakarsa/nama usaha/perusahaan"
                 placeholder="klik atau ketik minimal 2 abjad untuk menampilkan pilihan"
                 allowFreeform={true}
                 options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
