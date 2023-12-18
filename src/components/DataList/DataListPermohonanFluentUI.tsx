@@ -9,6 +9,7 @@ import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPem
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
+import { FormulirPermohonan } from "../Formulir/formulir-permohonan";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -276,17 +277,26 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
 
     const itemsBar: ICommandBarItemProps[] = useMemo(
         () => {            
-            return [
+            return [                
                 { 
                     key: 'newItem', 
                     text: 'Add', 
+                    cacheKey: 'myCacheKey',
                     iconProps: { iconName: 'Add' }, 
-                    onClick: () => {
-                        setFormulirTitle('Add pelaku usaha');
-                        setModeForm('add');
-                        showModalFormulirRegisterPermohonan();
-                        setDataLama(undefined);
-                    }
+                    subMenuProps: postsJenisPermohonan != undefined ? {
+                        items: postsJenisPermohonan?.map(
+                        (t) => ({
+                            key: t.id!, 
+                            text: `Permohonan (${t.nama})`,
+                            iconProps: { iconName: 'EditNote' },
+                            onClick: () => {
+                                setFormulirTitle(`Add permohonan (${t.nama})`);
+                                setModeForm('add');
+                                showModalFormulirRegisterPermohonan();
+                                setDataLama(undefined);
+                            }
+                        })
+                    )} : {items:[]}
                 },
                 { 
                     key: 'editItem', 
@@ -318,7 +328,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                 },
             ];
         }, 
-        [isSelectedItem, selection, postsRegisterPermohonan]
+        [isSelectedItem, selection, postsRegisterPermohonan, postsJenisPermohonan]
     ); 
 
     const _renderMenuList = useCallback(
@@ -739,7 +749,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                             {
                                 isModalSelection && (
                                     <Stack.Item>
-                                        <CommandBar items={itemsBar} style={{minWidth: 250}}/>
+                                        <CommandBar items={itemsBar} style={{minWidth: 280}}/>
                                     </Stack.Item>
                                 )
                             }  
@@ -875,6 +885,15 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                     </Stack>
                 </Callout>                
             }
+            {isModalFormulirRegisterPermohonanOpen && (
+                <FormulirPermohonan
+                    title={formulirTitle}
+                    isModalOpen={isModalFormulirRegisterPermohonanOpen}
+                    hideModal={hideModalFormulirRegisterPermohonan}
+                    mode={modeForm}
+                    dataLama={dataLama}
+                />
+            )}
         </Stack>
     );
 };
