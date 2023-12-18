@@ -1,14 +1,15 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
-import { FC, useCallback, useMemo, useState } from "react";
-import { PelakuUsahaSchema } from "../../features/schema-resolver/zod-schema";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useGetDaftarDataSkalaUsahaQuery, useSavePelakuUsahaMutation, useUpdatePelakuUsahaMutation, useUpdateIdPelakuUsahaMutation, useDeletePelakuUsahaMutation, useGetDaftarDataKategoriPelakuUsahaQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
-import { IPelakuUsaha } from "../../features/entity/pelaku-usaha";
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
+import { useAppSelector } from "../../app/hooks";
+import { invertParseNpwp } from "../../features/config/helper-function";
 
 interface IFormulirPermohonanFluentUIProps {
   title: string|undefined;
@@ -68,55 +69,44 @@ const iconButtonStyles = {
       color: theme.palette.neutralDark,
     },
 };
+const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
 
 export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+  const token = useAppSelector((state) => state.token);
   // local state
-  const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:'');
-  const [namaTextFieldValue, setNamaTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.nama!:'');
-  const [singkatanTextFieldValue, setSingkatanTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.singkatan!:'');
-  const [selectedKeySkalaUsaha, setSelectedKeySkalaUsaha] = useState<string|undefined|null>(dataLama != undefined ? dataLama.kategoriPelakuUsaha?.skalaUsaha?.id!:undefined);
-  const [selectedKeyKategoriPelakuUsaha, setSelectedKeyKategoriPelakuUsaha] = useState<string|undefined|null>(dataLama != undefined ? dataLama.kategoriPelakuUsaha?.id!:undefined);
-  const [querySkalaUsahaParams, setQuerySkalaUsahaParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: [],
-    sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
-    ],
-  });
-  const [queryKategoriPelakuUsahaParams, setQueryKategoriPelakuUsahaParams] = useState<IQueryParamFilters>({
-    pageNumber: 1,
-    pageSize: 100,
-    filters: dataLama == undefined ? []:[{
-      fieldName: 'id_skala_usaha',
-      value: dataLama.kategoriPelakuUsaha?.skalaUsaha?.id!
-    }],
-    sortOrders: [
-        {
-            fieldName: 'nama',
-            value: 'ASC'
-        },
-    ],
-  });
+  const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
+  const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
+  //ref component
+  const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
   //hook-form
-  const {handleSubmit, control, setValue, resetField} = useForm<IPelakuUsaha>({
+  const {handleSubmit, control, setValue, resetField} = useForm<IRegisterPermohonan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null},
-    resolver: zodResolver(PelakuUsahaSchema),
+    resolver: zodResolver(RegisterPermohonanSchema),
+  });
+  const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 25,
+    filters: dataLama != undefined ? [{
+      fieldName: 'nama',
+      value: dataLama.registerPerusahaan?.perusahaan?.nama!
+    }]
+    : token.hakAkses == 'Umum' ? [{
+      fieldName: 'kepemilikan',
+      value: token.userId!
+    }]:[],
+    sortOrders: [
+      {
+          fieldName: 'nama',
+          value: 'ASC'
+      },
+    ],
   });
   // rtk query
-  const { data: postsSkalaUsaha } = useGetDaftarDataSkalaUsahaQuery(querySkalaUsahaParams);    
-  const { data: postsKategoriPelakuUsaha } = useGetDaftarDataKategoriPelakuUsahaQuery(queryKategoriPelakuUsahaParams, {skip: selectedKeySkalaUsaha == null ? true:false});
-  const [ savePelakuUsaha] = useSavePelakuUsahaMutation();
-  const [ updatePelakuUsaha] = useUpdatePelakuUsahaMutation();
-  const [ updateIdPelakuUsaha] = useUpdateIdPelakuUsahaMutation();
-  const [ deletePelakuUsaha] = useDeletePelakuUsahaMutation();
-
+  const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
+  
   const dragOptions = useMemo(
     (): IDragOptions => ({
       moveMenuItemText: 'Move',
@@ -128,69 +118,56 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     [keepInBounds],
   );
 
-  const optionsSkalaUsaha: IComboBoxOption[]|undefined = useMemo(
+  const optionsRegisterPerusahaan: IComboBoxOption[]|undefined = useMemo(
     () => (
-        postsSkalaUsaha?.map((item):IComboBoxOption => {
+      postsRegisterPerusahaan?.map((item):IComboBoxOption => {
               return {
-                key: item.id!,
-                text: item.singkatan!,
+                key: item.id as string,
+                text: `${item.perusahaan?.pelakuUsaha != undefined ? item.perusahaan?.pelakuUsaha?.singkatan+'. ':''}${item.perusahaan?.nama}`,
                 data: item
               };
             })
     ),
-    [postsSkalaUsaha]
-  );
-
-  const optionsKategoriPelakuUsaha: IComboBoxOption[]|undefined = useMemo(
-    () => (
-      postsKategoriPelakuUsaha?.map((item):IComboBoxOption => {
-              return {
-                key: item.id!,
-                text: item.nama!,
-                data: item
-              };
-            })
-    ),
-    [postsKategoriPelakuUsaha]
+    [postsRegisterPerusahaan]
   );
   
-  const onSubmit: SubmitHandler<IPelakuUsaha> = async (data) => {
+  const onSubmit: SubmitHandler<IRegisterPermohonan> = async (data) => {
     console.log(data);
     setDisableForm(true);
     try {
       switch (mode) {
         case 'add':
-          await savePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          // await savePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         case 'edit':
-          if(dataLama?.id == data.id) {
-            await updatePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            }); 
-          }
-          else {
-            await updateIdPelakuUsaha({idLama: dataLama?.id!, pelakuUsaha: data}).unwrap().then((originalPromiseResult) => {
-              setDisableForm(false);
-            }).catch((rejectedValueOrSerializedError) => {
-              setDisableForm(false);
-            }); 
-          }          
-          hideModal();
+          // if(dataLama?.id == data.id) {
+          //   await updatePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
+          //     setDisableForm(false);
+          //   }).catch((rejectedValueOrSerializedError) => {
+          //     setDisableForm(false);
+          //   }); 
+          // }
+          // else {
+          //   await updateIdPelakuUsaha({idLama: dataLama?.id!, pelakuUsaha: data}).unwrap().then((originalPromiseResult) => {
+          //     setDisableForm(false);
+          //   }).catch((rejectedValueOrSerializedError) => {
+          //     setDisableForm(false);
+          //   }); 
+          // }          
+          // hideModal();
           break;
         case 'delete':
-          await deletePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
-            setDisableForm(false);
-          }).catch((rejectedValueOrSerializedError) => {
-            setDisableForm(false);
-          }); 
-          hideModal();
+          // await deletePelakuUsaha(data).unwrap().then((originalPromiseResult) => {
+          //   setDisableForm(false);
+          // }).catch((rejectedValueOrSerializedError) => {
+          //   setDisableForm(false);
+          // }); 
+          // hideModal();
           break;
         default:
           break;
@@ -200,14 +177,14 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     }
   };
 
-  const onError: SubmitErrorHandler<IPelakuUsaha> = async (err) => {
+  const onError: SubmitErrorHandler<IRegisterPermohonan> = async (err) => {
     if(mode == 'delete') {
-      await deletePelakuUsaha(dataLama!).unwrap().then((originalPromiseResult) => {
-        setDisableForm(false);
-      }).catch((rejectedValueOrSerializedError) => {
-        setDisableForm(false);
-      }); 
-      hideModal();
+      // await deletePelakuUsaha(dataLama!).unwrap().then((originalPromiseResult) => {
+      //   setDisableForm(false);
+      // }).catch((rejectedValueOrSerializedError) => {
+      //   setDisableForm(false);
+      // }); 
+      // hideModal();
     }
     else {
       console.log('error', err);
@@ -221,54 +198,113 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     []
   );
 
-  const _resetKategoriPelakuUsaha = useCallback(
-    () => {
-      resetField("kategoriPelakuUsaha");
-      setSelectedKeyKategoriPelakuUsaha(null);
+  const _onRenderRegisterPerusahaanOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+    return item?.data != undefined ?
+        <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+        <span><b>
+            {
+            item!.data!.perusahaan.pelakuUsaha !== undefined ?
+            `${item!.data.perusahaan?.pelakuUsaha?.singkatan}. ${item?.data.perusahaan?.nama}` :
+            `${item!.data.perusahaan?.nama}`
+            }
+        </b></span><br />  
+        <span>
+            {
+                item!.data.perusahaan?.id != undefined ?
+                invertParseNpwp(item!.data.perusahaan?.id) : `-`
+            }
+        </span><br />
+        <span>
+            {
+            item!.data.perusahaan?.alamat != undefined ? 
+            item!.data.perusahaan?.alamat.keterangan != undefined ? item!.data.perusahaan?.alamat.keterangan:null:null
+            }
+            {
+            item!.data.perusahaan?.alamat != undefined ? 
+            item!.data.perusahaan?.alamat.desa != undefined ? `, ${item!.data.perusahaan?.alamat.desa.nama}`:null:null
+            }                            
+        </span><br />
+        <span>
+            {
+                item!.data.perusahaan?.alamat != undefined ? 
+                item!.data.perusahaan?.alamat.kecamatan != undefined ? `${item!.data.perusahaan?.alamat.kecamatan.nama}`:null:null
+            }
+            {
+            item!.data.perusahaan?.alamat != undefined ? 
+            item!.data.perusahaan?.alamat.kabupaten != undefined ? `, ${item!.data.perusahaan?.alamat.kabupaten.nama}`:null:null
+            }
+        </span>
+        <span>
+            {
+            item!.data.perusahaan?.alamat != undefined ? 
+            item!.data.perusahaan?.alamat.propinsi != undefined ? `, ${item!.data.perusahaan?.alamat.propinsi.nama}`:null:null
+            }
+        </span>
+        </div>:null;      
+  };
+
+  const _onInputComboBoxRegisterPerusahaanValueChange = useCallback(
+    (newValue: string) => {
+      if(newValue.length > 1) {
+        comboBoxRegisterPerusahaanRef.current?.focus(true);
+        setQueryRegisterPerusahaanParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'nama',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'nama',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
+      else if(newValue == '') {
+        setQueryRegisterPerusahaanParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'nama'}) as number;                 
+              console.log(found);
+              if(found > -1) {
+                filters?.splice(found, 1);
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;    
+              return tmp;
+          }
+        );
+      }
     },
-    []
+    [comboBoxRegisterPerusahaanRef]
   );
 
-  const _onHandleOnChangeSkalaUsaha = useCallback(
+  const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-      _resetKategoriPelakuUsaha();
-      setQueryKategoriPelakuUsahaParams(
-        prev => {
-            let tmp = cloneDeep(prev);
-            let filters = cloneDeep(tmp.filters);
-            let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_skala_usaha'}) as number;     
-                                                
-            if(found == -1) {
-                filters?.push({
-                    fieldName: 'id_skala_usaha',
-                    value: option?.key as string
-                });
-            }
-            else {
-                filters?.splice(found, 1, {
-                    fieldName: 'id_skala_usaha',
-                    value: option?.key as string
-                })
-            }
-            
-            tmp.pageNumber = 1;
-            tmp.filters = filters;             
-            return tmp;
-        }
-      );
-      setSelectedKeySkalaUsaha(option?.key as string);
+      setSelectedKeyRegisterPerusahaan(option?.key as string);
     },
-    []
-  );
-
-  const _onHandleOnKategoriPelakuUsaha = useCallback(
-    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
-      let hasil = cloneDeep(postsKategoriPelakuUsaha?.at(index!));
-      console.log(hasil);
-      setValue('kategoriPelakuUsaha', hasil!);     
-      setSelectedKeyKategoriPelakuUsaha(option?.key as string);  
-    },
-    [postsKategoriPelakuUsaha]
+    [postsRegisterPerusahaan]
   );
 
   return (
@@ -318,79 +354,28 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
           />:null  
         } 
         <Controller 
-          name="nama"
+          name="registerPerusahaan"
           control={control}
           render={
             ({
               field: {onChange, onBlur}, 
               fieldState: { error }
             }) => (
-                <TextField
-                  label="Nama"
-                  value={namaTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setNamaTextFieldValue(newValue || '');
-                    }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
-                />
+              <ComboBox
+                componentRef={comboBoxRegisterPerusahaanRef}
+                label="Perusahaan/Nama usaha"
+                placeholder="klik atau ketik minimal 2 abjad untuk menampilkan pilihan"
+                allowFreeform={true}
+                options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+                selectedKey={selectedKeyRegisterPerusahaan}
+                useComboBoxAsMenuWidth={true}
+                onRenderOption={_onRenderRegisterPerusahaanOption}   
+                onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+                styles={basicComboBoxStyles}          
+                onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                disabled={mode == 'delete' ? true:disableForm}
+              />
             )}
-        />
-        <Controller 
-          name="singkatan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-                <TextField
-                  label="Singkatan"
-                  value={singkatanTextFieldValue}
-                  onChange={
-                    (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-                      onChange(newValue || '');
-                      setSingkatanTextFieldValue(newValue || '');
-                    }
-                  }
-                  styles={textFieldStyles}
-                  disabled={mode == 'delete' ? true:disableForm}
-                  errorMessage={error && 'harus diisi'}
-                />
-            )}
-        />
-        <ComboBox
-            label="Skala usaha"
-            placeholder="Pilih"
-            allowFreeform={true}
-            options={optionsSkalaUsaha != undefined ? optionsSkalaUsaha:[]}
-            selectedKey={selectedKeySkalaUsaha}
-            useComboBoxAsMenuWidth={true}     
-            onChange={_onHandleOnChangeSkalaUsaha}
-            disabled={mode == 'delete' ? true:disableForm}
-        />
-        <Controller 
-            name="kategoriPelakuUsaha"
-            control={control}
-            render={
-            ({field: {onChange, onBlur}, fieldState: { error }}) => (
-                <ComboBox
-                  label="Kategori pelaku usaha"
-                  placeholder="Pilih"
-                  allowFreeform={true}
-                  options={optionsKategoriPelakuUsaha != undefined ? optionsKategoriPelakuUsaha:[]}
-                  selectedKey={selectedKeyKategoriPelakuUsaha}
-                  useComboBoxAsMenuWidth={true}     
-                  errorMessage={error && 'harus diisi'}
-                  onChange={_onHandleOnKategoriPelakuUsaha}
-                  disabled={mode == 'delete'||selectedKeySkalaUsaha == null ? true:disableForm}
-                />
-            )
-            }
         />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}

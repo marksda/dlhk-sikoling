@@ -1,4 +1,5 @@
 import { IKategoriPermohonan } from "./kategori-permohonan";
+import { IOtoritas } from "./otoritas";
 import { IPegawai } from "./pegawai";
 import { IPosisiTahapPemberkasan } from "./posisi-tahap-pemberkasan";
 import { IRegisterDokumen } from "./register-dokumen";
@@ -11,7 +12,7 @@ export interface IRegisterPermohonan {
     kategoriPermohonan: Partial<IKategoriPermohonan>|null;
     tanggalRegistrasi: string|null,
     registerPerusahaan: Partial<IRegisterPerusahaan>|null;
-    pengurusPermohonan:any|null;
+    pengurusPermohonan: Partial<IOtoritas>|null;
     statusWali: Partial<IStatusWaliPermohonan>|null;
     penanggungJawabPermohonan: Partial<IPegawai>|null;
     pengirimBerkas: Partial<IPosisiTahapPemberkasan>|null;

@@ -231,5 +231,19 @@ export const PosisiTahapPemberkasanSchema = object({
     keterangan: z.string(),
 });
 
-// export const DaftarKbliSchema = z.array(RegisterKbliSchema);
+export const RegisterPermohonanSchema = object({
+    id: z.string().nullable(),
+    kategoriPermohonan: KategoriPermohonanSchema.pick({id:true}),
+    tanggalRegistrasi: z.string().optional(),
+    registerPerusahaan: RegisterPerusahaanSchema.pick({id:true}),
+    pengurusPermohonan: OtoritasSchema.pick({id:true}),
+    statusWali: StatusWaliPermohonanSchema.pick({id:true}),
+    penanggungJawabPermohonan: PegawaiSchema.pick({id:true}),
+    pengirimBerkas: PosisiTahapPemberkasanSchema.pick({id:true}),
+    penerimaBerkas: PosisiTahapPemberkasanSchema.pick({id:true}),
+    statusFlowLog: StatusFlowLogSchema.pick({id:true}),
+    daftarDokumenSyarat: z.array(RegisterDokumenSchema.pick({id: true})).nonempty(),
+    daftarDokumenHasil: z.array(RegisterDokumenSchema.pick({id: true})).nonempty(),
+});
+
 
