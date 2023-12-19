@@ -5,11 +5,12 @@ import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-sch
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataPegawaiQuery, useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 import { useAppSelector } from "../../app/hooks";
 import { invertParseNpwp } from "../../features/config/helper-function";
+import { IPegawai } from "../../features/entity/pegawai";
 
 interface IFormulirPermohonanFluentUIProps {
   title: string|undefined;
@@ -75,16 +76,29 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
   const token = useAppSelector((state) => state.token);
   // local state
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
+  const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined|null>(dataLama != undefined ? dataLama.penanggungJawabPermohonan?.id!:undefined);
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //ref component
+  const comboBoxPenanggungJawabPermohonanRef = useRef<IComboBox>(null);
   const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
   //hook-form
   const {handleSubmit, control, setValue, resetField} = useForm<IRegisterPermohonan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null},
     resolver: zodResolver(RegisterPermohonanSchema),
+  });
+  const [queryPegawaiParams, setQueryPegawaiParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 0,
+    filters: [],
+    sortOrders: [
+      {
+        fieldName: 'nama',
+        value: 'ASC'
+      },
+    ],
   });
   const [queryRegisterPerusahaanParams, setQueryRegisterPerusahaanParams] = useState<IQueryParamFilters>({
     pageNumber: 1,
@@ -106,6 +120,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
   });
   // rtk query
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
+  const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams, {skip: selectedKeyRegisterPerusahaan == null ? true:false});
   
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -116,6 +131,19 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
       dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
     }),
     [keepInBounds],
+  );
+
+  const optionsPegawai: IComboBoxOption[]|undefined = useMemo(
+    () => (
+      postsPegawai?.map((item):IComboBoxOption => {
+        return {
+          key: item.id!,
+          text: item.person?.nama!,
+          data: item
+        };
+      })
+    ),
+    [postsPegawai]
   );
 
   const optionsRegisterPerusahaan: IComboBoxOption[]|undefined = useMemo(
@@ -300,11 +328,111 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     [comboBoxRegisterPerusahaanRef]
   );
 
+  const _resetPenanggungJawabPermohonan = useCallback(
+    () => {
+      resetField("penanggungJawabPermohonan");
+      setSelectedKeyPegawai(null);
+    },
+    []
+  );
+
   const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+      _resetPenanggungJawabPermohonan();
+      setQueryPegawaiParams(
+        prev => {
+            let tmp = cloneDeep(prev);
+            let filters = cloneDeep(tmp.filters);
+            let found = filters?.findIndex((obj) => {return obj.fieldName == 'perusahaan_id'}) as number;     
+                                                
+            if(found == -1) {
+                filters?.push({
+                    fieldName: 'perusahaan_id',
+                    value: option?.key as string
+                });
+            }
+            else {
+                filters?.splice(found, 1, {
+                    fieldName: 'perusahaan_id',
+                    value: option?.key as string
+                })
+            }
+            
+            tmp.pageNumber = 1;
+            tmp.filters = filters;             
+            return tmp;
+        }
+      );
       setSelectedKeyRegisterPerusahaan(option?.key as string);
     },
     [postsRegisterPerusahaan]
+  );
+
+  const _onRenderPegawaiOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+    let data: IPegawai = item?.data;
+    return data != undefined ?
+        <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>
+          <span><b>{data.person?.nama}</b></span><br />  
+          <span>{data.person?.nik != undefined ? data.person?.nik : `-`}</span><br />
+          <span>{data.jabatan?.nama}</span>
+        </div>:null;      
+  };
+
+  const _onInputComboBoxPegawaiValueChange = useCallback(
+    (newValue: string) => {
+      if(newValue.length > 2) {
+        comboBoxPenanggungJawabPermohonanRef.current?.focus(true);
+        setQueryPegawaiParams(
+            prev => {
+                let tmp = cloneDeep(prev);
+                let filters = cloneDeep(tmp.filters);
+                let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;     
+                
+                if(newValue != '') {
+                    if(found == -1) {
+                        filters?.push({
+                            fieldName: 'pegawai',
+                            value: newValue
+                        });
+                    }
+                    else {
+                        filters?.splice(found, 1, {
+                            fieldName: 'pegawai',
+                            value: newValue
+                        })
+                    }
+                }
+                else {
+                    if(found > -1) {
+                        filters?.splice(found, 1);
+                    }
+                }
+                
+                tmp.pageNumber = 1;
+                tmp.filters = filters;             
+                return tmp;
+            }
+        );
+      }
+      else if(newValue.length == 0) {
+        setQueryPegawaiParams(
+          prev => {
+              let tmp = cloneDeep(prev);
+              let filters = cloneDeep(tmp.filters);
+              let found = filters?.findIndex((obj) => {return obj.fieldName == 'pegawai'}) as number;                 
+              console.log(found);
+              if(found > -1) {
+                filters?.splice(found, 1);
+              }
+              
+              tmp.pageNumber = 1;
+              tmp.filters = filters;    
+              return tmp;
+          }
+        );
+      }
+    },
+    [comboBoxPenanggungJawabPermohonanRef]
   );
 
   return (
@@ -352,7 +480,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
                     />
             )}
           />:null  
-        } 
+        }           
         <Controller 
           name="registerPerusahaan"
           control={control}
@@ -376,6 +504,32 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
                 disabled={mode == 'delete' ? true:disableForm}
               />
             )}
+        />
+        <Controller 
+          name="penanggungJawabPermohonan"
+          control={control}
+          render={
+            ({field: {onChange, onBlur}, fieldState: { error }}) => (
+              <ComboBox
+                componentRef={comboBoxPenanggungJawabPermohonanRef}
+                label="Penanggung jawab permohonan"
+                placeholder="silahkan pilih"
+                allowFreeform={true}
+                options={optionsPegawai != undefined ? optionsPegawai:[]}
+                selectedKey={selectedKeyPegawai != undefined ? selectedKeyPegawai:null}
+                useComboBoxAsMenuWidth={true}
+                onRenderOption={_onRenderPegawaiOption}   
+                onInputValueChange={_onInputComboBoxPegawaiValueChange}    
+                onChange={(event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+                  let penanggungJawab = cloneDeep(postsPegawai?.at(index!));
+                  onChange(penanggungJawab);
+                  setSelectedKeyPegawai(option?.key as string);
+                }}
+                disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
+                errorMessage={error && error.type == 'invalid_type'? 'harus diisi':error?.message}
+              />
+            )
+          }
         />
         <PrimaryButton 
           style={{marginTop: 16, width: '100%'}}
