@@ -9,8 +9,9 @@ import { useGetDaftarDataPegawaiQuery, useGetDaftarDataRegisterDokumenQuery, use
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 import { useAppSelector } from "../../app/hooks";
-import { invertParseNpwp } from "../../features/config/helper-function";
+import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IPegawai } from "../../features/entity/pegawai";
+import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 
 interface IFormulirPermohonanFluentUIProps {
   title: string|undefined;
@@ -76,6 +77,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
   const token = useAppSelector((state) => state.token);
   // local state
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
+  const [selectedKeyRegisterDokumenNib, setSelectedKeyRegisterDokumenNib] = useState<string|undefined|null>(undefined);
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined|null>(dataLama != undefined ? dataLama.penanggungJawabPermohonan?.id!:undefined);
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
@@ -124,7 +126,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     filters: [
       {
         fieldName: 'jenisDokumen',
-        value: '01'
+        value: '11'
       }
     ],
     sortOrders: [
@@ -176,12 +178,12 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     [postsRegisterPerusahaan]
   );
 
-  const optionsRegisterDokumenNin: IComboBoxOption[]|undefined = useMemo(
+  const optionsRegisterDokumenNib: IComboBoxOption[]|undefined = useMemo(
     () => (
       postsRegisterDokumenNib?.map((item):IComboBoxOption => {
               return {
                 key: item.id as string,
-                text: `${item.dokumen}`,
+                text: `Nib : ${item.dokumen.nomor}`,
                 data: item
               };
             })
@@ -366,9 +368,18 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     []
   );
 
+  const _resetDokumenNib = useCallback(
+    () => {
+      // resetField("penanggungJawabPermohonan");
+      setSelectedKeyRegisterDokumenNib(null);
+    },
+    []
+  );
+
   const _onHandleOnChangeRegisterPerusahaanComboBox = useCallback(
     (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
       _resetPenanggungJawabPermohonan();
+      _resetDokumenNib();
       setQueryPegawaiParams(
         prev => {
             let tmp = cloneDeep(prev);
@@ -489,6 +500,23 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
     [comboBoxPenanggungJawabPermohonanRef]
   );
 
+  const _onHandleOnChangeRegisterDokumenNibComboBox = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+      
+      setSelectedKeyRegisterDokumenNib(option?.key as string);
+    },
+    []
+  );
+
+  const _onRenderRegisterDokumenNibOption = (item: IComboBoxOption|ISelectableOption<any>|undefined) => {
+    let data = item?.data.dokumen as IDokumenNibOss;
+    return data != undefined ?
+        <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>          
+          <span>Nib : <b>{data.nomor}</b></span><br/>
+          <span>Tanggal penerbitan : <b>{utcFormatStringToDDMMYYYY(data.tanggal!)}</b></span>
+        </div>:null;      
+  };
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -558,6 +586,17 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
                 disabled={mode == 'delete' ? true:disableForm}
               />
             )}
+        />
+        <ComboBox
+          label="Dokumen Nib"
+          placeholder="pilih dokumen nib"
+          options={optionsRegisterDokumenNib != undefined ? optionsRegisterDokumenNib:[]}
+          selectedKey={selectedKeyRegisterDokumenNib}
+          useComboBoxAsMenuWidth={true}
+          onRenderOption={_onRenderRegisterDokumenNibOption}    
+          styles={basicComboBoxStyles}          
+          onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
+          disabled={mode == 'delete' ? true:disableForm}
         />
         <Controller 
           name="penanggungJawabPermohonan"
