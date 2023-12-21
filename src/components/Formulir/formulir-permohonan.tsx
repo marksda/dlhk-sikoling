@@ -596,7 +596,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
           onRenderOption={_onRenderRegisterDokumenNibOption}    
           styles={basicComboBoxStyles}          
           onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
-          disabled={mode == 'delete' ? true:disableForm}
+          disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
         />
         <Controller 
           name="penanggungJawabPermohonan"
