@@ -201,11 +201,11 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             minWidth: 180, 
             isResizable: true, 
             data: 'string',
-            onRender: (item: IItemRegisterDokumen) => {
+            onRender: (item: IItemRegisterDokumen) => {               
                 let doc = null;
                 let konten = null;
-                switch (item.dokumen?.id) {
-                    case '010101':
+                switch (item.dokumen.id) {
+                    case '01':
                         doc = item.dokumen as IDokumenAktaPendirian;
                         konten = 
                         <>
@@ -218,7 +218,7 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                             </Link>
                         </>; 
                         break;
-                    case '010301':
+                    case '11':
                         doc = item.dokumen as IDokumenNibOss;
                         konten = 
                         <>
@@ -242,15 +242,16 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                         </>; 
                         break;
                     default:
-                        doc = item.dokumen as IDokumenGenerik;
-                        konten = 
-                        <>
-                            <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
-                            <span>Nomor dokumen : {doc.nomor}</span><br />
-                            <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
-                            Download
-                            </Link>
-                        </>; 
+                        // doc = item.dokumen as IDokumenGenerik;
+                        // konten = 
+                        // <>
+                        //     <span>Tanggal penerbitan : {utcFormatStringToDDMMYYYY(doc.tanggal!)}</span><br /> 
+                        //     <span>Nomor dokumen : {doc.nomor}</span><br />
+                        //     <Link onClick={_onHandleClickOnLinkDownload} underline data-lokasi-file={item.lokasiFile}>
+                        //     Download
+                        //     </Link>
+                        // </>; 
+                        konten = null;
                         break;
                 }
 
@@ -297,6 +298,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
             },
         ],
     });
+
+    console.log(postsRegisterDokumen);
 
     const selection: Selection = useMemo(
         () => {

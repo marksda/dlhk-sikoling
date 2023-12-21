@@ -5,7 +5,7 @@ import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-sch
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
-import { useGetDaftarDataPegawaiQuery, useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
+import { useGetDaftarDataPegawaiQuery, useGetDaftarDataRegisterDokumenQuery, useGetDaftarDataRegisterPerusahaanQuery } from "../../features/repository/service/sikoling-api-slice";
 import { IQueryParamFilters } from "../../features/entity/query-param-filters";
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 import { useAppSelector } from "../../app/hooks";
@@ -118,9 +118,26 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
       },
     ],
   });
+  const [queryRegisterDokumenParams, setQueryRegisterDokumenParams] = useState<IQueryParamFilters>({
+    pageNumber: 1,
+    pageSize: 25,
+    filters: [
+      {
+        fieldName: 'jenisDokumen',
+        value: '01'
+      }
+    ],
+    sortOrders: [
+      {
+          fieldName: 'nama',
+          value: 'ASC'
+      },
+    ],
+  });
   // rtk query
   const { data: postsRegisterPerusahaan, isLoading: isLoadingPostsRegisterPerusahaan } = useGetDaftarDataRegisterPerusahaanQuery(queryRegisterPerusahaanParams);
   const { data: postsPegawai, isLoading: isLoadingPostsPegawai } = useGetDaftarDataPegawaiQuery(queryPegawaiParams, {skip: selectedKeyRegisterPerusahaan == null ? true:false});
+  const { data: postsRegisterDokumenNib, isLoading: isLoadingPosts } = useGetDaftarDataRegisterDokumenQuery(queryRegisterDokumenParams, {skip: selectedKeyRegisterPerusahaan == null ? true:false});
   
   const dragOptions = useMemo(
     (): IDragOptions => ({
@@ -157,6 +174,19 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
             })
     ),
     [postsRegisterPerusahaan]
+  );
+
+  const optionsRegisterDokumenNin: IComboBoxOption[]|undefined = useMemo(
+    () => (
+      postsRegisterDokumenNib?.map((item):IComboBoxOption => {
+              return {
+                key: item.id as string,
+                text: `${item.dokumen}`,
+                data: item
+              };
+            })
+    ),
+    [postsRegisterDokumenNib]
   );
   
   const onSubmit: SubmitHandler<IRegisterPermohonan> = async (data) => {
@@ -354,6 +384,30 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
             else {
                 filters?.splice(found, 1, {
                     fieldName: 'perusahaan_id',
+                    value: option?.key as string
+                })
+            }
+            
+            tmp.pageNumber = 1;
+            tmp.filters = filters;             
+            return tmp;
+        }
+      );
+      setQueryRegisterDokumenParams(
+        prev => {
+            let tmp = cloneDeep(prev);
+            let filters = cloneDeep(tmp.filters);
+            let found = filters?.findIndex((obj) => {return obj.fieldName == 'id_perusahaan'}) as number;     
+                                                
+            if(found == -1) {
+                filters?.push({
+                    fieldName: 'id_perusahaan',
+                    value: option?.key as string
+                });
+            }
+            else {
+                filters?.splice(found, 1, {
+                    fieldName: 'id_perusahaan',
                     value: option?.key as string
                 })
             }
