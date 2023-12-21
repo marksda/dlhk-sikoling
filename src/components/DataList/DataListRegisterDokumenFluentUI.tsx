@@ -299,8 +299,6 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
         ],
     });
 
-    console.log(postsRegisterDokumen);
-
     const selection: Selection = useMemo(
         () => {
             return new Selection({
