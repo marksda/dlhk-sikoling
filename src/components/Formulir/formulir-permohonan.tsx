@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, find, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-schema";
@@ -189,6 +189,25 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
             })
     ),
     [postsRegisterDokumenNib]
+  );
+
+  const optionsJenisKegiatanSesuaiKBLI: IComboBoxOption[]|undefined = useMemo(
+    () => {
+      if(postsRegisterDokumenNib != undefined && selectedKeyRegisterDokumenNib != null) {
+        let dataTerpilih = find(postsRegisterDokumenNib, (i) => i.id == selectedKeyRegisterDokumenNib);
+        return (dataTerpilih?.dokumen as IDokumenNibOss).daftarKbli?.map((item):IComboBoxOption => {
+          return {
+            key: item.kode as string,
+            text: `${item.kode} - ${item.nama}`,
+            data: item
+          };
+        });
+      }
+      else {
+        return [];
+      }
+    },
+    [postsRegisterDokumenNib, selectedKeyRegisterDokumenNib]
   );
   
   const onSubmit: SubmitHandler<IRegisterPermohonan> = async (data) => {
@@ -597,6 +616,12 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
           styles={basicComboBoxStyles}          
           onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
           disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
+        />        
+        <ComboBox
+          label="Jenis kegiatan"
+          placeholder="silahkan pilih"
+          allowFreeform={true}
+          options={optionsJenisKegiatanSesuaiKBLI != undefined ? optionsJenisKegiatanSesuaiKBLI:[]}         
         />
         <Controller 
           name="penanggungJawabPermohonan"
