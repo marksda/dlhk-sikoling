@@ -19,6 +19,7 @@ interface IFormulirPermohonanFluentUIProps {
   isModalOpen: boolean;
   hideModal: () => void;
   dataLama?: IRegisterPermohonan;
+  jenisPermohonan: string;
 };
 
 const theme = getTheme();
@@ -72,6 +73,10 @@ const iconButtonStyles = {
     },
 };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
+const optionsStatusKepemilikanLahan: IComboBoxOption[] = [
+  { key: '1', text: 'Milik sendiri' },
+  { key: '2', text: 'Pinjam / Sewa pakai' },
+];
 
 export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   const token = useAppSelector((state) => state.token);
@@ -79,6 +84,7 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyRegisterDokumenNib, setSelectedKeyRegisterDokumenNib] = useState<string|undefined|null>(undefined);
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined|null>(dataLama != undefined ? dataLama.penanggungJawabPermohonan?.id!:undefined);
+  const [selectedKeyStatusKepemilikanlahan, setSelectedKeyStatusKepemilikanlahan] = useState<string|undefined>(undefined);
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
@@ -536,6 +542,13 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
         </div>:null;      
   };
 
+  const _onHandleOnChangeStatusKepemilikanlahanComboBox = useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {      
+      setSelectedKeyStatusKepemilikanlahan(option?.key as string);
+    },
+    []
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -616,12 +629,24 @@ export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title,
           styles={basicComboBoxStyles}          
           onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
           disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
-        />        
+        /> 
         <ComboBox
           label="Jenis kegiatan"
           placeholder="silahkan pilih"
           allowFreeform={true}
-          options={optionsJenisKegiatanSesuaiKBLI != undefined ? optionsJenisKegiatanSesuaiKBLI:[]}         
+          options={optionsJenisKegiatanSesuaiKBLI != undefined ? optionsJenisKegiatanSesuaiKBLI:[]}    
+          useComboBoxAsMenuWidth={true}
+          disabled={mode == 'delete'||selectedKeyRegisterDokumenNib==undefined ? true:disableForm}     
+        />
+        <ComboBox
+          label="Status kepemilikan lahan tempat kegiatan usaha"
+          placeholder="silahkan pilih"
+          allowFreeform={true}
+          options={optionsStatusKepemilikanLahan}   
+          selectedKey={selectedKeyStatusKepemilikanlahan} 
+          onChange={_onHandleOnChangeStatusKepemilikanlahanComboBox}
+          useComboBoxAsMenuWidth={true}
+          disabled={mode == 'delete'||selectedKeyRegisterDokumenNib==undefined ? true:disableForm}     
         />
         <Controller 
           name="penanggungJawabPermohonan"

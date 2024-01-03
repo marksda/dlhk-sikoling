@@ -99,6 +99,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
     const [isSelectedItem, setIsSelectedItem] = useState<boolean>(false);
     const [formulirTitle, setFormulirTitle] = useState<string|undefined>(undefined);
     const [modeForm, setModeForm] = useState<string|undefined>(undefined);
+    const [jenisPermohonan, setJenisPermohonan] = useState<string|undefined>(undefined);
     const [isModalSelection, setIsModalSelection] = useState<boolean>(false);
     const [isModalFormulirRegisterPermohonanOpen, { setTrue: showModalFormulirRegisterPermohonan, setFalse: hideModalFormulirRegisterPermohonan}] = useBoolean(false);
     const [dataLama, setDataLama]= useState<IRegisterPermohonan|undefined>(undefined);    
@@ -294,6 +295,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                                 setModeForm('add');
                                 showModalFormulirRegisterPermohonan();
                                 setDataLama(undefined);
+                                setJenisPermohonan(t.nama!);
                             }
                         })
                     )} : {items:[]}
@@ -892,6 +894,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                     hideModal={hideModalFormulirRegisterPermohonan}
                     mode={modeForm}
                     dataLama={dataLama}
+                    jenisPermohonan={jenisPermohonan!}
                 />
             )}
         </Stack>
