@@ -311,6 +311,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         showModalFormulirRegisterPermohonan();
                         let dataTerpilih = find(postsRegisterPermohonan, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
+                        setJenisPermohonan(dataTerpilih?.kategoriPermohonan?.nama!);
                         selection.toggleKeySelected(selection.getSelection()[0].key as string);
                     }
                 },
@@ -326,6 +327,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                         showModalFormulirRegisterPermohonan();
                         let dataTerpilih = find(postsRegisterPermohonan, (i) => i.id == selection.getSelection()[0].key);
                         setDataLama(dataTerpilih);
+                        setJenisPermohonan(dataTerpilih?.kategoriPermohonan?.nama!);
                     }
                 },
             ];
