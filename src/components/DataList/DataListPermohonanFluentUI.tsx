@@ -9,7 +9,7 @@ import { useGetDaftarDataKategoriPermohonanQuery, useGetDaftarDataPosisiTahapPem
 import { IRegisterPermohonan } from "../../features/entity/register-permohonan";
 import { useBoolean } from "@fluentui/react-hooks";
 import find from "lodash.find";
-import { FormulirPermohonan } from "../Formulir/formulir-permohonan";
+import { FormulirPermohonanSPPL } from "../Formulir/formulir-permohonan-sppl";
 
 interface IDataListPermohonanFluentUIProps {
     initSelectedFilters: IQueryParamFilters;
@@ -332,6 +332,27 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
         }, 
         [isSelectedItem, selection, postsRegisterPermohonan, postsJenisPermohonan]
     ); 
+
+    const formulirPermohonan = useMemo(
+        () => {
+            switch (jenisPermohonan) {
+                case 'SPPL':
+                    return <FormulirPermohonanSPPL
+                        title={formulirTitle}
+                        isModalOpen={isModalFormulirRegisterPermohonanOpen}
+                        hideModal={hideModalFormulirRegisterPermohonan}
+                        mode={modeForm}
+                        dataLama={dataLama}
+                        jenisPermohonan={jenisPermohonan!}
+                    />
+                    break;            
+                default:
+                    return null;
+                    break;
+            }
+        },
+        [jenisPermohonan, formulirTitle, isModalFormulirRegisterPermohonanOpen, hideModalFormulirRegisterPermohonan, modeForm, dataLama]
+    );    
 
     const _renderMenuList = useCallback(
         (menuListProps: IContextualMenuListProps, defaultRender: IRenderFunction<IContextualMenuListProps>) => {
@@ -887,16 +908,7 @@ export const DataListPermohonanFluentUI: FC<IDataListPermohonanFluentUIProps> = 
                     </Stack>
                 </Callout>                
             }
-            {isModalFormulirRegisterPermohonanOpen && (
-                <FormulirPermohonan
-                    title={formulirTitle}
-                    isModalOpen={isModalFormulirRegisterPermohonanOpen}
-                    hideModal={hideModalFormulirRegisterPermohonan}
-                    mode={modeForm}
-                    dataLama={dataLama}
-                    jenisPermohonan={jenisPermohonan!}
-                />
-            )}
+            {formulirPermohonan}
         </Stack>
     );
 };

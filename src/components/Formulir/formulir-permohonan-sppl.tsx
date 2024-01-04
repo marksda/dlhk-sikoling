@@ -13,7 +13,7 @@ import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/confi
 import { IPegawai } from "../../features/entity/pegawai";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 
-interface IFormulirPermohonanFluentUIProps {
+interface IFormulirPermohonanSPPLFluentUIProps {
   title: string|undefined;
   mode: string|undefined;
   isModalOpen: boolean;
@@ -78,7 +78,7 @@ const optionsStatusKepemilikanLahan: IComboBoxOption[] = [
   { key: '2', text: 'Pinjam / Sewa pakai' },
 ];
 
-export const FormulirPermohonan: FC<IFormulirPermohonanFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
   const token = useAppSelector((state) => state.token);
   // local state
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
