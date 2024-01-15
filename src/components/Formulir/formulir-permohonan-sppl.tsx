@@ -648,11 +648,10 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
           </Stack.Item>   
           <Stack.Item style={{paddingTop: 26}}>
             <TooltipHost
-              content="Tekan icon ini jika ingin menambahkan pilihan dokumen nib pada combobox disamping icon ini"
+              content="Klik untuk menambahkan pilihan dokumen nib pada combobox disamping icon ini"
               id={tooltipId}
               calloutProps={calloutProps}
               styles={hostStyles}
-              setAriaDescribedBy={false}
             >
               <ActionButton 
                   iconProps={addDokumenIcon} 
