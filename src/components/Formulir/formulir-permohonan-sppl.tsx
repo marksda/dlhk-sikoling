@@ -1,4 +1,4 @@
-import { ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, find, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, ITooltipHostStyles, IconButton, Modal , PrimaryButton, Stack, TextField, TooltipHost, find, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-schema";
@@ -59,8 +59,11 @@ const contentStyles = mergeStyleSets({
     },
   },
 });
+const stackTokens: IStackTokens = { childrenGap: 4 };
+const calloutProps = { gapSpace: 0 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 350 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
+const addDokumenIcon: IIconProps = { iconName: 'PageAdd' };
 const iconButtonStyles = {
     root: {
       color: theme.palette.neutralPrimary,
@@ -73,6 +76,7 @@ const iconButtonStyles = {
     },
 };
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const optionsStatusKepemilikanLahan: IComboBoxOption[] = [
   { key: '1', text: 'Milik sendiri' },
   { key: '2', text: 'Pinjam / Sewa pakai' },
@@ -89,6 +93,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
+  const tooltipId = useId('tooltip');
   //ref component
   const comboBoxPenanggungJawabPermohonanRef = useRef<IComboBox>(null);
   const comboBoxRegisterPerusahaanRef = useRef<IComboBox>(null);
@@ -549,6 +554,14 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
     []
   );
 
+  const _onHandleBtnAddDokumen = useCallback(
+    (e) => {            
+        e.stopPropagation();
+        // showModalFormulirPerson();
+    },
+    [disableForm]
+  );
+
   return (
     <Modal
       titleAriaId={titleId}
@@ -619,17 +632,38 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
               />
             )}
         />
-        <ComboBox
-          label="Dokumen Nib"
-          placeholder="pilih dokumen nib"
-          options={optionsRegisterDokumenNib != undefined ? optionsRegisterDokumenNib:[]}
-          selectedKey={selectedKeyRegisterDokumenNib}
-          useComboBoxAsMenuWidth={true}
-          onRenderOption={_onRenderRegisterDokumenNibOption}    
-          styles={basicComboBoxStyles}          
-          onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
-          disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
-        /> 
+        <Stack horizontal  tokens={stackTokens}>
+          <Stack.Item>
+            <ComboBox
+              label="Dokumen Nib"
+              placeholder="pilih dokumen nib"
+              options={optionsRegisterDokumenNib != undefined ? optionsRegisterDokumenNib:[]}
+              selectedKey={selectedKeyRegisterDokumenNib}
+              useComboBoxAsMenuWidth={true}
+              onRenderOption={_onRenderRegisterDokumenNibOption}    
+              styles={basicComboBoxStyles}          
+              onChange={_onHandleOnChangeRegisterDokumenNibComboBox}
+              disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
+            /> 
+          </Stack.Item>   
+          <Stack.Item style={{paddingTop: 26}}>
+            <TooltipHost
+              content="Tekan icon ini jika ingin menambahkan pilihan dokumen nib pada combobox disamping icon ini"
+              id={tooltipId}
+              calloutProps={calloutProps}
+              styles={hostStyles}
+              setAriaDescribedBy={false}
+            >
+              <ActionButton 
+                  iconProps={addDokumenIcon} 
+                  allowDisabledFocus 
+                  onClick={_onHandleBtnAddDokumen}
+                  disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
+                >
+              </ActionButton>
+            </TooltipHost>
+          </Stack.Item>  
+        </Stack>        
         <ComboBox
           label="Jenis kegiatan"
           placeholder="silahkan pilih"
