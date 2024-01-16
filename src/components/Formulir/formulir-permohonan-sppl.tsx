@@ -15,7 +15,6 @@ import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { FormulirRegisterDokumen } from "./formulir-register-dokumen";
 import find from "lodash.find";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
-import { IPerusahaan } from "../../features/entity/perusahaan";
 
 interface IFormulirPermohonanSPPLFluentUIProps {
   title: string|undefined;
@@ -726,7 +725,10 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
           mode="add"
           dataLama={{
             id: null,
-            dokumen: null,
+            dokumen: {
+              id: '11',
+              nama: 'NIB - OSS'
+            },
             registerPerusahaan: find(postsRegisterPerusahaan! as IRegisterPerusahaan[], (item) => {
               return item.id == selectedKeyRegisterPerusahaan;
             }) as IRegisterPerusahaan,

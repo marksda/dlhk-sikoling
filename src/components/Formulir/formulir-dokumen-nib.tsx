@@ -200,8 +200,10 @@ export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFlu
         setConfigOnlyOfficeEditor(
           (prev: any) => {
             let hasil = cloneDeep(prev);
-            hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
-            hasil.width = `${window.innerWidth - 520}px`; 
+            if(hasil != null) {
+              hasil.height = mode == 'add' ? `${window.innerHeight - 195}px` : `${window.innerHeight - 130}px`;
+              hasil.width = `${window.innerWidth - 520}px`; 
+            }            
             return hasil;
           }
         );
