@@ -21,6 +21,7 @@ interface IFormulirRegisterDokumenFluentUIProps {
   isModalOpen: boolean;
   hideModal: () => void;
   dataLama?: IRegisterDokumen<any>;
+  lockOptionPerusahaan?: boolean;
 };
 
 const theme = getTheme();
@@ -75,7 +76,7 @@ const iconButtonStyles = {
 const basicComboBoxStyles: Partial<IComboBoxStyles> = { root: { minWidth: 400 } };
 const stackTokens = { childrenGap: 8 };
 
-export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode}) => { 
+export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> = ({title, isModalOpen, hideModal, dataLama, mode, lockOptionPerusahaan}) => { 
   const token = useAppSelector((state) => state.token);
   const [selectedKeyRegisterPerusahaan, setSelectedKeyRegisterPerusahaan] = useState<string|undefined>(dataLama != undefined ? dataLama.registerPerusahaan?.id!:undefined);
   const [selectedKeyDokumen, setSelectedKeyDokumen] = useState<string|undefined>(dataLama != undefined ? dataLama.dokumen?.id!:undefined);  
@@ -102,7 +103,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
     pageSize: 100,
     filters: dataLama != undefined ? [{
       fieldName: 'nama',
-      value: (dataLama.dokumen as IDokumen).nama!
+      value: dataLama.dokumen != undefined ? (dataLama.dokumen as IDokumen).nama!:''
     }]:[],
     sortOrders: [
         {
@@ -421,7 +422,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                     onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
                     styles={basicComboBoxStyles}          
                     onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-                    disabled={disableForm}
+                    disabled={lockOptionPerusahaan ? true: disableForm}
                   />
                 </Stack.Item> 
                 <Stack.Item grow> 
@@ -436,7 +437,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
                     onInputValueChange={_onInputComboBoxDokumenValueChange}      
                     styles={basicComboBoxStyles}           
                     onChange={_onHandleOnChangeDokumenComboBox}
-                    disabled={selectedKeyRegisterPerusahaan == undefined ? true : disableForm}
+                    disabled={selectedKeyRegisterPerusahaan == undefined || lockOptionPerusahaan == true ? true : disableForm}
                   />
                 </Stack.Item> 
               </Stack>

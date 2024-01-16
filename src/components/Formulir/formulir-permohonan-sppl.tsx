@@ -1,4 +1,4 @@
-import { ActionButton, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, ITooltipHostStyles, IconButton, Modal , PrimaryButton, Stack, TextField, TooltipHost, find, getTheme, mergeStyleSets } from "@fluentui/react";
+import { ActionButton, ComboBox, ContextualMenu, FontWeights, IComboBox, IComboBoxOption, IComboBoxStyles, IDragOptions, IIconProps, ISelectableOption, IStackTokens, ITextFieldStyles, ITooltipHostStyles, IconButton, Modal , PrimaryButton, Stack, TextField, TooltipHost, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { RegisterPermohonanSchema } from "../../features/schema-resolver/zod-schema";
@@ -12,6 +12,10 @@ import { useAppSelector } from "../../app/hooks";
 import { invertParseNpwp, utcFormatStringToDDMMYYYY } from "../../features/config/helper-function";
 import { IPegawai } from "../../features/entity/pegawai";
 import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
+import { FormulirRegisterDokumen } from "./formulir-register-dokumen";
+import find from "lodash.find";
+import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { IPerusahaan } from "../../features/entity/perusahaan";
 
 interface IFormulirPermohonanSPPLFluentUIProps {
   title: string|undefined;
@@ -89,6 +93,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
   const [selectedKeyRegisterDokumenNib, setSelectedKeyRegisterDokumenNib] = useState<string|undefined|null>(undefined);
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined|null>(dataLama != undefined ? dataLama.penanggungJawabPermohonan?.id!:undefined);
   const [selectedKeyStatusKepemilikanlahan, setSelectedKeyStatusKepemilikanlahan] = useState<string|undefined>(undefined);
+  const [isModalFormulirDokumenNibOpen, {setTrue: showModalFormulirDokumenNib, setFalse: hideModalFormulirDokumenNib}] = useBoolean(false);
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
@@ -194,7 +199,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
       postsRegisterDokumenNib?.map((item):IComboBoxOption => {
               return {
                 key: item.id as string,
-                text: `Nib : ${item.dokumen.nomor}`,
+                text: item.dokumen.nomor,
                 data: item
               };
             })
@@ -542,8 +547,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
     let data = item?.data.dokumen as IDokumenNibOss;
     return data != undefined ?
         <div style={{padding: 4, borderBottom: '1px solid #d9d9d9', width: 380}}>          
-          <span>Nib : <b>{data.nomor}</b></span><br/>
-          <span>Tanggal penerbitan : <b>{utcFormatStringToDDMMYYYY(data.tanggal!)}</b></span>
+          <span>Nib : <b>{data.nomor}</b>, Tanggal penerbitan : <b>{utcFormatStringToDDMMYYYY(data.tanggal!)}</b></span>
         </div>:null;      
   };
 
@@ -557,7 +561,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
   const _onHandleBtnAddDokumen = useCallback(
     (e) => {            
         e.stopPropagation();
-        // showModalFormulirPerson();
+        showModalFormulirDokumenNib();
     },
     [disableForm]
   );
@@ -714,6 +718,27 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
           disabled={disableForm}
         />
       </div>
+      { isModalFormulirDokumenNibOpen == true ?
+        <FormulirRegisterDokumen
+          title="Add Dokumen Nib"
+          isModalOpen={isModalFormulirDokumenNibOpen}
+          hideModal={hideModalFormulirDokumenNib}
+          mode="add"
+          dataLama={{
+            id: null,
+            dokumen: null,
+            registerPerusahaan: find(postsRegisterPerusahaan! as IRegisterPerusahaan[], (item) => {
+              return item.id == selectedKeyRegisterPerusahaan;
+            }) as IRegisterPerusahaan,
+            lokasiFile: null,
+            statusDokumen: null,
+            tanggalRegistrasi: null,
+            uploader: null,
+            statusVerified: null
+          }}
+          lockOptionPerusahaan={true}
+        />:null
+      }      
     </Modal>
   );
 }

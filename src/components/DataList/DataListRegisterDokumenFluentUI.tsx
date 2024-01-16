@@ -1128,7 +1128,8 @@ export const DataListRegisterDokumenFluentUI: FC<IDataListRegisterDokumenFluentU
                     isModalOpen={true}
                     hideModal={hideModalFormulirRegisterDokumen}
                     mode={modeForm}
-                    dataLama={dataLama}/>
+                    dataLama={dataLama}
+                    lockOptionPerusahaan={false}/>
             )}          
         </Stack>
     );
