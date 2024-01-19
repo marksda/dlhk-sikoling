@@ -15,6 +15,7 @@ import { IDokumenNibOss } from "../../features/entity/dokumen-nib-oss";
 import { FormulirRegisterDokumen } from "./formulir-register-dokumen";
 import find from "lodash.find";
 import { IRegisterPerusahaan } from "../../features/entity/register-perusahaan";
+import { FormulirRegisterPerusahaan } from "./formulir-register-perusahaan";
 
 interface IFormulirPermohonanSPPLFluentUIProps {
   title: string|undefined;
@@ -93,6 +94,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
   const [selectedKeyPegawai, setSelectedKeyPegawai] = useState<string|undefined|null>(dataLama != undefined ? dataLama.penanggungJawabPermohonan?.id!:undefined);
   const [selectedKeyStatusKepemilikanlahan, setSelectedKeyStatusKepemilikanlahan] = useState<string|undefined>(undefined);
   const [isModalFormulirDokumenNibOpen, {setTrue: showModalFormulirDokumenNib, setFalse: hideModalFormulirDokumenNib}] = useBoolean(false);
+  const [isModalFormulirRegisterPerusahaanOpen, {setTrue: showModalFormulirRegisterPerusahaan, setFalse: hideModalFormulirRegisterPerusahaan}] = useBoolean(false);
   const [idTextFieldValue, setIdTextFieldValue] = useState<string>(dataLama != undefined ? dataLama.id!:''); 
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
@@ -557,10 +559,18 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
     []
   );
 
-  const _onHandleBtnAddDokumen = useCallback(
+  const _onHandleBtnOpenFormulirDokumenNib = useCallback(
     (e) => {            
         e.stopPropagation();
         showModalFormulirDokumenNib();
+    },
+    [disableForm]
+  );
+
+  const _onHandleBtnOpenFormulirRegisterPerusahaan = useCallback(
+    (e) => {            
+        e.stopPropagation();
+        showModalFormulirRegisterPerusahaan();
     },
     [disableForm]
   );
@@ -648,7 +658,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
               <ActionButton 
                   iconProps={addIcon} 
                   allowDisabledFocus 
-                  onClick={_onHandleBtnAddDokumen}
+                  onClick={_onHandleBtnOpenFormulirRegisterPerusahaan}
                   disabled={mode == 'delete' ? true:disableForm}
                 >
               </ActionButton>
@@ -679,7 +689,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
               <ActionButton 
                   iconProps={addIcon} 
                   allowDisabledFocus 
-                  onClick={_onHandleBtnAddDokumen}
+                  onClick={_onHandleBtnOpenFormulirDokumenNib}
                   disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
                 >
               </ActionButton>
@@ -737,6 +747,14 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
           disabled={disableForm}
         />
       </div>
+      { isModalFormulirRegisterPerusahaanOpen == true ?
+          <FormulirRegisterPerusahaan 
+              title="Add perusahaan"
+              isModalOpen={isModalFormulirRegisterPerusahaanOpen}
+              hideModal={hideModalFormulirRegisterPerusahaan}
+              mode="add"
+          />:null
+      }
       { isModalFormulirDokumenNibOpen == true ?
         <FormulirRegisterDokumen
           title="Add Dokumen Nib"
@@ -747,16 +765,24 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
             id: null,
             dokumen: {
               id: '11',
-              nama: 'NIB - OSS'
+              nama: 'NIB - OSS',
+              nomor: null,
+              tanggal: null,
+              daftarKbli: []
             },
             registerPerusahaan: find(postsRegisterPerusahaan! as IRegisterPerusahaan[], (item) => {
               return item.id == selectedKeyRegisterPerusahaan;
             }) as IRegisterPerusahaan,
             lokasiFile: null,
-            statusDokumen: null,
-            tanggalRegistrasi: null,
-            uploader: null,
-            statusVerified: null
+            statusDokumen: {
+              id: '1',
+              nama: 'BERLAKU'
+            },
+            tanggalRegistrasi: '',
+            uploader: {
+              id: null
+            },
+            statusVerified: false
           }}
           lockOptionPerusahaan={true}
         />:null

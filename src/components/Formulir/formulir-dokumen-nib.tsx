@@ -75,6 +75,7 @@ const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 200 } 
 const mutexDokumenNib = new Mutex();
 
 export const FormulirRegisterDokumenNibOss: FC<IFormulirRegisterDokumenNibOssFluentUIProps> = ({mode, dokumen, registerPerusahaan, dataLama, closeWindow}) => { 
+  // console.log(dokumen);
   const token = useAppSelector((state) => state.token); 
   const dispatch = useAppDispatch();
   

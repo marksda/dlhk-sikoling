@@ -354,7 +354,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
           case '01':
             konten = <FormulirRegisterDokumenAktaPendirian 
                     mode={mode} 
-                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian : dataLama?.dokumen as IDokumenAktaPendirian}
+                    dokumen={dataLama == undefined ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenAktaPendirian : dataLama?.dokumen as IDokumenAktaPendirian}
                     registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
                     dataLama={dataLama}
                     closeWindow={hideModal}/>;
@@ -362,7 +362,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
           case '11':
             konten = <FormulirRegisterDokumenNibOss 
                     mode={mode} 
-                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss : dataLama?.dokumen as IDokumenNibOss}
+                    dokumen={dataLama == undefined ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenNibOss : dataLama?.dokumen as IDokumenNibOss}
                     registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
                     dataLama={dataLama}
                     closeWindow={hideModal}/>;
@@ -370,7 +370,7 @@ export const FormulirRegisterDokumen: FC<IFormulirRegisterDokumenFluentUIProps> 
           default:
             konten = <FormulirRegisterDokumenGenerik
                     mode={mode} 
-                    dokumen={mode == 'add' ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenGenerik : dataLama?.dokumen as IDokumenGenerik}
+                    dokumen={dataLama == undefined ? find(postsDokumen!, (i) => i.id == selectedKeyDokumen) as IDokumenGenerik : dataLama?.dokumen as IDokumenGenerik}
                     registerPerusahaan={mode == 'add' ? find(postsRegisterPerusahaan!, (i) => i.id == selectedKeyRegisterPerusahaan):dataLama?.registerPerusahaan!}
                     dataLama={dataLama}
                     closeWindow={hideModal}/>;

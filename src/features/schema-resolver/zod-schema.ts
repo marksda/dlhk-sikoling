@@ -172,6 +172,11 @@ export const KbliSchema = object({
     kategori: z.string(),
 });
 
+export const StatusDokumenSchema = object({
+    id: z.string().nullable(),
+    nama: z.string()
+});
+
 export const DokumenNibSchema = DokumenSchema.extend({
     nomor: z.string(),
     tanggal:z.string(),
@@ -201,6 +206,7 @@ export const RegisterDokumenSchema = object({
     // dokumen: DokumenSchema,
     registerPerusahaan: RegisterPerusahaanSchema.pick({id:true}),
     lokasiFile: z.string().nullable(),
+    statusDokumen: StatusDokumenSchema.pick({id:true, nama: true}).optional(),
     tanggalRegistrasi: z.string().optional(),
     uploader: OtoritasSchema.pick({id:true}).optional(),
     statusVerified: z.boolean().optional()
