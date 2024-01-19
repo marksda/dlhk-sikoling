@@ -66,7 +66,7 @@ const stackTokens: IStackTokens = { childrenGap: 4 };
 const calloutProps = { gapSpace: 0 };
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: 350 } };
 const cancelIcon: IIconProps = { iconName: 'Cancel' };
-const addDokumenIcon: IIconProps = { iconName: 'PageAdd' };
+const addIcon: IIconProps = { iconName: 'PageAdd' };
 const iconButtonStyles = {
     root: {
       color: theme.palette.neutralPrimary,
@@ -610,31 +610,51 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
                     />
             )}
           />:null  
-        }           
-        <Controller 
-          name="registerPerusahaan"
-          control={control}
-          render={
-            ({
-              field: {onChange, onBlur}, 
-              fieldState: { error }
-            }) => (
-              <ComboBox
-                componentRef={comboBoxRegisterPerusahaanRef}
-                label="Pemrakarsa/nama usaha/perusahaan"
-                placeholder="klik atau ketik minimal 2 abjad untuk menampilkan pilihan"
-                allowFreeform={true}
-                options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
-                selectedKey={selectedKeyRegisterPerusahaan}
-                useComboBoxAsMenuWidth={true}
-                onRenderOption={_onRenderRegisterPerusahaanOption}   
-                onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
-                styles={basicComboBoxStyles}          
-                onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
-                disabled={mode == 'delete' ? true:disableForm}
-              />
-            )}
-        />
+        }     
+        <Stack horizontal  tokens={stackTokens}>    
+          <Stack.Item>
+            <Controller 
+              name="registerPerusahaan"
+              control={control}
+              render={
+                ({
+                  field: {onChange, onBlur}, 
+                  fieldState: { error }
+                }) => (
+                  <ComboBox
+                    componentRef={comboBoxRegisterPerusahaanRef}
+                    label="Pemrakarsa/nama usaha/perusahaan"
+                    placeholder="klik atau ketik minimal 2 abjad untuk menampilkan pilihan"
+                    allowFreeform={true}
+                    options={optionsRegisterPerusahaan != undefined ? optionsRegisterPerusahaan:[]}
+                    selectedKey={selectedKeyRegisterPerusahaan}
+                    useComboBoxAsMenuWidth={true}
+                    onRenderOption={_onRenderRegisterPerusahaanOption}   
+                    onInputValueChange={_onInputComboBoxRegisterPerusahaanValueChange}      
+                    styles={basicComboBoxStyles}          
+                    onChange={_onHandleOnChangeRegisterPerusahaanComboBox}
+                    disabled={mode == 'delete' ? true:disableForm}
+                  />
+                )
+              }
+            />
+          </Stack.Item>
+          <Stack.Item style={{paddingTop: 26}}>
+            <TooltipHost
+              content="Klik untuk menambahkan pilihan pemrakarsa/nama usaha/perusahaan pada combobox disamping icon ini"
+              calloutProps={calloutProps}
+              styles={hostStyles}
+            >
+              <ActionButton 
+                  iconProps={addIcon} 
+                  allowDisabledFocus 
+                  onClick={_onHandleBtnAddDokumen}
+                  disabled={mode == 'delete' ? true:disableForm}
+                >
+              </ActionButton>
+            </TooltipHost>
+          </Stack.Item>          
+        </Stack>
         <Stack horizontal  tokens={stackTokens}>
           <Stack.Item>
             <ComboBox
@@ -657,7 +677,7 @@ export const FormulirPermohonanSPPL: FC<IFormulirPermohonanSPPLFluentUIProps> = 
               styles={hostStyles}
             >
               <ActionButton 
-                  iconProps={addDokumenIcon} 
+                  iconProps={addIcon} 
                   allowDisabledFocus 
                   onClick={_onHandleBtnAddDokumen}
                   disabled={mode == 'delete'||selectedKeyRegisterPerusahaan==undefined ? true:disableForm}
