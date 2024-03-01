@@ -1,7 +1,7 @@
 import { ContextualMenu, FontWeights, IDragOptions, IIconProps, ITextFieldStyles, IconButton, Modal , PrimaryButton, TextField, getTheme, mergeStyleSets } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { FC, useCallback, useMemo, useState } from "react";
-import { KategoriFlowLogSchema } from "../../features/schema-resolver/zod-schema";
+import { JabatanSchema, KategoriFlowLogSchema } from "../../features/schema-resolver/zod-schema";
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import cloneDeep from "lodash.clonedeep";
@@ -76,9 +76,9 @@ export const FormulirJabatan: FC<IFormulirJabatanFluentUIProps> = ({title, isMod
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const titleId = useId('title');
   //hook-form
-  const {handleSubmit, control, resetField, watch} = useForm<IKategoriFlowLog>({
+  const {handleSubmit, control, resetField, watch} = useForm<IJabatan>({
     defaultValues:  dataLama != undefined ? cloneDeep(dataLama):{id: null, nama: undefined},
-    resolver: zodResolver(KategoriFlowLogSchema),
+    resolver: zodResolver(JabatanSchema),
   });
   // rtk query
   const [ saveJabatan] = useSaveJabatanMutation();
@@ -142,7 +142,7 @@ export const FormulirJabatan: FC<IFormulirJabatanFluentUIProps> = ({title, isMod
     }
   };
 
-  const onError: SubmitErrorHandler<IKategoriFlowLog> = async (err) => {
+  const onError: SubmitErrorHandler<IJabatan> = async (err) => {
     if(mode == 'delete') {
       await deleteJabatan(dataLama!).unwrap().then((originalPromiseResult) => {
         setDisableForm(false);
